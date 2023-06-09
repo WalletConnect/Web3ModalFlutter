@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:web3modal_flutter/models/listings.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/button_widget.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';

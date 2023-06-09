@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web3modal_flutter/widgets/button_widget.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
 
 class SvgImageInfo {
   final String path;

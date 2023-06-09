@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/services/web3modal/i_web3modal_service.dart';
 import 'package:web3modal_flutter/utils/logger_util.dart';
 import 'package:web3modal_flutter/widgets/web3modal_theme.dart';

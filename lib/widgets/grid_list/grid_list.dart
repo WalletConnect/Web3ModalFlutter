@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 import 'package:web3modal_flutter/widgets/wallet_image.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
 
 enum GridListState { short, long, extraShort }
 
