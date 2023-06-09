@@ -3,9 +3,6 @@ description: The Web3Modal for WalletConnect built using Flutter.
 version: 1.0.0
 repository: https://github.com/WalletConnect/WalletConnectFlutterV2
 
-
-version: 1.0.0+1
-
 environment:
   sdk: '>=2.17.0 <4.0.0'
 
@@ -23,6 +20,7 @@ dependencies:
   universal_io: ^2.2.0
   w_common: ^3.0.0
   logger: ^1.4.0
+  http: ^0.13.6
   
 
 dev_dependencies:

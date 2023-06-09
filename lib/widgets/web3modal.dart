@@ -97,6 +97,7 @@ class _Web3ModalState extends State<Web3Modal>
               );
             }
           },
+          installed: installed,
         ),
       );
     }
@@ -329,10 +330,12 @@ class _Web3ModalState extends State<Web3Modal>
           key: Key(Web3ModalState.getAWallet.name),
           title: 'Get a wallet',
           onBack: _pop,
-          // TODO: Get wallet page working
           child: GetWalletPage(
-            recommendedWallets: const [],
-            manualWallets: const [],
+            service: widget.service,
+            wallets: _wallets
+                .where((GridListItemModel w) => !w.installed)
+                .take(6)
+                .toList(),
           ),
         );
       default:

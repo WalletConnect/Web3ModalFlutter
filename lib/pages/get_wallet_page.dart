@@ -1,32 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:web3modal_flutter/models/listings.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:web3modal_flutter/widgets/button_widget.dart';
+import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
+import 'package:web3modal_flutter/widgets/wallet_image.dart';
 
 class GetWalletPage extends StatelessWidget {
-  final List<WalletData> recommendedWallets;
-  final List<WalletData> manualWallets;
-
   const GetWalletPage({
     super.key,
-    required this.recommendedWallets,
-    required this.manualWallets,
+    required this.service,
+    required this.wallets,
   });
+
+  final IWeb3ModalService service;
+  final List<GridListItemModel> wallets;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text('Get a wallet'),
-        ListView(
-          children: [
-            ...recommendedWallets
-                .map((wallet) => WalletItem(wallet: wallet))
-                .toList(),
-            ...manualWallets
-                .map((wallet) => WalletItem(wallet: wallet))
-                .toList(),
-          ],
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children:
+              wallets.map((wallet) => WalletItem(wallet: wallet)).toList(),
         ),
-        const Text('Explore Wallets'),
+        const SizedBox(height: 8.0),
+        const Text(
+          "Not what you're looking for?",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16.0,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 4.0),
+        const Text(
+          "With hundreds of wallets out there, there's something for everyone",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16.0,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 8.0),
+        Web3ModalButton(
+          onPressed: () => launchUrl(
+            Uri.parse('https://explorer.walletconnect.com/?type=wallet'),
+          ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Explore Wallets'),
+              Icon(
+                Icons.arrow_outward,
+                size: 12,
+              ),
+            ],
+          ),
+        ),
         // URL: https://explorer.walletconnect.com/?type=wallet
       ],
     );
@@ -34,31 +68,46 @@ class GetWalletPage extends StatelessWidget {
 }
 
 class WalletItem extends StatelessWidget {
-  final WalletData wallet;
-
   const WalletItem({
     super.key,
     required this.wallet,
   });
 
+  final GridListItemModel wallet;
+
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading:
-          Icon(Icons.wallet_giftcard), // replace with your own image widget
-      title: Text(wallet.name),
-      trailing: IconButton(
-        icon: Icon(Icons.arrow_forward),
-        onPressed: () {
-          // Open the wallet's link in a new tab
-          // This requires the url_launcher package
-          // You can handle the link based on whether it's a 'universal' or 'native' link
-          String? url = wallet.universal;
-          if (wallet.native != null) {
-            url = wallet.native!;
-          }
-          // launch(url);
-        },
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 4.0,
+        bottom: 4.0,
+      ),
+      child: ListTile(
+        leading: WalletImage(
+          imageUrl: wallet.image,
+          imageSize: 50,
+        ),
+        title: Text(
+          wallet.title,
+          style: const TextStyle(
+            fontSize: 16.0,
+            color: Colors.white,
+          ),
+        ),
+        trailing: Web3ModalButton(
+          onPressed: wallet.onSelect,
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Get'),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 12,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
