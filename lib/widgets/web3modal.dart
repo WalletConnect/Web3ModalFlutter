@@ -19,7 +19,6 @@ import 'package:web3modal_flutter/widgets/toast/web3modal_toast_manager.dart';
 import 'package:web3modal_flutter/widgets/transition_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_navbar.dart';
 import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
-import 'package:web3modal_flutter/widgets/toast/web3modal_toast.dart';
 
 class Web3Modal extends StatefulWidget {
   const Web3Modal({
