@@ -117,6 +117,11 @@ class _MyHomePageState extends State<MyHomePage> {
               'Address: $_address',
               textAlign: TextAlign.center,
             ),
+            MaterialButton(
+              onPressed:
+                  _service.isConnected ? _service.launchCurrentWallet : null,
+              child: const Text('Launch Current Wallet'),
+            ),
           ],
         ),
       ),
