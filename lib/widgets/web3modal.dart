@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:web3modal_flutter/models/launch_url_exception.dart';
 import 'package:web3modal_flutter/models/listings.dart';
 import 'package:web3modal_flutter/pages/get_wallet_page.dart';
