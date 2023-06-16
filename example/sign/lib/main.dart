@@ -65,6 +65,20 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     _service = Web3ModalService(web3App: app);
     _address = _service.address;
+    _service.setRecommendedWallets(
+      {
+        'afbd95522f4041c71dd4f1a065f971fd32372865b416f95a0b1db759ae33f2a7',
+        '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662',
+        'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a'
+      },
+    );
+    _service.setExcludedWallets(
+      ExcludedWalletState.list,
+      {
+        'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+        '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369',
+      },
+    );
 
     _service.addListener(() {
       setState(() {

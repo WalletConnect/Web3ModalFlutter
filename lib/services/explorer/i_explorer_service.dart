@@ -25,6 +25,11 @@ abstract class IExplorerService {
     ListingParams? params,
   });
 
+  List<Listing> filterExcludedWallets({
+    required List<Listing> listings,
+    required Set<String> excludedWalletIds,
+  });
+
   String getWalletImageUrl({
     required String imageId,
   });

@@ -1,9 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:w_common/disposable.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/services/explorer/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer/i_explorer_service.dart';
+import 'package:web3modal_flutter/services/toast/toast_message.dart';
+import 'package:web3modal_flutter/services/toast/toast_service.dart';
 import 'package:web3modal_flutter/services/web3modal/i_web3modal_service.dart';
 import 'package:web3modal_flutter/utils/logger_util.dart';
 import 'package:web3modal_flutter/utils/namespaces.dart';
@@ -42,6 +46,21 @@ class Web3ModalService extends ChangeNotifier
   String? get address => _address;
 
   @override
+  String? get wcUri => connectResponse?.uri.toString();
+
+  Set<String> _recommendedWalletIds = {};
+  @override
+  Set<String> get recommendedWalletIds => _recommendedWalletIds;
+
+  ExcludedWalletState _excludedWalletState = ExcludedWalletState.list;
+  @override
+  ExcludedWalletState get excludedWalletState => _excludedWalletState;
+
+  Set<String> _excludedWalletIds = {};
+  @override
+  Set<String> get excludedWalletIds => _excludedWalletIds;
+
+  @override
   late IExplorerService explorerService;
 
   Map<String, RequiredNamespace> _requiredNamespaces =
@@ -49,7 +68,9 @@ class Web3ModalService extends ChangeNotifier
   @override
   Map<String, RequiredNamespace> get requiredNamespaces => _requiredNamespaces;
 
+  ConnectResponse? connectResponse;
   BuildContext? context;
+  final ToastService _toastService = ToastService();
 
   /// Creates a new instance of [Web3ModalService].
   Web3ModalService({
@@ -104,9 +125,21 @@ class Web3ModalService extends ChangeNotifier
       return;
     }
 
+    // If we aren't connected, connect!
+    if (!_isConnected) {
+      LoggerUtil.logger.i(
+        'Connecting to WalletConnect, required namespaces: $_requiredNamespaces',
+      );
+      connectResponse = await web3App!.connect(
+        requiredNamespaces: _requiredNamespaces,
+      );
+      _awaitConnectResponse();
+    }
+
     this.context = context;
 
-    final bool bottomSheet = Util.isMobileWidth(context);
+    final bool bottomSheet = Util.getPlatformType() == PlatformType.mobile ||
+        Util.isMobileWidth(context);
 
     _isOpen = true;
 
@@ -121,6 +154,8 @@ class Web3ModalService extends ChangeNotifier
         builder: (context) {
           return Web3Modal(
             service: this,
+            toastService: _toastService,
+            startState: startState,
           );
         },
       );
@@ -130,6 +165,8 @@ class Web3ModalService extends ChangeNotifier
         builder: (context) {
           return Web3Modal(
             service: this,
+            toastService: _toastService,
+            startState: startState,
           );
         },
       );
@@ -225,38 +262,78 @@ class Web3ModalService extends ChangeNotifier
   }
 
   @override
-  void setRecommendedWallets(List<String> walletIds) {}
+  void setRecommendedWallets(
+    Set<String> walletIds,
+  ) {
+    _checkInitialized();
+
+    _recommendedWalletIds = walletIds;
+
+    notifyListeners();
+  }
 
   @override
-  void setExcludedWallets(List<String> walletIds) {}
+  void setExcludedWallets(
+    ExcludedWalletState state,
+    Set<String> walletIds,
+  ) {
+    _checkInitialized();
+
+    _excludedWalletState = state;
+    _excludedWalletIds = walletIds;
+
+    notifyListeners();
+  }
 
   ////// Private methods //////
 
   void _registerListeners() {
-    web3App!.onSessionConnect.subscribe(
-      _onSessionConnect,
-    );
+    // web3App!.onSessionConnect.subscribe(
+    //   _onSessionConnect,
+    // );
     web3App!.onSessionDelete.subscribe(
       _onSessionDelete,
     );
   }
 
   void _unregisterListeners() {
-    web3App!.onSessionConnect.unsubscribe(
-      _onSessionConnect,
-    );
+    // web3App!.onSessionConnect.unsubscribe(
+    //   _onSessionConnect,
+    // );
     web3App!.onSessionDelete.unsubscribe(
       _onSessionDelete,
     );
   }
 
-  void _onSessionConnect(SessionConnect? args) {
-    LoggerUtil.logger.i('Session connected: $args');
-    _isConnected = true;
-    _session = args!.session;
-    _address = NamespaceUtils.getAccount(
-      _session!.namespaces.values.first.accounts.first,
-    );
+  Future<void> _awaitConnectResponse() async {
+    if (connectResponse == null) {
+      return;
+    }
+
+    try {
+      final SessionData session = await connectResponse!.session.future;
+      _isConnected = true;
+      _session = session;
+      _address = NamespaceUtils.getAccount(
+        _session!.namespaces.values.first.accounts.first,
+      );
+      // await _toastService.show(
+      //   ToastMessage(
+      //     type: ToastType.info,
+      //     text: 'Connected to Wallet',
+      //   ),
+      // );
+    } catch (e) {
+      LoggerUtil.logger.e('Error connecting to wallet: $e');
+      await _toastService.show(
+        ToastMessage(
+          type: ToastType.error,
+          text: 'Error Connecting to Wallet',
+        ),
+      );
+    } finally {
+      connectResponse = null;
+    }
 
     if (_isOpen) {
       close();
@@ -264,6 +341,21 @@ class Web3ModalService extends ChangeNotifier
       notifyListeners();
     }
   }
+
+  // void _onSessionConnect(SessionConnect? args) {
+  //   LoggerUtil.logger.i('Session connected: $args');
+  //   _isConnected = true;
+  //   _session = args!.session;
+  //   _address = NamespaceUtils.getAccount(
+  //     _session!.namespaces.values.first.accounts.first,
+  //   );
+
+  //   if (_isOpen) {
+  //     close();
+  //   } else {
+  //     notifyListeners();
+  //   }
+  // }
 
   void _onSessionDelete(SessionDelete? args) {
     _isConnected = false;

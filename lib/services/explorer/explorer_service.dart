@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:web3modal_flutter/models/listings.dart';
 import 'package:web3modal_flutter/services/explorer/i_explorer_service.dart';
+import 'package:web3modal_flutter/utils/logger_util.dart';
 
 class ExplorerService implements IExplorerService {
   @override
@@ -74,6 +75,23 @@ class ExplorerService implements IExplorerService {
       endpoint: '/w3m/v1/getAllListings',
       params: params,
     );
+  }
+
+  @override
+  List<Listing> filterExcludedWallets({
+    required List<Listing> listings,
+    required Set<String> excludedWalletIds,
+  }) {
+    return listings.where((listing) {
+      if (excludedWalletIds.contains(
+        listing.id,
+      )) {
+        LoggerUtil.logger.i('Excluding wallet from list: $listing');
+        return false;
+      }
+
+      return true;
+    }).toList();
   }
 
   @override

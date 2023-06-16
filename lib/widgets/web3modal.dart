@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+import 'package:web3modal_flutter/models/launch_url_exception.dart';
 import 'package:web3modal_flutter/models/listings.dart';
 import 'package:web3modal_flutter/pages/get_wallet_page.dart';
 import 'package:web3modal_flutter/pages/help_page.dart';
@@ -24,11 +24,13 @@ class Web3Modal extends StatefulWidget {
   const Web3Modal({
     super.key,
     required this.service,
-    this.initialState,
+    required this.toastService,
+    this.startState,
   });
 
   final IWeb3ModalService service;
-  final Web3ModalState? initialState;
+  final ToastService toastService;
+  final Web3ModalState? startState;
 
   @override
   State<Web3Modal> createState() => _Web3ModalState();
@@ -37,16 +39,12 @@ class Web3Modal extends StatefulWidget {
 class _Web3ModalState extends State<Web3Modal>
     with SingleTickerProviderStateMixin {
   bool _initialized = false;
-  final ToastService _toastService = ToastService();
 
   // Web3Modal State
   final List<Web3ModalState> _stateStack = [];
 
   // Wallet List
   List<GridListItemModel> _wallets = [];
-
-  // Connection
-  String _qrCode = '';
 
   // Animations
   // late AnimationController _controller;
@@ -55,8 +53,8 @@ class _Web3ModalState extends State<Web3Modal>
   void initState() {
     super.initState();
 
-    if (widget.initialState != null) {
-      _stateStack.add(widget.initialState!);
+    if (widget.startState != null) {
+      _stateStack.add(widget.startState!);
     } else {
       final PlatformType pType = Util.getPlatformType();
 
@@ -72,30 +70,36 @@ class _Web3ModalState extends State<Web3Modal>
   }
 
   Future<void> initialize() async {
-    // If we aren't connected, connect!
-    if (!widget.service.isConnected) {
-      LoggerUtil.logger.i(
-        'Connecting to WalletConnect, required namespaces: ${widget.service.requiredNamespaces}',
-      );
-      final ConnectResponse response = await widget.service.web3App!.connect(
-        requiredNamespaces: widget.service.requiredNamespaces,
-      );
-
-      setState(() {
-        _qrCode = response.uri.toString();
-      });
-    }
-
     // Fetch the wallet list
     ListingResponse items =
         await widget.service.explorerService.getAllListings();
 
+    // Filter out wallets that are excluded
+    List<Listing> listings = items.listings.values.toList();
+
+    if (widget.service.excludedWalletState == ExcludedWalletState.list) {
+      listings = widget.service.explorerService.filterExcludedWallets(
+        listings: listings,
+        excludedWalletIds: widget.service.excludedWalletIds,
+      );
+    } else {
+      // Filter down to only the included
+      listings = listings
+          .where(
+            (listing) => widget.service.recommendedWalletIds.contains(
+              listing.id,
+            ),
+          )
+          .toList();
+    }
+
     List<GridListItemModel> walletList = [];
-    for (Listing item in items.listings.values) {
+    for (Listing item in listings) {
       bool installed = await Util.isInstalled(item.mobile.native ?? '');
       walletList.add(
         GridListItemModel(
           title: item.name,
+          id: item.id,
           description: installed ? 'Installed' : null,
           image: widget.service.explorerService.getWalletImageUrl(
             imageId: item.imageId,
@@ -104,32 +108,39 @@ class _Web3ModalState extends State<Web3Modal>
             LoggerUtil.logger.v(
               'Selected ${item.name}. Installed: $installed Item info: $item.',
             );
-            if (installed) {
+            try {
               Util.navigateDeepLink(
                 universalLink: item.mobile.universal,
                 deepLink: item.mobile.native,
-                wcURI: _qrCode,
+                wcURI: widget.service.wcUri!,
               );
-            } else {
-              launchUrl(
-                Uri.parse(item.mobile.universal!),
+            } on LaunchUrlException catch (e) {
+              widget.toastService.show(
+                ToastMessage(
+                  type: ToastType.error,
+                  text: e.message,
+                ),
               );
             }
           },
           installed: installed,
         ),
       );
-      // Sort the installed wallets to the top
-      walletList.sort((a, b) {
-        if (a.installed == b.installed) {
-          return 0;
-        } else if (a.installed && !b.installed) {
-          return -1;
-        } else {
-          return 1;
-        }
-      });
     }
+    // Sort the installed wallets to the top
+    walletList.sort((a, b) {
+      if ((a.installed && !b.installed) ||
+          widget.service.recommendedWalletIds.contains(
+            a.id,
+          )) {
+        LoggerUtil.logger.i('Sorting ${a.title} to the top. ID: ${a.id}');
+        return -1;
+      } else if (a.installed == b.installed) {
+        return 0;
+      } else {
+        return 1;
+      }
+    });
 
     setState(() {
       _wallets = walletList;
@@ -232,7 +243,7 @@ class _Web3ModalState extends State<Web3Modal>
                   child: _buildBody(),
                 ),
                 Web3ModalToastManager(
-                  toastService: _toastService,
+                  toastService: widget.toastService,
                 ),
               ],
             ),
@@ -271,7 +282,7 @@ class _Web3ModalState extends State<Web3Modal>
             onPressed: _copyQrCodeToClipboard,
           ),
           child: QRCodePage(
-            qrData: _qrCode,
+            qrData: widget.service.wcUri!,
             logoPath: 'assets/walletconnect_logo_white.png',
           ),
         );
@@ -313,7 +324,7 @@ class _Web3ModalState extends State<Web3Modal>
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               QRCodePage(
-                qrData: _qrCode,
+                qrData: widget.service.wcUri!,
                 logoPath: 'assets/walletconnect_logo_white.png',
               ),
               GridList(
@@ -400,10 +411,10 @@ class _Web3ModalState extends State<Web3Modal>
   Future<void> _copyQrCodeToClipboard() async {
     await Clipboard.setData(
       ClipboardData(
-        text: _qrCode,
+        text: widget.service.wcUri!,
       ),
     );
-    _toastService.show(
+    widget.toastService.show(
       ToastMessage(
         type: ToastType.info,
         text: 'QR Copied',

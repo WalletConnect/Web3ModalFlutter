@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/services/explorer/i_explorer_service.dart';
 
-// enum Web3ModalConnectionState {
-//   idle,
-//   connecting,
-//   connected,
-// }
+enum ExcludedWalletState {
+  all,
+  list,
+}
 
 enum Web3ModalChains {
   ethereum,
@@ -46,6 +45,21 @@ abstract class IWeb3ModalService implements ChangeNotifier {
 
   /// The address of the currently connected account.
   String? get address;
+
+  /// The URI that can be used to connect to this dApp.
+  /// This is only available after the [open] function is called.
+  String? get wcUri;
+
+  /// The recommended wallets that will be prioritized in the modal.
+  /// Even if the [excludedWalletIds] list contains a wallet, it will still be
+  /// displayed if it is in this list.
+  Set<String> get recommendedWalletIds;
+
+  /// How the list of excluded wallets will be handled.
+  ExcludedWalletState get excludedWalletState;
+
+  /// The wallets that will be excluded from the modal.
+  Set<String> get excludedWalletIds;
 
   /// The service used to fetch wallet listings from the explorer API.
   abstract final IExplorerService explorerService;
@@ -89,11 +103,18 @@ abstract class IWeb3ModalService implements ChangeNotifier {
 
   /// Sets the required namespaces that will be used when connecting to the wallet
   /// The default is set to the [NamespaceConstants.ethereum] namespace.
-  void setRequiredNamespaces(Map<String, RequiredNamespace> requiredNamespaces);
+  void setRequiredNamespaces(
+    Map<String, RequiredNamespace> requiredNamespaces,
+  );
 
   /// Sets the recommended wallets to display in the modal.
-  void setRecommendedWallets(List<String> walletIds);
+  void setRecommendedWallets(
+    Set<String> walletIds,
+  );
 
   /// Sets the list of wallets to exclude from the modal.
-  void setExcludedWallets(List<String> walletIds);
+  void setExcludedWallets(
+    ExcludedWalletState state,
+    Set<String> walletIds,
+  );
 }

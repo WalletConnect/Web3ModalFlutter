@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:universal_io/io.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:web3modal_flutter/models/launch_url_exception.dart';
 import 'package:web3modal_flutter/utils/core_util.dart';
 import 'package:web3modal_flutter/utils/logger_util.dart';
 
@@ -64,62 +65,47 @@ class Util {
     String? universalLink,
     required String wcURI,
   }) async {
-    try {
-      // Construct the link
-      final Uri? nativeUri = CoreUtil.formatNativeUrl(
-        deepLink,
-        wcURI,
-      );
-      final Uri? universalUri = CoreUtil.formatUniversalUrl(
-        universalLink,
-        wcURI,
-      );
-      // Uri? nativeUri = nativeUrl == null
-      //     ? null
-      //     : Uri.parse(
-      //         nativeUrl,
-      //       );
-      // Uri? universalUri = universalUrl == null
-      //     ? null
-      //     : Uri.parse(
-      //         universalUrl,
-      //       );
+    // Construct the link
+    final Uri? nativeUri = CoreUtil.formatNativeUrl(
+      deepLink,
+      wcURI,
+    );
+    final Uri? universalUri = CoreUtil.formatUniversalUrl(
+      universalLink,
+      wcURI,
+    );
+    LoggerUtil.logger.v(
+      'Navigating deep links. Native: ${nativeUri.toString()}, Universal: ${universalUri.toString()}',
+    );
+    LoggerUtil.logger.v(
+      'Deep Link Query Params. Native: ${nativeUri?.queryParameters}, Universal: ${universalUri?.queryParameters}',
+    );
 
-      // Launch the link
-      LoggerUtil.logger.i(
-        'Navigating deep links. Native: ${nativeUri.toString()}, Universal: ${universalUri.toString()}',
+    // Launch the link
+    if (nativeUri != null) {
+      LoggerUtil.logger.v(
+        'Navigating deep links. Launching native URI.',
       );
-      LoggerUtil.logger.i(
-          'Deep Link Query Params. Native: ${nativeUri?.queryParameters}, Universal: ${universalUri?.queryParameters}');
-      if (nativeUri != null) {
-        if (await canLaunchUrl(nativeUri)) {
-          LoggerUtil.logger.i(
-            'Navigating deep links. Launching native URI.',
-          );
-          await launchUrl(nativeUri).catchError((err) async {
-            LoggerUtil.logger.i(
-              'Navigating deep links. Launching native failed, launching universal URI.',
-            );
-            // Fallback to universal link
-            if (universalUri != null && await canLaunchUrl(universalUri)) {
-              await launchUrl(universalUri);
-            } else {
-              throw Exception('No valid link found for this wallet');
-            }
-
-            return true;
-          });
-        }
-      } else if (universalUri != null && await canLaunchUrl(universalUri)) {
+      try {
+        await launchUrl(nativeUri);
+      } catch (e) {
         LoggerUtil.logger.i(
-          'Navigating deep links. Launching universal URI.',
+          'Navigating deep links. Launching native failed, launching universal URI.',
         );
-        await launchUrl(universalUri);
-      } else {
-        throw Exception('No valid link found for this wallet');
+        // Fallback to universal link
+        if (universalUri != null) {
+          await launchUrl(universalUri);
+        } else {
+          throw LaunchUrlException('Unable to open the wallet');
+        }
       }
-    } catch (error) {
-      // TODO: Add toast on error
+    } else if (universalUri != null) {
+      LoggerUtil.logger.i(
+        'Navigating deep links. Launching universal URI.',
+      );
+      await launchUrl(universalUri);
+    } else {
+      throw LaunchUrlException('Unable to open the wallet');
     }
   }
 }
