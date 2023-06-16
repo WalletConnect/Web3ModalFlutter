@@ -8,6 +8,11 @@ import 'package:web3modal_flutter/services/explorer/i_explorer_service.dart';
 //   connected,
 // }
 
+enum Web3ModalChains {
+  ethereum,
+  polygon,
+}
+
 enum Web3ModalState {
   account,
   qrCode,
@@ -57,7 +62,7 @@ abstract class IWeb3ModalService implements ChangeNotifier {
 
   /// Opens the modal with the provided [startState].
   /// If none is provided, the default state will be used based on platform.
-  void open({
+  Future<void> open({
     required BuildContext context,
     Web3ModalState? startState,
   });
@@ -69,8 +74,15 @@ abstract class IWeb3ModalService implements ChangeNotifier {
   /// If there is no session, this does nothing.
   Future<void> disconnect();
 
+  void launchCurrentWallet();
+
   /// Sets the default chain to use for the session.
-  void setDefaultChain(String chainId);
+  /// [web3modalChain] or [requiredNamespaces] must be provided, if both are null this function
+  /// will do nothing.
+  void setDefaultChain({
+    Web3ModalChains? web3modalChain,
+    Map<String, RequiredNamespace>? requiredNamespaces,
+  });
 
   /// The required namespaces that will be used when connecting to the wallet
   Map<String, RequiredNamespace> get requiredNamespaces;

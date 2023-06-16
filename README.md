@@ -74,6 +74,10 @@ For each app you would like to be able to deep link to, you must add that app's 
 
 I have not yet tested this on Android, but I believe it should work without any additional setup.
 
+## Detailed Usage
+
+You can launch the currently connected wallet by calling `_service.launchCurrentWallet()`.
+
 ### Commands
 
 `dart run build_runner build --delete-conflicting-outputs`

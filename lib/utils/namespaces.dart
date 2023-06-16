@@ -17,4 +17,21 @@ class NamespaceConstants {
       ],
     ),
   };
+
+  static const Map<String, RequiredNamespace> polygon = {
+    'eip155': RequiredNamespace(
+      methods: [
+        'eth_sendTransaction',
+        'eth_signTransaction',
+        'personal_sign',
+        // 'eth_sign',
+        'eth_signTypedData',
+      ],
+      chains: ['eip155:137'],
+      events: [
+        'chainChanged',
+        'accountsChanged',
+      ],
+    ),
+  };
 }

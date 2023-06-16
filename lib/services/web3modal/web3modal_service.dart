@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:w_common/disposable.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/services/explorer/explorer_service.dart';
@@ -93,11 +94,15 @@ class Web3ModalService extends ChangeNotifier
   }
 
   @override
-  void open({
+  Future<void> open({
     required BuildContext context,
     Web3ModalState? startState,
-  }) {
+  }) async {
     _checkInitialized();
+
+    if (_isOpen) {
+      return;
+    }
 
     this.context = context;
 
@@ -105,8 +110,10 @@ class Web3ModalService extends ChangeNotifier
 
     _isOpen = true;
 
+    notifyListeners();
+
     if (bottomSheet) {
-      showModalBottomSheet(
+      await showModalBottomSheet(
         // enableDrag: false,
         isDismissible: false,
         isScrollControlled: true,
@@ -118,7 +125,7 @@ class Web3ModalService extends ChangeNotifier
         },
       );
     } else {
-      showDialog(
+      await showDialog(
         context: context,
         builder: (context) {
           return Web3Modal(
@@ -128,18 +135,23 @@ class Web3ModalService extends ChangeNotifier
       );
     }
 
+    _isOpen = false;
+
     notifyListeners();
   }
 
   @override
   void close() {
-    _isOpen = false;
+    if (!_isOpen) {
+      return;
+    }
+    // _isOpen = false;
 
     if (context != null) {
       Navigator.pop(context!);
     }
 
-    notifyListeners();
+    // notifyListeners();
   }
 
   @override
@@ -163,8 +175,41 @@ class Web3ModalService extends ChangeNotifier
   }
 
   @override
-  void setDefaultChain(String chainId) {
+  void launchCurrentWallet() {
     _checkInitialized();
+
+    if (_session == null) {
+      return;
+    }
+
+    launchUrl(
+      Uri.parse(
+        _session!.peer.metadata.url,
+      ),
+    );
+  }
+
+  @override
+  void setDefaultChain({
+    Web3ModalChains? web3modalChain,
+    Map<String, RequiredNamespace>? requiredNamespaces,
+  }) {
+    _checkInitialized();
+
+    if (web3modalChain != null) {
+      switch (web3modalChain) {
+        case Web3ModalChains.ethereum:
+          _requiredNamespaces = NamespaceConstants.ethereum;
+          break;
+        case Web3ModalChains.polygon:
+          _requiredNamespaces = NamespaceConstants.polygon;
+          break;
+      }
+    }
+
+    if (requiredNamespaces != null) {
+      _requiredNamespaces = requiredNamespaces;
+    }
 
     notifyListeners();
   }

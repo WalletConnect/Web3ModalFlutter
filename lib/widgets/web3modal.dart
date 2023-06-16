@@ -6,6 +6,8 @@ import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/models/listings.dart';
 import 'package:web3modal_flutter/pages/get_wallet_page.dart';
 import 'package:web3modal_flutter/pages/help_page.dart';
+import 'package:web3modal_flutter/services/toast/toast_message.dart';
+import 'package:web3modal_flutter/services/toast/toast_service.dart';
 import 'package:web3modal_flutter/utils/logger_util.dart';
 
 import 'package:web3modal_flutter/widgets/qr_code_widget.dart';
@@ -13,9 +15,11 @@ import 'package:web3modal_flutter/services/web3modal/i_web3modal_service.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
+import 'package:web3modal_flutter/widgets/toast/web3modal_toast_manager.dart';
 import 'package:web3modal_flutter/widgets/transition_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_navbar.dart';
 import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
+import 'package:web3modal_flutter/widgets/toast/web3modal_toast.dart';
 
 class Web3Modal extends StatefulWidget {
   const Web3Modal({
@@ -34,6 +38,7 @@ class Web3Modal extends StatefulWidget {
 class _Web3ModalState extends State<Web3Modal>
     with SingleTickerProviderStateMixin {
   bool _initialized = false;
+  final ToastService _toastService = ToastService();
 
   // Web3Modal State
   final List<Web3ModalState> _stateStack = [];
@@ -68,6 +73,21 @@ class _Web3ModalState extends State<Web3Modal>
   }
 
   Future<void> initialize() async {
+    // If we aren't connected, connect!
+    if (!widget.service.isConnected) {
+      LoggerUtil.logger.i(
+        'Connecting to WalletConnect, required namespaces: ${widget.service.requiredNamespaces}',
+      );
+      final ConnectResponse response = await widget.service.web3App!.connect(
+        requiredNamespaces: widget.service.requiredNamespaces,
+      );
+
+      setState(() {
+        _qrCode = response.uri.toString();
+      });
+    }
+
+    // Fetch the wallet list
     ListingResponse items =
         await widget.service.explorerService.getAllListings();
 
@@ -100,27 +120,22 @@ class _Web3ModalState extends State<Web3Modal>
           installed: installed,
         ),
       );
-    }
-
-    if (!widget.service.isConnected) {
-      LoggerUtil.logger.i(
-        'Connecting to WalletConnect, required namespaces: ${widget.service.requiredNamespaces}',
-      );
-      final ConnectResponse response = await widget.service.web3App!.connect(
-        requiredNamespaces: widget.service.requiredNamespaces,
-      );
-
-      setState(() {
-        _wallets = walletList;
-        _qrCode = response.uri.toString();
-        _initialized = true;
-      });
-    } else {
-      setState(() {
-        _wallets = walletList;
-        _initialized = true;
+      // Sort the installed wallets to the top
+      walletList.sort((a, b) {
+        if (a.installed == b.installed) {
+          return 0;
+        } else if (a.installed && !b.installed) {
+          return -1;
+        } else {
+          return 1;
+        }
       });
     }
+
+    setState(() {
+      _wallets = walletList;
+      _initialized = true;
+    });
   }
 
   @override
@@ -138,6 +153,7 @@ class _Web3ModalState extends State<Web3Modal>
           theme.borderRadius,
         ),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -182,12 +198,15 @@ class _Web3ModalState extends State<Web3Modal>
                           });
                         }
                       },
+                      color: Colors.white,
                     ),
                     IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          widget.service.close();
-                        }),
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        widget.service.close();
+                      },
+                      color: Colors.white,
+                    ),
                   ],
                 ),
               ],
@@ -208,8 +227,15 @@ class _Web3ModalState extends State<Web3Modal>
             padding: const EdgeInsets.only(
               bottom: 20,
             ),
-            child: TransitionContainer(
-              child: _buildBody(),
+            child: Stack(
+              children: [
+                TransitionContainer(
+                  child: _buildBody(),
+                ),
+                Web3ModalToastManager(
+                  toastService: _toastService,
+                ),
+              ],
             ),
           ),
         ],
@@ -376,6 +402,12 @@ class _Web3ModalState extends State<Web3Modal>
     await Clipboard.setData(
       ClipboardData(
         text: _qrCode,
+      ),
+    );
+    _toastService.show(
+      ToastMessage(
+        type: ToastType.info,
+        text: 'QR Copied',
       ),
     );
   }
