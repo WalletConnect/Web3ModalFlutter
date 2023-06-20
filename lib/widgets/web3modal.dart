@@ -13,7 +13,6 @@ import 'package:web3modal_flutter/widgets/qr_code_widget.dart';
 import 'package:web3modal_flutter/services/web3modal/i_web3modal_service.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list.dart';
-import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 import 'package:web3modal_flutter/widgets/toast/web3modal_toast_manager.dart';
 import 'package:web3modal_flutter/widgets/transition_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_navbar.dart';
@@ -45,9 +44,7 @@ class _Web3ModalState extends State<Web3Modal>
   final List<Web3ModalState> _stateStack = [];
 
   // Wallet List
-  String _searchQuery = '';
-  final List<GridListItemModel> _allWallets = [];
-  final List<GridListItemModel> _wallets = [];
+  // final List<GridListItemModel> _wallets = [];
 
   // Animations
   // late AnimationController _controller;
@@ -236,7 +233,6 @@ class _Web3ModalState extends State<Web3Modal>
             onPressed: _toQrCode,
           ),
           child: GridList<WalletData>(
-            key: Key('${GridListState.short}${_wallets.length}'),
             state: GridListState.short,
             provider: widget.service.explorerService,
             viewLongList: _viewLongWalletList,
@@ -275,7 +271,6 @@ class _Web3ModalState extends State<Web3Modal>
                 logoPath: 'assets/walletconnect_logo_white.png',
               ),
               GridList(
-                key: Key('${GridListState.extraShort}${_wallets.length}'),
                 state: GridListState.extraShort,
                 provider: widget.service.explorerService,
                 viewLongList: _viewLongWalletList,
@@ -292,7 +287,6 @@ class _Web3ModalState extends State<Web3Modal>
             title: 'Select network',
           ),
           child: GridList(
-            key: Key('${GridListState.extraShort}${_wallets.length}'),
             state: GridListState.extraShort,
             provider: widget.service.explorerService,
             viewLongList: _viewLongWalletList,

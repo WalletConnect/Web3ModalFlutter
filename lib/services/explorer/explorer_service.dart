@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:universal_io/io.dart';
-import 'package:web3modal_flutter/models/launch_url_exception.dart';
 import 'dart:convert';
 
 import 'package:web3modal_flutter/models/listings.dart';
@@ -69,7 +68,7 @@ class ExplorerService implements IExplorerService {
     }
 
     LoggerUtil.logger.i('Fetching wallet listings. Platform: $platform');
-    List<Listing> listings = await fetchListings(
+    _listings = await fetchListings(
       endpoint: '/w3m/v1/get${platform}Listings',
       referer: referer,
       params: params,
@@ -78,14 +77,14 @@ class ExplorerService implements IExplorerService {
     if (excludedWalletState == ExcludedWalletState.list) {
       // If we are excluding all wallets, take out the excluded listings, if they exist
       if (excludedWalletIds != null) {
-        listings = filterExcludedListings(
-          listings: listings,
+        _listings = filterExcludedListings(
+          listings: _listings,
         );
       }
     } else if (excludedWalletState == ExcludedWalletState.all &&
         recommendedWalletIds != null) {
       // Filter down to only the included
-      listings = listings
+      _listings = _listings
           .where(
             (listing) => recommendedWalletIds!.contains(
               listing.id,
@@ -102,12 +101,12 @@ class ExplorerService implements IExplorerService {
     _walletList.clear();
 
     Map<String, int> itemCounts = {};
-    for (var i in listings) {
+    for (var i in _listings) {
       itemCounts[i.name] = (itemCounts[i.name] ?? 0) + 1;
     }
     print(itemCounts);
 
-    for (Listing item in listings) {
+    for (Listing item in _listings) {
       bool installed = await Util.isInstalled(item.mobile.native);
       _walletList.add(
         GridListItemModel<WalletData>(

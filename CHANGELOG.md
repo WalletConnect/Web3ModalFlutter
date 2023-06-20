@@ -3,6 +3,7 @@
 - Fixed modal having white background
 - Removed `eth_signTransaction` from EVM required namespace so that certain wallets would start working
 - Launch wallet function goes straight to the wallet now, if possible
+- Wallet search added
 
 ## 1.1.0
 
