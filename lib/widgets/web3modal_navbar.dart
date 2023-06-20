@@ -10,7 +10,7 @@ class Web3ModalNavBar extends StatelessWidget {
     required this.child,
   }) : super(key: key);
 
-  final String title;
+  final Widget title;
   final VoidCallback? onBack;
   final Widget? actionWidget;
   final Widget child;
@@ -38,13 +38,7 @@ class Web3ModalNavBar extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
+                child: title,
               ),
               SizedBox(
                 width: 60,

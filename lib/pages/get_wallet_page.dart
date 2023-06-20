@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:web3modal_flutter/models/listings.dart';
 import 'package:web3modal_flutter/widgets/button_widget.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
+import 'package:web3modal_flutter/widgets/grid_list/grid_list_provider.dart';
 import 'package:web3modal_flutter/widgets/wallet_image.dart';
 
 class GetWalletPage extends StatelessWidget {
   const GetWalletPage({
     super.key,
     required this.service,
-    required this.wallets,
   });
 
-  final IWeb3ModalService service;
-  final List<GridListItemModel> wallets;
+  final GridListProvider<WalletData> service;
 
   @override
   Widget build(BuildContext context) {
+    List<GridListItemModel<WalletData>> wallets = service.itemList.value
+        .where((GridListItemModel<WalletData> w) => !w.data.installed)
+        .take(6)
+        .toList();
+
     return Column(
       children: [
         Column(
@@ -72,7 +76,7 @@ class WalletItem extends StatelessWidget {
     required this.wallet,
   });
 
-  final GridListItemModel wallet;
+  final GridListItemModel<WalletData> wallet;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +98,11 @@ class WalletItem extends StatelessWidget {
           ),
         ),
         trailing: Web3ModalButton(
-          onPressed: wallet.onSelect,
+          onPressed: () => launchUrl(
+            Uri.parse(
+              wallet.data.listing.homepage,
+            ),
+          ),
           child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,

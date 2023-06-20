@@ -1,6 +1,6 @@
 name: web3modal_flutter
 description: The Web3Modal for WalletConnect built using Flutter.
-version: 1.1.0
+version: 1.1.1
 repository: https://github.com/WalletConnect/WalletConnectFlutterV2
 
 environment:
@@ -21,6 +21,7 @@ dependencies:
   w_common: ^3.0.0
   logger: ^1.4.0
   http: ^0.13.6
+  freezed_annotation: ^2.2.0
   
 
 dev_dependencies:
@@ -30,6 +31,7 @@ dev_dependencies:
   json_serializable: ^6.7.0
   build_runner: ^2.4.4
   flutter_lints: ^2.0.0
+  freezed: ^2.3.5
 
 flutter:
   uses-material-design: true

@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/services/explorer/i_explorer_service.dart';
 
-enum ExcludedWalletState {
-  all,
-  list,
-}
-
 enum Web3ModalChains {
   ethereum,
   polygon,
@@ -49,17 +44,6 @@ abstract class IWeb3ModalService implements ChangeNotifier {
   /// The URI that can be used to connect to this dApp.
   /// This is only available after the [open] function is called.
   String? get wcUri;
-
-  /// The recommended wallets that will be prioritized in the modal.
-  /// Even if the [excludedWalletIds] list contains a wallet, it will still be
-  /// displayed if it is in this list.
-  Set<String> get recommendedWalletIds;
-
-  /// How the list of excluded wallets will be handled.
-  ExcludedWalletState get excludedWalletState;
-
-  /// The wallets that will be excluded from the modal.
-  Set<String> get excludedWalletIds;
 
   /// The service used to fetch wallet listings from the explorer API.
   abstract final IExplorerService explorerService;
@@ -107,14 +91,17 @@ abstract class IWeb3ModalService implements ChangeNotifier {
     Map<String, RequiredNamespace> requiredNamespaces,
   );
 
-  /// Sets the recommended wallets to display in the modal.
-  void setRecommendedWallets(
-    Set<String> walletIds,
-  );
+  // /// Sets the recommended wallets to display in the modal.
+  // void setRecommendedWallets(
+  //   Set<String> walletIds,
+  // );
 
-  /// Sets the list of wallets to exclude from the modal.
-  void setExcludedWallets(
-    ExcludedWalletState state,
-    Set<String> walletIds,
-  );
+  // /// Sets the list of wallets to exclude from the modal.
+  // void setExcludedWallets(
+  //   ExcludedWalletState state,
+  //   Set<String> walletIds,
+  // );
+
+  /// Gets the name of the currently connected wallet.
+  String getReferer();
 }

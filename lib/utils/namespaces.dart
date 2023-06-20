@@ -5,9 +5,9 @@ class NamespaceConstants {
     'eip155': RequiredNamespace(
       methods: [
         'eth_sendTransaction',
-        'eth_signTransaction',
+        // 'eth_signTransaction',
         'personal_sign',
-        // 'eth_sign',
+        'eth_sign',
         'eth_signTypedData',
       ],
       chains: ['eip155:1'],

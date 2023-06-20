@@ -48,17 +48,17 @@ class Web3ModalService extends ChangeNotifier
   @override
   String? get wcUri => connectResponse?.uri.toString();
 
-  Set<String> _recommendedWalletIds = {};
-  @override
-  Set<String> get recommendedWalletIds => _recommendedWalletIds;
+  // Set<String> _recommendedWalletIds = {};
+  // @override
+  // Set<String> get recommendedWalletIds => _recommendedWalletIds;
 
-  ExcludedWalletState _excludedWalletState = ExcludedWalletState.list;
-  @override
-  ExcludedWalletState get excludedWalletState => _excludedWalletState;
+  // ExcludedWalletState _excludedWalletState = ExcludedWalletState.list;
+  // @override
+  // ExcludedWalletState get excludedWalletState => _excludedWalletState;
 
-  Set<String> _excludedWalletIds = {};
-  @override
-  Set<String> get excludedWalletIds => _excludedWalletIds;
+  // Set<String> _excludedWalletIds = {};
+  // @override
+  // Set<String> get excludedWalletIds => _excludedWalletIds;
 
   @override
   late IExplorerService explorerService;
@@ -75,8 +75,11 @@ class Web3ModalService extends ChangeNotifier
   /// Creates a new instance of [Web3ModalService].
   Web3ModalService({
     required IWeb3App web3App,
-    IExplorerService? explorerService,
     Map<String, RequiredNamespace>? requiredNamespaces,
+    IExplorerService? explorerService,
+    Set<String>? recommendedWalletIds,
+    ExcludedWalletState excludedWalletState = ExcludedWalletState.list,
+    Set<String>? excludedWalletIds,
   }) {
     _web3App = web3App;
     _projectId = projectId;
@@ -90,7 +93,12 @@ class Web3ModalService extends ChangeNotifier
     if (explorerService != null) {
       this.explorerService = explorerService;
     } else {
-      this.explorerService = ExplorerService(projectId: _projectId);
+      this.explorerService = ExplorerService(
+        projectId: _projectId,
+        recommendedWalletIds: recommendedWalletIds,
+        excludedWalletState: excludedWalletState,
+        excludedWalletIds: excludedWalletIds,
+      );
     }
 
     if (_web3App!.sessions.getAll().isNotEmpty) {
@@ -148,6 +156,7 @@ class Web3ModalService extends ChangeNotifier
     if (bottomSheet) {
       await showModalBottomSheet(
         // enableDrag: false,
+        backgroundColor: Colors.transparent,
         isDismissible: false,
         isScrollControlled: true,
         context: context,
@@ -219,11 +228,20 @@ class Web3ModalService extends ChangeNotifier
       return;
     }
 
-    launchUrl(
-      Uri.parse(
-        _session!.peer.metadata.url,
-      ),
-    );
+    final Redirect? redirect = _session!.peer.metadata.redirect;
+
+    if (redirect == null) {
+      launchUrl(
+        Uri.parse(
+          _session!.peer.metadata.url,
+        ),
+      );
+    } else {
+      Util.launchRedirect(
+        nativeUri: Uri.parse(redirect.native ?? ''),
+        universalUri: Uri.parse(redirect.universal ?? ''),
+      );
+    }
   }
 
   @override
@@ -261,28 +279,35 @@ class Web3ModalService extends ChangeNotifier
     notifyListeners();
   }
 
+  // @override
+  // void setRecommendedWallets(
+  //   Set<String> walletIds,
+  // ) {
+  //   _checkInitialized();
+
+  //   _recommendedWalletIds = walletIds;
+
+  //   notifyListeners();
+  // }
+
+  // @override
+  // void setExcludedWallets(
+  //   ExcludedWalletState state,
+  //   Set<String> walletIds,
+  // ) {
+  //   _checkInitialized();
+
+  //   _excludedWalletState = state;
+  //   _excludedWalletIds = walletIds;
+
+  //   notifyListeners();
+  // }
+
   @override
-  void setRecommendedWallets(
-    Set<String> walletIds,
-  ) {
+  String getReferer() {
     _checkInitialized();
 
-    _recommendedWalletIds = walletIds;
-
-    notifyListeners();
-  }
-
-  @override
-  void setExcludedWallets(
-    ExcludedWalletState state,
-    Set<String> walletIds,
-  ) {
-    _checkInitialized();
-
-    _excludedWalletState = state;
-    _excludedWalletIds = walletIds;
-
-    notifyListeners();
+    return _web3App!.metadata.name.replaceAll(' ', '');
   }
 
   ////// Private methods //////

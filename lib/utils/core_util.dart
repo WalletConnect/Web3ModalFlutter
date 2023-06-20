@@ -1,3 +1,5 @@
+import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+import 'package:web3modal_flutter/utils/constants.dart';
 import 'package:web3modal_flutter/utils/logger_util.dart';
 
 class CoreUtil {
@@ -39,5 +41,10 @@ class CoreUtil {
     LoggerUtil.logger.i('Encoded WC URL: $encodedWcUrl');
 
     return Uri.parse('$plainAppUrl/wc?uri=$encodedWcUrl');
+  }
+
+  static String getUserAgent() {
+    final String os = WalletConnectUtils.getOS();
+    return 'w3m-flutter-${Web3ModalConstants.WEB3MODAL_VERSION}/flutter-core-${WalletConnectConstants.SDK_VERSION}/$os';
   }
 }

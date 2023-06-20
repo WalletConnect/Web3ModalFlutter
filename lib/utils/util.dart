@@ -31,8 +31,8 @@ class Util {
   /// Detects if the given app (Represented by the URI) is installed.
   /// If on android/ios, this uses the AppCheck library.
   /// On web, this uses the injected values in the Javascript.
-  static Future<bool> isInstalled(String uri) async {
-    if (uri.isEmpty) {
+  static Future<bool> isInstalled(String? uri) async {
+    if (uri == null || uri.isEmpty) {
       return false;
     }
 
@@ -60,20 +60,10 @@ class Util {
   //   }
   // }
 
-  static Future<void> navigateDeepLink({
-    String? deepLink,
-    String? universalLink,
-    required String wcURI,
+  static Future<void> launchRedirect({
+    Uri? nativeUri,
+    Uri? universalUri,
   }) async {
-    // Construct the link
-    final Uri? nativeUri = CoreUtil.formatNativeUrl(
-      deepLink,
-      wcURI,
-    );
-    final Uri? universalUri = CoreUtil.formatUniversalUrl(
-      universalLink,
-      wcURI,
-    );
     LoggerUtil.logger.v(
       'Navigating deep links. Native: ${nativeUri.toString()}, Universal: ${universalUri.toString()}',
     );
@@ -107,5 +97,26 @@ class Util {
     } else {
       throw LaunchUrlException('Unable to open the wallet');
     }
+  }
+
+  static Future<void> navigateDeepLink({
+    String? nativeLink,
+    String? universalLink,
+    required String wcURI,
+  }) async {
+    // Construct the link
+    final Uri? nativeUri = CoreUtil.formatNativeUrl(
+      nativeLink,
+      wcURI,
+    );
+    final Uri? universalUri = CoreUtil.formatUniversalUrl(
+      universalLink,
+      wcURI,
+    );
+
+    await launchRedirect(
+      nativeUri: nativeUri,
+      universalUri: universalUri,
+    );
   }
 }

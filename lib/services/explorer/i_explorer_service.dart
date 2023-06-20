@@ -1,33 +1,32 @@
 import 'package:web3modal_flutter/models/listings.dart';
+import 'package:web3modal_flutter/widgets/grid_list/grid_list_provider.dart';
 
-abstract class IExplorerService {
-  abstract final String explorerUriRoot;
-  abstract final String projectId;
+enum ExcludedWalletState {
+  all,
+  list,
+}
 
-  Future<ListingResponse> fetchListings({
-    required String endpoint,
+abstract class IExplorerService implements GridListProvider<WalletData> {
+  /// The root URI of the explorer API.
+  String get explorerUriRoot;
+
+  /// The project ID used when querying the explorer API.
+  String get projectId;
+
+  /// The recommended wallets that will be prioritized in the modal.
+  /// Even if the [excludedWalletIds] list contains a wallet, it will still be
+  /// displayed if it is in this list.
+  Set<String>? recommendedWalletIds;
+
+  /// How the list of excluded wallets will be handled.
+  abstract ExcludedWalletState excludedWalletState;
+
+  /// The wallets that will be excluded from the modal.
+  Set<String>? excludedWalletIds;
+
+  Future<void> getListings({
+    required String referer,
     ListingParams? params,
-  });
-
-  Future<ListingResponse> getDesktopListings({
-    ListingParams? params,
-  });
-
-  Future<ListingResponse> getMobileListings({
-    ListingParams? params,
-  });
-
-  Future<ListingResponse> getInjectedListings({
-    ListingParams? params,
-  });
-
-  Future<ListingResponse> getAllListings({
-    ListingParams? params,
-  });
-
-  List<Listing> filterExcludedWallets({
-    required List<Listing> listings,
-    required Set<String> excludedWalletIds,
   });
 
   String getWalletImageUrl({

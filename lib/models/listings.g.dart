@@ -6,20 +6,52 @@ part of 'listings.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-WalletData _$WalletDataFromJson(Map<String, dynamic> json) => WalletData(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      universal: json['universal'] as String,
-      homepage: json['homepage'] as String,
-      native: json['native'] as String?,
+_$_WalletData _$$_WalletDataFromJson(Map<String, dynamic> json) =>
+    _$_WalletData(
+      listing: Listing.fromJson(json['listing'] as Map<String, dynamic>),
+      installed: json['installed'] as bool,
     );
 
-Map<String, dynamic> _$WalletDataToJson(WalletData instance) {
+Map<String, dynamic> _$$_WalletDataToJson(_$_WalletData instance) =>
+    <String, dynamic>{
+      'listing': instance.listing,
+      'installed': instance.installed,
+    };
+
+_$_ListingResponse _$$_ListingResponseFromJson(Map<String, dynamic> json) =>
+    _$_ListingResponse(
+      listings: (json['listings'] as Map<String, dynamic>).map(
+        (k, e) => MapEntry(k, Listing.fromJson(e as Map<String, dynamic>)),
+      ),
+      total: json['total'] as int,
+    );
+
+Map<String, dynamic> _$$_ListingResponseToJson(_$_ListingResponse instance) =>
+    <String, dynamic>{
+      'listings': instance.listings,
+      'total': instance.total,
+    };
+
+_$_Listing _$$_ListingFromJson(Map<String, dynamic> json) => _$_Listing(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      homepage: json['homepage'] as String,
+      imageId: json['image_id'] as String,
+      app: App.fromJson(json['app'] as Map<String, dynamic>),
+      injected: (json['injected'] as List<dynamic>?)
+          ?.map((e) => Injected.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      mobile: Redirect.fromJson(json['mobile'] as Map<String, dynamic>),
+      desktop: Redirect.fromJson(json['desktop'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$_ListingToJson(_$_Listing instance) {
   final val = <String, dynamic>{
     'id': instance.id,
     'name': instance.name,
-    'universal': instance.universal,
     'homepage': instance.homepage,
+    'image_id': instance.imageId,
+    'app': instance.app,
   };
 
   void writeNotNull(String key, dynamic value) {
@@ -28,50 +60,13 @@ Map<String, dynamic> _$WalletDataToJson(WalletData instance) {
     }
   }
 
-  writeNotNull('native', instance.native);
+  writeNotNull('injected', instance.injected);
+  val['mobile'] = instance.mobile;
+  val['desktop'] = instance.desktop;
   return val;
 }
 
-ListingResponse _$ListingResponseFromJson(Map<String, dynamic> json) =>
-    ListingResponse(
-      listings: (json['listings'] as Map<String, dynamic>).map(
-        (k, e) => MapEntry(k, Listing.fromJson(e as Map<String, dynamic>)),
-      ),
-      total: json['total'] as int,
-    );
-
-Map<String, dynamic> _$ListingResponseToJson(ListingResponse instance) =>
-    <String, dynamic>{
-      'listings': instance.listings,
-      'total': instance.total,
-    };
-
-Listing _$ListingFromJson(Map<String, dynamic> json) => Listing(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      homepage: json['homepage'] as String,
-      imageId: json['image_id'] as String,
-      app: App.fromJson(json['app'] as Map<String, dynamic>),
-      injected: (json['injected'] as List<dynamic>?)
-              ?.map((e) => Injected.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      mobile: Mobile.fromJson(json['mobile'] as Map<String, dynamic>),
-      desktop: Desktop.fromJson(json['desktop'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$ListingToJson(Listing instance) => <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-      'homepage': instance.homepage,
-      'image_id': instance.imageId,
-      'app': instance.app,
-      'injected': instance.injected,
-      'mobile': instance.mobile,
-      'desktop': instance.desktop,
-    };
-
-App _$AppFromJson(Map<String, dynamic> json) => App(
+_$_App _$$_AppFromJson(Map<String, dynamic> json) => _$_App(
       browser: json['browser'] as String?,
       ios: json['ios'] as String?,
       android: json['android'] as String?,
@@ -85,7 +80,7 @@ App _$AppFromJson(Map<String, dynamic> json) => App(
       opera: json['opera'] as String?,
     );
 
-Map<String, dynamic> _$AppToJson(App instance) {
+Map<String, dynamic> _$$_AppToJson(_$_App instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
@@ -108,56 +103,19 @@ Map<String, dynamic> _$AppToJson(App instance) {
   return val;
 }
 
-Injected _$InjectedFromJson(Map<String, dynamic> json) => Injected(
+_$_Injected _$$_InjectedFromJson(Map<String, dynamic> json) => _$_Injected(
       injectedId: json['injected_id'] as String,
       namespace: json['namespace'] as String,
     );
 
-Map<String, dynamic> _$InjectedToJson(Injected instance) => <String, dynamic>{
+Map<String, dynamic> _$$_InjectedToJson(_$_Injected instance) =>
+    <String, dynamic>{
       'injected_id': instance.injectedId,
       'namespace': instance.namespace,
     };
 
-Mobile _$MobileFromJson(Map<String, dynamic> json) => Mobile(
-      native: json['native'] as String?,
-      universal: json['universal'] as String?,
-    );
-
-Map<String, dynamic> _$MobileToJson(Mobile instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('native', instance.native);
-  writeNotNull('universal', instance.universal);
-  return val;
-}
-
-Desktop _$DesktopFromJson(Map<String, dynamic> json) => Desktop(
-      native: json['native'] as String?,
-      universal: json['universal'] as String?,
-    );
-
-Map<String, dynamic> _$DesktopToJson(Desktop instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('native', instance.native);
-  writeNotNull('universal', instance.universal);
-  return val;
-}
-
-ListingParams _$ListingParamsFromJson(Map<String, dynamic> json) =>
-    ListingParams(
+_$_ListingParams _$$_ListingParamsFromJson(Map<String, dynamic> json) =>
+    _$_ListingParams(
       page: json['page'] as int?,
       search: json['search'] as String?,
       entries: json['entries'] as int?,
@@ -168,7 +126,7 @@ ListingParams _$ListingParamsFromJson(Map<String, dynamic> json) =>
       sdks: json['sdks'] as String?,
     );
 
-Map<String, dynamic> _$ListingParamsToJson(ListingParams instance) {
+Map<String, dynamic> _$$_ListingParamsToJson(_$_ListingParams instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {

@@ -17,6 +17,8 @@ import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 import 'package:web3modal_flutter/widgets/toast/web3modal_toast_manager.dart';
 import 'package:web3modal_flutter/widgets/transition_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_navbar.dart';
+import 'package:web3modal_flutter/widgets/web3modal_navbar_title.dart';
+import 'package:web3modal_flutter/widgets/web3modal_search_bar.dart';
 import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
 
 class Web3Modal extends StatefulWidget {
@@ -43,7 +45,9 @@ class _Web3ModalState extends State<Web3Modal>
   final List<Web3ModalState> _stateStack = [];
 
   // Wallet List
-  List<GridListItemModel> _wallets = [];
+  String _searchQuery = '';
+  final List<GridListItemModel> _allWallets = [];
+  final List<GridListItemModel> _wallets = [];
 
   // Animations
   // late AnimationController _controller;
@@ -69,80 +73,13 @@ class _Web3ModalState extends State<Web3Modal>
   }
 
   Future<void> initialize() async {
-    // Fetch the wallet list
-    ListingResponse items =
-        await widget.service.explorerService.getAllListings();
+    // Fetch the wallets
 
-    // Filter out wallets that are excluded
-    List<Listing> listings = items.listings.values.toList();
-
-    if (widget.service.excludedWalletState == ExcludedWalletState.list) {
-      listings = widget.service.explorerService.filterExcludedWallets(
-        listings: listings,
-        excludedWalletIds: widget.service.excludedWalletIds,
-      );
-    } else {
-      // Filter down to only the included
-      listings = listings
-          .where(
-            (listing) => widget.service.recommendedWalletIds.contains(
-              listing.id,
-            ),
-          )
-          .toList();
-    }
-
-    List<GridListItemModel> walletList = [];
-    for (Listing item in listings) {
-      bool installed = await Util.isInstalled(item.mobile.native ?? '');
-      walletList.add(
-        GridListItemModel(
-          title: item.name,
-          id: item.id,
-          description: installed ? 'Installed' : null,
-          image: widget.service.explorerService.getWalletImageUrl(
-            imageId: item.imageId,
-          ),
-          onSelect: () async {
-            LoggerUtil.logger.v(
-              'Selected ${item.name}. Installed: $installed Item info: $item.',
-            );
-            try {
-              Util.navigateDeepLink(
-                universalLink: item.mobile.universal,
-                deepLink: item.mobile.native,
-                wcURI: widget.service.wcUri!,
-              );
-            } on LaunchUrlException catch (e) {
-              widget.toastService.show(
-                ToastMessage(
-                  type: ToastType.error,
-                  text: e.message,
-                ),
-              );
-            }
-          },
-          installed: installed,
-        ),
-      );
-    }
-    // Sort the installed wallets to the top
-    walletList.sort((a, b) {
-      if ((a.installed && !b.installed) ||
-          widget.service.recommendedWalletIds.contains(
-            a.id,
-          )) {
-        LoggerUtil.logger.i('Sorting ${a.title} to the top. ID: ${a.id}');
-        return -1;
-      } else if (a.installed == b.installed) {
-        return 0;
-      } else {
-        return 1;
-      }
-    });
+    await widget.service.explorerService.getListings(
+      referer: widget.service.getReferer(),
+    );
 
     setState(() {
-      _wallets = walletList;
       _initialized = true;
     });
   }
@@ -153,7 +90,7 @@ class _Web3ModalState extends State<Web3Modal>
 
     return Container(
       constraints: const BoxConstraints(
-        minWidth: 300,
+        minWidth: 200,
         maxWidth: 400,
       ),
       decoration: BoxDecoration(
@@ -273,7 +210,9 @@ class _Web3ModalState extends State<Web3Modal>
       case Web3ModalState.qrCode:
         return Web3ModalNavBar(
           key: Key(Web3ModalState.qrCode.name),
-          title: 'Scan QR Code',
+          title: const Web3ModalNavbarTitle(
+            title: 'Scan QR Code',
+          ),
           onBack: _pop,
           actionWidget: IconButton(
             icon: const Icon(Icons.copy_outlined),
@@ -288,29 +227,36 @@ class _Web3ModalState extends State<Web3Modal>
       case Web3ModalState.walletListShort:
         return Web3ModalNavBar(
           key: Key(Web3ModalState.walletListShort.name),
-          title: 'Connect your wallet',
+          title: const Web3ModalNavbarTitle(
+            title: 'Connect your wallet',
+          ),
           actionWidget: IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Web3ModalTheme.of(context).backgroundColor,
             onPressed: _toQrCode,
           ),
-          child: GridList(
+          child: GridList<WalletData>(
             key: Key('${GridListState.short}${_wallets.length}'),
             state: GridListState.short,
-            items: _wallets,
+            provider: widget.service.explorerService,
             viewLongList: _viewLongWalletList,
+            onSelect: _onWalletDataSelected,
           ),
         );
       case Web3ModalState.walletListLong:
         return Web3ModalNavBar(
           key: Key(Web3ModalState.walletListLong.name),
-          title: 'TODO: Implement Search',
+          title: Web3ModalSearchBar(
+            hintText: 'Search ${Util.getPlatformType().name} wallets',
+            onSearch: _updateSearch,
+          ),
           onBack: _pop,
-          child: GridList(
-            key: Key('${GridListState.long}${_wallets.length}'),
+          child: GridList<WalletData>(
+            // key: ValueKey('${GridListState.long}$_searchQuery'),
             state: GridListState.long,
-            items: _wallets,
+            provider: widget.service.explorerService,
             viewLongList: _viewLongWalletList,
+            onSelect: _onWalletDataSelected,
           ),
         );
       case Web3ModalState.qrCodeAndWalletList:
@@ -318,7 +264,9 @@ class _Web3ModalState extends State<Web3Modal>
           key: Key(
             Web3ModalState.qrCodeAndWalletList.name,
           ),
-          title: 'Connect your wallet',
+          title: const Web3ModalNavbarTitle(
+            title: 'Connect your wallet',
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -329,8 +277,9 @@ class _Web3ModalState extends State<Web3Modal>
               GridList(
                 key: Key('${GridListState.extraShort}${_wallets.length}'),
                 state: GridListState.extraShort,
-                items: _wallets,
+                provider: widget.service.explorerService,
                 viewLongList: _viewLongWalletList,
+                onSelect: _onWalletDataSelected,
               ),
             ],
           ),
@@ -339,18 +288,23 @@ class _Web3ModalState extends State<Web3Modal>
         return Web3ModalNavBar(
           // TODO: Update this to display chains, not wallets
           key: Key(Web3ModalState.chainList.name),
-          title: 'Select network',
+          title: const Web3ModalNavbarTitle(
+            title: 'Select network',
+          ),
           child: GridList(
             key: Key('${GridListState.extraShort}${_wallets.length}'),
             state: GridListState.extraShort,
-            items: _wallets,
+            provider: widget.service.explorerService,
             viewLongList: _viewLongWalletList,
+            onSelect: _onWalletDataSelected,
           ),
         );
       case Web3ModalState.help:
         return Web3ModalNavBar(
           key: Key(Web3ModalState.help.name),
-          title: 'Help',
+          title: const Web3ModalNavbarTitle(
+            title: 'Help',
+          ),
           onBack: _pop,
           child: HelpPage(
             getAWallet: () {
@@ -363,18 +317,36 @@ class _Web3ModalState extends State<Web3Modal>
       case Web3ModalState.getAWallet:
         return Web3ModalNavBar(
           key: Key(Web3ModalState.getAWallet.name),
-          title: 'Get a wallet',
+          title: const Web3ModalNavbarTitle(
+            title: 'Get a wallet',
+          ),
           onBack: _pop,
           child: GetWalletPage(
-            service: widget.service,
-            wallets: _wallets
-                .where((GridListItemModel w) => !w.installed)
-                .take(6)
-                .toList(),
+            service: widget.service.explorerService,
           ),
         );
       default:
         return Container();
+    }
+  }
+
+  Future<void> _onWalletDataSelected(WalletData item) async {
+    LoggerUtil.logger.v(
+      'Selected ${item.listing.name}. Installed: ${item.installed} Item info: $item.',
+    );
+    try {
+      Util.navigateDeepLink(
+        nativeLink: item.listing.mobile.native,
+        universalLink: item.listing.mobile.universal,
+        wcURI: widget.service.wcUri!,
+      );
+    } on LaunchUrlException catch (e) {
+      widget.toastService.show(
+        ToastMessage(
+          type: ToastType.error,
+          text: e.message,
+        ),
+      );
     }
   }
 
@@ -419,5 +391,9 @@ class _Web3ModalState extends State<Web3Modal>
         text: 'QR Copied',
       ),
     );
+  }
+
+  void _updateSearch(String query) {
+    widget.service.explorerService.filterList(query: query);
   }
 }

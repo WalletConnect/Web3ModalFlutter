@@ -1,86 +1,103 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
+import 'package:web3modal_flutter/widgets/grid_list/grid_list_provider.dart';
 import 'package:web3modal_flutter/widgets/wallet_image.dart';
 
 enum GridListState { short, long, extraShort }
 
-class GridList extends StatelessWidget {
+class GridList<T> extends StatelessWidget {
   static const double tileSize = 60;
   static double getTileBorderRadius(double tileSize) => tileSize / 4.0;
 
   const GridList({
     super.key,
     this.state = GridListState.short,
-    required this.items,
+    required this.provider,
     required this.viewLongList,
+    required this.onSelect,
   });
 
   final GridListState state;
-  final List<GridListItemModel> items;
+  final GridListProvider<T> provider;
   final void Function() viewLongList;
+  final void Function(T) onSelect;
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+    return ValueListenableBuilder(
+      valueListenable: provider.itemList,
+      builder: (context, List<GridListItemModel<T>> value, child) {
+        if (value.isEmpty) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
 
-    int itemCount;
-    double height;
-    switch (state) {
-      case GridListState.short:
-        itemCount = 8;
-        height = 240;
-        break;
-      case GridListState.long:
-        itemCount = items.length;
-        height = 600;
-        break;
-      case GridListState.extraShort:
-        itemCount = 4;
-        height = 120;
-        break;
-    }
+        int itemCount;
+        double height;
+        switch (state) {
+          case GridListState.short:
+            itemCount = min(8, value.length);
+            height = 240;
+            break;
+          case GridListState.long:
+            itemCount = value.length;
+            height = 600;
+            break;
+          case GridListState.extraShort:
+            itemCount = min(4, value.length);
+            height = 120;
+            break;
+        }
 
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      height: height,
-      child: GridView.builder(
-        itemCount: itemCount,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          childAspectRatio: 0.85,
-        ),
-        itemBuilder: (context, index) {
-          if (index == itemCount - 1 &&
-              items.length > itemCount &&
-              state != GridListState.long) {
-            return _buildViewAll(
-              context,
-              itemCount,
-            );
-          } else {
-            return GridListItem(
-              title: items[index].title,
-              description: items[index].description,
-              onSelect: items[index].onSelect,
-              child: WalletImage(
-                imageUrl: items[index].image,
-              ),
-            );
-          }
-        },
-      ),
+        return Container(
+          padding: const EdgeInsets.all(8.0),
+          height: height,
+          child: GridView.builder(
+            key: Key('${value.length}'),
+            itemCount: itemCount,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              childAspectRatio: 0.85,
+            ),
+            itemBuilder: (context, index) {
+              if (index == itemCount - 1 &&
+                  value.length > itemCount &&
+                  state != GridListState.long) {
+                return _buildViewAll(
+                  context,
+                  value,
+                  itemCount,
+                );
+              } else {
+                return GridListItem(
+                  key: Key(value[index].title),
+                  title: value[index].title,
+                  description: value[index].description,
+                  onSelect: () => onSelect(value[index].data),
+                  child: WalletImage(
+                    imageUrl: value[index].image,
+                  ),
+                );
+              }
+            },
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildViewAll(BuildContext context, int startIndex) {
+  Widget _buildViewAll(
+    BuildContext context,
+    List<GridListItemModel<T>> items,
+    int startIndex,
+  ) {
     List<Widget> images = [];
 
     for (int i = 0; i < 4; i++) {
@@ -100,12 +117,12 @@ class GridList extends StatelessWidget {
       title: 'View All',
       onSelect: viewLongList,
       child: Container(
-        width: tileSize,
-        height: tileSize,
+        width: GridList.tileSize,
+        height: GridList.tileSize,
         padding: const EdgeInsets.all(2.0),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(
-              getTileBorderRadius(GridList.tileSize),
+              GridList.getTileBorderRadius(GridList.tileSize),
             ),
             border: Border.all(
               color: Colors.grey,
