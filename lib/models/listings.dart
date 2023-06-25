@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
 part 'listings.freezed.dart';

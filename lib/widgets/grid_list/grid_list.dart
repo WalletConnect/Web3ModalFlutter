@@ -5,6 +5,7 @@ import 'package:web3modal_flutter/widgets/grid_list/grid_list_item.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_provider.dart';
 import 'package:web3modal_flutter/widgets/wallet_image.dart';
+import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
 
 enum GridListState { short, long, extraShort }
 
@@ -28,17 +29,30 @@ class GridList<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: provider.itemList,
-      builder: (context, List<GridListItemModel<T>> value, child) {
-        if (value.isEmpty) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: CircularProgressIndicator(),
+      valueListenable: provider.initialized,
+      builder: (context, bool value, child) {
+        if (value) {
+          return _buildGridList();
+        } else {
+          return Container(
+            padding: const EdgeInsets.all(8.0),
+            height: 240,
+            child: const Center(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: CircularProgressIndicator(),
+              ),
             ),
           );
         }
+      },
+    );
+  }
 
+  Widget _buildGridList() {
+    return ValueListenableBuilder(
+      valueListenable: provider.itemList,
+      builder: (context, List<GridListItemModel<T>> value, child) {
         int itemCount;
         double height;
         switch (state) {
@@ -54,6 +68,24 @@ class GridList<T> extends StatelessWidget {
             itemCount = min(4, value.length);
             height = 120;
             break;
+        }
+
+        if (value.isEmpty) {
+          return Container(
+            padding: const EdgeInsets.all(8.0),
+            height: height,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'No items found.',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: Web3ModalTheme.of(context).fontFamily,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          );
         }
 
         return Container(

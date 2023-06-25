@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:universal_io/io.dart';
+import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'dart:convert';
 
 import 'package:web3modal_flutter/models/listings.dart';
@@ -33,6 +34,9 @@ class ExplorerService implements IExplorerService {
   ValueNotifier<List<GridListItemModel<WalletData>>> itemList =
       ValueNotifier([]);
 
+  @override
+  ValueNotifier<bool> initialized = ValueNotifier(false);
+
   ExplorerService({
     required this.projectId,
     this.explorerUriRoot = 'https://explorer-api.walletconnect.com',
@@ -46,6 +50,10 @@ class ExplorerService implements IExplorerService {
     required String referer,
     ListingParams? params,
   }) async {
+    if (initialized.value) {
+      return;
+    }
+
     String? platform;
     switch (Util.getPlatformType()) {
       case PlatformType.desktop:
@@ -104,7 +112,6 @@ class ExplorerService implements IExplorerService {
     for (var i in _listings) {
       itemCounts[i.name] = (itemCounts[i.name] ?? 0) + 1;
     }
-    print(itemCounts);
 
     for (Listing item in _listings) {
       bool installed = await Util.isInstalled(item.mobile.native);
@@ -153,6 +160,7 @@ class ExplorerService implements IExplorerService {
     }
 
     itemList.value = _walletList;
+    initialized.value = true;
   }
 
   @override
@@ -186,6 +194,19 @@ class ExplorerService implements IExplorerService {
     required String imageId,
   }) {
     return '$explorerUriRoot/w3m/v1/getAssetImage/$imageId?projectId=$projectId';
+  }
+
+  @override
+  Redirect? getRedirect({required String name}) {
+    try {
+      final Listing listing = _listings.firstWhere(
+        (listing) => listing.name == name,
+      );
+
+      return listing.mobile;
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<List<Listing>> fetchListings({

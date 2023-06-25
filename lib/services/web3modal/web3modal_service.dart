@@ -144,6 +144,11 @@ class Web3ModalService extends ChangeNotifier
       _awaitConnectResponse();
     }
 
+    // Reset the explorer
+    explorerService.filterList(
+      query: '',
+    );
+
     this.context = context;
 
     final bool bottomSheet = Util.getPlatformType() == PlatformType.mobile ||
@@ -228,7 +233,7 @@ class Web3ModalService extends ChangeNotifier
       return;
     }
 
-    final Redirect? redirect = _session!.peer.metadata.redirect;
+    final Redirect? redirect = _constructRedirect();
 
     if (redirect == null) {
       launchUrl(
@@ -311,6 +316,24 @@ class Web3ModalService extends ChangeNotifier
   }
 
   ////// Private methods //////
+
+  Redirect? _constructRedirect() {
+    if (session == null) {
+      return null;
+    }
+
+    final Redirect? sessionRedirect = session?.peer.metadata.redirect;
+    final Redirect? explorerRedirect = explorerService.getRedirect(
+      name: session!.peer.metadata.name,
+    );
+
+    // Combine the redirect data from the session and the explorer API.
+    // The explorer API is the source of truth.
+    return Redirect(
+      native: explorerRedirect?.native ?? sessionRedirect?.native,
+      universal: explorerRedirect?.universal ?? sessionRedirect?.universal,
+    );
+  }
 
   void _registerListeners() {
     // web3App!.onSessionConnect.subscribe(

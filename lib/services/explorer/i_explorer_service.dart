@@ -1,3 +1,4 @@
+import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/models/listings.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_provider.dart';
 
@@ -35,5 +36,9 @@ abstract class IExplorerService implements GridListProvider<WalletData> {
 
   String getAssetImageUrl({
     required String imageId,
+  });
+
+  Redirect? getRedirect({
+    required String name,
   });
 }

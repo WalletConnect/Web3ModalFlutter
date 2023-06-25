@@ -115,12 +115,16 @@ class _Web3ModalState extends State<Web3Modal>
                       width: 20,
                       height: 20,
                       package: 'web3modal_flutter',
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.color,
+                      ),
                     ),
                     const SizedBox(width: 2),
                     Text(
                       'WalletConnect',
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
+                            color: Colors.white,
                           ),
                       textAlign: TextAlign.center,
                     ),
@@ -353,7 +357,11 @@ class _Web3ModalState extends State<Web3Modal>
   void _pop() {
     setState(() {
       // Remove all of the elements until we get to the help state
-      _stateStack.removeLast();
+      final state = _stateStack.removeLast();
+
+      if (state == Web3ModalState.walletListLong) {
+        widget.service.explorerService.filterList(query: '');
+      }
     });
   }
 
@@ -363,6 +371,10 @@ class _Web3ModalState extends State<Web3Modal>
       Web3ModalState removedState = _stateStack.removeLast();
       while (removedState != Web3ModalState.help) {
         removedState = _stateStack.removeLast();
+
+        if (removedState == Web3ModalState.walletListLong) {
+          widget.service.explorerService.filterList(query: '');
+        }
       }
     });
   }
