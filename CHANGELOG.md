@@ -1,3 +1,9 @@
+## 1.1.2
+
+- Redirects working on mobile
+- Theme updates
+- Bug fixes
+
 ## 1.1.1
 
 - Fixed modal having white background
