@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web3modal_flutter/models/listings.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
-import 'package:web3modal_flutter/widgets/button_widget.dart';
+import 'package:web3modal_flutter/widgets/web3modal_button.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_provider.dart';
 import 'package:web3modal_flutter/widgets/wallet_image.dart';
@@ -33,21 +33,21 @@ class GetWalletPage extends StatelessWidget {
               wallets.map((wallet) => WalletItem(wallet: wallet)).toList(),
         ),
         const SizedBox(height: 8.0),
-        const Text(
+        Text(
           "Not what you're looking for?",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16.0,
-            color: Colors.white,
+            color: theme.data.foreground100,
           ),
         ),
         const SizedBox(height: 4.0),
-        const Text(
+        Text(
           "With hundreds of wallets out there, there's something for everyone",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16.0,
-            color: Colors.grey,
+            color: theme.data.foreground200,
           ),
         ),
         const SizedBox(height: 8.0),
@@ -62,14 +62,14 @@ class GetWalletPage extends StatelessWidget {
               Text(
                 'Explore Wallets',
                 style: TextStyle(
-                  fontFamily: theme.fontFamily,
-                  color: Colors.white,
+                  fontFamily: theme.data.fontFamily,
+                  color: theme.data.inverse100,
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.arrow_outward,
                 size: 12,
-                color: Colors.white,
+                color: theme.data.inverse100,
               ),
             ],
           ),
@@ -104,9 +104,9 @@ class WalletItem extends StatelessWidget {
         ),
         title: Text(
           wallet.title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16.0,
-            color: Colors.white,
+            color: theme.data.foreground100,
           ),
         ),
         trailing: Web3ModalButton(
@@ -122,14 +122,14 @@ class WalletItem extends StatelessWidget {
               Text(
                 'Get',
                 style: TextStyle(
-                  fontFamily: theme.fontFamily,
-                  color: Colors.white,
+                  fontFamily: theme.data.fontFamily,
+                  color: theme.data.inverse100,
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.arrow_forward_ios,
                 size: 12,
-                color: Colors.white,
+                color: theme.data.inverse100,
               ),
             ],
           ),

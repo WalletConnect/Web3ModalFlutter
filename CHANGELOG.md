@@ -1,6 +1,7 @@
 ## 1.2.0
 
 - Updated `Web3ModalService` to require initialization and accept multiple kinds of inputs
+- Updated `Web3ModalTheme` to accept a `data` parameter, the theme is actually applied and can be modified as you wish
 
 ## 1.1.2
 

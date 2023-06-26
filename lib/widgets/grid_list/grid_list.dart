@@ -28,19 +28,23 @@ class GridList<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+
     return ValueListenableBuilder(
       valueListenable: provider.initialized,
       builder: (context, bool value, child) {
         if (value) {
-          return _buildGridList();
+          return _buildGridList(context);
         } else {
           return Container(
             padding: const EdgeInsets.all(8.0),
             height: 240,
-            child: const Center(
+            child: Center(
               child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: CircularProgressIndicator(),
+                padding: const EdgeInsets.all(8.0),
+                child: CircularProgressIndicator(
+                  color: theme.data.primary100,
+                ),
               ),
             ),
           );
@@ -49,7 +53,9 @@ class GridList<T> extends StatelessWidget {
     );
   }
 
-  Widget _buildGridList() {
+  Widget _buildGridList(BuildContext context) {
+    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+
     return ValueListenableBuilder(
       valueListenable: provider.itemList,
       builder: (context, List<GridListItemModel<T>> value, child) {
@@ -79,8 +85,8 @@ class GridList<T> extends StatelessWidget {
               child: Text(
                 'No items found.',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: Web3ModalTheme.of(context).fontFamily,
+                  color: theme.data.foreground200,
+                  fontFamily: theme.data.fontFamily,
                   fontSize: 16,
                 ),
               ),
@@ -130,6 +136,8 @@ class GridList<T> extends StatelessWidget {
     List<GridListItemModel<T>> items,
     int startIndex,
   ) {
+    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+
     List<Widget> images = [];
 
     for (int i = 0; i < 4; i++) {
@@ -153,14 +161,15 @@ class GridList<T> extends StatelessWidget {
         height: GridList.tileSize,
         padding: const EdgeInsets.all(2.0),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(
-              GridList.getTileBorderRadius(GridList.tileSize),
-            ),
-            border: Border.all(
-              color: Colors.grey,
-              strokeAlign: BorderSide.strokeAlignOutside,
-            ),
-            color: Colors.grey.shade800),
+          color: theme.data.background200,
+          border: Border.all(
+            color: theme.data.overlay010,
+            strokeAlign: BorderSide.strokeAlignOutside,
+          ),
+          borderRadius: BorderRadius.circular(
+            GridList.getTileBorderRadius(GridList.tileSize),
+          ),
+        ),
         child: Center(
           child: Wrap(
             spacing: 4.0,

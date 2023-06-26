@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/toast/toast_message.dart';
+import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
 
 class Web3ModalToast extends StatefulWidget {
   const Web3ModalToast({
@@ -48,6 +49,8 @@ class _Web3ModalToastState extends State<Web3ModalToast>
 
   @override
   Widget build(BuildContext context) {
+    Web3ModalTheme theme = Web3ModalTheme.of(context);
+
     return Positioned(
       top: 20.0,
       left: 20.0,
@@ -58,17 +61,19 @@ class _Web3ModalToastState extends State<Web3ModalToast>
           child: Container(
             decoration: BoxDecoration(
               color: widget.message.type == ToastType.info
-                  ? Colors.grey.shade800
-                  : Colors.red,
-              borderRadius: BorderRadius.circular(16.0),
+                  ? theme.data.background200
+                  : theme.data.error,
+              borderRadius: BorderRadius.circular(
+                theme.data.borderRadius,
+              ),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 widget.message.text,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: theme.data.foreground100,
                   fontSize: 18.0,
                 ),
               ),

@@ -18,25 +18,30 @@ class Web3ModalSearchBar extends StatelessWidget {
     return Container(
       height: 36,
       decoration: BoxDecoration(
-        color: theme.accentColor,
+        color: theme.data.overlay005,
         borderRadius: BorderRadius.circular(
-          30.0,
+          theme.data.borderRadius * 3,
         ),
         border: Border.all(
-          color: theme.accentColor.withOpacity(0.7),
+          color: theme.data.overlay005,
           width: 2,
         ),
       ),
       child: TextFormField(
         onChanged: onSearch,
         textAlignVertical: TextAlignVertical.center,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: theme.data.foreground275,
         ),
         decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.search, color: Colors.white),
+          prefixIcon: Icon(
+            Icons.search,
+            color: theme.data.foreground275,
+          ),
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+          hintStyle: TextStyle(
+            color: theme.data.foreground275,
+          ),
           border: InputBorder.none,
           isCollapsed: true,
           // contentPadding: const EdgeInsets.symmetric(vertical: 2.0),

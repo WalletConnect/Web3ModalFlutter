@@ -15,17 +15,14 @@ The first is the `Web3ModalTheme` which is used to style the modal.
 ```dart
 // Example of Web3ModalTheme
 return Web3ModalTheme(
-  backgroundColor: const Color.fromARGB(255, 0, 115, 255),
-  accentColor: const Color.fromARGB(255, 144, 144, 144),
-  fontFamily: 'roboto',
-  borderRadius: 5.0,
+  data: Web3ModalThemeData.darkMode,
   child: MaterialApp(
     title: 'Flutter Demo',
     theme: ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       useMaterial3: true,
     ),
-    home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    home: const MyHomePage(title: 'Web3Modal Sign Example'),
   ),
 );
 ```
