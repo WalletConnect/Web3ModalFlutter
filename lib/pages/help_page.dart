@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/button_widget.dart';
 
 class SvgImageInfo {
@@ -86,6 +87,8 @@ class _HelpPageState extends State<HelpPage> {
 
   @override
   Widget build(BuildContext context) {
+    Web3ModalTheme theme = Web3ModalTheme.of(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -118,8 +121,12 @@ class _HelpPageState extends State<HelpPage> {
               Expanded(
                 child: Web3ModalButton(
                   onPressed: widget.getAWallet,
-                  child: const Text(
+                  child: Text(
                     'Get a Wallet',
+                    style: TextStyle(
+                      fontFamily: theme.fontFamily,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -135,14 +142,19 @@ class _HelpPageState extends State<HelpPage> {
                       ),
                     );
                   },
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         'Learn More',
+                        style: TextStyle(
+                          fontFamily: theme.fontFamily,
+                          color: Colors.white,
+                        ),
                       ),
-                      Icon(
+                      const Icon(
                         Icons.arrow_outward,
+                        color: Colors.white,
                       ),
                     ],
                   ),

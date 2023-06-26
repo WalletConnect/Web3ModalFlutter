@@ -73,33 +73,63 @@ class Web3ModalService extends ChangeNotifier
   final ToastService _toastService = ToastService();
 
   /// Creates a new instance of [Web3ModalService].
+  /// [web3App] is optional and can be used to pass in an already created [Web3App].
+  /// [projectId] and [metadata] are optional and can be used to create a new [Web3App].
+  /// You must provide either a [projectId] and [metadata] or an already created [web3App], or this will throw an [ArgumentError].
+  /// [requiredNamespaces] is optional and can be used to pass in a custom set of required namespaces.
+  /// [explorerService] is optional and can be used to pass in a custom [IExplorerService].
+  /// [recommendedWalletIds] is optional and can be used to pass in a custom set of recommended wallet IDs.
+  /// [excludedWalletState] is optional and can be used to pass in a custom [ExcludedWalletState].
+  /// [excludedWalletIds] is optional and can be used to pass in a custom set of excluded wallet IDs.
   Web3ModalService({
-    required IWeb3App web3App,
+    IWeb3App? web3App,
+    String? projectId,
+    PairingMetadata? metadata,
     Map<String, RequiredNamespace>? requiredNamespaces,
     IExplorerService? explorerService,
     Set<String>? recommendedWalletIds,
     ExcludedWalletState excludedWalletState = ExcludedWalletState.list,
     Set<String>? excludedWalletIds,
   }) {
-    _web3App = web3App;
-    _projectId = projectId;
-
-    _registerListeners();
+    if (projectId == null && metadata == null && web3App == null) {
+      throw ArgumentError(
+        'Either a projectId and metadata must be provided or an already created web3App.',
+      );
+    }
+    _web3App = web3App ??
+        Web3App(
+          core: Core(
+            projectId: projectId!,
+          ),
+          metadata: metadata!,
+        );
+    _projectId = projectId ?? _web3App!.core.projectId;
 
     if (requiredNamespaces != null) {
       _requiredNamespaces = requiredNamespaces;
     }
 
-    if (explorerService != null) {
-      this.explorerService = explorerService;
-    } else {
-      this.explorerService = ExplorerService(
-        projectId: _projectId,
-        recommendedWalletIds: recommendedWalletIds,
-        excludedWalletState: excludedWalletState,
-        excludedWalletIds: excludedWalletIds,
-      );
+    this.explorerService = explorerService ??
+        ExplorerService(
+          projectId: _projectId,
+          recommendedWalletIds: recommendedWalletIds,
+          excludedWalletState: excludedWalletState,
+          excludedWalletIds: excludedWalletIds,
+        );
+  }
+
+  @override
+  Future<void> init() async {
+    if (_isInitialized) {
+      return;
     }
+
+    await _web3App!.init();
+    await explorerService.init(
+      referer: _web3App!.metadata.name.replaceAll(' ', ''),
+    );
+
+    _registerListeners();
 
     if (_web3App!.sessions.getAll().isNotEmpty) {
       _isConnected = true;
@@ -235,6 +265,10 @@ class Web3ModalService extends ChangeNotifier
 
     final Redirect? redirect = _constructRedirect();
 
+    LoggerUtil.logger.i(
+      'Launching wallet: $redirect, ${_session?.peer.metadata}',
+    );
+
     if (redirect == null) {
       launchUrl(
         Uri.parse(
@@ -326,6 +360,10 @@ class Web3ModalService extends ChangeNotifier
     final Redirect? explorerRedirect = explorerService.getRedirect(
       name: session!.peer.metadata.name,
     );
+
+    if (sessionRedirect == null && explorerRedirect == null) {
+      return null;
+    }
 
     // Combine the redirect data from the session and the explorer API.
     // The explorer API is the source of truth.

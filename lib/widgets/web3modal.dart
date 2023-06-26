@@ -72,9 +72,9 @@ class _Web3ModalState extends State<Web3Modal>
   Future<void> initialize() async {
     // Fetch the wallets
 
-    await widget.service.explorerService.getListings(
-      referer: widget.service.getReferer(),
-    );
+    // await widget.service.explorerService.getListings(
+    //   referer: widget.service.getReferer(),
+    // );
 
     setState(() {
       _initialized = true;

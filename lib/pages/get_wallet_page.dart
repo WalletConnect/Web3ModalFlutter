@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web3modal_flutter/models/listings.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/button_widget.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_provider.dart';
@@ -16,6 +17,8 @@ class GetWalletPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+
     List<GridListItemModel<WalletData>> wallets = service.itemList.value
         .where((GridListItemModel<WalletData> w) => !w.data.installed)
         .take(6)
@@ -52,14 +55,21 @@ class GetWalletPage extends StatelessWidget {
           onPressed: () => launchUrl(
             Uri.parse('https://explorer.walletconnect.com/?type=wallet'),
           ),
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Explore Wallets'),
-              Icon(
+              Text(
+                'Explore Wallets',
+                style: TextStyle(
+                  fontFamily: theme.fontFamily,
+                  color: Colors.white,
+                ),
+              ),
+              const Icon(
                 Icons.arrow_outward,
                 size: 12,
+                color: Colors.white,
               ),
             ],
           ),
@@ -80,6 +90,8 @@ class WalletItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(
         top: 4.0,
@@ -103,14 +115,21 @@ class WalletItem extends StatelessWidget {
               wallet.data.listing.homepage,
             ),
           ),
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Get'),
-              Icon(
+              Text(
+                'Get',
+                style: TextStyle(
+                  fontFamily: theme.fontFamily,
+                  color: Colors.white,
+                ),
+              ),
+              const Icon(
                 Icons.arrow_forward_ios,
                 size: 12,
+                color: Colors.white,
               ),
             ],
           ),

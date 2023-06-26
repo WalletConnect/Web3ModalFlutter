@@ -46,7 +46,7 @@ class ExplorerService implements IExplorerService {
   });
 
   @override
-  Future<void> getListings({
+  Future<void> init({
     required String referer,
     ListingParams? params,
   }) async {
@@ -199,8 +199,9 @@ class ExplorerService implements IExplorerService {
   @override
   Redirect? getRedirect({required String name}) {
     try {
+      LoggerUtil.logger.i('Getting redirect for $name');
       final Listing listing = _listings.firstWhere(
-        (listing) => listing.name == name,
+        (listing) => listing.name.contains(name) || name.contains(listing.name),
       );
 
       return listing.mobile;

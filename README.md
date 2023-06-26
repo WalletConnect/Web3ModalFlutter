@@ -33,8 +33,8 @@ return Web3ModalTheme(
 The second is the Web3ModalService which is your primary class for opening, closing, disconnecting, etc.
 
 ```dart
-final Web3App app = await Web3App.createInstance(
-  projectId: DartDefines.projectId,
+Web3ModalService service = Web3ModalService(
+  projectId: projectId, 
   metadata: const PairingMetadata(
     name: 'Flutter WalletConnect',
     description: 'Flutter Web3Modal Sign Example',
@@ -42,8 +42,10 @@ final Web3App app = await Web3App.createInstance(
     icons: ['https://walletconnect.com/walletconnect-logo.png'],
   ),
 );
-_service = Web3ModalService(web3App: app);
+await service.init();
 ```
+
+The service must be initialized before it can be used.
 
 Now that those two things are setup in your application, you can call `_service.open()` to open the modal.
 
@@ -76,7 +78,7 @@ I have not yet tested this on Android, but I believe it should work without any 
 
 ## Detailed Usage
 
-You can launch the currently connected wallet by calling `_service.launchCurrentWallet()`.
+You can launch the currently connected wallet by calling `service.launchCurrentWallet()`.
 
 ### Commands
 

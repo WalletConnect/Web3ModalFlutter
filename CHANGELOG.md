@@ -1,3 +1,7 @@
+## 1.2.0
+
+- Updated `Web3ModalService` to require initialization and accept multiple kinds of inputs
+
 ## 1.1.2
 
 - Redirects working on mobile

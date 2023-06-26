@@ -58,6 +58,9 @@ abstract class IWeb3ModalService implements ChangeNotifier {
   /// The list of wallets from the explorer API.
   // List<Listing> get listings;
 
+  /// Sets up the explorer and the web3App if they already been initialized.
+  Future<void> init();
+
   /// Opens the modal with the provided [startState].
   /// If none is provided, the default state will be used based on platform.
   Future<void> open({
