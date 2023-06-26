@@ -53,20 +53,23 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
         minWidth: buttonWidthMin,
         maxWidth: buttonWidthMax,
       ),
-      child: _buildButton(),
+      child: _buildButton(context),
     );
   }
 
-  Widget _buildButton() {
+  Widget _buildButton(BuildContext context) {
     final Web3ModalTheme theme = Web3ModalTheme.of(context);
 
     if (_state == Web3ModalConnectButtonState.idle) {
       return MaterialButton(
-        onPressed: () => _onConnectPressed(),
-        color: theme.backgroundColor,
+        onPressed: () => _onConnectPressed(context),
+        color: theme.data.primary100,
+        focusColor: theme.data.primary090,
+        hoverColor: theme.data.primary090,
+        highlightColor: theme.data.primary080,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
-            theme.borderRadius,
+            theme.data.borderRadius,
           ),
         ),
         child: Row(
@@ -78,13 +81,17 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
               width: 20,
               height: 20,
               package: 'web3modal_flutter',
+              colorFilter: ColorFilter.mode(
+                theme.data.foreground100,
+                BlendMode.srcIn,
+              ),
             ),
             const SizedBox(width: 8.0),
             Text(
               'Connect Wallet',
               style: TextStyle(
-                color: Colors.white,
-                fontFamily: theme.fontFamily,
+                color: theme.data.foreground100,
+                fontFamily: theme.data.fontFamily,
               ),
             ),
           ],
@@ -93,10 +100,10 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
     } else if (_state == Web3ModalConnectButtonState.connecting) {
       return MaterialButton(
         onPressed: () {},
-        color: Colors.grey,
+        color: theme.data.overlay030,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
-            theme.borderRadius,
+            theme.data.borderRadius,
           ),
         ),
         child: Row(
@@ -104,14 +111,14 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
           mainAxisSize: MainAxisSize.min,
           children: [
             CircularProgressIndicator(
-              color: theme.backgroundColor,
+              color: theme.data.primary100,
             ),
             const SizedBox(width: 8.0),
             Text(
               'Connecting...',
               style: TextStyle(
-                color: Colors.white,
-                fontFamily: theme.fontFamily,
+                color: theme.data.foreground100,
+                fontFamily: theme.data.fontFamily,
               ),
             ),
           ],
@@ -120,10 +127,13 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
     } else if (_state == Web3ModalConnectButtonState.account) {
       return MaterialButton(
         onPressed: _onAccountPressed,
-        color: theme.backgroundColor,
+        color: theme.data.primary100,
+        focusColor: theme.data.primary090,
+        hoverColor: theme.data.primary090,
+        highlightColor: theme.data.primary080,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
-            theme.borderRadius,
+            theme.data.borderRadius,
           ),
         ),
         child: Row(
@@ -136,8 +146,8 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
             Text(
               'Disconnect',
               style: TextStyle(
-                color: Colors.white,
-                fontFamily: theme.fontFamily,
+                color: theme.data.foreground100,
+                fontFamily: theme.data.fontFamily,
               ),
             ),
           ],
@@ -148,7 +158,7 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
     return Container();
   }
 
-  void _onConnectPressed() {
+  void _onConnectPressed(BuildContext context) {
     widget.web3ModalService.open(context: context);
   }
 

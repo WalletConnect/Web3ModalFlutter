@@ -91,9 +91,9 @@ class _Web3ModalState extends State<Web3Modal>
         maxWidth: 400,
       ),
       decoration: BoxDecoration(
-        color: theme.backgroundColor,
+        color: theme.data.primary100,
         borderRadius: BorderRadius.circular(
-          theme.borderRadius,
+          theme.data.borderRadius,
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -115,8 +115,8 @@ class _Web3ModalState extends State<Web3Modal>
                       width: 20,
                       height: 20,
                       package: 'web3modal_flutter',
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
+                      colorFilter: ColorFilter.mode(
+                        theme.data.foreground100,
                         BlendMode.color,
                       ),
                     ),
@@ -124,7 +124,7 @@ class _Web3ModalState extends State<Web3Modal>
                     Text(
                       'WalletConnect',
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Colors.white,
+                            color: theme.data.foreground100,
                           ),
                       textAlign: TextAlign.center,
                     ),
@@ -145,14 +145,14 @@ class _Web3ModalState extends State<Web3Modal>
                           });
                         }
                       },
-                      color: Colors.white,
+                      color: theme.data.foreground100,
                     ),
                     IconButton(
                       icon: const Icon(Icons.close),
                       onPressed: () {
                         widget.service.close();
                       },
-                      color: Colors.white,
+                      color: theme.data.foreground100,
                     ),
                   ],
                 ),
@@ -163,13 +163,13 @@ class _Web3ModalState extends State<Web3Modal>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(
-                  theme.borderRadius * 2,
+                  theme.data.borderRadius * 2,
                 ),
                 topRight: Radius.circular(
-                  theme.borderRadius * 2,
+                  theme.data.borderRadius * 2,
                 ),
               ),
-              color: Colors.black,
+              color: theme.data.background100,
             ),
             padding: const EdgeInsets.only(
               bottom: 20,
@@ -198,10 +198,12 @@ class _Web3ModalState extends State<Web3Modal>
           maxWidth: 400,
           minHeight: 300,
         ),
-        child: const Center(
+        child: Center(
           child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: CircularProgressIndicator(),
+            padding: const EdgeInsets.all(8.0),
+            child: CircularProgressIndicator(
+              color: Web3ModalTheme.of(context).data.primary100,
+            ),
           ),
         ),
       );
@@ -217,7 +219,7 @@ class _Web3ModalState extends State<Web3Modal>
           onBack: _pop,
           actionWidget: IconButton(
             icon: const Icon(Icons.copy_outlined),
-            color: Web3ModalTheme.of(context).backgroundColor,
+            color: Web3ModalTheme.of(context).data.foreground100,
             onPressed: _copyQrCodeToClipboard,
           ),
           child: QRCodePage(
@@ -233,7 +235,7 @@ class _Web3ModalState extends State<Web3Modal>
           ),
           actionWidget: IconButton(
             icon: const Icon(Icons.qr_code_scanner),
-            color: Web3ModalTheme.of(context).backgroundColor,
+            color: Web3ModalTheme.of(context).data.foreground100,
             onPressed: _toQrCode,
           ),
           child: GridList<WalletData>(

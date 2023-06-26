@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
-import 'package:web3modal_flutter/widgets/button_widget.dart';
+import 'package:web3modal_flutter/widgets/web3modal_button.dart';
 
 class SvgImageInfo {
   final String path;
@@ -124,8 +124,8 @@ class _HelpPageState extends State<HelpPage> {
                   child: Text(
                     'Get a Wallet',
                     style: TextStyle(
-                      fontFamily: theme.fontFamily,
-                      color: Colors.white,
+                      fontFamily: theme.data.fontFamily,
+                      color: theme.data.inverse100,
                     ),
                   ),
                 ),
@@ -148,13 +148,13 @@ class _HelpPageState extends State<HelpPage> {
                       Text(
                         'Learn More',
                         style: TextStyle(
-                          fontFamily: theme.fontFamily,
-                          color: Colors.white,
+                          fontFamily: theme.data.fontFamily,
+                          color: theme.data.inverse100,
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.arrow_outward,
-                        color: Colors.white,
+                        color: theme.data.inverse100,
                       ),
                     ],
                   ),
@@ -173,6 +173,8 @@ class _HelpPageState extends State<HelpPage> {
     required List<Widget> images,
     List<double?> imageBorderRadius = const [],
   }) {
+    Web3ModalTheme theme = Web3ModalTheme.of(context);
+
     return Container(
       padding: const EdgeInsets.all(10),
       child: Column(
@@ -185,19 +187,19 @@ class _HelpPageState extends State<HelpPage> {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: theme.data.foreground100,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             description,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
-              color: Colors.grey,
+              color: theme.data.foreground200,
             ),
           ),
         ],

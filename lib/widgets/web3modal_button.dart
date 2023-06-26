@@ -17,9 +17,14 @@ class Web3ModalButton extends StatelessWidget {
 
     return MaterialButton(
       onPressed: onPressed,
-      color: theme.backgroundColor,
+      color: theme.data.primary100,
+      focusColor: theme.data.primary090,
+      hoverColor: theme.data.primary090,
+      highlightColor: theme.data.primary080,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(
+          theme.data.borderRadius,
+        ),
       ),
       child: child,
     );

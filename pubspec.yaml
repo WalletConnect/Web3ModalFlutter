@@ -22,6 +22,7 @@ dependencies:
   logger: ^1.4.0
   http: ^0.13.6
   freezed_annotation: ^2.2.0
+  flex_color_picker: ^3.2.2
   
 
 dev_dependencies:

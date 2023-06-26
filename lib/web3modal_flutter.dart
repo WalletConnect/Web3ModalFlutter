@@ -4,6 +4,9 @@ library web3modal_flutter;
 export 'utils/logger_util.dart';
 export 'utils/namespaces.dart';
 
+// Models
+export 'models/web3modal_theme_data.dart';
+
 // Services
 export 'services/explorer/i_explorer_service.dart';
 export 'services/explorer/explorer_service.dart';

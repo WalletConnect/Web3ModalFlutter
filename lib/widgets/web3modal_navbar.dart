@@ -31,7 +31,7 @@ class Web3ModalNavBar extends StatelessWidget {
                     if (onBack != null)
                       IconButton(
                         icon: const Icon(Icons.arrow_back_ios),
-                        color: Web3ModalTheme.of(context).backgroundColor,
+                        color: Web3ModalTheme.of(context).data.foreground100,
                         onPressed: onBack,
                       ),
                   ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
 
 class GridListItem extends StatelessWidget {
   const GridListItem({
@@ -16,6 +17,8 @@ class GridListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+
     return InkWell(
       onTap: onSelect,
       child: Padding(
@@ -30,9 +33,9 @@ class GridListItem extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.clip,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12.0,
-                color: Colors.white,
+                color: theme.data.foreground100,
               ),
             ),
             const SizedBox(height: 2.0),
@@ -41,9 +44,9 @@ class GridListItem extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.fade,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12.0,
-                color: Colors.grey,
+                color: theme.data.foreground300,
               ),
             ),
           ],
