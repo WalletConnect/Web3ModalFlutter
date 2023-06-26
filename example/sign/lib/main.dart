@@ -45,22 +45,25 @@ class _MyAppState extends State<MyApp> {
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             title: const Text('Web3Modal Sign Example'),
           ),
-          body: Stack(
-            children: [
-              const MyHomePage(),
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: Row(
-                  children: [
-                    _buildIconButton(
-                      Icons.theater_comedy_outlined,
-                      _swapTheme,
-                    ),
-                  ],
+          body: SizedBox(
+            width: double.infinity,
+            child: Stack(
+              children: [
+                const MyHomePage(),
+                Positioned(
+                  bottom: 20,
+                  right: 20,
+                  child: Row(
+                    children: [
+                      _buildIconButton(
+                        Icons.theater_comedy_outlined,
+                        _swapTheme,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

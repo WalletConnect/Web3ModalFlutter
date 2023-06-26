@@ -70,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: const EdgeInsets.all(10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           // Web3Modal(service: _service),
           Web3ModalConnect(
