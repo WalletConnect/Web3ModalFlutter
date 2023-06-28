@@ -921,10 +921,10 @@ packages:
     dependency: "direct main"
     description:
       name: walletconnect_flutter_v2
-      sha256: b43b8b351e3eed9d24ba24f34fea8c8a12c92b90dd3ef27657ce3669098a9fff
+      sha256: "388cabf877b30a6f8daa69345ed34c4a2b70a8c18f303de77270a08d8d9d7ecb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.11"
+    version: "2.0.12"
   watcher:
     dependency: transitive
     description:
