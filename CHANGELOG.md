@@ -1,3 +1,10 @@
+## 1.2.1
+
+- Updated `Web3ModalTheme` to include multiple radius's
+- Added `buttonRadius` override to `Web3ModalButton`
+- Multiple bug fixes for URL launching and installation detection
+- Readme updated to include how to setup Android 11+ deep linking
+
 ## 1.2.0
 
 - Updated `Web3ModalService` to require initialization and accept multiple kinds of inputs
