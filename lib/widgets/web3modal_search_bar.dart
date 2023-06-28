@@ -20,7 +20,7 @@ class Web3ModalSearchBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.data.overlay005,
         borderRadius: BorderRadius.circular(
-          theme.data.borderRadius * 3,
+          theme.data.radiusXS,
         ),
         border: Border.all(
           color: theme.data.overlay005,

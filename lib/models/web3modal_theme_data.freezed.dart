@@ -40,7 +40,14 @@ mixin _$Web3ModalThemeData {
   Color get error => throw _privateConstructorUsedError;
   Color get success => throw _privateConstructorUsedError;
   String get fontFamily => throw _privateConstructorUsedError;
-  double get borderRadius => throw _privateConstructorUsedError;
+  double get radius4XS => throw _privateConstructorUsedError;
+  double get radius3XS => throw _privateConstructorUsedError;
+  double get radius2XS => throw _privateConstructorUsedError;
+  double get radiusXS => throw _privateConstructorUsedError;
+  double get radiusS => throw _privateConstructorUsedError;
+  double get radiusM => throw _privateConstructorUsedError;
+  double get radiusL => throw _privateConstructorUsedError;
+  double get radius3XL => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $Web3ModalThemeDataCopyWith<Web3ModalThemeData> get copyWith =>
@@ -74,7 +81,14 @@ abstract class $Web3ModalThemeDataCopyWith<$Res> {
       Color error,
       Color success,
       String fontFamily,
-      double borderRadius});
+      double radius4XS,
+      double radius3XS,
+      double radius2XS,
+      double radiusXS,
+      double radiusS,
+      double radiusM,
+      double radiusL,
+      double radius3XL});
 }
 
 /// @nodoc
@@ -110,7 +124,14 @@ class _$Web3ModalThemeDataCopyWithImpl<$Res, $Val extends Web3ModalThemeData>
     Object? error = null,
     Object? success = null,
     Object? fontFamily = null,
-    Object? borderRadius = null,
+    Object? radius4XS = null,
+    Object? radius3XS = null,
+    Object? radius2XS = null,
+    Object? radiusXS = null,
+    Object? radiusS = null,
+    Object? radiusM = null,
+    Object? radiusL = null,
+    Object? radius3XL = null,
   }) {
     return _then(_value.copyWith(
       primary100: null == primary100
@@ -193,9 +214,37 @@ class _$Web3ModalThemeDataCopyWithImpl<$Res, $Val extends Web3ModalThemeData>
           ? _value.fontFamily
           : fontFamily // ignore: cast_nullable_to_non_nullable
               as String,
-      borderRadius: null == borderRadius
-          ? _value.borderRadius
-          : borderRadius // ignore: cast_nullable_to_non_nullable
+      radius4XS: null == radius4XS
+          ? _value.radius4XS
+          : radius4XS // ignore: cast_nullable_to_non_nullable
+              as double,
+      radius3XS: null == radius3XS
+          ? _value.radius3XS
+          : radius3XS // ignore: cast_nullable_to_non_nullable
+              as double,
+      radius2XS: null == radius2XS
+          ? _value.radius2XS
+          : radius2XS // ignore: cast_nullable_to_non_nullable
+              as double,
+      radiusXS: null == radiusXS
+          ? _value.radiusXS
+          : radiusXS // ignore: cast_nullable_to_non_nullable
+              as double,
+      radiusS: null == radiusS
+          ? _value.radiusS
+          : radiusS // ignore: cast_nullable_to_non_nullable
+              as double,
+      radiusM: null == radiusM
+          ? _value.radiusM
+          : radiusM // ignore: cast_nullable_to_non_nullable
+              as double,
+      radiusL: null == radiusL
+          ? _value.radiusL
+          : radiusL // ignore: cast_nullable_to_non_nullable
+              as double,
+      radius3XL: null == radius3XL
+          ? _value.radius3XL
+          : radius3XL // ignore: cast_nullable_to_non_nullable
               as double,
     ) as $Val);
   }
@@ -230,7 +279,14 @@ abstract class _$$_Web3ModalThemeDataCopyWith<$Res>
       Color error,
       Color success,
       String fontFamily,
-      double borderRadius});
+      double radius4XS,
+      double radius3XS,
+      double radius2XS,
+      double radiusXS,
+      double radiusS,
+      double radiusM,
+      double radiusL,
+      double radius3XL});
 }
 
 /// @nodoc
@@ -264,7 +320,14 @@ class __$$_Web3ModalThemeDataCopyWithImpl<$Res>
     Object? error = null,
     Object? success = null,
     Object? fontFamily = null,
-    Object? borderRadius = null,
+    Object? radius4XS = null,
+    Object? radius3XS = null,
+    Object? radius2XS = null,
+    Object? radiusXS = null,
+    Object? radiusS = null,
+    Object? radiusM = null,
+    Object? radiusL = null,
+    Object? radius3XL = null,
   }) {
     return _then(_$_Web3ModalThemeData(
       primary100: null == primary100
@@ -347,9 +410,37 @@ class __$$_Web3ModalThemeDataCopyWithImpl<$Res>
           ? _value.fontFamily
           : fontFamily // ignore: cast_nullable_to_non_nullable
               as String,
-      borderRadius: null == borderRadius
-          ? _value.borderRadius
-          : borderRadius // ignore: cast_nullable_to_non_nullable
+      radius4XS: null == radius4XS
+          ? _value.radius4XS
+          : radius4XS // ignore: cast_nullable_to_non_nullable
+              as double,
+      radius3XS: null == radius3XS
+          ? _value.radius3XS
+          : radius3XS // ignore: cast_nullable_to_non_nullable
+              as double,
+      radius2XS: null == radius2XS
+          ? _value.radius2XS
+          : radius2XS // ignore: cast_nullable_to_non_nullable
+              as double,
+      radiusXS: null == radiusXS
+          ? _value.radiusXS
+          : radiusXS // ignore: cast_nullable_to_non_nullable
+              as double,
+      radiusS: null == radiusS
+          ? _value.radiusS
+          : radiusS // ignore: cast_nullable_to_non_nullable
+              as double,
+      radiusM: null == radiusM
+          ? _value.radiusM
+          : radiusM // ignore: cast_nullable_to_non_nullable
+              as double,
+      radiusL: null == radiusL
+          ? _value.radiusL
+          : radiusL // ignore: cast_nullable_to_non_nullable
+              as double,
+      radius3XL: null == radius3XL
+          ? _value.radius3XL
+          : radius3XL // ignore: cast_nullable_to_non_nullable
               as double,
     ));
   }
@@ -379,7 +470,14 @@ class _$_Web3ModalThemeData implements _Web3ModalThemeData {
       required this.error,
       required this.success,
       required this.fontFamily,
-      required this.borderRadius});
+      required this.radius4XS,
+      required this.radius3XS,
+      required this.radius2XS,
+      required this.radiusXS,
+      required this.radiusS,
+      required this.radiusM,
+      required this.radiusL,
+      required this.radius3XL});
 
 // required Color backgroundColor,
 // required Color accentColor,
@@ -426,11 +524,25 @@ class _$_Web3ModalThemeData implements _Web3ModalThemeData {
   @override
   final String fontFamily;
   @override
-  final double borderRadius;
+  final double radius4XS;
+  @override
+  final double radius3XS;
+  @override
+  final double radius2XS;
+  @override
+  final double radiusXS;
+  @override
+  final double radiusS;
+  @override
+  final double radiusM;
+  @override
+  final double radiusL;
+  @override
+  final double radius3XL;
 
   @override
   String toString() {
-    return 'Web3ModalThemeData(primary100: $primary100, primary090: $primary090, primary080: $primary080, overlay002: $overlay002, overlay005: $overlay005, overlay010: $overlay010, overlay020: $overlay020, overlay030: $overlay030, foreground100: $foreground100, foreground200: $foreground200, foreground275: $foreground275, foreground300: $foreground300, background100: $background100, background200: $background200, background300: $background300, inverse000: $inverse000, inverse100: $inverse100, error: $error, success: $success, fontFamily: $fontFamily, borderRadius: $borderRadius)';
+    return 'Web3ModalThemeData(primary100: $primary100, primary090: $primary090, primary080: $primary080, overlay002: $overlay002, overlay005: $overlay005, overlay010: $overlay010, overlay020: $overlay020, overlay030: $overlay030, foreground100: $foreground100, foreground200: $foreground200, foreground275: $foreground275, foreground300: $foreground300, background100: $background100, background200: $background200, background300: $background300, inverse000: $inverse000, inverse100: $inverse100, error: $error, success: $success, fontFamily: $fontFamily, radius4XS: $radius4XS, radius3XS: $radius3XS, radius2XS: $radius2XS, radiusXS: $radiusXS, radiusS: $radiusS, radiusM: $radiusM, radiusL: $radiusL, radius3XL: $radius3XL)';
   }
 
   @override
@@ -476,8 +588,19 @@ class _$_Web3ModalThemeData implements _Web3ModalThemeData {
             (identical(other.success, success) || other.success == success) &&
             (identical(other.fontFamily, fontFamily) ||
                 other.fontFamily == fontFamily) &&
-            (identical(other.borderRadius, borderRadius) ||
-                other.borderRadius == borderRadius));
+            (identical(other.radius4XS, radius4XS) ||
+                other.radius4XS == radius4XS) &&
+            (identical(other.radius3XS, radius3XS) ||
+                other.radius3XS == radius3XS) &&
+            (identical(other.radius2XS, radius2XS) ||
+                other.radius2XS == radius2XS) &&
+            (identical(other.radiusXS, radiusXS) ||
+                other.radiusXS == radiusXS) &&
+            (identical(other.radiusS, radiusS) || other.radiusS == radiusS) &&
+            (identical(other.radiusM, radiusM) || other.radiusM == radiusM) &&
+            (identical(other.radiusL, radiusL) || other.radiusL == radiusL) &&
+            (identical(other.radius3XL, radius3XL) ||
+                other.radius3XL == radius3XL));
   }
 
   @override
@@ -503,7 +626,14 @@ class _$_Web3ModalThemeData implements _Web3ModalThemeData {
         error,
         success,
         fontFamily,
-        borderRadius
+        radius4XS,
+        radius3XS,
+        radius2XS,
+        radiusXS,
+        radiusS,
+        radiusM,
+        radiusL,
+        radius3XL
       ]);
 
   @JsonKey(ignore: true)
@@ -536,7 +666,14 @@ abstract class _Web3ModalThemeData implements Web3ModalThemeData {
       required final Color error,
       required final Color success,
       required final String fontFamily,
-      required final double borderRadius}) = _$_Web3ModalThemeData;
+      required final double radius4XS,
+      required final double radius3XS,
+      required final double radius2XS,
+      required final double radiusXS,
+      required final double radiusS,
+      required final double radiusM,
+      required final double radiusL,
+      required final double radius3XL}) = _$_Web3ModalThemeData;
 
   @override // required Color backgroundColor,
 // required Color accentColor,
@@ -580,7 +717,21 @@ abstract class _Web3ModalThemeData implements Web3ModalThemeData {
   @override
   String get fontFamily;
   @override
-  double get borderRadius;
+  double get radius4XS;
+  @override
+  double get radius3XS;
+  @override
+  double get radius2XS;
+  @override
+  double get radiusXS;
+  @override
+  double get radiusS;
+  @override
+  double get radiusM;
+  @override
+  double get radiusL;
+  @override
+  double get radius3XL;
   @override
   @JsonKey(ignore: true)
   _$$_Web3ModalThemeDataCopyWith<_$_Web3ModalThemeData> get copyWith =>

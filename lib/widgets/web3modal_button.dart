@@ -23,7 +23,7 @@ class Web3ModalButton extends StatelessWidget {
       highlightColor: theme.data.primary080,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(
-          theme.data.borderRadius,
+          theme.data.radius4XS,
         ),
       ),
       child: child,

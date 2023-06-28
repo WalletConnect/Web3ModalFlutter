@@ -25,7 +25,7 @@ class Util {
   }
 
   static bool isMobileWidth(BuildContext context) {
-    return MediaQuery.of(context).size.width <= 400.0;
+    return MediaQuery.of(context).size.width <= 500.0;
   }
 
   /// Detects if the given app (Represented by the URI) is installed.
@@ -64,15 +64,15 @@ class Util {
     Uri? nativeUri,
     Uri? universalUri,
   }) async {
-    LoggerUtil.logger.v(
+    LoggerUtil.logger.i(
       'Navigating deep links. Native: ${nativeUri.toString()}, Universal: ${universalUri.toString()}',
     );
-    LoggerUtil.logger.v(
+    LoggerUtil.logger.i(
       'Deep Link Query Params. Native: ${nativeUri?.queryParameters}, Universal: ${universalUri?.queryParameters}',
     );
 
     // Launch the link
-    if (nativeUri != null) {
+    if (nativeUri != null && await canLaunchUrl(nativeUri)) {
       LoggerUtil.logger.v(
         'Navigating deep links. Launching native URI.',
       );
@@ -83,17 +83,23 @@ class Util {
           'Navigating deep links. Launching native failed, launching universal URI.',
         );
         // Fallback to universal link
-        if (universalUri != null) {
-          await launchUrl(universalUri);
+        if (universalUri != null && await canLaunchUrl(universalUri)) {
+          await launchUrl(
+            universalUri,
+            mode: LaunchMode.externalApplication,
+          );
         } else {
           throw LaunchUrlException('Unable to open the wallet');
         }
       }
-    } else if (universalUri != null) {
+    } else if (universalUri != null && await canLaunchUrl(universalUri)) {
       LoggerUtil.logger.i(
         'Navigating deep links. Launching universal URI.',
       );
-      await launchUrl(universalUri);
+      await launchUrl(
+        universalUri,
+        mode: LaunchMode.externalApplication,
+      );
     } else {
       throw LaunchUrlException('Unable to open the wallet');
     }

@@ -14,9 +14,11 @@ class Web3ModalConnect extends StatefulWidget {
   const Web3ModalConnect({
     super.key,
     required this.web3ModalService,
+    this.buttonRadius,
   });
 
   final IWeb3ModalService web3ModalService;
+  final double? buttonRadius;
 
   @override
   State<Web3ModalConnect> createState() => _Web3ModalConnectState();
@@ -69,7 +71,7 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
         highlightColor: theme.data.primary080,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
-            theme.data.borderRadius,
+            widget.buttonRadius ?? theme.data.radius4XS,
           ),
         ),
         child: Row(
@@ -103,7 +105,7 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
         color: theme.data.overlay030,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
-            theme.data.borderRadius,
+            widget.buttonRadius ?? theme.data.radius4XS,
           ),
         ),
         child: Row(
@@ -133,7 +135,7 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
         highlightColor: theme.data.primary080,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
-            theme.data.borderRadius,
+            widget.buttonRadius ?? theme.data.radius4XS,
           ),
         ),
         child: Row(

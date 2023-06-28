@@ -18,7 +18,7 @@ class QRCodePage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(
-          Web3ModalTheme.of(context).data.borderRadius * 3,
+          Web3ModalTheme.of(context).data.radiusXS,
         ),
       ),
       child: Center(

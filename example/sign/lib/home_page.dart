@@ -75,6 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // Web3Modal(service: _service),
           Web3ModalConnect(
             web3ModalService: _service,
+            buttonRadius: 20,
           ),
           Text(
             'Address: $_address',

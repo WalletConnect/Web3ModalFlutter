@@ -71,7 +71,27 @@ For each app you would like to be able to deep link to, you must add that app's 
 
 ## Android Setup
 
-I have not yet tested this on Android, but I believe it should work without any additional setup.
+On android 11+ you must specify the different schemes you would like to be able to deep link to in the `android/app/src/main/AndroidManifest.xml` file like so:
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="metamask" />
+        </intent>
+    </queries>
+    ...
+</manifest>
+```
+
+For some reason, multiple wallets have the `metamask` intent, and will launch metamask as a result.  
+This is a bug in the wallets, not this package.  
 
 ## Detailed Usage
 

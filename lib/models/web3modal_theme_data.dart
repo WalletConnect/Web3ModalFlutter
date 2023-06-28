@@ -6,8 +6,6 @@ part 'web3modal_theme_data.freezed.dart';
 @freezed
 class Web3ModalThemeData with _$Web3ModalThemeData {
   const factory Web3ModalThemeData({
-    // required Color backgroundColor,
-    // required Color accentColor,
     required Color primary100,
     required Color primary090,
     required Color primary080,
@@ -30,7 +28,14 @@ class Web3ModalThemeData with _$Web3ModalThemeData {
     required Color error,
     required Color success,
     required String fontFamily,
-    required double borderRadius,
+    required double radius4XS,
+    required double radius3XS,
+    required double radius2XS,
+    required double radiusXS,
+    required double radiusS,
+    required double radiusM,
+    required double radiusL,
+    required double radius3XL,
   }) = _Web3ModalThemeData;
 
   static const darkMode = Web3ModalThemeData(
@@ -54,7 +59,14 @@ class Web3ModalThemeData with _$Web3ModalThemeData {
     error: Color(0xFFF25A67),
     success: Color(0xFF26D962),
     fontFamily: 'roboto',
-    borderRadius: 10.0,
+    radius4XS: 6.0,
+    radius3XS: 8.0,
+    radius2XS: 12.0,
+    radiusXS: 16.0,
+    radiusS: 20.0,
+    radiusM: 28.0,
+    radiusL: 36.0,
+    radius3XL: 80.0,
   );
 
   static const lightMode = Web3ModalThemeData(
@@ -78,6 +90,13 @@ class Web3ModalThemeData with _$Web3ModalThemeData {
     error: Color(0xFFF05142),
     success: Color(0xFF26B562),
     fontFamily: 'roboto',
-    borderRadius: 10.0,
+    radius4XS: 6.0,
+    radius3XS: 8.0,
+    radius2XS: 12.0,
+    radiusXS: 16.0,
+    radiusS: 20.0,
+    radiusM: 28.0,
+    radiusL: 36.0,
+    radius3XL: 80.0,
   );
 }

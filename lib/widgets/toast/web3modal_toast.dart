@@ -64,7 +64,7 @@ class _Web3ModalToastState extends State<Web3ModalToast>
                   ? theme.data.background200
                   : theme.data.error,
               borderRadius: BorderRadius.circular(
-                theme.data.borderRadius,
+                theme.data.radius3XS,
               ),
             ),
             child: Padding(

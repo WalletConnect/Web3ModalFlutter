@@ -70,12 +70,6 @@ class _Web3ModalState extends State<Web3Modal>
   }
 
   Future<void> initialize() async {
-    // Fetch the wallets
-
-    // await widget.service.explorerService.getListings(
-    //   referer: widget.service.getReferer(),
-    // );
-
     setState(() {
       _initialized = true;
     });
@@ -85,16 +79,27 @@ class _Web3ModalState extends State<Web3Modal>
   Widget build(BuildContext context) {
     final Web3ModalTheme theme = Web3ModalTheme.of(context);
 
+    final BorderRadius containerBorderRadius = Util.isMobileWidth(context)
+        ? BorderRadius.only(
+            topLeft: Radius.circular(
+              theme.data.radius3XS,
+            ),
+            topRight: Radius.circular(
+              theme.data.radius3XS,
+            ),
+          )
+        : BorderRadius.circular(
+            theme.data.radius3XS,
+          );
+
     return Container(
-      constraints: const BoxConstraints(
-        minWidth: 200,
-        maxWidth: 400,
-      ),
+      // constraints: const BoxConstraints(
+      //   minWidth: 200,
+      //   maxWidth: 400,
+      // ),
       decoration: BoxDecoration(
         color: theme.data.primary100,
-        borderRadius: BorderRadius.circular(
-          theme.data.borderRadius,
-        ),
+        borderRadius: containerBorderRadius,
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -117,7 +122,7 @@ class _Web3ModalState extends State<Web3Modal>
                       package: 'web3modal_flutter',
                       colorFilter: ColorFilter.mode(
                         theme.data.foreground100,
-                        BlendMode.color,
+                        BlendMode.srcIn,
                       ),
                     ),
                     const SizedBox(width: 2),
@@ -163,10 +168,10 @@ class _Web3ModalState extends State<Web3Modal>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(
-                  theme.data.borderRadius * 2,
+                  theme.data.radius2XS,
                 ),
                 topRight: Radius.circular(
-                  theme.data.borderRadius * 2,
+                  theme.data.radius2XS,
                 ),
               ),
               color: theme.data.background100,
@@ -335,7 +340,7 @@ class _Web3ModalState extends State<Web3Modal>
       'Selected ${item.listing.name}. Installed: ${item.installed} Item info: $item.',
     );
     try {
-      Util.navigateDeepLink(
+      await Util.navigateDeepLink(
         nativeLink: item.listing.mobile.native,
         universalLink: item.listing.mobile.universal,
         wcURI: widget.service.wcUri!,
