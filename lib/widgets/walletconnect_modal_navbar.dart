@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_theme.dart';
 
-class Web3ModalNavBar extends StatelessWidget {
-  const Web3ModalNavBar({
+class WalletConnectModalNavBar extends StatelessWidget {
+  const WalletConnectModalNavBar({
     Key? key,
     required this.title,
     this.onBack,
@@ -31,7 +31,9 @@ class Web3ModalNavBar extends StatelessWidget {
                     if (onBack != null)
                       IconButton(
                         icon: const Icon(Icons.arrow_back_ios),
-                        color: Web3ModalTheme.of(context).data.foreground100,
+                        color: WalletConnectModalTheme.of(context)
+                            .data
+                            .foreground100,
                         onPressed: onBack,
                       ),
                   ],

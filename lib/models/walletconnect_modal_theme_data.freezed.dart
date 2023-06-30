@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'web3modal_theme_data.dart';
+part of 'walletconnect_modal_theme_data.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,9 +15,7 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$Web3ModalThemeData {
-// required Color backgroundColor,
-// required Color accentColor,
+mixin _$WalletConnectModalThemeData {
   Color get primary100 => throw _privateConstructorUsedError;
   Color get primary090 => throw _privateConstructorUsedError;
   Color get primary080 => throw _privateConstructorUsedError;
@@ -50,15 +48,17 @@ mixin _$Web3ModalThemeData {
   double get radius3XL => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $Web3ModalThemeDataCopyWith<Web3ModalThemeData> get copyWith =>
-      throw _privateConstructorUsedError;
+  $WalletConnectModalThemeDataCopyWith<WalletConnectModalThemeData>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $Web3ModalThemeDataCopyWith<$Res> {
-  factory $Web3ModalThemeDataCopyWith(
-          Web3ModalThemeData value, $Res Function(Web3ModalThemeData) then) =
-      _$Web3ModalThemeDataCopyWithImpl<$Res, Web3ModalThemeData>;
+abstract class $WalletConnectModalThemeDataCopyWith<$Res> {
+  factory $WalletConnectModalThemeDataCopyWith(
+          WalletConnectModalThemeData value,
+          $Res Function(WalletConnectModalThemeData) then) =
+      _$WalletConnectModalThemeDataCopyWithImpl<$Res,
+          WalletConnectModalThemeData>;
   @useResult
   $Res call(
       {Color primary100,
@@ -92,9 +92,10 @@ abstract class $Web3ModalThemeDataCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$Web3ModalThemeDataCopyWithImpl<$Res, $Val extends Web3ModalThemeData>
-    implements $Web3ModalThemeDataCopyWith<$Res> {
-  _$Web3ModalThemeDataCopyWithImpl(this._value, this._then);
+class _$WalletConnectModalThemeDataCopyWithImpl<$Res,
+        $Val extends WalletConnectModalThemeData>
+    implements $WalletConnectModalThemeDataCopyWith<$Res> {
+  _$WalletConnectModalThemeDataCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -251,11 +252,12 @@ class _$Web3ModalThemeDataCopyWithImpl<$Res, $Val extends Web3ModalThemeData>
 }
 
 /// @nodoc
-abstract class _$$_Web3ModalThemeDataCopyWith<$Res>
-    implements $Web3ModalThemeDataCopyWith<$Res> {
-  factory _$$_Web3ModalThemeDataCopyWith(_$_Web3ModalThemeData value,
-          $Res Function(_$_Web3ModalThemeData) then) =
-      __$$_Web3ModalThemeDataCopyWithImpl<$Res>;
+abstract class _$$_WalletConnectModalThemeDataCopyWith<$Res>
+    implements $WalletConnectModalThemeDataCopyWith<$Res> {
+  factory _$$_WalletConnectModalThemeDataCopyWith(
+          _$_WalletConnectModalThemeData value,
+          $Res Function(_$_WalletConnectModalThemeData) then) =
+      __$$_WalletConnectModalThemeDataCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -290,11 +292,13 @@ abstract class _$$_Web3ModalThemeDataCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_Web3ModalThemeDataCopyWithImpl<$Res>
-    extends _$Web3ModalThemeDataCopyWithImpl<$Res, _$_Web3ModalThemeData>
-    implements _$$_Web3ModalThemeDataCopyWith<$Res> {
-  __$$_Web3ModalThemeDataCopyWithImpl(
-      _$_Web3ModalThemeData _value, $Res Function(_$_Web3ModalThemeData) _then)
+class __$$_WalletConnectModalThemeDataCopyWithImpl<$Res>
+    extends _$WalletConnectModalThemeDataCopyWithImpl<$Res,
+        _$_WalletConnectModalThemeData>
+    implements _$$_WalletConnectModalThemeDataCopyWith<$Res> {
+  __$$_WalletConnectModalThemeDataCopyWithImpl(
+      _$_WalletConnectModalThemeData _value,
+      $Res Function(_$_WalletConnectModalThemeData) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -329,7 +333,7 @@ class __$$_Web3ModalThemeDataCopyWithImpl<$Res>
     Object? radiusL = null,
     Object? radius3XL = null,
   }) {
-    return _then(_$_Web3ModalThemeData(
+    return _then(_$_WalletConnectModalThemeData(
       primary100: null == primary100
           ? _value.primary100
           : primary100 // ignore: cast_nullable_to_non_nullable
@@ -448,8 +452,8 @@ class __$$_Web3ModalThemeDataCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Web3ModalThemeData implements _Web3ModalThemeData {
-  const _$_Web3ModalThemeData(
+class _$_WalletConnectModalThemeData implements _WalletConnectModalThemeData {
+  const _$_WalletConnectModalThemeData(
       {required this.primary100,
       required this.primary090,
       required this.primary080,
@@ -479,8 +483,6 @@ class _$_Web3ModalThemeData implements _Web3ModalThemeData {
       required this.radiusL,
       required this.radius3XL});
 
-// required Color backgroundColor,
-// required Color accentColor,
   @override
   final Color primary100;
   @override
@@ -542,14 +544,14 @@ class _$_Web3ModalThemeData implements _Web3ModalThemeData {
 
   @override
   String toString() {
-    return 'Web3ModalThemeData(primary100: $primary100, primary090: $primary090, primary080: $primary080, overlay002: $overlay002, overlay005: $overlay005, overlay010: $overlay010, overlay020: $overlay020, overlay030: $overlay030, foreground100: $foreground100, foreground200: $foreground200, foreground275: $foreground275, foreground300: $foreground300, background100: $background100, background200: $background200, background300: $background300, inverse000: $inverse000, inverse100: $inverse100, error: $error, success: $success, fontFamily: $fontFamily, radius4XS: $radius4XS, radius3XS: $radius3XS, radius2XS: $radius2XS, radiusXS: $radiusXS, radiusS: $radiusS, radiusM: $radiusM, radiusL: $radiusL, radius3XL: $radius3XL)';
+    return 'WalletConnectModalThemeData(primary100: $primary100, primary090: $primary090, primary080: $primary080, overlay002: $overlay002, overlay005: $overlay005, overlay010: $overlay010, overlay020: $overlay020, overlay030: $overlay030, foreground100: $foreground100, foreground200: $foreground200, foreground275: $foreground275, foreground300: $foreground300, background100: $background100, background200: $background200, background300: $background300, inverse000: $inverse000, inverse100: $inverse100, error: $error, success: $success, fontFamily: $fontFamily, radius4XS: $radius4XS, radius3XS: $radius3XS, radius2XS: $radius2XS, radiusXS: $radiusXS, radiusS: $radiusS, radiusM: $radiusM, radiusL: $radiusL, radius3XL: $radius3XL)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Web3ModalThemeData &&
+            other is _$_WalletConnectModalThemeData &&
             (identical(other.primary100, primary100) ||
                 other.primary100 == primary100) &&
             (identical(other.primary090, primary090) ||
@@ -639,13 +641,14 @@ class _$_Web3ModalThemeData implements _Web3ModalThemeData {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_Web3ModalThemeDataCopyWith<_$_Web3ModalThemeData> get copyWith =>
-      __$$_Web3ModalThemeDataCopyWithImpl<_$_Web3ModalThemeData>(
-          this, _$identity);
+  _$$_WalletConnectModalThemeDataCopyWith<_$_WalletConnectModalThemeData>
+      get copyWith => __$$_WalletConnectModalThemeDataCopyWithImpl<
+          _$_WalletConnectModalThemeData>(this, _$identity);
 }
 
-abstract class _Web3ModalThemeData implements Web3ModalThemeData {
-  const factory _Web3ModalThemeData(
+abstract class _WalletConnectModalThemeData
+    implements WalletConnectModalThemeData {
+  const factory _WalletConnectModalThemeData(
       {required final Color primary100,
       required final Color primary090,
       required final Color primary080,
@@ -673,10 +676,9 @@ abstract class _Web3ModalThemeData implements Web3ModalThemeData {
       required final double radiusS,
       required final double radiusM,
       required final double radiusL,
-      required final double radius3XL}) = _$_Web3ModalThemeData;
+      required final double radius3XL}) = _$_WalletConnectModalThemeData;
 
-  @override // required Color backgroundColor,
-// required Color accentColor,
+  @override
   Color get primary100;
   @override
   Color get primary090;
@@ -734,6 +736,6 @@ abstract class _Web3ModalThemeData implements Web3ModalThemeData {
   double get radius3XL;
   @override
   @JsonKey(ignore: true)
-  _$$_Web3ModalThemeDataCopyWith<_$_Web3ModalThemeData> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$_WalletConnectModalThemeDataCopyWith<_$_WalletConnectModalThemeData>
+      get copyWith => throw _privateConstructorUsedError;
 }

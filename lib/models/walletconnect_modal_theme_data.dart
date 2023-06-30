@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'web3modal_theme_data.freezed.dart';
+part 'walletconnect_modal_theme_data.freezed.dart';
 
 @freezed
-class Web3ModalThemeData with _$Web3ModalThemeData {
-  const factory Web3ModalThemeData({
+class WalletConnectModalThemeData with _$WalletConnectModalThemeData {
+  const factory WalletConnectModalThemeData({
     required Color primary100,
     required Color primary090,
     required Color primary080,
@@ -36,9 +36,9 @@ class Web3ModalThemeData with _$Web3ModalThemeData {
     required double radiusM,
     required double radiusL,
     required double radius3XL,
-  }) = _Web3ModalThemeData;
+  }) = _WalletConnectModalThemeData;
 
-  static const darkMode = Web3ModalThemeData(
+  static const darkMode = WalletConnectModalThemeData(
     primary100: Color(0xFF47A1FF),
     primary090: Color(0xFF59AAFF),
     primary080: Color(0xFF6CB4FF),
@@ -69,7 +69,7 @@ class Web3ModalThemeData with _$Web3ModalThemeData {
     radius3XL: 80.0,
   );
 
-  static const lightMode = Web3ModalThemeData(
+  static const lightMode = WalletConnectModalThemeData(
     primary100: Color(0xFF3396FF),
     primary090: Color(0xFF2D7DD2),
     primary080: Color(0xFF2978CC),

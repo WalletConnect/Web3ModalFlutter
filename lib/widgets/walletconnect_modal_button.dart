@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_theme.dart';
 
-class Web3ModalButton extends StatelessWidget {
+class WalletConnectModalButton extends StatelessWidget {
   final Widget child;
   final void Function() onPressed;
 
-  const Web3ModalButton({
+  const WalletConnectModalButton({
     Key? key,
     required this.onPressed,
     required this.child,
@@ -13,7 +13,7 @@ class Web3ModalButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+    final WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
     return MaterialButton(
       onPressed: onPressed,

@@ -7,9 +7,11 @@ import 'dart:convert';
 
 import 'package:web3modal_flutter/models/listings.dart';
 import 'package:web3modal_flutter/services/explorer/i_explorer_service.dart';
-import 'package:web3modal_flutter/utils/core_util.dart';
+import 'package:web3modal_flutter/services/utils/core/core_utils_singleton.dart';
+import 'package:web3modal_flutter/services/utils/platform/i_platform_utils.dart';
+import 'package:web3modal_flutter/services/utils/platform/platform_utils_singleton.dart';
+import 'package:web3modal_flutter/services/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/logger_util.dart';
-import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 
 class ExplorerService implements IExplorerService {
@@ -37,13 +39,16 @@ class ExplorerService implements IExplorerService {
   @override
   ValueNotifier<bool> initialized = ValueNotifier(false);
 
+  final http.Client client;
+
   ExplorerService({
     required this.projectId,
     this.explorerUriRoot = 'https://explorer-api.walletconnect.com',
     this.recommendedWalletIds,
     this.excludedWalletState = ExcludedWalletState.list,
     this.excludedWalletIds,
-  });
+    http.Client? client,
+  }) : client = client ?? http.Client();
 
   @override
   Future<void> init({
@@ -55,7 +60,7 @@ class ExplorerService implements IExplorerService {
     }
 
     String? platform;
-    switch (Util.getPlatformType()) {
+    switch (platformUtils.instance.getPlatformType()) {
       case PlatformType.desktop:
         platform = 'Desktop';
         break;
@@ -81,6 +86,7 @@ class ExplorerService implements IExplorerService {
       referer: referer,
       params: params,
     );
+    print(_listings);
 
     if (excludedWalletState == ExcludedWalletState.list) {
       // If we are excluding all wallets, take out the excluded listings, if they exist
@@ -107,14 +113,10 @@ class ExplorerService implements IExplorerService {
       return;
     }
     _walletList.clear();
-
-    Map<String, int> itemCounts = {};
-    for (var i in _listings) {
-      itemCounts[i.name] = (itemCounts[i.name] ?? 0) + 1;
-    }
+    print(_listings);
 
     for (Listing item in _listings) {
-      bool installed = await Util.isInstalled(item.mobile.native);
+      bool installed = await urlUtils.instance.isInstalled(item.mobile.native);
       _walletList.add(
         GridListItemModel<WalletData>(
           title: item.name,
@@ -165,9 +167,9 @@ class ExplorerService implements IExplorerService {
 
   @override
   void filterList({
-    required String query,
+    String? query,
   }) {
-    if (query.isEmpty) {
+    if (query == null || query.isEmpty) {
       itemList.value = _walletList;
       return;
     }
@@ -217,7 +219,7 @@ class ExplorerService implements IExplorerService {
   }) async {
     LoggerUtil.logger.i('Fetching wallet listings. Endpoint: $endpoint');
     final Map<String, String> headers = {
-      'user-agent': CoreUtil.getUserAgent(),
+      'user-agent': coreUtils.instance.getUserAgent(),
       'referer': referer,
     };
     LoggerUtil.logger.i('Fetching wallet listings. Headers: $headers');
@@ -226,7 +228,7 @@ class ExplorerService implements IExplorerService {
       'projectId': projectId,
       ...params == null ? {} : params.toJson(),
     };
-    final http.Response response = await http.get(
+    final http.Response response = await client.get(
       uri.replace(
         queryParameters: queryParameters,
       ),

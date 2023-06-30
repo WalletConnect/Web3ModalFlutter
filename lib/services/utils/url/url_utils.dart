@@ -1,44 +1,46 @@
-import 'package:flutter/material.dart';
-import 'package:universal_io/io.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web3modal_flutter/models/launch_url_exception.dart';
-import 'package:web3modal_flutter/utils/core_util.dart';
+import 'package:web3modal_flutter/services/utils/core/core_utils_singleton.dart';
+import 'package:web3modal_flutter/services/utils/platform/i_platform_utils.dart';
+import 'package:web3modal_flutter/services/utils/url/i_url_utils.dart';
+import 'package:web3modal_flutter/services/utils/platform/platform_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/logger_util.dart';
 
-enum PlatformType {
-  mobile,
-  desktop,
-  web,
+Future<bool> _launchUrl(Uri url, {LaunchMode? mode}) async {
+  try {
+    return await launchUrl(
+      url,
+      mode: mode ?? LaunchMode.platformDefault,
+    );
+  } catch (e) {
+    LoggerUtil.logger.e(
+      'Error launching URL: ${url.toString()}',
+    );
+    LoggerUtil.logger.e(e);
+    throw LaunchUrlException(
+      'Error launching URL: ${url.toString()}',
+    );
+  }
 }
 
-class Util {
-  static PlatformType getPlatformType() {
-    if (Platform.isAndroid || Platform.isIOS) {
-      return PlatformType.mobile;
-    } else if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
-      return PlatformType.desktop;
-    } else if (kIsWeb) {
-      return PlatformType.web;
-    }
-    return PlatformType.mobile;
-  }
+class UrlUtils extends IUrlUtils {
+  UrlUtils({
+    this.launchUrlFunc = _launchUrl,
+    this.canLaunchUrlFunc = canLaunchUrl,
+  });
 
-  static bool isMobileWidth(BuildContext context) {
-    return MediaQuery.of(context).size.width <= 500.0;
-  }
+  final Future<bool> Function(Uri url, {LaunchMode? mode}) launchUrlFunc;
+  final Future<bool> Function(Uri url) canLaunchUrlFunc;
 
-  /// Detects if the given app (Represented by the URI) is installed.
-  /// If on android/ios, this uses the AppCheck library.
-  /// On web, this uses the injected values in the Javascript.
-  static Future<bool> isInstalled(String? uri) async {
+  @override
+  Future<bool> isInstalled(String? uri) async {
     if (uri == null || uri.isEmpty) {
       return false;
     }
 
     try {
-      return getPlatformType() == PlatformType.mobile &&
-          await canLaunchUrl(
+      return platformUtils.instance.getPlatformType() == PlatformType.mobile &&
+          await canLaunchUrlFunc(
             Uri.parse(
               uri,
             ),
@@ -50,17 +52,8 @@ class Util {
     return false;
   }
 
-  // static Future<void> launchApp(
-  //   String universalUri,
-  //   String nativeLink,
-  //   String wcUri,
-  // ) async {
-  //   if (getPlatformType() == PlatformType.mobile) {
-  //     await AppCheck.launchApp(uri);
-  //   }
-  // }
-
-  static Future<void> launchRedirect({
+  @override
+  Future<void> launchRedirect({
     Uri? nativeUri,
     Uri? universalUri,
   }) async {
@@ -72,19 +65,22 @@ class Util {
     );
 
     // Launch the link
-    if (nativeUri != null && await canLaunchUrl(nativeUri)) {
+    if (nativeUri != null && await canLaunchUrlFunc(nativeUri)) {
       LoggerUtil.logger.v(
         'Navigating deep links. Launching native URI.',
       );
       try {
-        await launchUrl(nativeUri);
+        await launchUrlFunc(
+          nativeUri,
+          mode: LaunchMode.externalApplication,
+        );
       } catch (e) {
         LoggerUtil.logger.i(
           'Navigating deep links. Launching native failed, launching universal URI.',
         );
         // Fallback to universal link
-        if (universalUri != null && await canLaunchUrl(universalUri)) {
-          await launchUrl(
+        if (universalUri != null && await canLaunchUrlFunc(universalUri)) {
+          await launchUrlFunc(
             universalUri,
             mode: LaunchMode.externalApplication,
           );
@@ -92,11 +88,11 @@ class Util {
           throw LaunchUrlException('Unable to open the wallet');
         }
       }
-    } else if (universalUri != null && await canLaunchUrl(universalUri)) {
+    } else if (universalUri != null && await canLaunchUrlFunc(universalUri)) {
       LoggerUtil.logger.i(
         'Navigating deep links. Launching universal URI.',
       );
-      await launchUrl(
+      await launchUrlFunc(
         universalUri,
         mode: LaunchMode.externalApplication,
       );
@@ -105,17 +101,18 @@ class Util {
     }
   }
 
-  static Future<void> navigateDeepLink({
+  @override
+  Future<void> navigateDeepLink({
     String? nativeLink,
     String? universalLink,
     required String wcURI,
   }) async {
     // Construct the link
-    final Uri? nativeUri = CoreUtil.formatNativeUrl(
+    final Uri? nativeUri = coreUtils.instance.formatNativeUrl(
       nativeLink,
       wcURI,
     );
-    final Uri? universalUri = CoreUtil.formatUniversalUrl(
+    final Uri? universalUri = coreUtils.instance.formatUniversalUrl(
       universalLink,
       wcURI,
     );

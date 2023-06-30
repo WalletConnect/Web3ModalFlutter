@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_theme.dart';
 
 class QRCodePage extends StatelessWidget {
   const QRCodePage({
@@ -18,7 +18,7 @@ class QRCodePage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(
-          Web3ModalTheme.of(context).data.radiusXS,
+          WalletConnectModalTheme.of(context).data.radiusXS,
         ),
       ),
       child: Center(

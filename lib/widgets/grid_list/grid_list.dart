@@ -5,7 +5,7 @@ import 'package:web3modal_flutter/widgets/grid_list/grid_list_item.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_provider.dart';
 import 'package:web3modal_flutter/widgets/wallet_image.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_theme.dart';
 
 enum GridListState { short, long, extraShort }
 
@@ -28,7 +28,7 @@ class GridList<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+    final WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
     return ValueListenableBuilder(
       valueListenable: provider.initialized,
@@ -54,7 +54,7 @@ class GridList<T> extends StatelessWidget {
   }
 
   Widget _buildGridList(BuildContext context) {
-    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+    final WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
     return ValueListenableBuilder(
       valueListenable: provider.itemList,
@@ -136,7 +136,7 @@ class GridList<T> extends StatelessWidget {
     List<GridListItemModel<T>> items,
     int startIndex,
   ) {
-    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+    final WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
     List<Widget> images = [];
 

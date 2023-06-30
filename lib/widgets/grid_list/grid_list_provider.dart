@@ -6,6 +6,6 @@ abstract class GridListProvider<T> {
   abstract ValueNotifier<bool> initialized;
 
   void filterList({
-    required String query,
+    String? query,
   });
 }

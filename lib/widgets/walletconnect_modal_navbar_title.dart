@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_theme.dart';
 
-class Web3ModalNavbarTitle extends StatelessWidget {
-  const Web3ModalNavbarTitle({
+class WalletConnectModalNavbarTitle extends StatelessWidget {
+  const WalletConnectModalNavbarTitle({
     super.key,
     required this.title,
   });
@@ -14,7 +14,7 @@ class Web3ModalNavbarTitle extends StatelessWidget {
     return Text(
       title,
       style: Theme.of(context).textTheme.titleLarge!.copyWith(
-            color: Web3ModalTheme.of(context).data.foreground100,
+            color: WalletConnectModalTheme.of(context).data.foreground100,
           ),
       textAlign: TextAlign.center,
     );

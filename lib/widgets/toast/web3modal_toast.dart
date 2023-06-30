@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/toast/toast_message.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_theme.dart';
 
 class Web3ModalToast extends StatefulWidget {
   const Web3ModalToast({
@@ -49,7 +49,7 @@ class _Web3ModalToastState extends State<Web3ModalToast>
 
   @override
   Widget build(BuildContext context) {
-    Web3ModalTheme theme = Web3ModalTheme.of(context);
+    WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
     return Positioned(
       top: 20.0,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_theme.dart';
 
 class GridListItem extends StatelessWidget {
   const GridListItem({
@@ -17,7 +17,7 @@ class GridListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+    final WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
     return InkWell(
       onTap: onSelect,

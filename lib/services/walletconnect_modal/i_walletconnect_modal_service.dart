@@ -7,7 +7,7 @@ enum Web3ModalChains {
   polygon,
 }
 
-enum Web3ModalState {
+enum WalletConnectModalState {
   account,
   qrCode,
   walletListShort,
@@ -18,7 +18,7 @@ enum Web3ModalState {
   getAWallet,
 }
 
-abstract class IWeb3ModalService implements ChangeNotifier {
+abstract class IWalletConnectModalService implements ChangeNotifier {
   /// Whether or not this object has been initialized.
   bool get isInitialized;
 
@@ -65,7 +65,7 @@ abstract class IWeb3ModalService implements ChangeNotifier {
   /// If none is provided, the default state will be used based on platform.
   Future<void> open({
     required BuildContext context,
-    Web3ModalState? startState,
+    WalletConnectModalState? startState,
   });
 
   /// Closes the modal.

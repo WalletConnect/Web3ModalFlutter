@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
-import 'package:web3modal_flutter/widgets/web3modal_button.dart';
+import 'package:web3modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_button.dart';
 
 class SvgImageInfo {
   final String path;
@@ -87,7 +87,7 @@ class _HelpPageState extends State<HelpPage> {
 
   @override
   Widget build(BuildContext context) {
-    Web3ModalTheme theme = Web3ModalTheme.of(context);
+    WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -119,7 +119,7 @@ class _HelpPageState extends State<HelpPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
-                child: Web3ModalButton(
+                child: WalletConnectModalButton(
                   onPressed: widget.getAWallet,
                   child: Text(
                     'Get a Wallet',
@@ -134,7 +134,7 @@ class _HelpPageState extends State<HelpPage> {
                 width: 10,
               ),
               Expanded(
-                child: Web3ModalButton(
+                child: WalletConnectModalButton(
                   onPressed: () {
                     launchUrl(
                       Uri.parse(
@@ -173,7 +173,7 @@ class _HelpPageState extends State<HelpPage> {
     required List<Widget> images,
     List<double?> imageBorderRadius = const [],
   }) {
-    Web3ModalTheme theme = Web3ModalTheme.of(context);
+    WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
     return Container(
       padding: const EdgeInsets.all(10),

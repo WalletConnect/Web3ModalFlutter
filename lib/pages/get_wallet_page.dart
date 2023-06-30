@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web3modal_flutter/models/listings.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
-import 'package:web3modal_flutter/widgets/web3modal_button.dart';
+import 'package:web3modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_button.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list_provider.dart';
 import 'package:web3modal_flutter/widgets/wallet_image.dart';
@@ -17,7 +17,7 @@ class GetWalletPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+    final WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
     List<GridListItemModel<WalletData>> wallets = service.itemList.value
         .where((GridListItemModel<WalletData> w) => !w.data.installed)
@@ -51,7 +51,7 @@ class GetWalletPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8.0),
-        Web3ModalButton(
+        WalletConnectModalButton(
           onPressed: () => launchUrl(
             Uri.parse('https://explorer.walletconnect.com/?type=wallet'),
           ),
@@ -90,7 +90,7 @@ class WalletItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+    final WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -109,7 +109,7 @@ class WalletItem extends StatelessWidget {
             color: theme.data.foreground100,
           ),
         ),
-        trailing: Web3ModalButton(
+        trailing: WalletConnectModalButton(
           onPressed: () => launchUrl(
             Uri.parse(
               wallet.data.listing.homepage,

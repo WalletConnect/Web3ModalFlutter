@@ -1,35 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:web3modal_flutter/services/web3modal/i_web3modal_service.dart';
+import 'package:web3modal_flutter/services/walletconnect_modal/i_walletconnect_modal_service.dart';
 import 'package:web3modal_flutter/utils/logger_util.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_theme.dart';
 
-enum Web3ModalConnectButtonState {
+enum WalletConnectModalConnectButtonState {
   idle,
   connecting,
   account,
 }
 
-class Web3ModalConnect extends StatefulWidget {
-  const Web3ModalConnect({
+class WalletConnectModalConnect extends StatefulWidget {
+  const WalletConnectModalConnect({
     super.key,
     required this.web3ModalService,
     this.buttonRadius,
   });
 
-  final IWeb3ModalService web3ModalService;
+  final IWalletConnectModalService web3ModalService;
   final double? buttonRadius;
 
   @override
-  State<Web3ModalConnect> createState() => _Web3ModalConnectState();
+  State<WalletConnectModalConnect> createState() =>
+      _WalletConnectModalConnectState();
 }
 
-class _Web3ModalConnectState extends State<Web3ModalConnect> {
+class _WalletConnectModalConnectState extends State<WalletConnectModalConnect> {
   static const double buttonHeight = 60;
   static const double buttonWidthMin = 150;
   static const double buttonWidthMax = 200;
 
-  Web3ModalConnectButtonState _state = Web3ModalConnectButtonState.idle;
+  WalletConnectModalConnectButtonState _state =
+      WalletConnectModalConnectButtonState.idle;
 
   @override
   void initState() {
@@ -60,9 +62,9 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
   }
 
   Widget _buildButton(BuildContext context) {
-    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+    final WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
-    if (_state == Web3ModalConnectButtonState.idle) {
+    if (_state == WalletConnectModalConnectButtonState.idle) {
       return MaterialButton(
         onPressed: () => _onConnectPressed(context),
         color: theme.data.primary100,
@@ -99,7 +101,7 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
           ],
         ),
       );
-    } else if (_state == Web3ModalConnectButtonState.connecting) {
+    } else if (_state == WalletConnectModalConnectButtonState.connecting) {
       return MaterialButton(
         onPressed: () {},
         color: theme.data.overlay030,
@@ -126,7 +128,7 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
           ],
         ),
       );
-    } else if (_state == Web3ModalConnectButtonState.account) {
+    } else if (_state == WalletConnectModalConnectButtonState.account) {
       return MaterialButton(
         onPressed: _onAccountPressed,
         color: theme.data.primary100,
@@ -184,7 +186,7 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
     // Case 1: Is connected
     if (widget.web3ModalService.isConnected) {
       setState(() {
-        _state = Web3ModalConnectButtonState.account;
+        _state = WalletConnectModalConnectButtonState.account;
       });
       return;
     }
@@ -192,7 +194,7 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
     else if (!widget.web3ModalService.isOpen &&
         !widget.web3ModalService.isConnected) {
       setState(() {
-        _state = Web3ModalConnectButtonState.idle;
+        _state = WalletConnectModalConnectButtonState.idle;
       });
       return;
     }
@@ -200,7 +202,7 @@ class _Web3ModalConnectState extends State<Web3ModalConnect> {
     else if (widget.web3ModalService.isOpen &&
         !widget.web3ModalService.isConnected) {
       setState(() {
-        _state = Web3ModalConnectButtonState.connecting;
+        _state = WalletConnectModalConnectButtonState.connecting;
       });
       return;
     }

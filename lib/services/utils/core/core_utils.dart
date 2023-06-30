@@ -1,13 +1,16 @@
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+import 'package:web3modal_flutter/services/utils/core/i_core_utils.dart';
 import 'package:web3modal_flutter/utils/constants.dart';
 import 'package:web3modal_flutter/utils/logger_util.dart';
 
-class CoreUtil {
-  static bool isHttpUrl(String url) {
+class CoreUtils extends ICoreUtils {
+  @override
+  bool isHttpUrl(String url) {
     return url.startsWith('http://') || url.startsWith('https://');
   }
 
-  static Uri? formatNativeUrl(String? appUrl, String wcUri) {
+  @override
+  Uri? formatNativeUrl(String? appUrl, String wcUri) {
     if (appUrl == null || appUrl.isEmpty) return null;
 
     if (isHttpUrl(appUrl)) {
@@ -26,7 +29,8 @@ class CoreUtil {
     return Uri.parse('${safeAppUrl}wc?uri=$encodedWcUrl');
   }
 
-  static Uri? formatUniversalUrl(String? appUrl, String wcUri) {
+  @override
+  Uri? formatUniversalUrl(String? appUrl, String wcUri) {
     if (appUrl == null || appUrl.isEmpty) return null;
 
     if (!isHttpUrl(appUrl)) {
@@ -43,7 +47,8 @@ class CoreUtil {
     return Uri.parse('$plainAppUrl/wc?uri=$encodedWcUrl');
   }
 
-  static String getUserAgent() {
+  @override
+  String getUserAgent() {
     final String os = WalletConnectUtils.getOS();
     return 'w3m-flutter-${Web3ModalConstants.WEB3MODAL_VERSION}/flutter-core-${WalletConnectConstants.SDK_VERSION}/$os';
   }

@@ -18,16 +18,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool _isDark = true;
   List<Color> primaryColors = [
-    Web3ModalThemeData.darkMode.primary100,
-    Web3ModalThemeData.darkMode.primary090,
-    Web3ModalThemeData.darkMode.primary080,
+    WalletConnectModalThemeData.darkMode.primary100,
+    WalletConnectModalThemeData.darkMode.primary090,
+    WalletConnectModalThemeData.darkMode.primary080,
   ];
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final Web3ModalThemeData themeData =
-        _isDark ? Web3ModalThemeData.darkMode : Web3ModalThemeData.lightMode;
+    final WalletConnectModalThemeData themeData = _isDark
+        ? WalletConnectModalThemeData.darkMode
+        : WalletConnectModalThemeData.lightMode;
     return Web3ModalTheme(
       data: themeData.copyWith(
         primary100: primaryColors[0],
@@ -74,18 +75,19 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _isDark = !_isDark;
       if (_isDark &&
-          primaryColors[0] == Web3ModalThemeData.darkMode.primary100) {
+          primaryColors[0] == WalletConnectModalThemeData.darkMode.primary100) {
         primaryColors = [
-          Web3ModalThemeData.lightMode.primary100,
-          Web3ModalThemeData.lightMode.primary090,
-          Web3ModalThemeData.lightMode.primary080,
+          WalletConnectModalThemeData.lightMode.primary100,
+          WalletConnectModalThemeData.lightMode.primary090,
+          WalletConnectModalThemeData.lightMode.primary080,
         ];
       } else if (!_isDark &&
-          primaryColors[0] == Web3ModalThemeData.lightMode.primary100) {
+          primaryColors[0] ==
+              WalletConnectModalThemeData.lightMode.primary100) {
         primaryColors = [
-          Web3ModalThemeData.darkMode.primary100,
-          Web3ModalThemeData.darkMode.primary090,
-          Web3ModalThemeData.darkMode.primary080,
+          WalletConnectModalThemeData.darkMode.primary100,
+          WalletConnectModalThemeData.darkMode.primary090,
+          WalletConnectModalThemeData.darkMode.primary080,
         ];
       }
     });

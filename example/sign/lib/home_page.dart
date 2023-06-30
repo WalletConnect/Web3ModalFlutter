@@ -13,7 +13,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late IWeb3ModalService _service;
+  late IWalletConnectModalService _service;
   String? _address;
   bool initialized = false;
 
@@ -25,7 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> initialize() async {
-    _service = Web3ModalService(
+    _service = WalletConnectModalService(
       projectId: DartDefines.projectId,
       metadata: const PairingMetadata(
         name: 'Flutter WalletConnect',

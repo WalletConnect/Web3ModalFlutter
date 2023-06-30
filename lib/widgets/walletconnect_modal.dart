@@ -7,47 +7,41 @@ import 'package:web3modal_flutter/pages/get_wallet_page.dart';
 import 'package:web3modal_flutter/pages/help_page.dart';
 import 'package:web3modal_flutter/services/toast/toast_message.dart';
 import 'package:web3modal_flutter/services/toast/toast_service.dart';
+import 'package:web3modal_flutter/services/utils/platform/i_platform_utils.dart';
+import 'package:web3modal_flutter/services/utils/platform/platform_utils_singleton.dart';
+import 'package:web3modal_flutter/services/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/logger_util.dart';
-
 import 'package:web3modal_flutter/widgets/qr_code_widget.dart';
-import 'package:web3modal_flutter/services/web3modal/i_web3modal_service.dart';
-import 'package:web3modal_flutter/utils/util.dart';
+import 'package:web3modal_flutter/services/walletconnect_modal/i_walletconnect_modal_service.dart';
 import 'package:web3modal_flutter/widgets/grid_list/grid_list.dart';
 import 'package:web3modal_flutter/widgets/toast/web3modal_toast_manager.dart';
 import 'package:web3modal_flutter/widgets/transition_container.dart';
-import 'package:web3modal_flutter/widgets/web3modal_navbar.dart';
-import 'package:web3modal_flutter/widgets/web3modal_navbar_title.dart';
-import 'package:web3modal_flutter/widgets/web3modal_search_bar.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_navbar.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_navbar_title.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_search_bar.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_theme.dart';
 
-class Web3Modal extends StatefulWidget {
-  const Web3Modal({
+class WalletConnectModal extends StatefulWidget {
+  const WalletConnectModal({
     super.key,
     required this.service,
     required this.toastService,
     this.startState,
   });
 
-  final IWeb3ModalService service;
+  final IWalletConnectModalService service;
   final ToastService toastService;
-  final Web3ModalState? startState;
+  final WalletConnectModalState? startState;
 
   @override
-  State<Web3Modal> createState() => _Web3ModalState();
+  State<WalletConnectModal> createState() => _WalletConnectModalState();
 }
 
-class _Web3ModalState extends State<Web3Modal>
+class _WalletConnectModalState extends State<WalletConnectModal>
     with SingleTickerProviderStateMixin {
   bool _initialized = false;
 
-  // Web3Modal State
-  final List<Web3ModalState> _stateStack = [];
-
-  // Wallet List
-  // final List<GridListItemModel> _wallets = [];
-
-  // Animations
-  // late AnimationController _controller;
+  final List<WalletConnectModalState> _stateStack = [];
 
   @override
   void initState() {
@@ -56,13 +50,13 @@ class _Web3ModalState extends State<Web3Modal>
     if (widget.startState != null) {
       _stateStack.add(widget.startState!);
     } else {
-      final PlatformType pType = Util.getPlatformType();
+      final PlatformType pType = platformUtils.instance.getPlatformType();
 
       // Choose the state based on platform
       if (pType == PlatformType.mobile) {
-        _stateStack.add(Web3ModalState.walletListShort);
+        _stateStack.add(WalletConnectModalState.walletListShort);
       } else if (pType == PlatformType.desktop) {
-        _stateStack.add(Web3ModalState.qrCodeAndWalletList);
+        _stateStack.add(WalletConnectModalState.qrCodeAndWalletList);
       }
     }
 
@@ -77,20 +71,23 @@ class _Web3ModalState extends State<Web3Modal>
 
   @override
   Widget build(BuildContext context) {
-    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+    final WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
-    final BorderRadius containerBorderRadius = Util.isMobileWidth(context)
-        ? BorderRadius.only(
-            topLeft: Radius.circular(
-              theme.data.radius3XS,
-            ),
-            topRight: Radius.circular(
-              theme.data.radius3XS,
-            ),
-          )
-        : BorderRadius.circular(
-            theme.data.radius3XS,
-          );
+    final BorderRadius containerBorderRadius =
+        platformUtils.instance.isMobileWidth(
+      MediaQuery.of(context).size.width,
+    )
+            ? BorderRadius.only(
+                topLeft: Radius.circular(
+                  theme.data.radius3XS,
+                ),
+                topRight: Radius.circular(
+                  theme.data.radius3XS,
+                ),
+              )
+            : BorderRadius.circular(
+                theme.data.radius3XS,
+              );
 
     return Container(
       // constraints: const BoxConstraints(
@@ -138,15 +135,16 @@ class _Web3ModalState extends State<Web3Modal>
                 Row(
                   children: <Widget>[
                     IconButton(
-                      icon: _stateStack.last == Web3ModalState.help
+                      icon: _stateStack.last == WalletConnectModalState.help
                           ? const Icon(Icons.help_outlined)
                           : const Icon(Icons.help_outline),
                       onPressed: () {
-                        if (_stateStack.contains(Web3ModalState.help)) {
-                          _popUntil(Web3ModalState.help);
+                        if (_stateStack
+                            .contains(WalletConnectModalState.help)) {
+                          _popUntil(WalletConnectModalState.help);
                         } else {
                           setState(() {
-                            _stateStack.add(Web3ModalState.help);
+                            _stateStack.add(WalletConnectModalState.help);
                           });
                         }
                       },
@@ -207,7 +205,7 @@ class _Web3ModalState extends State<Web3Modal>
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: CircularProgressIndicator(
-              color: Web3ModalTheme.of(context).data.primary100,
+              color: WalletConnectModalTheme.of(context).data.primary100,
             ),
           ),
         ),
@@ -215,16 +213,16 @@ class _Web3ModalState extends State<Web3Modal>
     }
 
     switch (_stateStack.last) {
-      case Web3ModalState.qrCode:
-        return Web3ModalNavBar(
-          key: Key(Web3ModalState.qrCode.name),
-          title: const Web3ModalNavbarTitle(
+      case WalletConnectModalState.qrCode:
+        return WalletConnectModalNavBar(
+          key: Key(WalletConnectModalState.qrCode.name),
+          title: const WalletConnectModalNavbarTitle(
             title: 'Scan QR Code',
           ),
           onBack: _pop,
           actionWidget: IconButton(
             icon: const Icon(Icons.copy_outlined),
-            color: Web3ModalTheme.of(context).data.foreground100,
+            color: WalletConnectModalTheme.of(context).data.foreground100,
             onPressed: _copyQrCodeToClipboard,
           ),
           child: QRCodePage(
@@ -232,15 +230,15 @@ class _Web3ModalState extends State<Web3Modal>
             logoPath: 'assets/walletconnect_logo_white.png',
           ),
         );
-      case Web3ModalState.walletListShort:
-        return Web3ModalNavBar(
-          key: Key(Web3ModalState.walletListShort.name),
-          title: const Web3ModalNavbarTitle(
+      case WalletConnectModalState.walletListShort:
+        return WalletConnectModalNavBar(
+          key: Key(WalletConnectModalState.walletListShort.name),
+          title: const WalletConnectModalNavbarTitle(
             title: 'Connect your wallet',
           ),
           actionWidget: IconButton(
             icon: const Icon(Icons.qr_code_scanner),
-            color: Web3ModalTheme.of(context).data.foreground100,
+            color: WalletConnectModalTheme.of(context).data.foreground100,
             onPressed: _toQrCode,
           ),
           child: GridList<WalletData>(
@@ -250,11 +248,12 @@ class _Web3ModalState extends State<Web3Modal>
             onSelect: _onWalletDataSelected,
           ),
         );
-      case Web3ModalState.walletListLong:
-        return Web3ModalNavBar(
-          key: Key(Web3ModalState.walletListLong.name),
-          title: Web3ModalSearchBar(
-            hintText: 'Search ${Util.getPlatformType().name} wallets',
+      case WalletConnectModalState.walletListLong:
+        return WalletConnectModalNavBar(
+          key: Key(WalletConnectModalState.walletListLong.name),
+          title: WalletConnectModalSearchBar(
+            hintText:
+                'Search ${platformUtils.instance.getPlatformType().name} wallets',
             onSearch: _updateSearch,
           ),
           onBack: _pop,
@@ -266,12 +265,12 @@ class _Web3ModalState extends State<Web3Modal>
             onSelect: _onWalletDataSelected,
           ),
         );
-      case Web3ModalState.qrCodeAndWalletList:
-        return Web3ModalNavBar(
+      case WalletConnectModalState.qrCodeAndWalletList:
+        return WalletConnectModalNavBar(
           key: Key(
-            Web3ModalState.qrCodeAndWalletList.name,
+            WalletConnectModalState.qrCodeAndWalletList.name,
           ),
-          title: const Web3ModalNavbarTitle(
+          title: const WalletConnectModalNavbarTitle(
             title: 'Connect your wallet',
           ),
           child: Column(
@@ -290,11 +289,11 @@ class _Web3ModalState extends State<Web3Modal>
             ],
           ),
         );
-      case Web3ModalState.chainList:
-        return Web3ModalNavBar(
+      case WalletConnectModalState.chainList:
+        return WalletConnectModalNavBar(
           // TODO: Update this to display chains, not wallets
-          key: Key(Web3ModalState.chainList.name),
-          title: const Web3ModalNavbarTitle(
+          key: Key(WalletConnectModalState.chainList.name),
+          title: const WalletConnectModalNavbarTitle(
             title: 'Select network',
           ),
           child: GridList(
@@ -304,25 +303,25 @@ class _Web3ModalState extends State<Web3Modal>
             onSelect: _onWalletDataSelected,
           ),
         );
-      case Web3ModalState.help:
-        return Web3ModalNavBar(
-          key: Key(Web3ModalState.help.name),
-          title: const Web3ModalNavbarTitle(
+      case WalletConnectModalState.help:
+        return WalletConnectModalNavBar(
+          key: Key(WalletConnectModalState.help.name),
+          title: const WalletConnectModalNavbarTitle(
             title: 'Help',
           ),
           onBack: _pop,
           child: HelpPage(
             getAWallet: () {
               setState(() {
-                _stateStack.add(Web3ModalState.getAWallet);
+                _stateStack.add(WalletConnectModalState.getAWallet);
               });
             },
           ),
         );
-      case Web3ModalState.getAWallet:
-        return Web3ModalNavBar(
-          key: Key(Web3ModalState.getAWallet.name),
-          title: const Web3ModalNavbarTitle(
+      case WalletConnectModalState.getAWallet:
+        return WalletConnectModalNavBar(
+          key: Key(WalletConnectModalState.getAWallet.name),
+          title: const WalletConnectModalNavbarTitle(
             title: 'Get a wallet',
           ),
           onBack: _pop,
@@ -340,7 +339,7 @@ class _Web3ModalState extends State<Web3Modal>
       'Selected ${item.listing.name}. Installed: ${item.installed} Item info: $item.',
     );
     try {
-      await Util.navigateDeepLink(
+      await urlUtils.instance.navigateDeepLink(
         nativeLink: item.listing.mobile.native,
         universalLink: item.listing.mobile.universal,
         wcURI: widget.service.wcUri!,
@@ -357,7 +356,7 @@ class _Web3ModalState extends State<Web3Modal>
 
   void _viewLongWalletList() {
     setState(() {
-      _stateStack.add(Web3ModalState.walletListLong);
+      _stateStack.add(WalletConnectModalState.walletListLong);
     });
   }
 
@@ -366,20 +365,20 @@ class _Web3ModalState extends State<Web3Modal>
       // Remove all of the elements until we get to the help state
       final state = _stateStack.removeLast();
 
-      if (state == Web3ModalState.walletListLong) {
+      if (state == WalletConnectModalState.walletListLong) {
         widget.service.explorerService.filterList(query: '');
       }
     });
   }
 
-  void _popUntil(Web3ModalState targetState) {
+  void _popUntil(WalletConnectModalState targetState) {
     setState(() {
       // Remove all of the elements until we get to the help state
-      Web3ModalState removedState = _stateStack.removeLast();
-      while (removedState != Web3ModalState.help) {
+      WalletConnectModalState removedState = _stateStack.removeLast();
+      while (removedState != WalletConnectModalState.help) {
         removedState = _stateStack.removeLast();
 
-        if (removedState == Web3ModalState.walletListLong) {
+        if (removedState == WalletConnectModalState.walletListLong) {
           widget.service.explorerService.filterList(query: '');
         }
       }
@@ -388,7 +387,7 @@ class _Web3ModalState extends State<Web3Modal>
 
   void _toQrCode() {
     setState(() {
-      _stateStack.add(Web3ModalState.qrCode);
+      _stateStack.add(WalletConnectModalState.qrCode);
     });
   }
 

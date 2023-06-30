@@ -8,15 +8,17 @@ import 'package:web3modal_flutter/services/explorer/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer/i_explorer_service.dart';
 import 'package:web3modal_flutter/services/toast/toast_message.dart';
 import 'package:web3modal_flutter/services/toast/toast_service.dart';
-import 'package:web3modal_flutter/services/web3modal/i_web3modal_service.dart';
+import 'package:web3modal_flutter/services/utils/platform/i_platform_utils.dart';
+import 'package:web3modal_flutter/services/utils/platform/platform_utils_singleton.dart';
+import 'package:web3modal_flutter/services/utils/url/url_utils_singleton.dart';
+import 'package:web3modal_flutter/services/walletconnect_modal/i_walletconnect_modal_service.dart';
 import 'package:web3modal_flutter/utils/logger_util.dart';
 import 'package:web3modal_flutter/utils/namespaces.dart';
-import 'package:web3modal_flutter/utils/util.dart';
-import 'package:web3modal_flutter/widgets/web3modal.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal.dart';
 
-class Web3ModalService extends ChangeNotifier
+class WalletConnectModalService extends ChangeNotifier
     with Disposable
-    implements IWeb3ModalService {
+    implements IWalletConnectModalService {
   bool _isInitialized = false;
   @override
   bool get isInitialized => _isInitialized;
@@ -48,18 +50,6 @@ class Web3ModalService extends ChangeNotifier
   @override
   String? get wcUri => connectResponse?.uri.toString();
 
-  // Set<String> _recommendedWalletIds = {};
-  // @override
-  // Set<String> get recommendedWalletIds => _recommendedWalletIds;
-
-  // ExcludedWalletState _excludedWalletState = ExcludedWalletState.list;
-  // @override
-  // ExcludedWalletState get excludedWalletState => _excludedWalletState;
-
-  // Set<String> _excludedWalletIds = {};
-  // @override
-  // Set<String> get excludedWalletIds => _excludedWalletIds;
-
   @override
   late IExplorerService explorerService;
 
@@ -72,7 +62,7 @@ class Web3ModalService extends ChangeNotifier
   BuildContext? context;
   final ToastService _toastService = ToastService();
 
-  /// Creates a new instance of [Web3ModalService].
+  /// Creates a new instance of [WalletConnectModalService].
   /// [web3App] is optional and can be used to pass in an already created [Web3App].
   /// [projectId] and [metadata] are optional and can be used to create a new [Web3App].
   /// You must provide either a [projectId] and [metadata] or an already created [web3App], or this will throw an [ArgumentError].
@@ -81,7 +71,7 @@ class Web3ModalService extends ChangeNotifier
   /// [recommendedWalletIds] is optional and can be used to pass in a custom set of recommended wallet IDs.
   /// [excludedWalletState] is optional and can be used to pass in a custom [ExcludedWalletState].
   /// [excludedWalletIds] is optional and can be used to pass in a custom set of excluded wallet IDs.
-  Web3ModalService({
+  WalletConnectModalService({
     IWeb3App? web3App,
     String? projectId,
     PairingMetadata? metadata,
@@ -155,7 +145,7 @@ class Web3ModalService extends ChangeNotifier
   @override
   Future<void> open({
     required BuildContext context,
-    Web3ModalState? startState,
+    WalletConnectModalState? startState,
   }) async {
     _checkInitialized();
 
@@ -181,8 +171,11 @@ class Web3ModalService extends ChangeNotifier
 
     this.context = context;
 
-    final bool bottomSheet = Util.getPlatformType() == PlatformType.mobile ||
-        Util.isMobileWidth(context);
+    final bool bottomSheet =
+        platformUtils.instance.getPlatformType() == PlatformType.mobile ||
+            platformUtils.instance.isMobileWidth(
+              MediaQuery.of(context).size.width,
+            );
 
     _isOpen = true;
 
@@ -196,7 +189,7 @@ class Web3ModalService extends ChangeNotifier
         isScrollControlled: true,
         context: context,
         builder: (context) {
-          return Web3Modal(
+          return WalletConnectModal(
             service: this,
             toastService: _toastService,
             startState: startState,
@@ -207,7 +200,7 @@ class Web3ModalService extends ChangeNotifier
       await showDialog(
         context: context,
         builder: (context) {
-          return Web3Modal(
+          return WalletConnectModal(
             service: this,
             toastService: _toastService,
             startState: startState,
@@ -276,7 +269,7 @@ class Web3ModalService extends ChangeNotifier
         ),
       );
     } else {
-      Util.launchRedirect(
+      urlUtils.instance.launchRedirect(
         nativeUri: Uri.parse(redirect.native ?? ''),
         universalUri: Uri.parse(redirect.universal ?? ''),
       );
@@ -317,30 +310,6 @@ class Web3ModalService extends ChangeNotifier
 
     notifyListeners();
   }
-
-  // @override
-  // void setRecommendedWallets(
-  //   Set<String> walletIds,
-  // ) {
-  //   _checkInitialized();
-
-  //   _recommendedWalletIds = walletIds;
-
-  //   notifyListeners();
-  // }
-
-  // @override
-  // void setExcludedWallets(
-  //   ExcludedWalletState state,
-  //   Set<String> walletIds,
-  // ) {
-  //   _checkInitialized();
-
-  //   _excludedWalletState = state;
-  //   _excludedWalletIds = walletIds;
-
-  //   notifyListeners();
-  // }
 
   @override
   String getReferer() {
@@ -427,21 +396,6 @@ class Web3ModalService extends ChangeNotifier
       notifyListeners();
     }
   }
-
-  // void _onSessionConnect(SessionConnect? args) {
-  //   LoggerUtil.logger.i('Session connected: $args');
-  //   _isConnected = true;
-  //   _session = args!.session;
-  //   _address = NamespaceUtils.getAccount(
-  //     _session!.namespaces.values.first.accounts.first,
-  //   );
-
-  //   if (_isOpen) {
-  //     close();
-  //   } else {
-  //     notifyListeners();
-  //   }
-  // }
 
   void _onSessionDelete(SessionDelete? args) {
     _isConnected = false;

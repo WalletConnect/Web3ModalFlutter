@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/widgets/web3modal_theme.dart';
+import 'package:web3modal_flutter/widgets/walletconnect_modal_theme.dart';
 
-class Web3ModalSearchBar extends StatelessWidget {
-  const Web3ModalSearchBar({
+class WalletConnectModalSearchBar extends StatelessWidget {
+  const WalletConnectModalSearchBar({
     super.key,
     required this.hintText,
     required this.onSearch,
@@ -13,7 +13,7 @@ class Web3ModalSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Web3ModalTheme theme = Web3ModalTheme.of(context);
+    final WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
 
     return Container(
       height: 36,
