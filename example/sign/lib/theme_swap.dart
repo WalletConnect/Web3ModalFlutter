@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:web3modal_flutter/walletconnect_modal_flutter.dart';
 
 class ThemeSwap extends StatefulWidget {
   const ThemeSwap({
@@ -26,7 +26,7 @@ class _ThemeSwapState extends State<ThemeSwap> {
     final WalletConnectModalThemeData themeData = _isDark
         ? WalletConnectModalThemeData.darkMode
         : WalletConnectModalThemeData.lightMode;
-    return Web3ModalTheme(
+    return WalletConnectModalTheme(
       data: themeData.copyWith(
         primary100: primaryColors[0],
         primary090: primaryColors[1],

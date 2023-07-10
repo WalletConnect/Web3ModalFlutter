@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sign/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:web3modal_flutter/walletconnect_modal_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!initialized) {
       return Center(
         child: CircularProgressIndicator(
-          color: Web3ModalTheme.of(context).data.primary100,
+          color: WalletConnectModalTheme.of(context).data.primary100,
         ),
       );
     }
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           // Web3Modal(service: _service),
-          Web3ModalConnect(
+          WalletConnectModalConnect(
             web3ModalService: _service,
             buttonRadius: 20,
           ),

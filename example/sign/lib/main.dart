@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sign/home_page.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:web3modal_flutter/walletconnect_modal_flutter.dart';
 
 void main() {
   runApp(
@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
     final WalletConnectModalThemeData themeData = _isDark
         ? WalletConnectModalThemeData.darkMode
         : WalletConnectModalThemeData.lightMode;
-    return Web3ModalTheme(
+    return WalletConnectModalTheme(
       data: themeData.copyWith(
         primary100: primaryColors[0],
         primary090: primaryColors[1],
