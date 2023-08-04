@@ -24,6 +24,7 @@ dependencies:
   freezed_annotation: ^2.2.0
   flex_color_picker: ^3.2.2
   mockito: ^5.4.2
+  walletconnect_modal_flutter: ^1.1.6
   
 
 dev_dependencies:
@@ -40,5 +41,4 @@ flutter:
 
   assets:
     - assets/
-    - assets/help_page/
 
