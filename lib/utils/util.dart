@@ -8,7 +8,7 @@ class Util {
     return short && value.length > 8 ? '${value.substring(0, 8)}..' : value;
   }
 
-  static String truncate(String value, int length) {
+  static String truncate(String value, {int length = 8}) {
     if (value.length <= length) {
       return value;
     }
@@ -16,7 +16,7 @@ class Util {
     return '${value.substring(0, 4)}...${value.substring(value.length - 4)}';
   }
 
-  List<Color> generateAvatarColors(String address) {
+  static List<Color> generateAvatarColors(String address) {
     final RegExp regExp = RegExp(r'.{1,7}');
     List<Match> matches = regExp.allMatches(address).toList();
     List<String> seedArr =

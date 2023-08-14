@@ -103,9 +103,7 @@ class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
   void _onConnectPressed(BuildContext context) {
     widget.w3mService.open(
       context: context,
-      startWidget: SelectNetworkPage(
-        service: widget.w3mService,
-      ),
+      startWidget: const SelectNetworkPage(),
     );
   }
 

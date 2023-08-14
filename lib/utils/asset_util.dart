@@ -24,6 +24,7 @@ class AssetUtil {
     'accountsChanged',
   ];
 
+  /// All RPC urls were found here: https://rpc.info/
   static const Map<String, W3MChainInfo> chainPresets = {
     '1': W3MChainInfo(
       chainName: 'Ethereum',
@@ -37,6 +38,7 @@ class AssetUtil {
           events: ethEvents,
         ),
       },
+      rpcUrl: 'https://eth.drpc.org',
     ),
     '42161': W3MChainInfo(
       chainName: 'Arbitrum',
@@ -50,9 +52,10 @@ class AssetUtil {
           events: ethEvents,
         ),
       },
+      rpcUrl: 'https://arbitrum.blockpi.network/v1/rpc/public',
     ),
     '43114': W3MChainInfo(
-      chainName: 'Avalance',
+      chainName: 'Avalanche',
       chainId: '43114',
       chainIcon: '30c46e53-e989-45fb-4549-be3bd4eb3b00',
       tokenName: 'AVAX',
@@ -63,6 +66,7 @@ class AssetUtil {
           events: ethEvents,
         ),
       },
+      rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
     ),
     '56': W3MChainInfo(
       chainName: 'Binance Smart Chain',
@@ -76,6 +80,7 @@ class AssetUtil {
           events: ethEvents,
         ),
       },
+      rpcUrl: 'https://bsc-dataseed.binance.org/',
     ),
     '250': W3MChainInfo(
       chainName: 'Fantom',
@@ -89,6 +94,7 @@ class AssetUtil {
           events: ethEvents,
         ),
       },
+      rpcUrl: 'https://rpc.ftm.tools/',
     ),
     '10': W3MChainInfo(
       chainName: 'Optimism',
@@ -102,6 +108,7 @@ class AssetUtil {
           events: ethEvents,
         ),
       },
+      rpcUrl: 'https://mainnet.optimism.io/',
     ),
     '137': W3MChainInfo(
       chainName: 'Polygon',
@@ -115,6 +122,7 @@ class AssetUtil {
           events: ethEvents,
         ),
       },
+      rpcUrl: 'https://polygon.drpc.org',
     ),
     // '100': W3MChainInfo(
     //   chainName: 'Gnosis',
@@ -134,6 +142,7 @@ class AssetUtil {
           events: ethEvents,
         ),
       },
+      rpcUrl: 'https://eth.bd.evmos.org:8545',
     ),
     // '324': W3MChainInfo(
     //   chainName: 'ZkSync',
@@ -159,6 +168,7 @@ class AssetUtil {
           events: ethEvents,
         ),
       },
+      rpcUrl: 'https://rpc.ankr.com/iotex',
     ),
     '1088': W3MChainInfo(
       chainName: 'Metis',
@@ -172,6 +182,7 @@ class AssetUtil {
           events: ethEvents,
         ),
       },
+      rpcUrl: 'https://metis-mainnet.public.blastapi.io',
     ),
     // '1284': W3MChainInfo(
     //   chainName: 'Moonbeam',

@@ -25,6 +25,8 @@ dependencies:
   flex_color_picker: ^3.2.2
   mockito: ^5.4.2
   walletconnect_modal_flutter: ^1.1.6
+  web3dart: ^2.6.1
+  hexagon: ^0.2.0
   
 
 dev_dependencies:

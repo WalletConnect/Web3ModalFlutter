@@ -7,11 +7,20 @@ abstract class IW3MService extends IWalletConnectModalService
   /// The currently selected chain.
   W3MChainInfo? get selectedChain;
 
+  /// Returns the url of the token of the currently selected chain.
+  /// Pass this into a [Image.network] and it will load the token image.
+  String? get tokenImageUrl;
+
+  /// The url to the account's avatar image.
+  /// Pass this into a [Image.network] and it will load the avatar image.
+  String? get avatarUrl;
+
   /// Returns the balance of the currently connected wallet on the selected chain.
-  double get chainBalance;
+  double? get chainBalance;
 
   /// Sets the selected chain.
   /// If the wallet is already connected, it will request that the chain be changed, and will update the session
   /// with the new chain.
-  void setSelectedChain(W3MChainInfo? chain);
+  /// If the [chain] is null, this will disconnect the wallet.
+  Future<void> setSelectedChain(W3MChainInfo? chain);
 }
