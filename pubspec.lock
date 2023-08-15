@@ -652,10 +652,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_foundation
-      sha256: f39696b83e844923b642ce9dd4bd31736c17e697f6731a5adf445b1274cf3cd4
+      sha256: d29753996d8eb8f7619a1f13df6ce65e34bc107bef6330739ed76f18b22310ef
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.2"
+    version: "2.3.3"
   shared_preferences_linux:
     dependency: transitive
     description:
@@ -945,10 +945,10 @@ packages:
     dependency: "direct main"
     description:
       name: walletconnect_modal_flutter
-      sha256: a5c83c5dbab5902f5e9ed37952dee113366145be20de75834c521a1c1ab8bc4a
+      sha256: "5f79c75788f32ffc70a926d221e083804ac525c5d14f006ff5ad3728c7ae1bed"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.2"
+    version: "1.2.4"
   watcher:
     dependency: transitive
     description:

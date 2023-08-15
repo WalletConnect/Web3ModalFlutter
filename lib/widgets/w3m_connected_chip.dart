@@ -39,7 +39,7 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
 
     return Container(
       decoration: BoxDecoration(
-        color: themeData.overlay030,
+        color: themeData.overlay020,
         border: Border.all(
           color: themeData.overlay010,
           width: 1,
@@ -47,10 +47,15 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
         borderRadius: BorderRadius.circular(100),
       ),
       constraints: const BoxConstraints(
-        minWidth: 150,
+        minWidth: 50,
         maxWidth: 250,
       ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 4,
+      ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           // The glowing dot
           Container(
@@ -74,6 +79,10 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
           // Connected Text
           Text(
             _connected ? StringConstants.connected : StringConstants.error,
+            style: TextStyle(
+              color: themeData.foreground100,
+              fontFamily: themeData.fontFamily,
+            ),
           ),
         ],
       ),

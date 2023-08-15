@@ -17,6 +17,10 @@ class NetworkService implements INetworkService {
 
   @override
   Future<void> init() async {
+    if (initialized.value) {
+      return;
+    }
+
     for (var value in AssetUtil.chainPresets.values) {
       itemListComplete.add(
         GridListItemModel<W3MChainInfo>(

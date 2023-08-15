@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
+import 'package:walletconnect_modal_flutter/services/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_button.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
 
 class W3MNetworkSelect extends StatefulWidget {
   const W3MNetworkSelect({
     super.key,
-    required this.w3mService,
+    required this.service,
     this.buttonRadius,
   });
 
-  final IW3MService w3mService;
+  final IW3MService service;
   final double? buttonRadius;
 
   @override
@@ -34,14 +36,14 @@ class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
 
     _onServiceUpdate();
 
-    widget.w3mService.addListener(_onServiceUpdate);
+    widget.service.addListener(_onServiceUpdate);
   }
 
   @override
   void dispose() {
     super.dispose();
 
-    widget.w3mService.removeListener(_onServiceUpdate);
+    widget.service.removeListener(_onServiceUpdate);
   }
 
   @override
@@ -57,42 +59,46 @@ class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
   }
 
   Widget _buildButton(BuildContext context) {
-    final WalletConnectModalTheme theme = WalletConnectModalTheme.of(context);
+    final WalletConnectModalThemeData themeData =
+        WalletConnectModalTheme.getData(context);
 
-    return MaterialButton(
-      onPressed: () => _onConnectPressed(context),
-      color: theme.data.primary100,
-      focusColor: theme.data.primary090,
-      hoverColor: theme.data.primary090,
-      highlightColor: theme.data.primary080,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(
-          widget.buttonRadius ?? theme.data.radius4XS,
-        ),
-      ),
+    return WalletConnectModalButton(
+      onPressed: () {
+        _onConnectPressed(context);
+      },
+      borderRadius: widget.buttonRadius ?? themeData.radius4XS,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          _selectedChain?.chainIcon == null
-              ? SvgPicture.asset(
-                  'assets/network_placeholder.svg',
-                  width: 20,
-                  height: 20,
-                )
-              : Image.network(
-                  explorerService.instance!.getAssetImageUrl(
+          W3MTokenImage(
+            imageUrl: _selectedChain?.chainIcon == null
+                ? null
+                : explorerService.instance!.getAssetImageUrl(
                     imageId: _selectedChain!.chainIcon,
                   ),
-                  width: 20,
-                  height: 20,
-                ),
+            isChain: true,
+          ),
+          // _selectedChain?.chainIcon == null
+          //     ? SvgPicture.asset(
+          //         'assets/network_placeholder.svg',
+          //         package: 'web3modal_flutter',
+          //         width: 20,
+          //         height: 20,
+          //       )
+          //     : Image.network(
+          //         explorerService.instance!.getAssetImageUrl(
+          //           imageId: _selectedChain!.chainIcon,
+          //         ),
+          //         width: 20,
+          //         height: 20,
+          //       ),
           const SizedBox(width: 8.0),
           Text(
             StringConstants.selectNetwork,
             style: TextStyle(
-              color: theme.data.foreground100,
-              fontFamily: theme.data.fontFamily,
+              color: Colors.white,
+              fontFamily: themeData.fontFamily,
             ),
           ),
         ],
@@ -101,9 +107,14 @@ class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
   }
 
   void _onConnectPressed(BuildContext context) {
-    widget.w3mService.open(
+    widget.service.open(
       context: context,
-      startWidget: const SelectNetworkPage(),
+      startWidget: SelectNetworkPage(
+        onSelect: (info) {
+          widget.service.setSelectedChain(info);
+          widgetStack.instance.addDefault();
+        },
+      ),
     );
   }
 
@@ -113,7 +124,7 @@ class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
     );
 
     setState(() {
-      _selectedChain = widget.w3mService.selectedChain;
+      _selectedChain = widget.service.selectedChain;
     });
   }
 }

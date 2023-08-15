@@ -1,4 +1,4 @@
-package com.example.sign
+package com.walletconnect.flutterdapp
 
 import io.flutter.embedding.android.FlutterActivity
 

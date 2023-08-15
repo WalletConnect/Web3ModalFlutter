@@ -5,12 +5,12 @@ import 'package:hexagon/hexagon.dart';
 class W3MTokenImage extends StatelessWidget {
   const W3MTokenImage({
     super.key,
-    this.token,
+    this.imageUrl,
     this.isChain = false,
     this.size = 36,
   });
 
-  final String? token;
+  final String? imageUrl;
   final double size;
   final bool isChain;
 
@@ -20,35 +20,47 @@ class W3MTokenImage extends StatelessWidget {
   }
 
   Widget _buildToken() {
-    return token == null
-        ? SvgPicture.asset(
-            'token_placeholder.svg',
-            package: 'web3modal_flutter',
-            width: size,
-            height: size,
-          )
-        : Image.network(
-            token!,
-            width: size,
-            height: size,
-          );
+    return Container(
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(
+          Radius.circular(
+            100,
+          ),
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: imageUrl == null
+          ? SvgPicture.asset(
+              'assets/token_placeholder.svg',
+              package: 'web3modal_flutter',
+              width: size,
+              height: size,
+            )
+          : Image.network(
+              imageUrl!,
+              width: size,
+              height: size,
+            ),
+    );
   }
 
   Widget _buildChain() {
     return HexagonWidget.pointy(
       width: size,
+      height: size,
       cornerRadius: 8,
-      child: token == null
+      color: Colors.black,
+      child: imageUrl == null
           ? SvgPicture.asset(
-              'network_placeholder.svg',
+              'assets/network_placeholder.svg',
               package: 'web3modal_flutter',
-              // width: size,
-              // height: size,
+              width: size,
+              height: size,
             )
           : Image.network(
-              token!,
-              // width: size,
-              // height: size,
+              imageUrl!,
+              width: size,
+              height: size,
             ),
     );
   }

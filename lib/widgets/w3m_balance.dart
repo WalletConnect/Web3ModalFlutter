@@ -26,13 +26,13 @@ class _W3MBalanceState extends State<W3MBalance> {
   void initState() {
     super.initState();
 
-    widget.service.addListener(_w3m_service_updated);
-    _w3m_service_updated();
+    widget.service.addListener(_w3mServiceUpdated);
+    _w3mServiceUpdated();
   }
 
   @override
   void dispose() {
-    widget.service.removeListener(_w3m_service_updated);
+    widget.service.removeListener(_w3mServiceUpdated);
     super.dispose();
   }
 
@@ -45,14 +45,16 @@ class _W3MBalanceState extends State<W3MBalance> {
       children: [
         // Token image
         W3MTokenImage(
-          token: _tokenImage,
+          imageUrl: _tokenImage,
+          size: 30,
         ),
-        const SizedBox(width: 2.0),
+        const SizedBox(width: 8.0),
         Text(
           _balance,
           style: TextStyle(
             color: themeData.foreground100,
             fontWeight: FontWeight.bold,
+            fontSize: 16.0,
           ),
         ),
         if (_tokenName != null)
@@ -71,12 +73,14 @@ class _W3MBalanceState extends State<W3MBalance> {
     );
   }
 
-  void _w3m_service_updated() {
+  void _w3mServiceUpdated() {
     setState(() {
       _tokenImage = widget.service.tokenImageUrl;
       _balance = widget.service.chainBalance == null
           ? balanceDefault
-          : widget.service.chainBalance!.toStringAsFixed(3);
+          : widget.service.chainBalance!.toStringAsPrecision(5);
+      RegExp regex = RegExp(r"([.]*0+)(?!.*\d)");
+      _balance = _balance.replaceAll(regex, '');
       _tokenName = widget.service.selectedChain == null
           ? null
           : widget.service.selectedChain!.tokenName;

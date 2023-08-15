@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_provider.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/utils/util.dart';
+import 'package:web3modal_flutter/widgets/w3m_address.dart';
 import 'package:web3modal_flutter/widgets/w3m_avatar.dart';
 import 'package:web3modal_flutter/widgets/w3m_balance.dart';
 
@@ -29,26 +28,25 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     WalletConnectModalThemeData themeData =
         WalletConnectModalTheme.getData(context);
 
-    IW3MService w3mService =
-        WalletConnectModalProvider.of(context).service as IW3MService;
-
     return Container(
-      color: themeData.background100,
-      padding: const EdgeInsets.all(2.0),
+      padding: const EdgeInsets.all(4.0),
       decoration: BoxDecoration(
+        color: themeData.background300,
         borderRadius: BorderRadius.all(
           Radius.circular(
-            themeData.radius3XS,
+            themeData.radiusXS,
           ),
         ),
         border: Border.all(
-          color: themeData.overlay010,
-          width: 2.0,
+          color: themeData.overlay030,
+          width: 1.0,
         ),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          W3MBalance(service: w3mService),
+          W3MBalance(service: widget.service),
+          const SizedBox(width: 8),
           GestureDetector(
             onTapDown: (details) {
               setState(() {
@@ -66,32 +64,37 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
                 startWidget: const AccountPage(),
               );
             },
-            child: Transform.scale(
+            // TODO: Make this scale over time
+            child: AnimatedScale(
               scale: scale,
+              duration: const Duration(milliseconds: 100),
               child: Container(
-                padding: const EdgeInsets.all(1.0),
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(
+                padding: const EdgeInsets.only(
+                  left: 4.0,
+                  right: 8.0,
+                  top: 4.0,
+                  bottom: 4.0,
+                ),
+                decoration: BoxDecoration(
+                  color: themeData.primary100,
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(
                       100,
                     ),
                   ),
                 ),
-                color: themeData.primary100,
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Rainbow circle avatar (assuming you use the Image widget)
                     W3MAvatar(
-                      address: widget.service.address!,
-                      avatar: widget.avatar,
+                      service: widget.service,
+                      size: 30,
                     ),
-                    const SizedBox(height: 10.0),
+                    const SizedBox(width: 4.0),
                     // Address
-                    Text(
-                      Util.truncate(widget.service.address!),
-                      style: TextStyle(
-                        color: themeData.foreground100,
-                      ),
+                    W3MAddress(
+                      service: widget.service,
                     ),
                   ],
                 ),

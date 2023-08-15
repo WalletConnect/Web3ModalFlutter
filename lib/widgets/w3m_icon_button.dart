@@ -25,19 +25,31 @@ class W3MIconButton extends StatelessWidget {
       ),
       focusColor: themeData.overlay030,
       hoverColor: themeData.overlay020,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            icon,
-            const SizedBox(height: 8),
-            Text(
-              text,
-              style: TextStyle(
-                color: themeData.primary100,
+      child: Container(
+        // constraints: const BoxConstraints(
+        //   maxWidth: 100,
+        // ),
+        padding: const EdgeInsets.symmetric(
+          vertical: 10,
+          // horizontal: 4,
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              icon,
+              const SizedBox(height: 4),
+              Text(
+                text,
+                style: TextStyle(
+                  color: themeData.primary100,
+                  fontSize: 12,
+                ),
+                maxLines: 2,
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,35 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 
-class W3MAvatar extends StatelessWidget {
+class W3MAvatar extends StatefulWidget {
   const W3MAvatar({
     super.key,
-    required this.address,
-    this.avatar,
+    required this.service,
     this.size = 40.0,
   });
 
-  final String? avatar;
-  final String address;
+  final IW3MService service;
   final double size;
+
+  @override
+  State<W3MAvatar> createState() => _W3MAvatarState();
+}
+
+class _W3MAvatarState extends State<W3MAvatar> {
+  String? _avatarUrl;
+  String? _address;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.service.addListener(_w3mServiceUpdated);
+    _w3mServiceUpdated();
+  }
+
+  @override
+  void dispose() {
+    widget.service.removeListener(_w3mServiceUpdated);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: size,
-      height: size,
+      width: widget.size,
+      height: widget.size,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(size / 2),
-        child: avatar != null
-            ? Image.network(avatar!)
+        borderRadius: BorderRadius.circular(widget.size / 2),
+        child: _avatarUrl != null
+            ? Image.network(_avatarUrl!)
             : _buildGradientAvatar(context),
       ),
     );
   }
 
   Widget _buildGradientAvatar(BuildContext context) {
-    List<Color> colors = Util.generateAvatarColors(address);
+    List<Color> colors = Util.generateAvatarColors(_address!);
     WalletConnectModalThemeData themeData =
         WalletConnectModalTheme.getData(context);
 
@@ -40,7 +60,7 @@ class W3MAvatar extends StatelessWidget {
           height: double.infinity,
           decoration: BoxDecoration(
             color: colors[0],
-            borderRadius: BorderRadius.circular(size / 2.0),
+            borderRadius: BorderRadius.circular(widget.size / 2.0),
             boxShadow: [
               BoxShadow(
                 color: themeData.overlay030,
@@ -77,5 +97,12 @@ class W3MAvatar extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _w3mServiceUpdated() {
+    setState(() {
+      _avatarUrl = widget.service.avatarUrl;
+      _address = widget.service.address;
+    });
   }
 }

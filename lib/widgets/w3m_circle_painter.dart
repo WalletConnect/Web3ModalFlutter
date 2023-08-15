@@ -15,6 +15,7 @@ class W3MCirclePainter extends StatelessWidget {
         WalletConnectModalTheme.getData(context);
 
     return Container(
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: themeData.primary100,
         borderRadius: BorderRadius.circular(100),

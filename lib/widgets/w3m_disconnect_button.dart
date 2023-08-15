@@ -29,11 +29,16 @@ class _W3MDisconnectButtonState extends State<W3MDisconnectButton> {
     return W3MIconButton(
       icon: W3MCirclePainter(
         child: _disconnecting
-            ? CircularProgressIndicator(
-                color: themeData.foreground100,
+            ? SizedBox(
+                width: 12,
+                height: 12,
+                child: CircularProgressIndicator(
+                  color: themeData.foreground100,
+                  strokeWidth: 2,
+                ),
               )
             : SvgPicture.asset(
-                'account_disconnect.svg',
+                'assets/account_disconnect.svg',
                 package: 'web3modal_flutter',
                 colorFilter: ColorFilter.mode(
                   themeData.foreground100,
@@ -54,7 +59,7 @@ class _W3MDisconnectButtonState extends State<W3MDisconnectButton> {
     setState(() {
       _disconnecting = true;
     });
-    await widget.service.disconnect();
     widget.service.close();
+    await widget.service.disconnect();
   }
 }

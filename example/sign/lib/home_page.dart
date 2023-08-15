@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:sign/models/page_data.dart';
+import 'package:sign/pages/auth_page.dart';
+import 'package:sign/pages/sign_page.dart';
+import 'package:sign/utils/constants.dart';
 import 'package:sign/utils/dart_defines.dart';
+import 'package:sign/utils/string_constants.dart';
+import 'package:sign/widgets/event_widget.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -13,81 +20,173 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late IWalletConnectModalService _service;
-  String? _address;
-  bool initialized = false;
+  IWeb3App? _web3App;
+  bool _initialized = false;
+
+  List<PageData> _pageDatas = [];
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
 
+    Logger.level = Level.verbose;
+
     initialize();
   }
 
   Future<void> initialize() async {
-    _service = WalletConnectModalService(
-      projectId: DartDefines.projectId,
-      metadata: const PairingMetadata(
-        name: 'Flutter WalletConnect',
-        description: 'Flutter Web3Modal Sign Example',
-        url: 'https://walletconnect.com/',
-        icons: ['https://walletconnect.com/walletconnect-logo.png'],
+    _web3App = Web3App(
+      core: Core(
+        projectId: DartDefines.projectId,
       ),
-      recommendedWalletIds: {
-        'afbd95522f4041c71dd4f1a065f971fd32372865b416f95a0b1db759ae33f2a7',
-        '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662',
-        // 'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a',
-        'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
-        // '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369' // Defiant
-      },
+      metadata: const PairingMetadata(
+        name: 'Flutter Dapp Example',
+        description: 'Flutter Dapp Example',
+        url: 'https://www.walletconnect.com/',
+        icons: ['https://walletconnect.com/walletconnect-logo.png'],
+        redirect: Redirect(
+          native: 'flutterdapp://',
+          universal: 'https://www.walletconnect.com',
+        ),
+      ),
     );
-    _address = _service.address;
 
-    _service.addListener(() {
-      setState(() {
-        _address = _service.address;
-      });
-    });
-
-    await _service.init();
+    _web3App!.onSessionPing.subscribe(_onSessionPing);
+    _web3App!.onSessionEvent.subscribe(_onSessionEvent);
 
     setState(() {
-      initialized = true;
+      _pageDatas = [
+        PageData(
+          page: SignPage(web3App: _web3App!),
+          title: StringConstants.signPageTitle,
+          icon: Icons.home,
+        ),
+        // PageData(
+        //   page: PairingsPage(web3App: _web3App!),
+        //   title: StringConstants.pairingsPageTitle,
+        //   icon: Icons.connect_without_contact_sharp,
+        // ),
+        // PageData(
+        //   page: SessionsPage(web3App: _web3App!),
+        //   title: StringConstants.sessionsPageTitle,
+        //   icon: Icons.confirmation_number_outlined,
+        // ),
+        PageData(
+          page: AuthPage(web3App: _web3App!),
+          title: StringConstants.authPageTitle,
+          icon: Icons.lock,
+        ),
+      ];
+
+      _initialized = true;
     });
   }
 
   @override
+  void dispose() {
+    _web3App!.onSessionPing.unsubscribe(_onSessionPing);
+    _web3App!.onSessionEvent.unsubscribe(_onSessionEvent);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (!initialized) {
+    if (!_initialized) {
       return Center(
         child: CircularProgressIndicator(
-          color: Web3ModalTheme.of(context).data.primary100,
+          color: WalletConnectModalTheme.getData(context).primary100,
         ),
       );
     }
 
-    return Container(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // Web3Modal(service: _service),
-          Web3ModalConnect(
-            web3ModalService: _service,
-            buttonRadius: 20,
-          ),
-          Text(
-            'Address: $_address',
-            textAlign: TextAlign.center,
-          ),
-          MaterialButton(
-            onPressed:
-                _service.isConnected ? _service.launchCurrentWallet : null,
-            child: const Text('Launch Current Wallet'),
-          ),
-        ],
+    final List<Widget> navRail = [];
+    if (MediaQuery.of(context).size.width >= Constants.smallScreen) {
+      navRail.add(_buildNavigationRail());
+    }
+    navRail.add(
+      Expanded(
+        child: _pageDatas[_selectedIndex].page,
       ),
+    );
+
+    return Scaffold(
+      bottomNavigationBar:
+          MediaQuery.of(context).size.width < Constants.smallScreen
+              ? _buildBottomNavBar()
+              : null,
+      body: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: navRail,
+      ),
+    );
+  }
+
+  Widget _buildBottomNavBar() {
+    return BottomNavigationBar(
+      currentIndex: _selectedIndex,
+      unselectedItemColor: Colors.grey,
+      selectedItemColor: Colors.indigoAccent,
+      // called when one tab is selected
+      onTap: (int index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+      // bottom tab items
+      items: _pageDatas
+          .map(
+            (e) => BottomNavigationBarItem(
+              icon: Icon(e.icon),
+              label: e.title,
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _buildNavigationRail() {
+    return NavigationRail(
+      selectedIndex: _selectedIndex,
+      onDestinationSelected: (int index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+      labelType: NavigationRailLabelType.selected,
+      destinations: _pageDatas
+          .map(
+            (e) => NavigationRailDestination(
+              icon: Icon(e.icon),
+              label: Text(e.title),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  void _onSessionPing(SessionPing? args) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EventWidget(
+          title: StringConstants.receivedPing,
+          content: 'Topic: ${args!.topic}',
+        );
+      },
+    );
+  }
+
+  void _onSessionEvent(SessionEvent? args) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EventWidget(
+          title: StringConstants.receivedEvent,
+          content:
+              'Topic: ${args!.topic}\nEvent Name: ${args.name}\nEvent Data: ${args.data}',
+        );
+      },
     );
   }
 }

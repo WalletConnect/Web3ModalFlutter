@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Sign</string>
+	<string>Flutter Dapp</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -53,5 +53,16 @@
 		<string>rainbow</string>
 		<string>trust</string>
 	</array>
+  <key>CFBundleURLTypes</key>
+  <array>
+      <dict>
+          <key>CFBundleURLSchemes</key>
+          <array>
+              <string>flutterdapp</string>
+          </array>
+          <key>CFBundleURLName</key>
+          <string>com.walletconnect.flutterdapp</string>
+      </dict>
+  </array>
 </dict>
 </plist>

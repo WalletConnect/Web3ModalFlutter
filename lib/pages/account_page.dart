@@ -5,14 +5,12 @@ import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.d
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_navbar.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_navbar_title.dart';
 import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_provider.dart';
 import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/utils/util.dart';
+import 'package:web3modal_flutter/widgets/w3m_address.dart';
 import 'package:web3modal_flutter/widgets/w3m_avatar.dart';
 import 'package:web3modal_flutter/widgets/w3m_balance.dart';
 import 'package:web3modal_flutter/widgets/w3m_circle_painter.dart';
@@ -40,68 +38,136 @@ class AccountPage extends StatelessWidget {
       thickness: 1,
     );
 
-    return WalletConnectModalNavBar(
-      title: const WalletConnectModalNavbarTitle(
-        title: 'Select network',
+    const double paddingHorizontal = 20;
+    const double paddingVertical = 10;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: paddingVertical,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                children: [
-                  W3MAvatar(
-                    address: service.address ?? '',
-                    avatar: null,
-                  ),
-                  Text(
-                    Util.truncate(service.address ?? ''),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: paddingHorizontal,
+                  top: paddingVertical,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    W3MAvatar(
+                      service: service,
+                      size: 60,
+                    ),
+                    const SizedBox(
+                      height: paddingVertical,
+                    ),
+                    W3MAddress(
+                      service: service,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: themeData.inverse100,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              W3MConnectedChip(
-                service: service,
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: paddingVertical,
+                  right: paddingHorizontal,
+                ),
+                child: W3MConnectedChip(
+                  service: service,
+                ),
               ),
             ],
           ),
-          divider,
-          W3MBalance(
-            service: service,
+          const SizedBox(
+            height: paddingVertical,
           ),
           divider,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              W3MIconButton(
-                icon: W3MTokenImage(
-                  token: service.tokenImageUrl,
-                  isChain: true,
-                ),
-                text: service.selectedChain?.chainName ?? 'No Chain',
-                onPressed: () {
-                  widgetStack.instance.add(
-                    const SelectNetworkPage(),
-                  );
-                },
-              ),
-              W3MIconButton(
-                icon: W3MCirclePainter(
-                  child: SvgPicture.asset(
-                    'account_disconnect.svg',
-                    package: 'web3modal_flutter',
+          // SizedBox(
+          //   height: paddingVertical,
+          // ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: paddingHorizontal,
+              vertical: paddingVertical,
+            ),
+            child: W3MBalance(
+              service: service,
+            ),
+          ),
+
+          // SizedBox(
+          //   height: paddingVertical,
+          // ),
+          divider,
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: paddingHorizontal,
+              vertical: paddingVertical,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: W3MIconButton(
+                    icon: W3MTokenImage(
+                      imageUrl: service.tokenImageUrl,
+                      isChain: true,
+                      size: 34,
+                    ),
+                    text: service.selectedChain?.chainName ?? 'No Chain',
+                    onPressed: () {
+                      widgetStack.instance.add(
+                        SelectNetworkPage(
+                          onSelect: (chain) {
+                            service.setSelectedChain(chain);
+                            widgetStack.instance.pop();
+                          },
+                        ),
+                      );
+                    },
                   ),
                 ),
-                text: StringConstants.copyAddress,
-                onPressed: () {
-                  _copyAddress(service);
-                },
-              ),
-              W3MDisconnectButton(
-                service: service,
-              ),
-            ],
+                const SizedBox(
+                  width: 4,
+                ),
+                Flexible(
+                  child: W3MIconButton(
+                    icon: W3MCirclePainter(
+                      child: SvgPicture.asset(
+                        'assets/account_copy.svg',
+                        package: 'web3modal_flutter',
+                      ),
+                    ),
+                    text: StringConstants.copyAddress,
+                    onPressed: () {
+                      _copyAddress(service);
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+                Flexible(
+                  child: W3MDisconnectButton(
+                    service: service,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

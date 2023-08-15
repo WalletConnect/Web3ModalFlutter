@@ -9,9 +9,30 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="metamask" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="trust" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="zerion" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="rainbow" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="safe" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="omni" />
+        </intent>
     </queries>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="sign"
+        android:label="Flutter Dapp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         
@@ -34,6 +55,14 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
+                <data android:scheme="flutterdapp" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

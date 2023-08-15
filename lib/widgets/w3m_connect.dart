@@ -6,20 +6,20 @@ import 'package:web3modal_flutter/widgets/w3m_account_button.dart';
 class W3MConnect extends StatelessWidget {
   const W3MConnect({
     super.key,
-    required this.web3ModalService,
+    required this.service,
     this.buttonRadius,
   });
 
-  final IW3MService web3ModalService;
+  final IW3MService service;
   final double? buttonRadius;
 
   @override
   Widget build(BuildContext context) {
     return WalletConnectModalConnect(
-      service: web3ModalService,
+      service: service,
       buttonRadius: buttonRadius,
       connectedWidget: W3MAccountButton(
-        service: web3ModalService,
+        service: service,
       ),
     );
   }

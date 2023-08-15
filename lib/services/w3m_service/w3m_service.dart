@@ -22,7 +22,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   @override
   String? get avatarUrl => _avatarUrl;
 
-  double? _chainBalance = -1;
+  double? _chainBalance;
   @override
   double? get chainBalance => _chainBalance;
 
@@ -60,6 +60,20 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     _registerListeners();
 
     await super.init();
+
+    // Get the chainId of the chain we are connected to.
+    if (session != null && session!.requiredNamespaces != null) {
+      final List<String> chainIds =
+          NamespaceUtils.getChainIdsFromRequiredNamespaces(
+        requiredNamespaces: session!.requiredNamespaces!,
+      );
+      if (chainIds.isNotEmpty) {
+        final String chainId = chainIds.first.split(':')[1];
+        if (AssetUtil.chainPresets.containsKey(chainId)) {
+          setSelectedChain(AssetUtil.chainPresets[chainId]!);
+        }
+      }
+    }
   }
 
   @override
@@ -97,6 +111,8 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
     if (isConnected) {
       // TODO: Request that the wallet change the chain.
+
+      _loadAccountData();
     }
 
     notifyListeners();
@@ -129,13 +145,17 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     );
 
     // Get the avatar, each chainId is just a number in string form.
-    final blockchainId = await blockchainApiUtils.instance!.getIdentity(
-      address!,
-      int.parse(
-        selectedChain!.chainId,
-      ),
-    );
-    _avatarUrl = blockchainId.avatar;
+    try {
+      final blockchainId = await blockchainApiUtils.instance!.getIdentity(
+        address!,
+        int.parse(
+          selectedChain!.chainId,
+        ),
+      );
+      _avatarUrl = blockchainId.avatar;
+    } catch (_) {
+      // Couldn't load avatar, default to address icon
+    }
 
     // Tell everyone we have loaded the things
     notifyListeners();

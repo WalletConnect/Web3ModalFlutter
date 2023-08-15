@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:logger/logger.dart';
 import 'package:sign/home_page.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 
 void main() {
   runApp(
@@ -23,13 +25,27 @@ class _MyAppState extends State<MyApp> {
     WalletConnectModalThemeData.darkMode.primary080,
   ];
 
+  @override
+  void initState() {
+    super.initState();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
+    LoggerUtil.setLogLevel(Level.verbose);
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final WalletConnectModalThemeData themeData = _isDark
         ? WalletConnectModalThemeData.darkMode
         : WalletConnectModalThemeData.lightMode;
-    return Web3ModalTheme(
+    return WalletConnectModalTheme(
       data: themeData.copyWith(
         primary100: primaryColors[0],
         primary090: primaryColors[1],
@@ -41,30 +57,24 @@ class _MyAppState extends State<MyApp> {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            title: const Text('Web3Modal Sign Example'),
-          ),
-          body: SizedBox(
-            width: double.infinity,
-            child: Stack(
-              children: [
-                const MyHomePage(),
-                Positioned(
-                  bottom: 20,
-                  right: 20,
-                  child: Row(
-                    children: [
-                      _buildIconButton(
-                        Icons.theater_comedy_outlined,
-                        _swapTheme,
-                      ),
-                    ],
-                  ),
+        home: SizedBox(
+          width: double.infinity,
+          child: Stack(
+            children: [
+              const MyHomePage(),
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: Row(
+                  children: [
+                    _buildIconButton(
+                      Icons.theater_comedy_outlined,
+                      _swapTheme,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
