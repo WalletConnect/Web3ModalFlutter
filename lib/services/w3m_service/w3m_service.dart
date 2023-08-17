@@ -8,6 +8,7 @@ import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api
 import 'package:web3modal_flutter/services/network_service.dart/network_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
+import 'package:web3modal_flutter/utils/eth_util.dart';
 
 class W3MService extends WalletConnectModalService implements IW3MService {
   W3MChainInfo? _selectedChain;
@@ -62,10 +63,10 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     await super.init();
 
     // Get the chainId of the chain we are connected to.
-    if (session != null && session!.requiredNamespaces != null) {
-      final List<String> chainIds =
-          NamespaceUtils.getChainIdsFromRequiredNamespaces(
-        requiredNamespaces: session!.requiredNamespaces!,
+    print(session);
+    if (session != null) {
+      final List<String> chainIds = NamespaceUtils.getChainIdsFromNamespaces(
+        namespaces: session!.namespaces,
       );
       if (chainIds.isNotEmpty) {
         final String chainId = chainIds.first.split(':')[1];
@@ -85,8 +86,13 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   }
 
   @override
-  Future<void> setSelectedChain(W3MChainInfo? chain) async {
-    _selectedChain = chain;
+  Future<void> setSelectedChain(
+    W3MChainInfo? chain, {
+    bool switchChain = true,
+  }) async {
+    if (chain?.chainId == selectedChain?.chainId) {
+      return;
+    }
 
     setDefaultChain(
       requiredNamespaces:
@@ -109,33 +115,63 @@ class W3MService extends WalletConnectModalService implements IW3MService {
       ),
     );
 
-    if (isConnected) {
-      // TODO: Request that the wallet change the chain.
-
-      _loadAccountData();
+    // If we are connected, and the selected chain is not null, and the chains are different, switch chains.
+    if (switchChain &&
+        isConnected &&
+        _selectedChain != null &&
+        _selectedChain!.chainId != chain.chainId) {
+      _switchEthChain(selectedChain!, chain);
+      await launchCurrentWallet();
     }
 
-    notifyListeners();
+    _selectedChain = chain;
+
+    // Load account data, this will notify listeners
+    if (!await _loadAccountData()) {
+      notifyListeners();
+    }
   }
 
   /// PRIVATE FUNCTIONS ///
 
   void _registerListeners() {
     web3App!.onSessionConnect.subscribe(_onSessionConnect);
+    web3App!.onSessionUpdate.subscribe(_onSessionUpdate);
+    web3App!.onSessionEvent.subscribe(_onSessionEvent);
   }
 
   void _unregisterListeners() {
     web3App!.onSessionConnect.unsubscribe(_onSessionConnect);
+    web3App!.onSessionUpdate.unsubscribe(_onSessionUpdate);
+    web3App!.onSessionEvent.unsubscribe(_onSessionEvent);
   }
 
   void _onSessionConnect(SessionConnect? args) {
     _loadAccountData();
   }
 
-  Future<void> _loadAccountData() async {
+  void _onSessionUpdate(SessionUpdate? args) {
+    LoggerUtil.logger.i(args?.namespaces);
+    // _loadAccountData();
+  }
+
+  void _onSessionEvent(SessionEvent? args) {
+    if (args?.name == EthUtil.chainChanged) {
+      if (AssetUtil.chainPresets.containsKey(args?.data.toString())) {
+        setSelectedChain(
+          AssetUtil.chainPresets[args?.data.toString()]!,
+          switchChain: false,
+        );
+      }
+    }
+  }
+
+  /// Loads account balance and avatar.
+  /// Returns true if it was able to actually load data (i.e. there is a selected chain and session)
+  Future<bool> _loadAccountData() async {
     // If there is no selected chain or session, stop. No account to load in.
     if (selectedChain == null || session == null) {
-      return;
+      return false;
     }
 
     // Get the chain balance.
@@ -159,5 +195,52 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
     // Tell everyone we have loaded the things
     notifyListeners();
+
+    return true;
+  }
+
+  Future<void> _switchEthChain(
+    W3MChainInfo from,
+    W3MChainInfo to,
+  ) async {
+    final int chainIdInt = int.parse(to.chainId);
+    final String chainHex = chainIdInt.toRadixString(16);
+    final String chainId = 'eip155:${from.chainId}';
+    web3App!
+        .request(
+      topic: session!.topic,
+      chainId: chainId,
+      request: SessionRequestParams(
+        method: 'wallet_switchEthereumChain',
+        params: [
+          {
+            'chainId': '0x$chainHex',
+          },
+        ],
+      ),
+    )
+        .catchError(
+      (e) {
+        web3App!.request(
+          topic: session!.topic,
+          chainId: chainId,
+          request: SessionRequestParams(
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                'chainId': '0x$chainHex',
+                'chainName': to.chainName,
+                'nativeCurrency': {
+                  'name': to.tokenName,
+                  'symbol': to.tokenName,
+                  'decimals': 18,
+                },
+                'rpcUrls': [to.rpcUrl],
+              },
+            ],
+          ),
+        );
+      },
+    );
   }
 }

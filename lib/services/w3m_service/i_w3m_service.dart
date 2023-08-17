@@ -22,5 +22,8 @@ abstract class IW3MService extends IWalletConnectModalService
   /// If the wallet is already connected, it will request that the chain be changed, and will update the session
   /// with the new chain.
   /// If the [chain] is null, this will disconnect the wallet.
-  Future<void> setSelectedChain(W3MChainInfo? chain);
+  Future<void> setSelectedChain(
+    W3MChainInfo? chain, {
+    bool switchChain = false,
+  });
 }

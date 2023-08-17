@@ -122,6 +122,7 @@ class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
     LoggerUtil.logger.i(
       'W3MNetworkSelect._onServiceUpdate(). isConnected: $_selectedChain.',
     );
+    print('W3MNetworkSelect._onServiceUpdate(). isConnected: $_selectedChain.');
 
     setState(() {
       _selectedChain = widget.service.selectedChain;

@@ -5,6 +5,8 @@ class Constants {
 
   static const String aud = 'https://walletconnect.org/login';
   static const String domain = 'walletconnect.org';
+
+  static const String signPageTypeKey = 'signPageType';
 }
 
 class StyleConstants {

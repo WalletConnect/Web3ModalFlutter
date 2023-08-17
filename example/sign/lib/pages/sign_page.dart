@@ -4,6 +4,7 @@ import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign/models/chain_metadata.dart';
 import 'package:sign/utils/constants.dart';
 import 'package:sign/utils/crypto/chain_data.dart';
@@ -17,6 +18,13 @@ import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart';
 import 'package:web3modal_flutter/widgets/w3m_connect.dart';
 import 'package:web3modal_flutter/widgets/w3m_network_select.dart';
+
+enum SignPageType {
+  none,
+  bareBones,
+  walletConnectModal,
+  web3Modal,
+}
 
 class SignPage extends StatefulWidget {
   const SignPage({
@@ -33,6 +41,9 @@ class SignPage extends StatefulWidget {
 class SignPageState extends State<SignPage>
     with SingleTickerProviderStateMixin {
   bool _initialized = false;
+
+  SignPageType _signPageType = SignPageType.none;
+
   IWalletConnectModalService? _walletConnectModalService;
   IW3MService? _w3mService;
 
@@ -49,7 +60,8 @@ class SignPageState extends State<SignPage>
     Tab(text: 'Web3Modal'),
   ];
   late TabController _tabController;
-  // late PageController _pageController;
+
+  SharedPreferences? _prefs;
 
   @override
   void initState() {
@@ -66,6 +78,9 @@ class SignPageState extends State<SignPage>
   }
 
   Future<void> initialize() async {
+    _prefs = await SharedPreferences.getInstance();
+    _signPageType = SignPageType.values[_prefs!.getInt('signPageType') ?? 0];
+
     _walletConnectModalService = WalletConnectModalService(
       web3App: widget.web3App,
       recommendedWalletIds: {
@@ -82,13 +97,16 @@ class SignPageState extends State<SignPage>
         'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
       },
     );
-    _isConnected = _walletConnectModalService!.isConnected;
 
+    widget.web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
+    widget.web3App.onSessionDelete.subscribe(_onWeb3AppDisconnect);
     _walletConnectModalService?.addListener(_modalListener);
     _w3mService?.addListener(_modalListener);
 
     await _walletConnectModalService?.init();
     await _w3mService?.init();
+
+    _isConnected = widget.web3App.sessions.getAll().isNotEmpty;
 
     // Loop through all the chain data
     for (final ChainMetadata chain in ChainData.allChains) {
@@ -110,16 +128,52 @@ class SignPageState extends State<SignPage>
   @override
   void dispose() {
     _tabController.removeListener(_tabChanged);
+    widget.web3App.onSessionConnect.unsubscribe(_onWeb3AppConnect);
+    widget.web3App.onSessionDelete.unsubscribe(_onWeb3AppDisconnect);
     _walletConnectModalService?.removeListener(_modalListener);
     _w3mService?.removeListener(_modalListener);
     super.dispose();
   }
 
-  void _modalListener() {
+  void _onWeb3AppConnect(SessionConnect? args) {
+    // If we connect, default to barebones
     setState(() {
-      _isConnected =
-          _walletConnectModalService!.isConnected || _w3mService!.isConnected;
+      _isConnected = true;
+      if (_signPageType == SignPageType.none) {
+        _signPageType = SignPageType.bareBones;
+      }
     });
+    _prefs!.setInt(
+      Constants.signPageTypeKey,
+      _signPageType.index,
+    );
+  }
+
+  void _onWeb3AppDisconnect(SessionDelete? args) {
+    setState(() {
+      _isConnected = false;
+      _signPageType = SignPageType.none;
+    });
+    _prefs!.setInt(
+      Constants.signPageTypeKey,
+      _signPageType.index,
+    );
+  }
+
+  void _modalListener() {
+    if (_signPageType == SignPageType.none) {
+      setState(() {
+        if (_walletConnectModalService!.isConnected) {
+          _signPageType = SignPageType.walletConnectModal;
+        } else if (_w3mService!.isConnected) {
+          _signPageType = SignPageType.web3Modal;
+        }
+      });
+      _prefs!.setInt(
+        Constants.signPageTypeKey,
+        _signPageType.index,
+      );
+    }
   }
 
   @override
@@ -142,28 +196,54 @@ class SignPageState extends State<SignPage>
   Widget _buildConnected() {
     final SessionData session = widget.web3App.sessions.getAll().first;
 
-    // return Center(
-    //   child: W3MConnect(
-    //     service: _w3mService!,
-    //     buttonRadius: 20,
-    //   ),
-    // );
-
-    // return Container(
-    //   padding: const EdgeInsets.all(8.0),
-    //   child: SessionWidget(
-    //     session: session,
-    //     web3App: widget.web3App,
-    //     launchRedirect: () {
-    //       _walletConnectModalService!.launchCurrentWallet();
-    //     },
-    //   ),
-    // );
+    // Assign the button based on the type
+    Widget button;
+    switch (_signPageType) {
+      case SignPageType.bareBones:
+        button = Container(
+          width: double.infinity,
+          height: StyleConstants.linear48,
+          margin: const EdgeInsets.symmetric(
+            vertical: StyleConstants.linear8,
+          ),
+          child: ElevatedButton(
+            onPressed: () async {
+              await widget.web3App.disconnectSession(
+                  topic: session.topic,
+                  reason: Errors.getSdkError(
+                    Errors.USER_DISCONNECTED,
+                  ));
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                Colors.red,
+              ),
+            ),
+            child: const Text(
+              StringConstants.delete,
+              style: StyleConstants.buttonText,
+            ),
+          ),
+        );
+      case SignPageType.walletConnectModal:
+        button = WalletConnectModalConnect(
+          service: _walletConnectModalService!,
+          buttonRadius: 20,
+        );
+      case SignPageType.web3Modal:
+        button = W3MConnect(
+          service: _w3mService!,
+          buttonRadius: 20,
+        );
+      case SignPageType.none:
+      default:
+        button = Container();
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Connected",
+        title: Text(
+          _getScaffoldTitleFromType(),
           style: StyleConstants.titleText,
         ),
       ),
@@ -171,14 +251,7 @@ class SignPageState extends State<SignPage>
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          WalletConnectModalConnect(
-            service: _walletConnectModalService!,
-            buttonRadius: 20,
-          ),
-          W3MConnect(
-            service: _w3mService!,
-            buttonRadius: 20,
-          ),
+          button,
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(8.0),
@@ -186,7 +259,11 @@ class SignPageState extends State<SignPage>
                 session: session,
                 web3App: widget.web3App,
                 launchRedirect: () {
-                  _walletConnectModalService!.launchCurrentWallet();
+                  if (_signPageType == SignPageType.walletConnectModal) {
+                    _walletConnectModalService!.launchCurrentWallet();
+                  } else if (_signPageType == SignPageType.web3Modal) {
+                    _w3mService!.launchCurrentWallet();
+                  }
                 },
               ),
             ),
@@ -539,5 +616,18 @@ class SignPageState extends State<SignPage>
       },
     );
     _shouldDismissQrCode = false;
+  }
+
+  String _getScaffoldTitleFromType() {
+    switch (_signPageType) {
+      case SignPageType.bareBones:
+        return 'Bare Bones';
+      case SignPageType.walletConnectModal:
+        return 'WalletConnect Modal';
+      case SignPageType.web3Modal:
+        return 'Web3Modal';
+      default:
+        return 'Sign';
+    }
   }
 }

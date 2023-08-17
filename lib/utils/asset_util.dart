@@ -1,5 +1,6 @@
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
+import 'package:web3modal_flutter/utils/eth_util.dart';
 
 class AssetUtil {
   static String getChainIconAssetId(String chainId) {
@@ -12,18 +13,6 @@ class AssetUtil {
         '692ed6ba-e569-459a-556a-776476829e00';
   }
 
-  static const ethMethods = [
-    'eth_sendTransaction',
-    // 'eth_signTransaction',
-    'personal_sign',
-    'eth_sign',
-    'eth_signTypedData',
-  ];
-  static const ethEvents = [
-    'chainChanged',
-    'accountsChanged',
-  ];
-
   /// All RPC urls were found here: https://rpc.info/
   static const Map<String, W3MChainInfo> chainPresets = {
     '1': W3MChainInfo(
@@ -33,9 +22,9 @@ class AssetUtil {
       tokenName: 'ETH',
       requiredNamespaces: {
         'eip155': RequiredNamespace(
-          methods: ethMethods,
+          methods: EthUtil.ethMethods,
           chains: ['eip155:1'],
-          events: ethEvents,
+          events: EthUtil.ethEvents,
         ),
       },
       rpcUrl: 'https://eth.drpc.org',
@@ -47,9 +36,9 @@ class AssetUtil {
       tokenName: 'ARB',
       requiredNamespaces: {
         'eip155': RequiredNamespace(
-          methods: ethMethods,
+          methods: EthUtil.ethMethods,
           chains: ['eip155:42161'],
-          events: ethEvents,
+          events: EthUtil.ethEvents,
         ),
       },
       rpcUrl: 'https://arbitrum.blockpi.network/v1/rpc/public',
@@ -61,9 +50,9 @@ class AssetUtil {
       tokenName: 'AVAX',
       requiredNamespaces: {
         'eip155': RequiredNamespace(
-          methods: ethMethods,
+          methods: EthUtil.ethMethods,
           chains: ['eip155:43114'],
-          events: ethEvents,
+          events: EthUtil.ethEvents,
         ),
       },
       rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
@@ -75,9 +64,9 @@ class AssetUtil {
       tokenName: 'BNB',
       requiredNamespaces: {
         'eip155': RequiredNamespace(
-          methods: ethMethods,
+          methods: EthUtil.ethMethods,
           chains: ['eip155:56'],
-          events: ethEvents,
+          events: EthUtil.ethEvents,
         ),
       },
       rpcUrl: 'https://bsc-dataseed.binance.org/',
@@ -89,9 +78,9 @@ class AssetUtil {
       tokenName: 'FTM',
       requiredNamespaces: {
         'eip155': RequiredNamespace(
-          methods: ethMethods,
+          methods: EthUtil.ethMethods,
           chains: ['eip155:250'],
-          events: ethEvents,
+          events: EthUtil.ethEvents,
         ),
       },
       rpcUrl: 'https://rpc.ftm.tools/',
@@ -103,9 +92,9 @@ class AssetUtil {
       tokenName: 'OP',
       requiredNamespaces: {
         'eip155': RequiredNamespace(
-          methods: ethMethods,
+          methods: EthUtil.ethMethods,
           chains: ['eip155:10'],
-          events: ethEvents,
+          events: EthUtil.ethEvents,
         ),
       },
       rpcUrl: 'https://mainnet.optimism.io/',
@@ -117,9 +106,9 @@ class AssetUtil {
       tokenName: 'MATIC',
       requiredNamespaces: {
         'eip155': RequiredNamespace(
-          methods: ethMethods,
+          methods: EthUtil.ethMethods,
           chains: ['eip155:137'],
-          events: ethEvents,
+          events: EthUtil.ethEvents,
         ),
       },
       rpcUrl: 'https://polygon.drpc.org',
@@ -137,9 +126,9 @@ class AssetUtil {
       tokenName: 'EVMOS',
       requiredNamespaces: {
         'eip155': RequiredNamespace(
-          methods: ethMethods,
+          methods: EthUtil.ethMethods,
           chains: ['eip155:9001'],
-          events: ethEvents,
+          events: EthUtil.ethEvents,
         ),
       },
       rpcUrl: 'https://eth.bd.evmos.org:8545',
@@ -163,9 +152,9 @@ class AssetUtil {
       tokenName: 'IOTX',
       requiredNamespaces: {
         'eip155': RequiredNamespace(
-          methods: ethMethods,
+          methods: EthUtil.ethMethods,
           chains: ['eip155:4689'],
-          events: ethEvents,
+          events: EthUtil.ethEvents,
         ),
       },
       rpcUrl: 'https://rpc.ankr.com/iotex',
@@ -177,9 +166,9 @@ class AssetUtil {
       tokenName: 'METIS',
       requiredNamespaces: {
         'eip155': RequiredNamespace(
-          methods: ethMethods,
+          methods: EthUtil.ethMethods,
           chains: ['eip155:1088'],
-          events: ethEvents,
+          events: EthUtil.ethEvents,
         ),
       },
       rpcUrl: 'https://metis-mainnet.public.blastapi.io',

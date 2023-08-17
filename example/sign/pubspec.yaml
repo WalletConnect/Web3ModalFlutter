@@ -46,6 +46,7 @@ dependencies:
   web3dart: ^2.6.1
   universal_io: ^2.2.2
   json_annotation: ^4.8.1
+  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:

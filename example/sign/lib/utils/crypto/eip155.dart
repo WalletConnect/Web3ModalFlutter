@@ -11,6 +11,7 @@ enum EIP155Methods {
   ethSignTypedData,
   ethSendTransaction,
   walletSwitchEthereumChain,
+  walletAddEthereumChain,
 }
 
 enum EIP155Events {
@@ -51,7 +52,8 @@ class EIP155 {
     // EIP155Methods.ethSignTransaction: 'eth_signTransaction',
     // EIP155Methods.ethSignTypedData: 'eth_signTypedData',
     EIP155Methods.ethSendTransaction: 'eth_sendTransaction',
-    EIP155Methods.walletSwitchEthereumChain: 'wallet_switchEthereumChain'
+    // EIP155Methods.walletSwitchEthereumChain: 'wallet_switchEthereumChain',
+    // EIP155Methods.walletAddEthereumChain: 'wallet_addEthereumChain'
   };
 
   static final Map<EIP155Events, String> events = {
@@ -113,12 +115,13 @@ class EIP155 {
             value: '0x01',
           ),
         );
+      case EIP155Methods.walletAddEthereumChain:
       case EIP155Methods.walletSwitchEthereumChain:
         return walletSwitchChain(
           web3App: web3App,
           topic: topic,
           chainId: chainId,
-          chainInfo: AssetUtil.chainPresets['43114']!,
+          chainInfo: AssetUtil.chainPresets[chainId.split(':')[1]]!,
         );
     }
   }
@@ -131,15 +134,40 @@ class EIP155 {
   }) async {
     final int chainIdInt = int.parse(chainInfo.chainId);
     final String chainHex = chainIdInt.toRadixString(16);
-    print(chainHex);
-    return await web3App.request(
-      topic: topic,
-      chainId: chainId,
-      request: SessionRequestParams(
-        method: methods[EIP155Methods.walletSwitchEthereumChain]!,
-        params: {'chainId': '0x$chainHex'},
-      ),
-    );
+    try {
+      return await web3App.request(
+        topic: topic,
+        chainId: chainId,
+        request: SessionRequestParams(
+          method: methods[EIP155Methods.walletSwitchEthereumChain]!,
+          params: [
+            {
+              'chainId': '0x$chainHex',
+            },
+          ],
+        ),
+      );
+    } catch (e) {
+      return await web3App.request(
+        topic: topic,
+        chainId: chainId,
+        request: SessionRequestParams(
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              'chainId': '0x$chainHex',
+              'chainName': chainInfo.chainName,
+              'nativeCurrency': {
+                'name': chainInfo.tokenName,
+                'symbol': chainInfo.tokenName,
+                'decimals': 18,
+              },
+              'rpcUrls': [chainInfo.rpcUrl],
+            },
+          ],
+        ),
+      );
+    }
   }
 
   static Future<dynamic> personalSign({

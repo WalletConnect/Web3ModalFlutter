@@ -94,9 +94,6 @@ class AccountPage extends StatelessWidget {
             height: paddingVertical,
           ),
           divider,
-          // SizedBox(
-          //   height: paddingVertical,
-          // ),
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: paddingHorizontal,
@@ -106,10 +103,6 @@ class AccountPage extends StatelessWidget {
               service: service,
             ),
           ),
-
-          // SizedBox(
-          //   height: paddingVertical,
-          // ),
           divider,
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -122,21 +115,26 @@ class AccountPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
-                  child: W3MIconButton(
-                    icon: W3MTokenImage(
-                      imageUrl: service.tokenImageUrl,
-                      isChain: true,
-                      size: 34,
-                    ),
-                    text: service.selectedChain?.chainName ?? 'No Chain',
-                    onPressed: () {
-                      widgetStack.instance.add(
-                        SelectNetworkPage(
-                          onSelect: (chain) {
-                            service.setSelectedChain(chain);
-                            widgetStack.instance.pop();
-                          },
+                  child: ListenableBuilder(
+                    listenable: service,
+                    builder: (BuildContext context, Widget? child) {
+                      return W3MIconButton(
+                        icon: W3MTokenImage(
+                          imageUrl: service.tokenImageUrl,
+                          isChain: true,
+                          size: 34,
                         ),
+                        text: service.selectedChain?.chainName ?? 'No Chain',
+                        onPressed: () {
+                          widgetStack.instance.add(
+                            SelectNetworkPage(
+                              onSelect: (chain) {
+                                service.setSelectedChain(chain);
+                                widgetStack.instance.pop();
+                              },
+                            ),
+                          );
+                        },
                       );
                     },
                   ),

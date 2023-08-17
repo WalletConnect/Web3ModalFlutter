@@ -61,6 +61,15 @@ class ChainData {
       isTestnet: true,
       rpc: ['https://matic-mumbai.chainstacklabs.com'],
     ),
+    ChainMetadata(
+      type: ChainType.eip155,
+      chainId: 'eip155:56',
+      name: 'Binance Smart Chain',
+      logo: '/chain-logos/eip155-137.png',
+      color: Colors.yellow.shade700,
+      isTestnet: true,
+      rpc: ['https://bsc-dataseed.binance.org/'],
+    ),
     // const ChainMetadata(
     //   type: ChainType.eip155,
     //   chainId: 'solana:8E9rvCKLFQia2Y35HXjjpWzj8weVo44K',

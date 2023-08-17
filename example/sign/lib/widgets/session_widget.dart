@@ -58,33 +58,9 @@ class SessionWidgetState extends State<SessionWidget> {
     }
 
     // Add a delete button
-    children.add(
-      Container(
-        width: double.infinity,
-        height: StyleConstants.linear48,
-        margin: const EdgeInsets.symmetric(
-          vertical: StyleConstants.linear8,
-        ),
-        child: ElevatedButton(
-          onPressed: () async {
-            await widget.web3App.disconnectSession(
-                topic: widget.session.topic,
-                reason: Errors.getSdkError(
-                  Errors.USER_DISCONNECTED,
-                ));
-          },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
-              Colors.red,
-            ),
-          ),
-          child: const Text(
-            StringConstants.delete,
-            style: StyleConstants.buttonText,
-          ),
-        ),
-      ),
-    );
+    // children.add(
+
+    // );
 
     return ListView(
       children: children,
