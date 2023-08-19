@@ -100,8 +100,8 @@ class SignPageState extends State<SignPage>
 
     widget.web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
     widget.web3App.onSessionDelete.subscribe(_onWeb3AppDisconnect);
-    _walletConnectModalService?.addListener(_modalListener);
-    _w3mService?.addListener(_modalListener);
+    _walletConnectModalService?.addListener(_walletConnectServiceListener);
+    _w3mService?.addListener(_w3mServiceListener);
 
     await _walletConnectModalService?.init();
     await _w3mService?.init();
@@ -130,8 +130,8 @@ class SignPageState extends State<SignPage>
     _tabController.removeListener(_tabChanged);
     widget.web3App.onSessionConnect.unsubscribe(_onWeb3AppConnect);
     widget.web3App.onSessionDelete.unsubscribe(_onWeb3AppDisconnect);
-    _walletConnectModalService?.removeListener(_modalListener);
-    _w3mService?.removeListener(_modalListener);
+    _walletConnectModalService?.removeListener(_walletConnectServiceListener);
+    _w3mService?.removeListener(_w3mServiceListener);
     super.dispose();
   }
 
@@ -160,18 +160,32 @@ class SignPageState extends State<SignPage>
     );
   }
 
-  void _modalListener() {
-    if (_signPageType == SignPageType.none) {
+  void _walletConnectServiceListener() {
+    // if (_signPageType == SignPageType.none ||
+    //     _signPageType == SignPageType.bareBones) {
+    //   setState(() {
+    //     if (_walletConnectModalService!.isConnected) {
+    //       _signPageType = SignPageType.walletConnectModal;
+    //     }
+    //   });
+    //   _prefs!.setInt(
+    //     Constants.signPageTypeKey,
+    //     SignPageType.walletConnectModal.index,
+    //   );
+    // }
+  }
+
+  void _w3mServiceListener() {
+    if (_signPageType == SignPageType.none ||
+        _signPageType == SignPageType.bareBones) {
       setState(() {
-        if (_walletConnectModalService!.isConnected) {
-          _signPageType = SignPageType.walletConnectModal;
-        } else if (_w3mService!.isConnected) {
+        if (_w3mService!.isConnected) {
           _signPageType = SignPageType.web3Modal;
         }
       });
       _prefs!.setInt(
         Constants.signPageTypeKey,
-        _signPageType.index,
+        SignPageType.web3Modal.index,
       );
     }
   }
@@ -511,8 +525,8 @@ class SignPageState extends State<SignPage>
         .i('Updated Required Namespaces, namespaces: $requiredNamespaces');
     LoggerUtil.logger
         .i('Updated Required Namespaces, service: $_walletConnectModalService');
-    _walletConnectModalService?.setDefaultChain(
-      requiredNamespaces: requiredNamespaces,
+    _walletConnectModalService?.setOptionalNamespaces(
+      optionalNamespaces: requiredNamespaces,
     );
   }
 

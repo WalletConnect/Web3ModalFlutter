@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/explorer/i_explorer_service.dart';
@@ -11,6 +12,8 @@ import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 
 class W3MService extends WalletConnectModalService implements IW3MService {
+  static const String selectedChainId = 'selectedChainId';
+
   W3MChainInfo? _selectedChain;
   @override
   W3MChainInfo? get selectedChain => _selectedChain;
@@ -26,6 +29,8 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   double? _chainBalance;
   @override
   double? get chainBalance => _chainBalance;
+
+  SharedPreferences? _prefs;
 
   W3MService({
     IWeb3App? web3App,
@@ -58,20 +63,48 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
   @override
   Future<void> init() async {
+    _prefs = await SharedPreferences.getInstance();
+
     _registerListeners();
 
     await super.init();
 
+    // Set the optional namespaces to everything in our asset util.
+    final List<String> chainIds = [];
+    for (final String id in AssetUtil.chainPresets.keys) {
+      chainIds.add('eip155:$id');
+    }
+    final Map<String, RequiredNamespace> optionalNamespaces = {
+      'eip155': RequiredNamespace(
+        methods: EthUtil.ethMethods,
+        chains: chainIds,
+        events: EthUtil.ethEvents,
+      ),
+    };
+    setOptionalNamespaces(
+      optionalNamespaces: optionalNamespaces,
+    );
+
     // Get the chainId of the chain we are connected to.
-    print(session);
     if (session != null) {
-      final List<String> chainIds = NamespaceUtils.getChainIdsFromNamespaces(
-        namespaces: session!.namespaces,
-      );
-      if (chainIds.isNotEmpty) {
-        final String chainId = chainIds.first.split(':')[1];
+      final String? chainId = _prefs!.getString(selectedChainId);
+
+      // If we had a chainId stored, use it!
+      if (chainId != null) {
         if (AssetUtil.chainPresets.containsKey(chainId)) {
           setSelectedChain(AssetUtil.chainPresets[chainId]!);
+        }
+      } else {
+        // Otherwise, just get the first chainId from the namespaces of the session and use that
+        final List<String> chainIds = NamespaceUtils.getChainIdsFromNamespaces(
+          namespaces: session!.namespaces,
+        );
+        if (chainIds.isNotEmpty) {
+          final String chainId = chainIds.first.split(':')[1];
+          // If we have the chain in our presets, set it as the selected chain
+          if (AssetUtil.chainPresets.containsKey(chainId)) {
+            setSelectedChain(AssetUtil.chainPresets[chainId]!);
+          }
         }
       }
     }
@@ -94,11 +127,6 @@ class W3MService extends WalletConnectModalService implements IW3MService {
       return;
     }
 
-    setDefaultChain(
-      requiredNamespaces:
-          chain?.requiredNamespaces ?? NamespaceConstants.ethereum,
-    );
-
     _chainBalance = null;
     _tokenImageUrl = null;
 
@@ -108,6 +136,9 @@ class W3MService extends WalletConnectModalService implements IW3MService {
       return;
     }
 
+    // Store the chain for when we reload the app.
+    await _prefs!.setString(selectedChainId, chain.chainId);
+
     // Get the token/chain icon.
     _tokenImageUrl = explorerService.instance!.getAssetImageUrl(
       imageId: AssetUtil.getChainIconAssetId(
@@ -116,10 +147,18 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     );
 
     // If we are connected, and the selected chain is not null, and the chains are different, switch chains.
-    if (switchChain &&
-        isConnected &&
-        _selectedChain != null &&
-        _selectedChain!.chainId != chain.chainId) {
+    if (switchChain && // We want to swap the chain
+        isConnected && // We are connected (Should mean the session isn't null)
+        session != null && // Session isn't null (We double check)
+        !NamespaceUtils.getChainIdsFromNamespaces(
+          namespaces: session!.namespaces,
+        ).contains(
+            'eip155:${chain.chainId}') && // The session doesn't already have the chain
+        _selectedChain != null && // The selected chain isn't null
+        _selectedChain!.chainId !=
+            chain.chainId) // The selected chain is different
+    {
+      // Then we swap/add the chain and launch the wallet
       _switchEthChain(selectedChain!, chain);
       await launchCurrentWallet();
     }

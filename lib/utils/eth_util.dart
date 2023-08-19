@@ -1,6 +1,3 @@
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:web3modal_flutter/models/w3m_chain_info.dart';
-
 class EthUtil {
   static const ethMethods = [
     'eth_sendTransaction',

@@ -564,10 +564,10 @@ packages:
     dependency: transitive
     description:
       name: platform
-      sha256: "4a451831508d7d6ca779f7ac6e212b4023dd5a7d08a27a63da33756410e32b76"
+      sha256: "57c07bf82207aee366dfaa3867b3164e4f03a238a461a11b0e8a3a510d51203d"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.0"
+    version: "3.1.1"
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -633,7 +633,7 @@ packages:
     source: hosted
     version: "1.1.0"
   shared_preferences:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shared_preferences
       sha256: "0344316c947ffeb3a529eac929e1978fcd37c26be4e8468628bac399365a3ca1"
@@ -937,18 +937,18 @@ packages:
     dependency: "direct main"
     description:
       name: walletconnect_flutter_v2
-      sha256: "3a7c6d1f1598f3236cf90ee30946910b0feae170b40e094e305e3dbbf7b824d2"
+      sha256: "7429c8edfcf830e931ecd9112656a52c5f9c83cb0fcc00a1afb4f10d2be1b6e7"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.3"
+    version: "2.1.4"
   walletconnect_modal_flutter:
     dependency: "direct main"
     description:
       name: walletconnect_modal_flutter
-      sha256: "5f79c75788f32ffc70a926d221e083804ac525c5d14f006ff5ad3728c7ae1bed"
+      sha256: "55844d8bef0fd42f9b2eb775694650520c67f0fc7cb4b2cb3e9fde108a3ef701"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.4"
+    version: "2.1.0"
   watcher:
     dependency: transitive
     description:
