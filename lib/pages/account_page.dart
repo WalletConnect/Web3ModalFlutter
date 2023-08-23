@@ -119,12 +119,14 @@ class AccountPage extends StatelessWidget {
                     listenable: service,
                     builder: (BuildContext context, Widget? child) {
                       return W3MIconButton(
+                        key: Web3ModalConstants.chainSwapButton,
                         icon: W3MTokenImage(
                           imageUrl: service.tokenImageUrl,
                           isChain: true,
                           size: 34,
                         ),
-                        text: service.selectedChain?.chainName ?? 'No Chain',
+                        text: service.selectedChain?.chainName ??
+                            StringConstants.noChain,
                         onPressed: () {
                           widgetStack.instance.add(
                             SelectNetworkPage(
@@ -144,6 +146,7 @@ class AccountPage extends StatelessWidget {
                 ),
                 Flexible(
                   child: W3MIconButton(
+                    key: Web3ModalConstants.addressCopyButton,
                     icon: W3MCirclePainter(
                       child: SvgPicture.asset(
                         'assets/account_copy.svg',

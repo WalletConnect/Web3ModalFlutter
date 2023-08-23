@@ -234,7 +234,7 @@ packages:
     source: hosted
     version: "1.0.2"
   event:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: event
       sha256: eb4814de94cbf6a10da9c4f652bc654087d7066e33566b5036822e6c0b24befb
@@ -504,6 +504,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.4.2"
+  network_image_mock:
+    dependency: "direct dev"
+    description:
+      name: network_image_mock
+      sha256: "855cdd01d42440e0cffee0d6c2370909fc31b3bcba308a59829f24f64be42db7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   package_config:
     dependency: transitive
     description:
@@ -945,10 +953,10 @@ packages:
     dependency: "direct main"
     description:
       name: walletconnect_modal_flutter
-      sha256: "55844d8bef0fd42f9b2eb775694650520c67f0fc7cb4b2cb3e9fde108a3ef701"
+      sha256: "4ac9ee3b8314e0b77b9edfcdde35c830542d648c9cdd082dce7cf507727ef1a5"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   watcher:
     dependency: transitive
     description:

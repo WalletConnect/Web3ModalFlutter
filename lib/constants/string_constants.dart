@@ -6,4 +6,5 @@ class StringConstants {
   static const String copyAddress = 'Copy Address';
   static const String disconnect = 'Disconnect';
   static const String addressCopied = 'Address copied';
+  static const String noChain = 'No Chain';
 }

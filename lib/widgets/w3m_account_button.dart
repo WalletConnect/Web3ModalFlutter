@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/widgets/w3m_address.dart';
@@ -48,6 +49,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
           W3MBalance(service: widget.service),
           const SizedBox(width: 8),
           GestureDetector(
+            key: Web3ModalConstants.w3mAccountButton,
             onTapDown: (details) {
               setState(() {
                 scale = 0.75;
@@ -64,7 +66,6 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
                 startWidget: const AccountPage(),
               );
             },
-            // TODO: Make this scale over time
             child: AnimatedScale(
               scale: scale,
               duration: const Duration(milliseconds: 100),

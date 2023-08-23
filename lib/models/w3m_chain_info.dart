@@ -1,25 +1,21 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:web3modal_flutter/services/ledger_service.dart/ethereum_service.dart';
+import 'package:web3modal_flutter/services/ledger_service.dart/evm_service.dart';
 import 'package:web3modal_flutter/services/ledger_service.dart/i_ledger_service.dart';
 
-class W3MChainInfo {
-  final String chainName;
-  final String chainId;
-  final String chainIcon;
-  final String tokenName;
-  final Map<String, RequiredNamespace> requiredNamespaces;
-  final String rpcUrl;
-  final ILedgerService ledgerService;
+part 'w3m_chain_info.freezed.dart';
 
-  const W3MChainInfo({
-    required this.chainName,
-    required this.chainId,
-    required this.chainIcon,
-    required this.tokenName,
-    required this.requiredNamespaces,
-    required this.rpcUrl,
-    this.ledgerService = const EVMService(),
-  });
+@freezed
+class W3MChainInfo with _$W3MChainInfo {
+  factory W3MChainInfo({
+    required String chainName,
+    required String chainId,
+    required String chainIcon,
+    required String tokenName,
+    required Map<String, RequiredNamespace> requiredNamespaces,
+    required String rpcUrl,
+    @Default(EVMService()) ILedgerService ledgerService,
+  }) = _W3MChainInfo;
 }
 
 class W3MAssetIcon {

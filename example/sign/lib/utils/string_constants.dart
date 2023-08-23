@@ -7,7 +7,9 @@ class StringConstants {
 
   // Main Page
   static const String appTitle = 'WalletConnect v2 Flutter dApp Demo';
-  static const String signPageTitle = 'Sign';
+  static const String basicPageTitle = 'Basic';
+  static const String wcmPageTitle = 'WalletConnect Modal';
+  static const String w3mPageTitle = 'Web3Modal';
   static const String pairingsPageTitle = 'Pairings';
   static const String sessionsPageTitle = 'Sessions';
   static const String authPageTitle = 'Auth';

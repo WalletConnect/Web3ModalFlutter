@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
+import 'package:sign/models/chain_metadata.dart';
 import 'package:sign/models/page_data.dart';
-import 'package:sign/pages/auth_page.dart';
-import 'package:sign/pages/sign_page.dart';
+import 'package:sign/pages/basic_page.dart';
+import 'package:sign/pages/w3m_page.dart';
+import 'package:sign/pages/wcm_page.dart';
 import 'package:sign/utils/constants.dart';
+import 'package:sign/utils/crypto/chain_data.dart';
+import 'package:sign/utils/crypto/helpers.dart';
 import 'package:sign/utils/dart_defines.dart';
 import 'package:sign/utils/string_constants.dart';
 import 'package:sign/widgets/event_widget.dart';
@@ -30,8 +33,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    Logger.level = Level.verbose;
-
     initialize();
   }
 
@@ -55,12 +56,36 @@ class _MyHomePageState extends State<MyHomePage> {
     _web3App!.onSessionPing.subscribe(_onSessionPing);
     _web3App!.onSessionEvent.subscribe(_onSessionEvent);
 
+    await _web3App!.init();
+
+    // Loop through all the chain data
+    for (final ChainMetadata chain in ChainData.allChains) {
+      // Loop through the events for that chain
+      for (final event in getChainEvents(chain.type)) {
+        _web3App!.registerEventHandler(
+          chainId: chain.chainId,
+          event: event,
+          handler: null,
+        );
+      }
+    }
+
     setState(() {
       _pageDatas = [
         PageData(
-          page: SignPage(web3App: _web3App!),
-          title: StringConstants.signPageTitle,
-          icon: Icons.home,
+          page: BasicPage(web3App: _web3App!),
+          title: StringConstants.basicPageTitle,
+          icon: Icons.looks_one,
+        ),
+        PageData(
+          page: WCMPage(web3App: _web3App!),
+          title: StringConstants.wcmPageTitle,
+          icon: Icons.looks_two,
+        ),
+        PageData(
+          page: W3MPage(web3App: _web3App!),
+          title: StringConstants.w3mPageTitle,
+          icon: Icons.looks_3,
         ),
         // PageData(
         //   page: PairingsPage(web3App: _web3App!),
@@ -72,11 +97,11 @@ class _MyHomePageState extends State<MyHomePage> {
         //   title: StringConstants.sessionsPageTitle,
         //   icon: Icons.confirmation_number_outlined,
         // ),
-        PageData(
-          page: AuthPage(web3App: _web3App!),
-          title: StringConstants.authPageTitle,
-          icon: Icons.lock,
-        ),
+        // PageData(
+        //   page: AuthPage(web3App: _web3App!),
+        //   title: StringConstants.authPageTitle,
+        //   icon: Icons.lock,
+        // ),
       ];
 
       _initialized = true;

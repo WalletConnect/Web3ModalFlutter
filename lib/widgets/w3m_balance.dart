@@ -4,6 +4,8 @@ import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
 
 class W3MBalance extends StatefulWidget {
+  static const balanceDefault = '_._';
+
   const W3MBalance({
     super.key,
     required this.service,
@@ -16,10 +18,8 @@ class W3MBalance extends StatefulWidget {
 }
 
 class _W3MBalanceState extends State<W3MBalance> {
-  static const balanceDefault = '_._';
-
   String? _tokenImage;
-  String _balance = balanceDefault;
+  String _balance = W3MBalance.balanceDefault;
   String? _tokenName;
 
   @override
@@ -77,7 +77,7 @@ class _W3MBalanceState extends State<W3MBalance> {
     setState(() {
       _tokenImage = widget.service.tokenImageUrl;
       _balance = widget.service.chainBalance == null
-          ? balanceDefault
+          ? W3MBalance.balanceDefault
           : widget.service.chainBalance!.toStringAsPrecision(5);
       RegExp regex = RegExp(r"([.]*0+)(?!.*\d)");
       _balance = _balance.replaceAll(regex, '');

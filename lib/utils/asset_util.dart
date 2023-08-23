@@ -14,14 +14,14 @@ class AssetUtil {
   }
 
   /// All RPC urls were found here: https://rpc.info/
-  static const Map<String, W3MChainInfo> chainPresets = {
+  static Map<String, W3MChainInfo> chainPresets = {
     '1': W3MChainInfo(
       chainName: 'Ethereum',
       chainId: '1',
       chainIcon: '692ed6ba-e569-459a-556a-776476829e00',
       tokenName: 'ETH',
       requiredNamespaces: {
-        'eip155': RequiredNamespace(
+        'eip155': const RequiredNamespace(
           methods: EthUtil.ethMethods,
           chains: ['eip155:1'],
           events: EthUtil.ethEvents,
@@ -35,7 +35,7 @@ class AssetUtil {
       chainIcon: '600a9a04-c1b9-42ca-6785-9b4b6ff85200',
       tokenName: 'ARB',
       requiredNamespaces: {
-        'eip155': RequiredNamespace(
+        'eip155': const RequiredNamespace(
           methods: EthUtil.ethMethods,
           chains: ['eip155:42161'],
           events: EthUtil.ethEvents,
@@ -49,7 +49,7 @@ class AssetUtil {
       chainIcon: '30c46e53-e989-45fb-4549-be3bd4eb3b00',
       tokenName: 'AVAX',
       requiredNamespaces: {
-        'eip155': RequiredNamespace(
+        'eip155': const RequiredNamespace(
           methods: EthUtil.ethMethods,
           chains: ['eip155:43114'],
           events: EthUtil.ethEvents,
@@ -63,7 +63,7 @@ class AssetUtil {
       chainIcon: '93564157-2e8e-4ce7-81df-b264dbee9b00',
       tokenName: 'BNB',
       requiredNamespaces: {
-        'eip155': RequiredNamespace(
+        'eip155': const RequiredNamespace(
           methods: EthUtil.ethMethods,
           chains: ['eip155:56'],
           events: EthUtil.ethEvents,
@@ -77,7 +77,7 @@ class AssetUtil {
       chainIcon: '06b26297-fe0c-4733-5d6b-ffa5498aac00',
       tokenName: 'FTM',
       requiredNamespaces: {
-        'eip155': RequiredNamespace(
+        'eip155': const RequiredNamespace(
           methods: EthUtil.ethMethods,
           chains: ['eip155:250'],
           events: EthUtil.ethEvents,
@@ -91,7 +91,7 @@ class AssetUtil {
       chainIcon: 'ab9c186a-c52f-464b-2906-ca59d760a400',
       tokenName: 'OP',
       requiredNamespaces: {
-        'eip155': RequiredNamespace(
+        'eip155': const RequiredNamespace(
           methods: EthUtil.ethMethods,
           chains: ['eip155:10'],
           events: EthUtil.ethEvents,
@@ -105,7 +105,7 @@ class AssetUtil {
       chainIcon: '41d04d42-da3b-4453-8506-668cc0727900',
       tokenName: 'MATIC',
       requiredNamespaces: {
-        'eip155': RequiredNamespace(
+        'eip155': const RequiredNamespace(
           methods: EthUtil.ethMethods,
           chains: ['eip155:137'],
           events: EthUtil.ethEvents,
@@ -125,7 +125,7 @@ class AssetUtil {
       chainIcon: 'f926ff41-260d-4028-635e-91913fc28e00',
       tokenName: 'EVMOS',
       requiredNamespaces: {
-        'eip155': RequiredNamespace(
+        'eip155': const RequiredNamespace(
           methods: EthUtil.ethMethods,
           chains: ['eip155:9001'],
           events: EthUtil.ethEvents,
@@ -151,7 +151,7 @@ class AssetUtil {
       chainIcon: '34e68754-e536-40da-c153-6ef2e7188a00',
       tokenName: 'IOTX',
       requiredNamespaces: {
-        'eip155': RequiredNamespace(
+        'eip155': const RequiredNamespace(
           methods: EthUtil.ethMethods,
           chains: ['eip155:4689'],
           events: EthUtil.ethEvents,
@@ -165,7 +165,7 @@ class AssetUtil {
       chainIcon: '3897a66d-40b9-4833-162f-a2c90531c900',
       tokenName: 'METIS',
       requiredNamespaces: {
-        'eip155': RequiredNamespace(
+        'eip155': const RequiredNamespace(
           methods: EthUtil.ethMethods,
           chains: ['eip155:1088'],
           events: EthUtil.ethEvents,

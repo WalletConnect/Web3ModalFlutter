@@ -1,4 +1,3 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/explorer/i_explorer_service.dart';
@@ -7,6 +6,7 @@ import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils_singleton.dart';
 import 'package:web3modal_flutter/services/network_service.dart/network_service_singleton.dart';
+import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
@@ -29,8 +29,6 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   double? _chainBalance;
   @override
   double? get chainBalance => _chainBalance;
-
-  SharedPreferences? _prefs;
 
   W3MService({
     IWeb3App? web3App,
@@ -59,14 +57,16 @@ class W3MService extends WalletConnectModalService implements IW3MService {
         await networkService.instance.init();
       },
     );
+    WalletConnectModalServices.registerInitFunction(
+      'storage_service',
+      () async {
+        await storageService.instance.init();
+      },
+    );
   }
 
   @override
   Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
-
-    _registerListeners();
-
     await super.init();
 
     // Set the optional namespaces to everything in our asset util.
@@ -87,12 +87,13 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
     // Get the chainId of the chain we are connected to.
     if (session != null) {
-      final String? chainId = _prefs!.getString(selectedChainId);
+      final String? chainId =
+          storageService.instance.getString(selectedChainId);
 
       // If we had a chainId stored, use it!
       if (chainId != null) {
         if (AssetUtil.chainPresets.containsKey(chainId)) {
-          setSelectedChain(AssetUtil.chainPresets[chainId]!);
+          await setSelectedChain(AssetUtil.chainPresets[chainId]!);
         }
       } else {
         // Otherwise, just get the first chainId from the namespaces of the session and use that
@@ -103,18 +104,10 @@ class W3MService extends WalletConnectModalService implements IW3MService {
           final String chainId = chainIds.first.split(':')[1];
           // If we have the chain in our presets, set it as the selected chain
           if (AssetUtil.chainPresets.containsKey(chainId)) {
-            setSelectedChain(AssetUtil.chainPresets[chainId]!);
+            await setSelectedChain(AssetUtil.chainPresets[chainId]!);
           }
         }
       }
-    }
-  }
-
-  @override
-  // ignore: prefer_void_to_null
-  Future<Null> onDispose() async {
-    if (isInitialized) {
-      _unregisterListeners();
     }
   }
 
@@ -123,6 +116,8 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     W3MChainInfo? chain, {
     bool switchChain = true,
   }) async {
+    checkInitialized();
+
     if (chain?.chainId == selectedChain?.chainId) {
       return;
     }
@@ -132,12 +127,13 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
     // If the chain is null, disconnect and stop.
     if (chain == null) {
+      _selectedChain = null;
       await disconnect();
       return;
     }
 
     // Store the chain for when we reload the app.
-    await _prefs!.setString(selectedChainId, chain.chainId);
+    await storageService.instance.setString(selectedChainId, chain.chainId);
 
     // Get the token/chain icon.
     _tokenImageUrl = explorerService.instance!.getAssetImageUrl(
@@ -173,26 +169,31 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
   /// PRIVATE FUNCTIONS ///
 
-  void _registerListeners() {
-    web3App!.onSessionConnect.subscribe(_onSessionConnect);
-    web3App!.onSessionUpdate.subscribe(_onSessionUpdate);
+  @override
+  void registerListeners() {
+    super.registerListeners();
+    // web3App!.onSessionUpdate.subscribe(_onSessionUpdate);
     web3App!.onSessionEvent.subscribe(_onSessionEvent);
   }
 
-  void _unregisterListeners() {
-    web3App!.onSessionConnect.unsubscribe(_onSessionConnect);
-    web3App!.onSessionUpdate.unsubscribe(_onSessionUpdate);
+  @override
+  void unregisterListeners() {
+    super.unregisterListeners();
+    // web3App!.onSessionUpdate.unsubscribe(_onSessionUpdate);
     web3App!.onSessionEvent.unsubscribe(_onSessionEvent);
   }
 
-  void _onSessionConnect(SessionConnect? args) {
+  @override
+  void onSessionConnect(SessionConnect? args) {
     _loadAccountData();
+
+    super.onSessionConnect(args);
   }
 
-  void _onSessionUpdate(SessionUpdate? args) {
-    LoggerUtil.logger.i(args?.namespaces);
-    // _loadAccountData();
-  }
+  // void _onSessionUpdate(SessionUpdate? args) {
+  //   LoggerUtil.logger.i(args?.namespaces);
+  //   // _loadAccountData();
+  // }
 
   void _onSessionEvent(SessionEvent? args) {
     if (args?.name == EthUtil.chainChanged) {
