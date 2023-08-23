@@ -68,6 +68,10 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
   @override
   Future<void> init() async {
+    if (isInitialized) {
+      return;
+    }
+
     await super.init();
 
     // Set the optional namespaces to everything in our asset util.
@@ -92,7 +96,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
           storageService.instance.getString(selectedChainId);
 
       // If we had a chainId stored, use it!
-      if (chainId != null) {
+      if (chainId != null && chainId.isNotEmpty) {
         if (ChainData.chainPresets.containsKey(chainId)) {
           await setSelectedChain(ChainData.chainPresets[chainId]!);
         }
@@ -129,6 +133,8 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     // If the chain is null, disconnect and stop.
     if (chain == null) {
       _selectedChain = null;
+      await storageService.instance.setString(selectedChainId, '');
+      setRequiredNamespaces(requiredNamespaces: {});
       await disconnect();
       return;
     }
@@ -147,11 +153,17 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     if (switchChain && // We want to swap the chain
         isConnected && // We are connected (Should mean the session isn't null)
         session != null && // Session isn't null (We double check)
+        _selectedChain != null && // The selected chain isn't null
+        NamespaceUtils.getNamespacesMethodsForChainId(
+          chainId: selectedChain!.namespace,
+          namespaces: session!.namespaces,
+        ).contains(
+          EthUtil.walletSwitchEthChain,
+        ) && // The session has the switch chain method
         !NamespaceUtils.getChainIdsFromNamespaces(
           namespaces: session!.namespaces,
         ).contains(
-            'eip155:${chain.chainId}') && // The session doesn't already have the chain
-        _selectedChain != null && // The selected chain isn't null
+            chain.namespace) && // The session doesn't already have the chain
         _selectedChain!.chainId !=
             chain.chainId) // The selected chain is different
     {
@@ -162,10 +174,14 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
     _selectedChain = chain;
 
-    // Load account data, this will notify listeners
-    if (!await _loadAccountData()) {
-      notifyListeners();
-    }
+    // Set the requiredNamespace to be the selected chain
+    // This will also notify listeners
+    setRequiredNamespaces(
+      requiredNamespaces: chain.requiredNamespaces,
+    );
+
+    // Load the account data, notify listeners when done
+    await _loadAccountData();
   }
 
   /// PRIVATE FUNCTIONS ///
@@ -186,9 +202,9 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
   @override
   void onSessionConnect(SessionConnect? args) {
-    _loadAccountData();
-
     super.onSessionConnect(args);
+
+    _loadAccountData();
   }
 
   // void _onSessionUpdate(SessionUpdate? args) {

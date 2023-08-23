@@ -14,6 +14,7 @@ class W3MChainInfo with _$W3MChainInfo {
     required String chainIcon,
     required String tokenName,
     required Map<String, RequiredNamespace> requiredNamespaces,
+    required Map<String, RequiredNamespace> optionalNamespaces,
     required String rpcUrl,
     @Default(EVMService()) ILedgerService ledgerService,
   }) = _W3MChainInfo;

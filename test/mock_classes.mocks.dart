@@ -61,8 +61,7 @@ import 'package:web3modal_flutter/services/network_service.dart/network_service.
     as _i34;
 import 'package:web3modal_flutter/services/storage_service/storage_service.dart'
     as _i37;
-import 'package:web3modal_flutter/services/w3m_service/w3m_service.dart'
-    as _i22;
+import 'package:web3modal_flutter/web3modal_flutter.dart' as _i22;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

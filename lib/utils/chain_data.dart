@@ -13,9 +13,16 @@ class ChainData {
       tokenName: 'ETH',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethMethods,
+          methods: EthUtil.ethRequiredMethods,
           chains: ['eip155:1'],
           events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:1'],
+          events: [],
         ),
       },
       rpcUrl: 'https://eth.drpc.org',
@@ -28,9 +35,16 @@ class ChainData {
       tokenName: 'ARB',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethMethods,
+          methods: EthUtil.ethRequiredMethods,
           chains: ['eip155:42161'],
           events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:42161'],
+          events: [],
         ),
       },
       rpcUrl: 'https://arbitrum.blockpi.network/v1/rpc/public',
@@ -43,9 +57,16 @@ class ChainData {
       tokenName: 'AVAX',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethMethods,
+          methods: EthUtil.ethRequiredMethods,
           chains: ['eip155:43114'],
           events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:43114'],
+          events: [],
         ),
       },
       rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
@@ -58,9 +79,16 @@ class ChainData {
       tokenName: 'BNB',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethMethods,
+          methods: EthUtil.ethRequiredMethods,
           chains: ['eip155:56'],
           events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:56'],
+          events: [],
         ),
       },
       rpcUrl: 'https://bsc-dataseed.binance.org/',
@@ -73,9 +101,16 @@ class ChainData {
       tokenName: 'FTM',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethMethods,
+          methods: EthUtil.ethRequiredMethods,
           chains: ['eip155:250'],
           events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:50'],
+          events: [],
         ),
       },
       rpcUrl: 'https://rpc.ftm.tools/',
@@ -88,9 +123,16 @@ class ChainData {
       tokenName: 'OP',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethMethods,
+          methods: EthUtil.ethRequiredMethods,
           chains: ['eip155:10'],
           events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:10'],
+          events: [],
         ),
       },
       rpcUrl: 'https://mainnet.optimism.io/',
@@ -103,9 +145,16 @@ class ChainData {
       tokenName: 'MATIC',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethMethods,
+          methods: EthUtil.ethRequiredMethods,
           chains: ['eip155:137'],
           events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:137'],
+          events: [],
         ),
       },
       rpcUrl: 'https://polygon.drpc.org',
@@ -124,9 +173,16 @@ class ChainData {
       tokenName: 'EVMOS',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethMethods,
+          methods: EthUtil.ethRequiredMethods,
           chains: ['eip155:9001'],
           events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:9001'],
+          events: [],
         ),
       },
       rpcUrl: 'https://eth.bd.evmos.org:8545',
@@ -151,9 +207,16 @@ class ChainData {
       tokenName: 'IOTX',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethMethods,
+          methods: EthUtil.ethRequiredMethods,
           chains: ['eip155:4689'],
           events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:4689'],
+          events: [],
         ),
       },
       rpcUrl: 'https://rpc.ankr.com/iotex',
@@ -166,9 +229,16 @@ class ChainData {
       tokenName: 'METIS',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethMethods,
+          methods: EthUtil.ethRequiredMethods,
           chains: ['eip155:1088'],
           events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:1088'],
+          events: [],
         ),
       },
       rpcUrl: 'https://metis-mainnet.public.blastapi.io',

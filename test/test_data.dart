@@ -1,6 +1,7 @@
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:walletconnect_modal_flutter/models/listings.dart';
 import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
+import 'package:web3modal_flutter/utils/eth_util.dart';
 
 final List<Listing> testListings1 = [
   const Listing(
@@ -134,7 +135,31 @@ final testSession = SessionData(
   namespaces: {
     'test': const Namespace(
       accounts: ['eip155:1:0x123'],
-      methods: ['method1'],
+      methods: [
+        'method1',
+      ],
+      events: [],
+    ),
+  },
+  self: connectionMetadata,
+  peer: connectionMetadata,
+);
+
+final testSessionWalletSwap = SessionData(
+  topic: 'a',
+  pairingTopic: 'b',
+  relay: Relay('irn'),
+  expiry: 1,
+  acknowledged: true,
+  controller: 'test',
+  namespaces: {
+    'test': const Namespace(
+      accounts: ['eip155:1:0x123'],
+      methods: [
+        'method1',
+        EthUtil.walletAddEthChain,
+        EthUtil.walletSwitchEthChain,
+      ],
       events: [],
     ),
   },

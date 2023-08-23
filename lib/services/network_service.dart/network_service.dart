@@ -1,4 +1,4 @@
-import 'package:flutter/src/foundation/change_notifier.dart';
+import 'package:flutter/material.dart';
 import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
 import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';

@@ -23,6 +23,8 @@ mixin _$W3MChainInfo {
   String get tokenName => throw _privateConstructorUsedError;
   Map<String, RequiredNamespace> get requiredNamespaces =>
       throw _privateConstructorUsedError;
+  Map<String, RequiredNamespace> get optionalNamespaces =>
+      throw _privateConstructorUsedError;
   String get rpcUrl => throw _privateConstructorUsedError;
   ILedgerService get ledgerService => throw _privateConstructorUsedError;
 
@@ -44,6 +46,7 @@ abstract class $W3MChainInfoCopyWith<$Res> {
       String chainIcon,
       String tokenName,
       Map<String, RequiredNamespace> requiredNamespaces,
+      Map<String, RequiredNamespace> optionalNamespaces,
       String rpcUrl,
       ILedgerService ledgerService});
 }
@@ -67,6 +70,7 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
     Object? chainIcon = null,
     Object? tokenName = null,
     Object? requiredNamespaces = null,
+    Object? optionalNamespaces = null,
     Object? rpcUrl = null,
     Object? ledgerService = null,
   }) {
@@ -95,6 +99,10 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
           ? _value.requiredNamespaces
           : requiredNamespaces // ignore: cast_nullable_to_non_nullable
               as Map<String, RequiredNamespace>,
+      optionalNamespaces: null == optionalNamespaces
+          ? _value.optionalNamespaces
+          : optionalNamespaces // ignore: cast_nullable_to_non_nullable
+              as Map<String, RequiredNamespace>,
       rpcUrl: null == rpcUrl
           ? _value.rpcUrl
           : rpcUrl // ignore: cast_nullable_to_non_nullable
@@ -122,6 +130,7 @@ abstract class _$$_W3MChainInfoCopyWith<$Res>
       String chainIcon,
       String tokenName,
       Map<String, RequiredNamespace> requiredNamespaces,
+      Map<String, RequiredNamespace> optionalNamespaces,
       String rpcUrl,
       ILedgerService ledgerService});
 }
@@ -143,6 +152,7 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
     Object? chainIcon = null,
     Object? tokenName = null,
     Object? requiredNamespaces = null,
+    Object? optionalNamespaces = null,
     Object? rpcUrl = null,
     Object? ledgerService = null,
   }) {
@@ -171,6 +181,10 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
           ? _value._requiredNamespaces
           : requiredNamespaces // ignore: cast_nullable_to_non_nullable
               as Map<String, RequiredNamespace>,
+      optionalNamespaces: null == optionalNamespaces
+          ? _value._optionalNamespaces
+          : optionalNamespaces // ignore: cast_nullable_to_non_nullable
+              as Map<String, RequiredNamespace>,
       rpcUrl: null == rpcUrl
           ? _value.rpcUrl
           : rpcUrl // ignore: cast_nullable_to_non_nullable
@@ -193,9 +207,11 @@ class _$_W3MChainInfo implements _W3MChainInfo {
       required this.chainIcon,
       required this.tokenName,
       required final Map<String, RequiredNamespace> requiredNamespaces,
+      required final Map<String, RequiredNamespace> optionalNamespaces,
       required this.rpcUrl,
       this.ledgerService = const EVMService()})
-      : _requiredNamespaces = requiredNamespaces;
+      : _requiredNamespaces = requiredNamespaces,
+        _optionalNamespaces = optionalNamespaces;
 
   @override
   final String chainName;
@@ -216,6 +232,15 @@ class _$_W3MChainInfo implements _W3MChainInfo {
     return EqualUnmodifiableMapView(_requiredNamespaces);
   }
 
+  final Map<String, RequiredNamespace> _optionalNamespaces;
+  @override
+  Map<String, RequiredNamespace> get optionalNamespaces {
+    if (_optionalNamespaces is EqualUnmodifiableMapView)
+      return _optionalNamespaces;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_optionalNamespaces);
+  }
+
   @override
   final String rpcUrl;
   @override
@@ -224,7 +249,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
 
   @override
   String toString() {
-    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, namespace: $namespace, chainIcon: $chainIcon, tokenName: $tokenName, requiredNamespaces: $requiredNamespaces, rpcUrl: $rpcUrl, ledgerService: $ledgerService)';
+    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, namespace: $namespace, chainIcon: $chainIcon, tokenName: $tokenName, requiredNamespaces: $requiredNamespaces, optionalNamespaces: $optionalNamespaces, rpcUrl: $rpcUrl, ledgerService: $ledgerService)';
   }
 
   @override
@@ -243,6 +268,8 @@ class _$_W3MChainInfo implements _W3MChainInfo {
                 other.tokenName == tokenName) &&
             const DeepCollectionEquality()
                 .equals(other._requiredNamespaces, _requiredNamespaces) &&
+            const DeepCollectionEquality()
+                .equals(other._optionalNamespaces, _optionalNamespaces) &&
             (identical(other.rpcUrl, rpcUrl) || other.rpcUrl == rpcUrl) &&
             (identical(other.ledgerService, ledgerService) ||
                 other.ledgerService == ledgerService));
@@ -257,6 +284,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
       chainIcon,
       tokenName,
       const DeepCollectionEquality().hash(_requiredNamespaces),
+      const DeepCollectionEquality().hash(_optionalNamespaces),
       rpcUrl,
       ledgerService);
 
@@ -275,6 +303,7 @@ abstract class _W3MChainInfo implements W3MChainInfo {
       required final String chainIcon,
       required final String tokenName,
       required final Map<String, RequiredNamespace> requiredNamespaces,
+      required final Map<String, RequiredNamespace> optionalNamespaces,
       required final String rpcUrl,
       final ILedgerService ledgerService}) = _$_W3MChainInfo;
 
@@ -290,6 +319,8 @@ abstract class _W3MChainInfo implements W3MChainInfo {
   String get tokenName;
   @override
   Map<String, RequiredNamespace> get requiredNamespaces;
+  @override
+  Map<String, RequiredNamespace> get optionalNamespaces;
   @override
   String get rpcUrl;
   @override

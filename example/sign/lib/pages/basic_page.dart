@@ -94,11 +94,15 @@ class _BasicPageState extends State<BasicPage>
       );
     }
 
-    if (_isConnected) {
-      return _buildConnected();
-    } else {
-      return _buildConnect();
-    }
+    return Container(
+      padding: const EdgeInsets.all(8),
+      child: _isConnected ? _buildConnected() : _buildConnect(),
+    );
+    // if (_isConnected) {
+    //   return _buildConnected();
+    // } else {
+    //   return _buildConnect();
+    // }
   }
 
   Widget _buildConnected() {
@@ -166,7 +170,34 @@ class _BasicPageState extends State<BasicPage>
     // Build the list of chain button
     final List<ChainMetadata> chains = ChainDataWrapper.chains;
 
-    List<Widget> chainButtons = [];
+    List<Widget> chainButtons = [
+      Container(
+        width: double.infinity,
+        height: StyleConstants.linear48,
+        margin: const EdgeInsets.symmetric(
+          vertical: StyleConstants.linear8,
+        ),
+        child: ElevatedButton(
+          onPressed: () => _onConnect(),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+              StyleConstants.primaryColor,
+            ),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  StyleConstants.linear8,
+                ),
+              ),
+            ),
+          ),
+          child: const Text(
+            StringConstants.bareBonesSign,
+            style: StyleConstants.buttonText,
+          ),
+        ),
+      ),
+    ];
 
     for (final ChainMetadata chain in chains) {
       // Build the button
@@ -193,32 +224,6 @@ class _BasicPageState extends State<BasicPage>
         ),
         // _buildTestnetSwitch(),
         ...chainButtons,
-        Container(
-          width: double.infinity,
-          height: StyleConstants.linear48,
-          margin: const EdgeInsets.symmetric(
-            vertical: StyleConstants.linear8,
-          ),
-          child: ElevatedButton(
-            onPressed: () => _onConnect(),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
-                StyleConstants.primaryColor,
-              ),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    StyleConstants.linear8,
-                  ),
-                ),
-              ),
-            ),
-            child: const Text(
-              StringConstants.bareBonesSign,
-              style: StyleConstants.buttonText,
-            ),
-          ),
-        ),
       ],
     );
   }

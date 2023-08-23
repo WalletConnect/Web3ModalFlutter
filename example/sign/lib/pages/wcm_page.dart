@@ -9,6 +9,7 @@ import 'package:sign/utils/string_constants.dart';
 import 'package:sign/widgets/chain_button.dart';
 import 'package:sign/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+import 'package:walletconnect_modal_flutter/services/explorer/i_explorer_service.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 
 class WCMPage extends StatefulWidget {
@@ -28,7 +29,7 @@ class _WCMPageState extends State<WCMPage> with SingleTickerProviderStateMixin {
 
   IWalletConnectModalService? _walletConnectModalService;
 
-  bool _testnetOnly = false;
+  ChainMetadata? _firstChain;
   final List<ChainMetadata> _selectedChains = [];
 
   bool _isConnected = false;
@@ -44,10 +45,10 @@ class _WCMPageState extends State<WCMPage> with SingleTickerProviderStateMixin {
     _walletConnectModalService = WalletConnectModalService(
       web3App: widget.web3App,
       recommendedWalletIds: {
-        'afbd95522f4041c71dd4f1a065f971fd32372865b416f95a0b1db759ae33f2a7',
-        '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662',
-        'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+        'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask
+        '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0', // Trust
       },
+      excludedWalletState: ExcludedWalletState.all,
     );
 
     widget.web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
@@ -92,11 +93,10 @@ class _WCMPageState extends State<WCMPage> with SingleTickerProviderStateMixin {
       );
     }
 
-    if (_isConnected) {
-      return _buildConnected();
-    } else {
-      return _buildConnect();
-    }
+    return Container(
+      padding: const EdgeInsets.all(8),
+      child: _isConnected ? _buildConnected() : _buildConnect(),
+    );
   }
 
   Widget _buildConnected() {
@@ -145,7 +145,12 @@ class _WCMPageState extends State<WCMPage> with SingleTickerProviderStateMixin {
     // Build the list of chain button
     final List<ChainMetadata> chains = ChainDataWrapper.chains;
 
-    List<Widget> chainButtons = [];
+    List<Widget> chainButtons = [
+      WalletConnectModalConnect(
+        service: _walletConnectModalService!,
+        buttonRadius: 20,
+      ),
+    ];
 
     for (final ChainMetadata chain in chains) {
       // Build the button
@@ -175,67 +180,55 @@ class _WCMPageState extends State<WCMPage> with SingleTickerProviderStateMixin {
         ),
         // _buildTestnetSwitch(),
         ...chainButtons,
-        WalletConnectModalConnect(
-          service: _walletConnectModalService!,
-          buttonRadius: 20,
-        ),
       ],
     );
   }
 
-  Widget _buildTestnetSwitch() {
-    return SizedBox(
-      height: StyleConstants.linear48,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            StringConstants.testnetsOnly,
-            style: StyleConstants.buttonText,
-          ),
-          Switch(
-            value: _testnetOnly,
-            onChanged: (value) {
-              setState(() {
-                _testnetOnly = value;
-              });
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _selectChain(
-    ChainMetadata chain, {
-    bool deselectOthers = false,
-  }) {
+  void _selectChain(ChainMetadata chain) {
     setState(() {
-      if (deselectOthers) {
-        _selectedChains.clear();
-        _selectedChains.add(chain);
-      } else {
-        if (_selectedChains.contains(chain)) {
-          _selectedChains.remove(chain);
-        } else {
-          _selectedChains.add(chain);
+      if (_selectedChains.contains(chain)) {
+        _selectedChains.remove(chain);
+
+        if (chain == _firstChain) {
+          _firstChain = null;
+
+          if (_selectedChains.isNotEmpty) {
+            _firstChain = _selectedChains.first;
+          }
         }
+      } else {
+        _firstChain ??= chain;
+        _selectedChains.add(chain);
       }
     });
     _updateRequiredNamespaces();
   }
 
   void _updateRequiredNamespaces() {
-    final Map<String, RequiredNamespace> requiredNamespaces =
-        _getRequiredNamespaces();
-    LoggerUtil.logger
-        .i('_updateRequiredNamespaces, namespaces: $requiredNamespaces');
+    final Map<String, RequiredNamespace> requiredNamespaces = {};
+    if (_firstChain != null) {
+      requiredNamespaces[_firstChain!.type.name] = RequiredNamespace(
+        chains: [_firstChain!.w3mChainInfo.namespace],
+        methods: getChainMethods(_firstChain!.type),
+        events: getChainEvents(_firstChain!.type),
+      );
+    }
+    final Map<String, RequiredNamespace> optionalNamespaces =
+        _getOtionalNamespaces();
+
+    _walletConnectModalService?.setRequiredNamespaces(
+      requiredNamespaces: requiredNamespaces,
+    );
     _walletConnectModalService?.setOptionalNamespaces(
-      optionalNamespaces: requiredNamespaces,
+      optionalNamespaces: optionalNamespaces,
+    );
+
+    LoggerUtil.logger.i(
+      '_updateRequiredNamespaces, requiredNamespaces: $requiredNamespaces, optionalNamespaces: $optionalNamespaces',
     );
   }
 
-  Map<String, RequiredNamespace> _getRequiredNamespaces() {
+  Map<String, RequiredNamespace> _getOtionalNamespaces() {
     final Map<String, RequiredNamespace> requiredNamespaces = {};
     final Map<ChainType, Set<String>> chains = {};
 

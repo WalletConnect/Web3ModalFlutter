@@ -86,11 +86,10 @@ class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
       );
     }
 
-    if (_isConnected) {
-      return _buildConnected();
-    } else {
-      return _buildConnect();
-    }
+    return Container(
+      padding: const EdgeInsets.all(8),
+      child: _isConnected ? _buildConnected() : _buildConnect(),
+    );
   }
 
   Widget _buildConnected() {

@@ -5,11 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
+import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils_singleton.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart';
 import 'package:web3modal_flutter/services/network_service.dart/network_service_singleton.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
-import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -28,6 +28,9 @@ void main() {
     late MockStorageService mockStorageService;
     late MockBlockchainApiUtils mockBlockchainApiUtils;
     late MockEVMService mockEVMService;
+    late MockUrlUtils mockUrlUtils;
+
+    late Event<SessionDelete> onSessionDelete = Event<SessionDelete>();
 
     setUp(() async {
       // Web3App Mocking
@@ -45,7 +48,7 @@ void main() {
         metadata,
       );
       when(web3App.onSessionDelete).thenReturn(
-        Event<SessionDelete>(),
+        onSessionDelete,
       );
       when(web3App.onSessionConnect).thenReturn(
         Event<SessionConnect>(),
@@ -81,27 +84,32 @@ void main() {
       mockBlockchainApiUtils = MockBlockchainApiUtils();
       es = MockExplorerService();
       mockEVMService = MockEVMService();
+      mockUrlUtils = MockUrlUtils();
       networkService.instance = mockNetworkService;
       storageService.instance = mockStorageService;
       explorerService.instance = es;
       blockchainApiUtils.instance = mockBlockchainApiUtils;
-      ChainData.chainPresets['1'] = ChainData.chainPresets['1']!.copyWith(
-        ledgerService: mockEVMService,
-      );
+      urlUtils.instance = mockUrlUtils;
+
+      // Change all chain presets to use our mock EVMService
+      for (var entry in ChainData.chainPresets.entries) {
+        ChainData.chainPresets[entry.key] = entry.value.copyWith(
+          ledgerService: mockEVMService,
+        );
+      }
 
       when(es.init()).thenAnswer((_) async {});
       // await WalletConnectModalServices.explorer.init();
       when(mockStorageService.getString(W3MService.selectedChainId))
           .thenReturn('1');
-      when(mockStorageService.setString(W3MService.selectedChainId, '1'))
+      when(mockStorageService.setString(W3MService.selectedChainId, any))
           .thenAnswer((_) => Future.value(true));
       when(
         es.getAssetImageUrl(
-          imageId: AssetUtil.getChainIconAssetId(
-            '1',
-          ),
+          imageId: anyNamed('imageId'),
         ),
       ).thenReturn('abc');
+      when(es.getRedirect(name: anyNamed("name"))).thenReturn(null);
       when(mockEVMService.getBalance(any, any)).thenAnswer(
         (_) => Future.value(1.0),
       );
@@ -113,6 +121,17 @@ void main() {
           ),
         ),
       );
+      when(mockUrlUtils.launchUrl(any)).thenAnswer(
+        (realInvocation) => Future.value(true),
+      );
+      // when(
+      //   mockUrlUtils.launchRedirect(
+      //     nativeUri: anyNamed("nativeUri"),
+      //     universalUri: anyNamed('universalUri'),
+      //   ),
+      // ).thenAnswer(
+      //   (_) async {},
+      // );
     });
 
     group('Constructor', () {
@@ -131,6 +150,13 @@ void main() {
           'should call init on services, set optional namespaces, then skip init again',
           () async {
         when(es.init()).thenAnswer((_) async {});
+
+        int counter = 0;
+        f() {
+          counter++;
+        }
+
+        service.addListener(f);
 
         await service.init();
 
@@ -153,6 +179,7 @@ void main() {
           service.optionalNamespaces,
           optionalNamespaces,
         );
+        expect(counter, 2);
 
         await service.init();
 
@@ -160,6 +187,9 @@ void main() {
         verifyNever(mockStorageService.init());
 
         expect(service.isInitialized, isTrue);
+        expect(counter, 2);
+
+        service.removeListener(f);
       });
 
       test(
@@ -168,6 +198,13 @@ void main() {
         when(sessions.getAll()).thenReturn(
           [testSession],
         );
+
+        int counter = 0;
+        f() {
+          counter++;
+        }
+
+        service.addListener(f);
 
         await service.init();
 
@@ -181,6 +218,9 @@ void main() {
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
         expect(service.selectedChain, ChainData.chainPresets['1']);
+        expect(counter, 4);
+
+        service.removeListener(f);
       });
     });
 
@@ -197,10 +237,17 @@ void main() {
           [testSession],
         );
 
+        int counter = 0;
+        f() {
+          counter++;
+        }
+
+        service.addListener(f);
+
+        // Init the service will use the test session properly
         await service.init();
-
-        await service.setSelectedChain(ChainData.chainPresets['1']!);
-
+        // WalletConnectModal, setOptionalNamespaces, setSelectedChain (calls it twice)
+        expect(counter, 4);
         verify(
           mockStorageService.setString(W3MService.selectedChainId, '1'),
         ).called(1);
@@ -208,28 +255,78 @@ void main() {
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
         expect(service.selectedChain, ChainData.chainPresets['1']);
+        expect(
+          service.requiredNamespaces,
+          ChainData.chainPresets['1']!.requiredNamespaces,
+        );
 
-        verifyNever(mockStorageService.setString(
-          W3MService.selectedChainId,
-          '1',
-        ));
+        // Chain swap to polygon
+        await service.setSelectedChain(ChainData.chainPresets['137']!);
 
+        //
+        expect(counter, 6);
+        verify(
+          mockStorageService.setString(W3MService.selectedChainId, '137'),
+        ).called(1);
+        verify(es.getAssetImageUrl(imageId: anyNamed('imageId'))).called(1);
+        verify(mockEVMService.getBalance(any, any)).called(1);
+        verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
+        expect(service.selectedChain, ChainData.chainPresets['137']);
+        expect(
+          service.requiredNamespaces,
+          ChainData.chainPresets['137']!.requiredNamespaces,
+        );
+
+        // Setting selected chain to null will disconnect
         await service.setSelectedChain(null);
-
-        verifyNever(mockStorageService.setString(
-          W3MService.selectedChainId,
-          '1',
+        onSessionDelete.broadcast(SessionDelete(
+          'topic',
         ));
-        expect(service.session != null, true);
+
+        verify(mockStorageService.setString(
+          W3MService.selectedChainId,
+          '',
+        ));
         verify(
           web3App.disconnectSession(
             topic: anyNamed('topic'),
             reason: anyNamed('reason'),
           ),
         ).called(2);
+        expect(service.session == null, true);
         expect(service.selectedChain, null);
         expect(service.chainBalance, null);
         expect(service.tokenImageUrl, null);
+        expect(
+          service.requiredNamespaces,
+          {},
+        );
+
+        expect(counter, 8); // setRequiredNamespaces, disconnect
+      });
+
+      test('switch wallet if all conditions are met', () async {
+        when(sessions.getAll()).thenReturn(
+          [testSessionWalletSwap],
+        );
+
+        await service.init();
+
+        await service.setSelectedChain(ChainData.chainPresets['1']!);
+        await service.setSelectedChain(ChainData.chainPresets['137']!);
+
+        // Check that we switched wallets
+        verify(
+          web3App.request(
+            topic: anyNamed('topic'),
+            chainId: anyNamed('chainId'),
+            request: anyNamed('request'),
+          ),
+        ).called(1);
+        verify(es.getRedirect(name: anyNamed('name'))).called(1);
+        verify(
+          mockUrlUtils.launchUrl(any),
+        ).called(1);
       });
     });
   });

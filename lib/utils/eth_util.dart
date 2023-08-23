@@ -1,12 +1,18 @@
 class EthUtil {
-  static const ethMethods = [
-    'eth_sendTransaction',
-    // 'eth_signTransaction',
+  static const ethRequiredMethods = [
     'personal_sign',
-    'eth_sign',
     'eth_signTypedData',
-    'wallet_switchEthereumChain',
-    'wallet_addEthereumChain',
+    'eth_sendTransaction',
+  ];
+  static const walletSwitchEthChain = 'wallet_switchEthereumChain';
+  static const walletAddEthChain = 'wallet_addEthereumChain';
+  static const ethOptionalMethods = [
+    walletSwitchEthChain,
+    walletAddEthChain,
+  ];
+  static const ethMethods = [
+    ...ethRequiredMethods,
+    ...ethOptionalMethods,
   ];
   static const String chainChanged = 'chainChanged';
   static const String accountsChanged = 'accountsChanged';
