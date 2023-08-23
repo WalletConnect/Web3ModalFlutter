@@ -9,6 +9,7 @@ import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart';
 import 'package:web3modal_flutter/services/network_service.dart/network_service_singleton.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
+import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -84,7 +85,7 @@ void main() {
       storageService.instance = mockStorageService;
       explorerService.instance = es;
       blockchainApiUtils.instance = mockBlockchainApiUtils;
-      AssetUtil.chainPresets['1'] = AssetUtil.chainPresets['1']!.copyWith(
+      ChainData.chainPresets['1'] = ChainData.chainPresets['1']!.copyWith(
         ledgerService: mockEVMService,
       );
 
@@ -138,7 +139,7 @@ void main() {
 
         expect(service.isInitialized, isTrue);
         final List<String> chainIds = [];
-        for (final String id in AssetUtil.chainPresets.keys) {
+        for (final String id in ChainData.chainPresets.keys) {
           chainIds.add('eip155:$id');
         }
         final Map<String, RequiredNamespace> optionalNamespaces = {
@@ -179,14 +180,14 @@ void main() {
         verify(es.getAssetImageUrl(imageId: anyNamed('imageId'))).called(1);
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
-        expect(service.selectedChain, AssetUtil.chainPresets['1']);
+        expect(service.selectedChain, ChainData.chainPresets['1']);
       });
     });
 
     group('setSelectedChain', () {
       test('throws if _checkInitialized fails', () async {
         expect(
-          () => service.setSelectedChain(AssetUtil.chainPresets['1']!),
+          () => service.setSelectedChain(ChainData.chainPresets['1']!),
           throwsA(isA<StateError>()),
         );
       });
@@ -198,7 +199,7 @@ void main() {
 
         await service.init();
 
-        await service.setSelectedChain(AssetUtil.chainPresets['1']!);
+        await service.setSelectedChain(ChainData.chainPresets['1']!);
 
         verify(
           mockStorageService.setString(W3MService.selectedChainId, '1'),
@@ -206,7 +207,7 @@ void main() {
         verify(es.getAssetImageUrl(imageId: anyNamed('imageId'))).called(1);
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
-        expect(service.selectedChain, AssetUtil.chainPresets['1']);
+        expect(service.selectedChain, ChainData.chainPresets['1']);
 
         verifyNever(mockStorageService.setString(
           W3MService.selectedChainId,
