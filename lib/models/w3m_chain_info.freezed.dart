@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$W3MChainInfo {
   String get chainName => throw _privateConstructorUsedError;
   String get chainId => throw _privateConstructorUsedError;
+  String get namespace => throw _privateConstructorUsedError;
   String get chainIcon => throw _privateConstructorUsedError;
   String get tokenName => throw _privateConstructorUsedError;
   Map<String, RequiredNamespace> get requiredNamespaces =>
@@ -39,6 +40,7 @@ abstract class $W3MChainInfoCopyWith<$Res> {
   $Res call(
       {String chainName,
       String chainId,
+      String namespace,
       String chainIcon,
       String tokenName,
       Map<String, RequiredNamespace> requiredNamespaces,
@@ -61,6 +63,7 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
   $Res call({
     Object? chainName = null,
     Object? chainId = null,
+    Object? namespace = null,
     Object? chainIcon = null,
     Object? tokenName = null,
     Object? requiredNamespaces = null,
@@ -75,6 +78,10 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
       chainId: null == chainId
           ? _value.chainId
           : chainId // ignore: cast_nullable_to_non_nullable
+              as String,
+      namespace: null == namespace
+          ? _value.namespace
+          : namespace // ignore: cast_nullable_to_non_nullable
               as String,
       chainIcon: null == chainIcon
           ? _value.chainIcon
@@ -111,6 +118,7 @@ abstract class _$$_W3MChainInfoCopyWith<$Res>
   $Res call(
       {String chainName,
       String chainId,
+      String namespace,
       String chainIcon,
       String tokenName,
       Map<String, RequiredNamespace> requiredNamespaces,
@@ -131,6 +139,7 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
   $Res call({
     Object? chainName = null,
     Object? chainId = null,
+    Object? namespace = null,
     Object? chainIcon = null,
     Object? tokenName = null,
     Object? requiredNamespaces = null,
@@ -145,6 +154,10 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
       chainId: null == chainId
           ? _value.chainId
           : chainId // ignore: cast_nullable_to_non_nullable
+              as String,
+      namespace: null == namespace
+          ? _value.namespace
+          : namespace // ignore: cast_nullable_to_non_nullable
               as String,
       chainIcon: null == chainIcon
           ? _value.chainIcon
@@ -176,6 +189,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
   _$_W3MChainInfo(
       {required this.chainName,
       required this.chainId,
+      required this.namespace,
       required this.chainIcon,
       required this.tokenName,
       required final Map<String, RequiredNamespace> requiredNamespaces,
@@ -187,6 +201,8 @@ class _$_W3MChainInfo implements _W3MChainInfo {
   final String chainName;
   @override
   final String chainId;
+  @override
+  final String namespace;
   @override
   final String chainIcon;
   @override
@@ -208,7 +224,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
 
   @override
   String toString() {
-    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, chainIcon: $chainIcon, tokenName: $tokenName, requiredNamespaces: $requiredNamespaces, rpcUrl: $rpcUrl, ledgerService: $ledgerService)';
+    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, namespace: $namespace, chainIcon: $chainIcon, tokenName: $tokenName, requiredNamespaces: $requiredNamespaces, rpcUrl: $rpcUrl, ledgerService: $ledgerService)';
   }
 
   @override
@@ -219,6 +235,8 @@ class _$_W3MChainInfo implements _W3MChainInfo {
             (identical(other.chainName, chainName) ||
                 other.chainName == chainName) &&
             (identical(other.chainId, chainId) || other.chainId == chainId) &&
+            (identical(other.namespace, namespace) ||
+                other.namespace == namespace) &&
             (identical(other.chainIcon, chainIcon) ||
                 other.chainIcon == chainIcon) &&
             (identical(other.tokenName, tokenName) ||
@@ -235,6 +253,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
       runtimeType,
       chainName,
       chainId,
+      namespace,
       chainIcon,
       tokenName,
       const DeepCollectionEquality().hash(_requiredNamespaces),
@@ -252,6 +271,7 @@ abstract class _W3MChainInfo implements W3MChainInfo {
   factory _W3MChainInfo(
       {required final String chainName,
       required final String chainId,
+      required final String namespace,
       required final String chainIcon,
       required final String tokenName,
       required final Map<String, RequiredNamespace> requiredNamespaces,
@@ -262,6 +282,8 @@ abstract class _W3MChainInfo implements W3MChainInfo {
   String get chainName;
   @override
   String get chainId;
+  @override
+  String get namespace;
   @override
   String get chainIcon;
   @override

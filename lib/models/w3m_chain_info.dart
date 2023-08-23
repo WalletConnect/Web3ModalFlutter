@@ -10,6 +10,7 @@ class W3MChainInfo with _$W3MChainInfo {
   factory W3MChainInfo({
     required String chainName,
     required String chainId,
+    required String namespace,
     required String chainIcon,
     required String tokenName,
     required Map<String, RequiredNamespace> requiredNamespaces,

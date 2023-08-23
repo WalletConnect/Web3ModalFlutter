@@ -45,10 +45,10 @@ packages:
     dependency: transitive
     description:
       name: base_x
-      sha256: "3f1043679659f1759c651f900da6f24f0a8062c28daa6f9625e8d580002e187b"
+      sha256: "519abcdafd637d4b6bd7e72fabd8f9264935f804b9b9f6c5d8411c7d52cbf8fd"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "2.0.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -953,10 +953,10 @@ packages:
     dependency: "direct main"
     description:
       name: walletconnect_modal_flutter
-      sha256: "55844d8bef0fd42f9b2eb775694650520c67f0fc7cb4b2cb3e9fde108a3ef701"
+      sha256: "4ac9ee3b8314e0b77b9edfcdde35c830542d648c9cdd082dce7cf507727ef1a5"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   watcher:
     dependency: transitive
     description:

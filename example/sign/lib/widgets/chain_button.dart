@@ -41,7 +41,7 @@ class ChainButton extends StatelessWidget {
           ),
         ),
         child: Text(
-          chain.name,
+          chain.w3mChainInfo.chainName,
           style: StyleConstants.buttonText,
         ),
       ),

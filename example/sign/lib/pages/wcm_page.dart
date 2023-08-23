@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sign/models/chain_metadata.dart';
 import 'package:sign/utils/constants.dart';
-import 'package:sign/utils/crypto/chain_data.dart';
+import 'package:sign/utils/crypto/chain_data_wrapper.dart';
 import 'package:sign/utils/crypto/helpers.dart';
 import 'package:sign/utils/string_constants.dart';
 import 'package:sign/widgets/chain_button.dart';
@@ -143,8 +143,7 @@ class _WCMPageState extends State<WCMPage> with SingleTickerProviderStateMixin {
 
   Widget _buildWalletConnect() {
     // Build the list of chain button
-    final List<ChainMetadata> chains =
-        _testnetOnly ? ChainData.testChains : ChainData.mainChains;
+    final List<ChainMetadata> chains = ChainDataWrapper.chains;
 
     List<Widget> chainButtons = [];
 
@@ -156,7 +155,7 @@ class _WCMPageState extends State<WCMPage> with SingleTickerProviderStateMixin {
           onPressed: () {
             _selectChain(
               chain,
-              deselectOthers: true,
+              // deselectOthers: true,
             );
           },
           selected: _selectedChains.contains(chain),
@@ -174,7 +173,7 @@ class _WCMPageState extends State<WCMPage> with SingleTickerProviderStateMixin {
         const SizedBox(
           height: StyleConstants.linear24,
         ),
-        _buildTestnetSwitch(),
+        // _buildTestnetSwitch(),
         ...chainButtons,
         WalletConnectModalConnect(
           service: _walletConnectModalService!,
@@ -238,22 +237,27 @@ class _WCMPageState extends State<WCMPage> with SingleTickerProviderStateMixin {
 
   Map<String, RequiredNamespace> _getRequiredNamespaces() {
     final Map<String, RequiredNamespace> requiredNamespaces = {};
+    final Map<ChainType, Set<String>> chains = {};
+
+    // Construct our list of chains for each type of blockchain
     for (final chain in _selectedChains) {
-      // If the chain is already in the required namespaces, add it to the chains list
-      final String chainName = chain.chainId.split(':')[0];
-      if (requiredNamespaces.containsKey(chainName)) {
-        requiredNamespaces[chainName]!.chains!.add(chain.chainId);
-        continue;
+      if (!chains.containsKey(chain.type)) {
+        chains[chain.type] = {};
       }
-      final RequiredNamespace rNamespace = RequiredNamespace(
-        chains: [chain.chainId],
-        methods: getChainMethods(chain.type),
-        events: getChainEvents(chain.type),
-      );
-      requiredNamespaces[chainName] = rNamespace;
+      chains[chain.type]!.add(chain.w3mChainInfo.namespace);
     }
 
-    LoggerUtil.logger.i('_getRequiredNamespaces: $requiredNamespaces');
+    for (final entry in chains.entries) {
+      // Create the required namespaces
+      requiredNamespaces[entry.key.name] = RequiredNamespace(
+        chains: entry.value.toList(),
+        methods: getChainMethods(entry.key),
+        events: getChainEvents(entry.key),
+      );
+    }
+
+    LoggerUtil.logger
+        .i('WCM Page, _getRequiredNamespaces: $requiredNamespaces');
     return requiredNamespaces;
   }
 }

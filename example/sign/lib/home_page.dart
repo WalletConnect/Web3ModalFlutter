@@ -5,7 +5,7 @@ import 'package:sign/pages/basic_page.dart';
 import 'package:sign/pages/w3m_page.dart';
 import 'package:sign/pages/wcm_page.dart';
 import 'package:sign/utils/constants.dart';
-import 'package:sign/utils/crypto/chain_data.dart';
+import 'package:sign/utils/crypto/chain_data_wrapper.dart';
 import 'package:sign/utils/crypto/helpers.dart';
 import 'package:sign/utils/dart_defines.dart';
 import 'package:sign/utils/string_constants.dart';
@@ -59,11 +59,11 @@ class _MyHomePageState extends State<MyHomePage> {
     await _web3App!.init();
 
     // Loop through all the chain data
-    for (final ChainMetadata chain in ChainData.allChains) {
+    for (final ChainMetadata chain in ChainDataWrapper.chains) {
       // Loop through the events for that chain
       for (final event in getChainEvents(chain.type)) {
         _web3App!.registerEventHandler(
-          chainId: chain.chainId,
+          chainId: chain.w3mChainInfo.namespace,
           event: event,
           handler: null,
         );

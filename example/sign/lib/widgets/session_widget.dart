@@ -78,7 +78,7 @@ class SessionWidgetState extends State<SessionWidget> {
 
     final List<Widget> children = [
       Text(
-        chainMetadata.name,
+        chainMetadata.w3mChainInfo.chainName,
         style: StyleConstants.subtitleText,
       ),
       const SizedBox(
@@ -246,7 +246,7 @@ class SessionWidgetState extends State<SessionWidget> {
           web3App: widget.web3App,
           topic: widget.session.topic,
           method: method.toEip155Method()!,
-          chainId: chainMetadata.chainId,
+          chainId: chainMetadata.w3mChainInfo.namespace,
           address: address.toLowerCase(),
         );
       // case ChainType.kadena:

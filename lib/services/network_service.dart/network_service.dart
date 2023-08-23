@@ -5,6 +5,7 @@ import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/network_service.dart/i_network_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/util.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class NetworkService implements INetworkService {
   @override
@@ -21,7 +22,7 @@ class NetworkService implements INetworkService {
       return;
     }
 
-    for (var value in AssetUtil.chainPresets.values) {
+    for (var value in ChainData.chainPresets.values) {
       itemListComplete.add(
         GridListItemModel<W3MChainInfo>(
           image: explorerService.instance!.getAssetImageUrl(

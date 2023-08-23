@@ -1,3 +1,8 @@
+## 2.0.0
+
+- Migrated to relying on WalletConnectModalFlutter
+- Massive changes to the API. Please read the updated documentation.
+
 ## 1.2.1
 
 - Updated `Web3ModalTheme` to include multiple radius's

@@ -9,6 +9,7 @@ import 'package:web3modal_flutter/services/network_service.dart/network_service_
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
+import 'package:web3modal_flutter/utils/chain_data.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 
 class W3MService extends WalletConnectModalService implements IW3MService {
@@ -71,7 +72,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
     // Set the optional namespaces to everything in our asset util.
     final List<String> chainIds = [];
-    for (final String id in AssetUtil.chainPresets.keys) {
+    for (final String id in ChainData.chainPresets.keys) {
       chainIds.add('eip155:$id');
     }
     final Map<String, RequiredNamespace> optionalNamespaces = {
@@ -92,8 +93,8 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
       // If we had a chainId stored, use it!
       if (chainId != null) {
-        if (AssetUtil.chainPresets.containsKey(chainId)) {
-          await setSelectedChain(AssetUtil.chainPresets[chainId]!);
+        if (ChainData.chainPresets.containsKey(chainId)) {
+          await setSelectedChain(ChainData.chainPresets[chainId]!);
         }
       } else {
         // Otherwise, just get the first chainId from the namespaces of the session and use that
@@ -103,8 +104,8 @@ class W3MService extends WalletConnectModalService implements IW3MService {
         if (chainIds.isNotEmpty) {
           final String chainId = chainIds.first.split(':')[1];
           // If we have the chain in our presets, set it as the selected chain
-          if (AssetUtil.chainPresets.containsKey(chainId)) {
-            await setSelectedChain(AssetUtil.chainPresets[chainId]!);
+          if (ChainData.chainPresets.containsKey(chainId)) {
+            await setSelectedChain(ChainData.chainPresets[chainId]!);
           }
         }
       }
@@ -197,9 +198,9 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
   void _onSessionEvent(SessionEvent? args) {
     if (args?.name == EthUtil.chainChanged) {
-      if (AssetUtil.chainPresets.containsKey(args?.data.toString())) {
+      if (ChainData.chainPresets.containsKey(args?.data.toString())) {
         setSelectedChain(
-          AssetUtil.chainPresets[args?.data.toString()]!,
+          ChainData.chainPresets[args?.data.toString()]!,
           switchChain: false,
         );
       }

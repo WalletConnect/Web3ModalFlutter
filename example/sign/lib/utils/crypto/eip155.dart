@@ -121,7 +121,7 @@ class EIP155 {
           web3App: web3App,
           topic: topic,
           chainId: chainId,
-          chainInfo: AssetUtil.chainPresets[chainId.split(':')[1]]!,
+          chainInfo: ChainData.chainPresets[chainId.split(':')[1]]!,
         );
     }
   }
