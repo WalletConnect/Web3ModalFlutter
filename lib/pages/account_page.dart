@@ -151,6 +151,10 @@ class AccountPage extends StatelessWidget {
                       child: SvgPicture.asset(
                         'assets/account_copy.svg',
                         package: 'web3modal_flutter',
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
                     text: StringConstants.copyAddress,

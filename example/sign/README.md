@@ -1,4 +1,4 @@
-# sign
+# walletconnect_flutter_dapp
 
 A new Flutter project.
 

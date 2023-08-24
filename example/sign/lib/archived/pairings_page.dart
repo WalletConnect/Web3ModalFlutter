@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sign/utils/constants.dart';
-import 'package:sign/utils/string_constants.dart';
-import 'package:sign/widgets/pairing_item.dart';
+import 'package:walletconnect_flutter_dapp/utils/constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
+import 'package:walletconnect_flutter_dapp/widgets/pairing_item.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
 class PairingsPage extends StatefulWidget {

@@ -1,6 +1,6 @@
 {
-    "name": "sign",
-    "short_name": "sign",
+    "name": "walletconnect_flutter_dapp",
+    "short_name": "walletconnect_flutter_dapp",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

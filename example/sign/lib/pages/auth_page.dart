@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sign/utils/constants.dart';
-import 'package:sign/widgets/auth_item.dart';
+import 'package:walletconnect_flutter_dapp/utils/constants.dart';
+import 'package:walletconnect_flutter_dapp/widgets/auth_item.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
 class AuthPage extends StatefulWidget {

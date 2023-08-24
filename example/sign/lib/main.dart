@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
-import 'package:sign/home_page.dart';
+import 'package:walletconnect_flutter_dapp/home_page.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 
 void main() {
@@ -59,22 +59,8 @@ class _MyAppState extends State<MyApp> {
         ),
         home: SizedBox(
           width: double.infinity,
-          child: Stack(
-            children: [
-              const MyHomePage(),
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: Row(
-                  children: [
-                    _buildIconButton(
-                      Icons.theater_comedy_outlined,
-                      _swapTheme,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          child: MyHomePage(
+            swapTheme: _swapTheme,
           ),
         ),
       ),
@@ -101,24 +87,5 @@ class _MyAppState extends State<MyApp> {
         ];
       }
     });
-  }
-
-  Widget _buildIconButton(IconData icon, void Function()? onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: BorderRadius.circular(
-          48,
-        ),
-      ),
-      child: IconButton(
-        icon: Icon(
-          icon,
-          color: Colors.white,
-        ),
-        iconSize: 24,
-        onPressed: onPressed,
-      ),
-    );
   }
 }

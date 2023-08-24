@@ -5,7 +5,7 @@
 // import 'package:walletconnect_flutter_v2_dapp/utils/test_data.dart';
 
 // enum KadenaMethods {
-//   sign,
+//   walletconnect_flutter_dapp,
 //   quicksign,
 //   kadenaSignV1,
 //   kadenaQuicksignV1,
@@ -44,7 +44,7 @@
 
 // class Kadena {
 //   static final Map<KadenaMethods, String> methods = {
-//     KadenaMethods.sign: 'kadena_sign',
+//     KadenaMethods.walletconnect_flutter_dapp: 'kadena_sign',
 //     KadenaMethods.quicksign: 'kadena_quicksign',
 //     KadenaMethods.kadenaSignV1: 'kadena_sign_v1',
 //     KadenaMethods.kadenaQuicksignV1: 'kadena_quicksign_v1',
@@ -64,7 +64,7 @@
 //         address.startsWith('k**') ? address.substring(3) : address;
 
 //     switch (method) {
-//       case KadenaMethods.sign:
+//       case KadenaMethods.walletconnect_flutter_dapp:
 //       case KadenaMethods.kadenaSignV1:
 //         return kadenaSignV1(
 //           web3App: web3App,

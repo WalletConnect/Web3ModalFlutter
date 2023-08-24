@@ -1,5 +1,5 @@
-import 'package:sign/models/eth/ethereum_transaction.dart';
-import 'package:sign/utils/crypto/test_data.dart';
+import 'package:walletconnect_flutter_dapp/models/eth/ethereum_transaction.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/test_data.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -91,7 +91,7 @@ class EIP155 {
           topic: topic,
           chainId: chainId,
           address: address,
-          data: typedData,
+          data: testSignTypedData(int.parse(chainId.split(':')[1])),
         );
       case EIP155Methods.ethSignTransaction:
         return ethSignTransaction(

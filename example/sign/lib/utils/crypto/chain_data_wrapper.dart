@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sign/models/chain_metadata.dart';
+import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class ChainDataWrapper {

@@ -33,15 +33,15 @@ class _W3MDisconnectButtonState extends State<W3MDisconnectButton> {
                 width: 12,
                 height: 12,
                 child: CircularProgressIndicator(
-                  color: themeData.foreground100,
+                  color: themeData.inverse100,
                   strokeWidth: 2,
                 ),
               )
             : SvgPicture.asset(
                 'assets/account_disconnect.svg',
                 package: 'web3modal_flutter',
-                colorFilter: ColorFilter.mode(
-                  themeData.foreground100,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
                   BlendMode.srcIn,
                 ),
               ),

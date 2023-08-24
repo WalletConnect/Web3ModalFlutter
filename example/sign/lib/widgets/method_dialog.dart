@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sign/utils/constants.dart';
-import 'package:sign/utils/string_constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 
 class MethodDialog extends StatefulWidget {
   static Future<void> show(

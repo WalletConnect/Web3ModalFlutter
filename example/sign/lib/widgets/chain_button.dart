@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sign/models/chain_metadata.dart';
-import 'package:sign/utils/constants.dart';
+import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
+import 'package:walletconnect_flutter_dapp/utils/constants.dart';
 
 class ChainButton extends StatelessWidget {
   const ChainButton({

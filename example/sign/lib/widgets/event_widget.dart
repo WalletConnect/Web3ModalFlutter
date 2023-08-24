@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sign/utils/constants.dart';
-import 'package:sign/utils/string_constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 
 class EventWidget extends StatelessWidget {
   const EventWidget({

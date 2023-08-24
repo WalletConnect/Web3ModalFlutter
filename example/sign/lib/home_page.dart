@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:sign/models/chain_metadata.dart';
-import 'package:sign/models/page_data.dart';
-import 'package:sign/pages/basic_page.dart';
-import 'package:sign/pages/w3m_page.dart';
-import 'package:sign/pages/wcm_page.dart';
-import 'package:sign/utils/constants.dart';
-import 'package:sign/utils/crypto/chain_data_wrapper.dart';
-import 'package:sign/utils/crypto/helpers.dart';
-import 'package:sign/utils/dart_defines.dart';
-import 'package:sign/utils/string_constants.dart';
-import 'package:sign/widgets/event_widget.dart';
+import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
+import 'package:walletconnect_flutter_dapp/models/page_data.dart';
+import 'package:walletconnect_flutter_dapp/pages/basic_page.dart';
+import 'package:walletconnect_flutter_dapp/pages/w3m_page.dart';
+import 'package:walletconnect_flutter_dapp/pages/wcm_page.dart';
+import 'package:walletconnect_flutter_dapp/utils/constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/chain_data_wrapper.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/helpers.dart';
+import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
+import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
+import 'package:walletconnect_flutter_dapp/widgets/event_widget.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
     super.key,
+    required this.swapTheme,
   });
+
+  final void Function() swapTheme;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -140,9 +143,25 @@ class _MyHomePageState extends State<MyHomePage> {
           MediaQuery.of(context).size.width < Constants.smallScreen
               ? _buildBottomNavBar()
               : null,
-      body: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: navRail,
+      body: Stack(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: navRail,
+          ),
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: Row(
+              children: [
+                _buildIconButton(
+                  Icons.theater_comedy_outlined,
+                  widget.swapTheme,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -187,6 +206,25 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           )
           .toList(),
+    );
+  }
+
+  Widget _buildIconButton(IconData icon, void Function()? onPressed) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(
+          48,
+        ),
+      ),
+      child: IconButton(
+        icon: Icon(
+          icon,
+          color: Colors.white,
+        ),
+        iconSize: 24,
+        onPressed: onPressed,
+      ),
     );
   }
 

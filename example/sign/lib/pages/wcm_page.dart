@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:sign/models/chain_metadata.dart';
-import 'package:sign/utils/constants.dart';
-import 'package:sign/utils/crypto/chain_data_wrapper.dart';
-import 'package:sign/utils/crypto/helpers.dart';
-import 'package:sign/utils/string_constants.dart';
-import 'package:sign/widgets/chain_button.dart';
-import 'package:sign/widgets/session_widget.dart';
+import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
+import 'package:walletconnect_flutter_dapp/utils/constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/chain_data_wrapper.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/helpers.dart';
+import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
+import 'package:walletconnect_flutter_dapp/widgets/chain_button.dart';
+import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:walletconnect_modal_flutter/services/explorer/i_explorer_service.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
@@ -48,7 +48,7 @@ class _WCMPageState extends State<WCMPage> with SingleTickerProviderStateMixin {
         'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask
         '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0', // Trust
       },
-      excludedWalletState: ExcludedWalletState.all,
+      // excludedWalletState: ExcludedWalletState.all,
     );
 
     widget.web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
