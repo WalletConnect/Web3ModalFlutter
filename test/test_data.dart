@@ -101,6 +101,7 @@ final List<GridListItemModel<WalletData>> itemList = testListings2.map((e) {
     data: WalletData(
       listing: e,
       installed: false,
+      recent: false,
     ),
   );
 }).toList();

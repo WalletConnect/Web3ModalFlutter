@@ -147,14 +147,12 @@ class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
         ),
         W3MConnect(
           service: _w3mService!,
-          buttonRadius: 20,
         ),
         const SizedBox(
           height: StyleConstants.linear8,
         ),
         W3MNetworkSelect(
           service: _w3mService!,
-          buttonRadius: 20,
         ),
       ],
     );

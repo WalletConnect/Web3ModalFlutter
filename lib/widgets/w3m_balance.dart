@@ -46,7 +46,7 @@ class _W3MBalanceState extends State<W3MBalance> {
         // Token image
         W3MTokenImage(
           imageUrl: _tokenImage,
-          size: 30,
+          size: 24,
         ),
         const SizedBox(width: 8.0),
         Text(
@@ -65,6 +65,8 @@ class _W3MBalanceState extends State<W3MBalance> {
                 _tokenName!,
                 style: TextStyle(
                   color: themeData.foreground100,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
                 ),
               ),
             ],
@@ -78,7 +80,7 @@ class _W3MBalanceState extends State<W3MBalance> {
       _tokenImage = widget.service.tokenImageUrl;
       _balance = widget.service.chainBalance == null
           ? W3MBalance.balanceDefault
-          : widget.service.chainBalance!.toStringAsPrecision(5);
+          : widget.service.chainBalance!.toStringAsPrecision(4);
       RegExp regex = RegExp(r"([.]*0+)(?!.*\d)");
       _balance = _balance.replaceAll(regex, '');
       _tokenName = widget.service.selectedChain == null

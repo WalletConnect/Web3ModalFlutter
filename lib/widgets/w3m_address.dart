@@ -44,7 +44,9 @@ class _W3MAddressState extends State<W3MAddress> {
       Util.truncate(_address ?? ''),
       style: widget.style ??
           TextStyle(
-            color: themeData.foreground100,
+            color: themeData.inverse100,
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
           ),
       // overflow: TextOverflow.ellipsis,
       // maxLines: 1,

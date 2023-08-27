@@ -109,7 +109,7 @@ class ChainData {
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
           methods: EthUtil.ethOptionalMethods,
-          chains: ['eip155:50'],
+          chains: ['eip155:250'],
           events: [],
         ),
       },

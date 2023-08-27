@@ -59,4 +59,9 @@ class NetworkService implements INetworkService {
         )
         .toList();
   }
+
+  @override
+  void updateSort() {
+    // itemList.value = itemList.value;
+  }
 }

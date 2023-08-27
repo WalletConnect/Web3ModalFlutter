@@ -33,7 +33,7 @@ class AccountPage extends StatelessWidget {
         WalletConnectModalProvider.of(context).service as IW3MService;
 
     final Widget divider = Divider(
-      color: themeData.overlay030,
+      color: themeData.overlay010,
       height: 1,
       thickness: 1,
     );
@@ -42,8 +42,8 @@ class AccountPage extends StatelessWidget {
     const double paddingVertical = 10;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: paddingVertical,
+      padding: const EdgeInsets.only(
+        top: paddingVertical,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -73,7 +73,7 @@ class AccountPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
-                        color: themeData.inverse100,
+                        color: themeData.foreground100,
                       ),
                     ),
                   ],
@@ -105,9 +105,10 @@ class AccountPage extends StatelessWidget {
           ),
           divider,
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: paddingHorizontal,
-              vertical: paddingVertical,
+            padding: const EdgeInsets.only(
+              left: paddingHorizontal,
+              right: paddingHorizontal,
+              top: paddingVertical,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

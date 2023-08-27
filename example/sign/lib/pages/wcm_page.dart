@@ -9,7 +9,6 @@ import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_dapp/widgets/chain_button.dart';
 import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:walletconnect_modal_flutter/services/explorer/i_explorer_service.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 
 class WCMPage extends StatefulWidget {

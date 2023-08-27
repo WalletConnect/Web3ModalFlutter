@@ -14,19 +14,19 @@ class W3MNetworkSelect extends StatefulWidget {
     super.key,
     required this.service,
     this.buttonRadius,
+    this.width,
   });
 
   final IW3MService service;
   final double? buttonRadius;
+  final double? width;
 
   @override
   State<W3MNetworkSelect> createState() => _W3MNetworkSelectState();
 }
 
 class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
-  static const double buttonHeight = 60;
-  static const double buttonWidthMin = 150;
-  static const double buttonWidthMax = 200;
+  static const double _defaultButtonRadius = 10;
 
   W3MChainInfo? _selectedChain;
 
@@ -48,13 +48,15 @@ class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(
-        minHeight: buttonHeight,
-        minWidth: buttonWidthMin,
-        maxWidth: buttonWidthMax,
+    return Align(
+      alignment: Alignment.center,
+      child: Container(
+        constraints: BoxConstraints(
+          minHeight: 40,
+          minWidth: widget.width ?? 180,
+        ),
+        child: _buildButton(context),
       ),
-      child: _buildButton(context),
     );
   }
 
@@ -66,7 +68,7 @@ class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
       onPressed: () {
         _onConnectPressed(context);
       },
-      borderRadius: widget.buttonRadius ?? themeData.radius4XS,
+      borderRadius: widget.buttonRadius ?? _defaultButtonRadius,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -78,24 +80,12 @@ class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
                     imageId: _selectedChain!.chainIcon,
                   ),
             isChain: true,
+            size: 30,
           ),
-          // _selectedChain?.chainIcon == null
-          //     ? SvgPicture.asset(
-          //         'assets/network_placeholder.svg',
-          //         package: 'web3modal_flutter',
-          //         width: 20,
-          //         height: 20,
-          //       )
-          //     : Image.network(
-          //         explorerService.instance!.getAssetImageUrl(
-          //           imageId: _selectedChain!.chainIcon,
-          //         ),
-          //         width: 20,
-          //         height: 20,
-          //       ),
           const SizedBox(width: 8.0),
           Text(
-            StringConstants.selectNetwork,
+            widget.service.selectedChain?.chainName ??
+                StringConstants.selectNetwork,
             style: TextStyle(
               color: Colors.white,
               fontFamily: themeData.fontFamily,

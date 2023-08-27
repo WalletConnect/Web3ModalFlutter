@@ -39,7 +39,7 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
 
     return Container(
       decoration: BoxDecoration(
-        color: themeData.overlay020,
+        color: themeData.background200,
         border: Border.all(
           color: themeData.overlay010,
           width: 1,
