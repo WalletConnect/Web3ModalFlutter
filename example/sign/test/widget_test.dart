@@ -7,8 +7,6 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:walletconnect_flutter_dapp/main.dart';
-
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {});
 }

@@ -1009,10 +1009,10 @@ packages:
     dependency: "direct main"
     description:
       name: walletconnect_modal_flutter
-      sha256: b4a36d307ce2bc2ce0f138b31da34f0420520c88c9ccd710c5d30ac2caa9058a
+      sha256: d7191fd1c64593afabde80b25698751aeb69d0eb856457f4996886b33bffd8b5
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.4"
+    version: "2.1.5"
   watcher:
     dependency: transitive
     description:

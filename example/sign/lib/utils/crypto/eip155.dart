@@ -1,17 +1,19 @@
+import 'dart:convert';
+
 import 'package:walletconnect_flutter_dapp/models/eth/ethereum_transaction.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/contract.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/test_data.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/web3dart_extension.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+import 'package:web3dart/web3dart.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
-enum EIP155Methods {
+enum EIP155UIMethods {
   personalSign,
-  ethSign,
-  ethSignTransaction,
   ethSignTypedData,
   ethSendTransaction,
-  walletSwitchEthereumChain,
-  walletAddEthereumChain,
+  testContractCall,
 }
 
 enum EIP155Events {
@@ -19,12 +21,12 @@ enum EIP155Events {
   accountsChanged,
 }
 
-extension EIP155MethodsX on EIP155Methods {
+extension EIP155MethodsX on EIP155UIMethods {
   String? get value => EIP155.methods[this];
 }
 
 extension EIP155MethodsStringX on String {
-  EIP155Methods? toEip155Method() {
+  EIP155UIMethods? toEip155Method() {
     final entries = EIP155.methods.entries.where(
       (element) => element.value == this,
     );
@@ -46,12 +48,33 @@ extension EIP155EventsStringX on String {
 }
 
 class EIP155 {
-  static final Map<EIP155Methods, String> methods = {
-    EIP155Methods.personalSign: 'personal_sign',
+  static const ethRequiredMethods = [
+    'personal_sign',
+    'eth_signTypedData',
+    'eth_sendTransaction',
+  ];
+  static const walletSwitchEthChain = 'wallet_switchEthereumChain';
+  static const walletAddEthChain = 'wallet_addEthereumChain';
+  static const ethOptionalMethods = [
+    walletSwitchEthChain,
+    walletAddEthChain,
+  ];
+  static const allMethods = [
+    ...ethRequiredMethods,
+    ...ethOptionalMethods,
+  ];
+  static const ethEvents = [
+    'chainChanged',
+    'accountsChanged',
+  ];
+
+  static final Map<EIP155UIMethods, String> methods = {
+    EIP155UIMethods.personalSign: 'personal_sign',
     // EIP155Methods.ethSign: 'eth_sign',
     // EIP155Methods.ethSignTransaction: 'eth_signTransaction',
-    EIP155Methods.ethSignTypedData: 'eth_signTypedData',
-    // EIP155Methods.ethSendTransaction: 'eth_sendTransaction',
+    EIP155UIMethods.ethSignTypedData: 'eth_signTypedData',
+    EIP155UIMethods.testContractCall: 'test_contractCall',
+    EIP155UIMethods.ethSendTransaction: 'eth_sendTransaction',
     // EIP155Methods.walletSwitchEthereumChain: 'wallet_switchEthereumChain',
     // EIP155Methods.walletAddEthereumChain: 'wallet_addEthereumChain'
   };
@@ -64,12 +87,12 @@ class EIP155 {
   static Future<dynamic> callMethod({
     required IWeb3App web3App,
     required String topic,
-    required EIP155Methods method,
+    required EIP155UIMethods method,
     required String chainId,
     required String address,
   }) {
     switch (method) {
-      case EIP155Methods.personalSign:
+      case EIP155UIMethods.personalSign:
         return personalSign(
           web3App: web3App,
           topic: topic,
@@ -77,15 +100,7 @@ class EIP155 {
           address: address,
           data: testSignData,
         );
-      case EIP155Methods.ethSign:
-        return ethSign(
-          web3App: web3App,
-          topic: topic,
-          chainId: chainId,
-          address: address,
-          data: testSignData,
-        );
-      case EIP155Methods.ethSignTypedData:
+      case EIP155UIMethods.ethSignTypedData:
         return ethSignTypedData(
           web3App: web3App,
           topic: topic,
@@ -93,18 +108,15 @@ class EIP155 {
           address: address,
           data: testSignTypedData(int.parse(chainId.split(':')[1])),
         );
-      case EIP155Methods.ethSignTransaction:
-        return ethSignTransaction(
+      case EIP155UIMethods.testContractCall:
+        return testContractCall(
           web3App: web3App,
           topic: topic,
           chainId: chainId,
-          transaction: EthereumTransaction(
-            from: address,
-            to: address,
-            value: '0x01',
-          ),
+          address: address,
         );
-      case EIP155Methods.ethSendTransaction:
+
+      case EIP155UIMethods.ethSendTransaction:
         return ethSendTransaction(
           web3App: web3App,
           topic: topic,
@@ -115,58 +127,36 @@ class EIP155 {
             value: '0x01',
           ),
         );
-      case EIP155Methods.walletAddEthereumChain:
-      case EIP155Methods.walletSwitchEthereumChain:
-        return walletSwitchChain(
-          web3App: web3App,
-          topic: topic,
-          chainId: chainId,
-          chainInfo: ChainData.chainPresets[chainId.split(':')[1]]!,
-        );
-    }
-  }
-
-  static Future<dynamic> walletSwitchChain({
-    required IWeb3App web3App,
-    required String topic,
-    required String chainId,
-    required W3MChainInfo chainInfo,
-  }) async {
-    final int chainIdInt = int.parse(chainInfo.chainId);
-    final String chainHex = chainIdInt.toRadixString(16);
-    try {
-      return await web3App.request(
-        topic: topic,
-        chainId: chainId,
-        request: SessionRequestParams(
-          method: methods[EIP155Methods.walletSwitchEthereumChain]!,
-          params: [
-            {
-              'chainId': '0x$chainHex',
-            },
-          ],
-        ),
-      );
-    } catch (e) {
-      return await web3App.request(
-        topic: topic,
-        chainId: chainId,
-        request: SessionRequestParams(
-          method: 'wallet_addEthereumChain',
-          params: [
-            {
-              'chainId': '0x$chainHex',
-              'chainName': chainInfo.chainName,
-              'nativeCurrency': {
-                'name': chainInfo.tokenName,
-                'symbol': chainInfo.tokenName,
-                'decimals': 18,
-              },
-              'rpcUrls': [chainInfo.rpcUrl],
-            },
-          ],
-        ),
-      );
+      // case EIP155UIMethods.ethSign:
+      //   return ethSign(
+      //     web3App: web3App,
+      //     topic: topic,
+      //     chainId: chainId,
+      //     address: address,
+      //     data: testSignData,
+      //   );
+      // case EIP155UIMethods.ethSignTransaction:
+      //   return ethSignTransaction(
+      //     web3App: web3App,
+      //     topic: topic,
+      //     chainId: chainId,
+      //     transaction: EthereumTransaction(
+      //       from: address,
+      //       to: address,
+      //       value: '0x01',
+      //     ),
+      //   );
+      // case EIP155UIMethods.walletAddEthereumChain:
+      // case EIP155UIMethods.walletSwitchEthereumChain:
+      //   return walletSwitchChain(
+      //     web3App: web3App,
+      //     topic: topic,
+      //     chainId: chainId,
+      //     chainInfo: ChainData.chains.firstWhere(
+      //       (element) => element.chainId == chainId,
+      //       orElse: () => ChainData.chains.first,
+      //     ),
+      //   );
     }
   }
 
@@ -181,25 +171,8 @@ class EIP155 {
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(
-        method: methods[EIP155Methods.personalSign]!,
+        method: methods[EIP155UIMethods.personalSign]!,
         params: [data, address],
-      ),
-    );
-  }
-
-  static Future<dynamic> ethSign({
-    required IWeb3App web3App,
-    required String topic,
-    required String chainId,
-    required String address,
-    required String data,
-  }) async {
-    return await web3App.request(
-      topic: topic,
-      chainId: chainId,
-      request: SessionRequestParams(
-        method: methods[EIP155Methods.ethSign]!,
-        params: [address, data],
       ),
     );
   }
@@ -215,24 +188,41 @@ class EIP155 {
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(
-        method: methods[EIP155Methods.ethSignTypedData]!,
+        method: methods[EIP155UIMethods.ethSignTypedData]!,
         params: [address, data],
       ),
     );
   }
 
-  static Future<dynamic> ethSignTransaction({
+  static Future<dynamic> testContractCall({
     required IWeb3App web3App,
     required String topic,
     required String chainId,
-    required EthereumTransaction transaction,
+    required String address,
   }) async {
+    final W3MChainInfo ethChain = ChainData.chainPresets['1']!;
+
+    final DeployedContract contract = DeployedContract(
+      ContractAbi.fromJson(
+          jsonEncode(ContractDetails.readContractAbi), 'Tether (USDT)'),
+      EthereumAddress.fromHex(ContractDetails.contractAddress),
+    );
+
+    final ContractFunction balanceFunction = contract.function('balanceOf');
+
+    final Transaction t = Transaction.callContract(
+      contract: contract,
+      function: balanceFunction,
+      parameters: [EthereumAddress.fromHex(ContractDetails.balanceAddress)],
+    );
+
     return await web3App.request(
       topic: topic,
-      chainId: chainId,
+      chainId: ethChain.namespace,
       request: SessionRequestParams(
-        method: methods[EIP155Methods.ethSignTransaction]!,
-        params: [transaction.toJson()],
+        method: 'eth_sendTransaction',
+        // Check the `web3dart_extension` file for this function
+        params: [t.toJson(fromAddress: ContractDetails.balanceAddress)],
       ),
     );
   }
@@ -247,9 +237,86 @@ class EIP155 {
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(
-        method: methods[EIP155Methods.ethSendTransaction]!,
+        method: methods[EIP155UIMethods.ethSendTransaction]!,
         params: [transaction.toJson()],
       ),
     );
   }
+
+  // static Future<dynamic> walletSwitchChain({
+  //   required IWeb3App web3App,
+  //   required String topic,
+  //   required String chainId,
+  //   required ChainMetadata chainInfo,
+  // }) async {
+  //   final int chainIdInt = int.parse(chainInfo.chainId);
+  //   final String chainHex = chainIdInt.toRadixString(16);
+  //   try {
+  //     return await web3App.request(
+  //       topic: topic,
+  //       chainId: chainId,
+  //       request: SessionRequestParams(
+  //         method: methods[EIP155UIMethods.walletSwitchEthereumChain]!,
+  //         params: [
+  //           {
+  //             'chainId': '0x$chainHex',
+  //           },
+  //         ],
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     return await web3App.request(
+  //       topic: topic,
+  //       chainId: chainId,
+  //       request: SessionRequestParams(
+  //         method: 'wallet_addEthereumChain',
+  //         params: [
+  //           {
+  //             'chainId': '0x$chainHex',
+  //             'chainName': chainInfo.chainName,
+  //             'nativeCurrency': {
+  //               'name': chainInfo.tokenName,
+  //               'symbol': chainInfo.tokenName,
+  //               'decimals': 18,
+  //             },
+  //             'rpcUrls': [chainInfo.rpcUrl],
+  //           },
+  //         ],
+  //       ),
+  //     );
+  //   }
+  // }
+
+  // static Future<dynamic> ethSign({
+  //   required IWeb3App web3App,
+  //   required String topic,
+  //   required String chainId,
+  //   required String address,
+  //   required String data,
+  // }) async {
+  //   return await web3App.request(
+  //     topic: topic,
+  //     chainId: chainId,
+  //     request: SessionRequestParams(
+  //       method: methods[EIP155UIMethods.ethSign]!,
+  //       params: [address, data],
+  //     ),
+  //   );
+  // }
+
+  // static Future<dynamic> ethSignTransaction({
+  //   required IWeb3App web3App,
+  //   required String topic,
+  //   required String chainId,
+  //   required EthereumTransaction transaction,
+  // }) async {
+  //   return await web3App.request(
+  //     topic: topic,
+  //     chainId: chainId,
+  //     request: SessionRequestParams(
+  //       method: methods[EIP155UIMethods.ethSignTransaction]!,
+  //       params: [transaction.toJson()],
+  //     ),
+  //   );
+  // }
 }
