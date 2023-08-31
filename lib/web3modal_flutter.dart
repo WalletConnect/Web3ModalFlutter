@@ -11,3 +11,4 @@ export 'services/w3m_service/w3m_service.dart';
 // Widgets
 export 'widgets/w3m_connect.dart';
 export 'widgets/w3m_network_select.dart';
+export 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_theme.dart';
