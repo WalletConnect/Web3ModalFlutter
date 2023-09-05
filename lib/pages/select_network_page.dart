@@ -28,10 +28,10 @@ class SelectNetworkPage extends StatelessWidget {
         state: GridListState.long,
         provider: networkService.instance,
         onSelect: onSelect,
-        heightOverride: 340,
+        heightOverride: 380,
         longBottomSheetHeightOverride: 240,
-        longBottomSheetAspectRatio: 0.9,
-        itemAspectRatio: 0.9,
+        longBottomSheetAspectRatio: 0.85,
+        itemAspectRatio: 0.8,
         createListItem: (info, height) {
           return Column(
             // crossAxisAlignment: CrossAxisAlignment.center,

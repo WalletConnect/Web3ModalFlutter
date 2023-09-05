@@ -1,3 +1,7 @@
+## 2.0.1
+
+- Updated to WalletConnectModal `2.1.8`
+
 ## 2.0.0
 
 - Migrated to relying on WalletConnectModalFlutter

@@ -44,6 +44,7 @@ class AccountPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(
         top: paddingVertical,
+        bottom: paddingVertical,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
