@@ -5,7 +5,6 @@ import 'package:walletconnect_flutter_dapp/utils/constants.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class W3MPage extends StatefulWidget {
@@ -145,13 +144,13 @@ class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
         const SizedBox(
           height: StyleConstants.linear24,
         ),
-        W3MConnect(
+        W3MNetworkSelect(
           service: _w3mService!,
         ),
         const SizedBox(
           height: StyleConstants.linear8,
         ),
-        W3MNetworkSelect(
+        W3MConnect(
           service: _w3mService!,
         ),
       ],

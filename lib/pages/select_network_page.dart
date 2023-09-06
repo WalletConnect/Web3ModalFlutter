@@ -31,7 +31,7 @@ class SelectNetworkPage extends StatelessWidget {
         heightOverride: 380,
         longBottomSheetHeightOverride: 240,
         longBottomSheetAspectRatio: 0.85,
-        itemAspectRatio: 0.8,
+        itemAspectRatio: 0.75,
         createListItem: (info, height) {
           return Column(
             // crossAxisAlignment: CrossAxisAlignment.center,

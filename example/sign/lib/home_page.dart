@@ -3,6 +3,7 @@ import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
 import 'package:walletconnect_flutter_dapp/models/page_data.dart';
 import 'package:walletconnect_flutter_dapp/pages/basic_page.dart';
 import 'package:walletconnect_flutter_dapp/pages/w3m_page.dart';
+import 'package:walletconnect_flutter_dapp/pages/w3m_v3_page.dart';
 import 'package:walletconnect_flutter_dapp/pages/wcm_page.dart';
 import 'package:walletconnect_flutter_dapp/utils/constants.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/chain_data_wrapper.dart';
@@ -89,6 +90,11 @@ class _MyHomePageState extends State<MyHomePage> {
           page: W3MPage(web3App: _web3App!),
           title: StringConstants.w3mPageTitle,
           icon: Icons.looks_3,
+        ),
+        PageData(
+          page: W3MV3Page(web3App: _web3App!),
+          title: StringConstants.w3mPageTitleV3,
+          icon: Icons.looks_4,
         ),
         // PageData(
         //   page: PairingsPage(web3App: _web3App!),
