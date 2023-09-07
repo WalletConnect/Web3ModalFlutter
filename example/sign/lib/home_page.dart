@@ -3,7 +3,6 @@ import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
 import 'package:walletconnect_flutter_dapp/models/page_data.dart';
 import 'package:walletconnect_flutter_dapp/pages/basic_page.dart';
 import 'package:walletconnect_flutter_dapp/pages/w3m_page.dart';
-import 'package:walletconnect_flutter_dapp/pages/w3m_v3_page.dart';
 import 'package:walletconnect_flutter_dapp/pages/wcm_page.dart';
 import 'package:walletconnect_flutter_dapp/utils/constants.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/chain_data_wrapper.dart';
@@ -12,7 +11,7 @@ import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_dapp/widgets/event_widget.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -91,26 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
           title: StringConstants.w3mPageTitle,
           icon: Icons.looks_3,
         ),
-        PageData(
-          page: W3MV3Page(web3App: _web3App!),
-          title: StringConstants.w3mPageTitleV3,
-          icon: Icons.looks_4,
-        ),
-        // PageData(
-        //   page: PairingsPage(web3App: _web3App!),
-        //   title: StringConstants.pairingsPageTitle,
-        //   icon: Icons.connect_without_contact_sharp,
-        // ),
-        // PageData(
-        //   page: SessionsPage(web3App: _web3App!),
-        //   title: StringConstants.sessionsPageTitle,
-        //   icon: Icons.confirmation_number_outlined,
-        // ),
-        // PageData(
-        //   page: AuthPage(web3App: _web3App!),
-        //   title: StringConstants.authPageTitle,
-        //   icon: Icons.lock,
-        // ),
       ];
 
       _initialized = true;
@@ -129,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!_initialized) {
       return Center(
         child: CircularProgressIndicator(
-          color: WalletConnectModalTheme.getData(context).primary100,
+          color: Web3ModalTheme.getDataOf(context).colors.blue100,
         ),
       );
     }

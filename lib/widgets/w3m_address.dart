@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 
 class W3MAddress extends StatefulWidget {
@@ -36,18 +36,18 @@ class _W3MAddressState extends State<W3MAddress> {
 
   @override
   Widget build(BuildContext context) {
-    WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
 
     return Text(
       // _address ?? '',
       Util.truncate(_address ?? ''),
       style: widget.style ??
           TextStyle(
-            color: themeData.inverse100,
+            color: themeData.colors.inverse100,
             fontWeight: FontWeight.w600,
             fontSize: 16,
           ),
+      // TODO instead of this, use style: themeData.textStyles.whateverNeeded
       // overflow: TextOverflow.ellipsis,
       // maxLines: 1,
       // softWrap: false,

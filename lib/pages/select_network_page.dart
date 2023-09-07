@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list.dart';
 import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_navbar.dart';
 import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_navbar_title.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/network_service.dart/network_service_singleton.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
 
 class SelectNetworkPage extends StatelessWidget {
@@ -17,8 +17,7 @@ class SelectNetworkPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
 
     return WalletConnectModalNavBar(
       title: const WalletConnectModalNavbarTitle(
@@ -50,8 +49,9 @@ class SelectNetworkPage extends StatelessWidget {
                 overflow: TextOverflow.clip,
                 style: TextStyle(
                   fontSize: 12.0,
-                  color: themeData.foreground100,
+                  color: themeData.colors.foreground100,
                 ),
+                // TODO instead of this, use style: themeData.textStyles.whateverNeeded
               ),
             ],
           );

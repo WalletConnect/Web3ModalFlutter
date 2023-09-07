@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/w3m_circle_painter.dart';
 import 'package:web3modal_flutter/widgets/w3m_icon_button.dart';
 
@@ -23,8 +23,7 @@ class _W3MDisconnectButtonState extends State<W3MDisconnectButton> {
 
   @override
   Widget build(BuildContext context) {
-    final WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
 
     return W3MIconButton(
       icon: W3MCirclePainter(
@@ -33,7 +32,7 @@ class _W3MDisconnectButtonState extends State<W3MDisconnectButton> {
                 width: 12,
                 height: 12,
                 child: CircularProgressIndicator(
-                  color: themeData.inverse100,
+                  color: themeData.colors.inverse100,
                   strokeWidth: 2,
                 ),
               )

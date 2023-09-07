@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 
 class W3MConnectedChip extends StatefulWidget {
   const W3MConnectedChip({
@@ -34,14 +34,13 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
 
   @override
   Widget build(BuildContext context) {
-    WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
 
     return Container(
       decoration: BoxDecoration(
-        color: themeData.background200,
+        color: themeData.colors.background200,
         border: Border.all(
-          color: themeData.overlay010,
+          color: themeData.colors.overgray010,
           width: 1,
         ),
         borderRadius: BorderRadius.circular(100),
@@ -62,11 +61,15 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
             width: 10,
             height: 10,
             decoration: BoxDecoration(
-              color: _connected ? themeData.success : themeData.error,
+              color: _connected
+                  ? themeData.colors.success100
+                  : themeData.colors.error100,
               borderRadius: BorderRadius.circular(100),
               boxShadow: [
                 BoxShadow(
-                  color: _connected ? themeData.success : themeData.error,
+                  color: _connected
+                      ? themeData.colors.success100
+                      : themeData.colors.error100,
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
@@ -80,9 +83,10 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
           Text(
             _connected ? StringConstants.connected : StringConstants.error,
             style: TextStyle(
-              color: themeData.foreground100,
-              fontFamily: themeData.fontFamily,
+              color: themeData.colors.foreground100,
+              fontFamily: themeData.textStyles.fontFamily,
             ),
+            // TODO instead of this, use style: themeData.textStyles.whateverNeeded
           ),
         ],
       ),

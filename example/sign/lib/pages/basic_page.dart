@@ -13,6 +13,7 @@ import 'package:walletconnect_flutter_dapp/widgets/chain_button.dart';
 import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 
 enum SignPageType {
   none,
@@ -37,7 +38,7 @@ class _BasicPageState extends State<BasicPage>
     with SingleTickerProviderStateMixin {
   bool _initialized = false;
 
-  bool _testnetOnly = false;
+  // bool _testnetOnly = false;
   final List<ChainMetadata> _selectedChains = [];
 
   bool _shouldDismissQrCode = true;
@@ -89,7 +90,7 @@ class _BasicPageState extends State<BasicPage>
     if (!_initialized) {
       return Center(
         child: CircularProgressIndicator(
-          color: WalletConnectModalTheme.getData(context).primary100,
+          color: Web3ModalTheme.getDataOf(context).colors.blue100,
         ),
       );
     }
@@ -222,32 +223,8 @@ class _BasicPageState extends State<BasicPage>
         const SizedBox(
           height: StyleConstants.linear24,
         ),
-        // _buildTestnetSwitch(),
         ...chainButtons,
       ],
-    );
-  }
-
-  Widget _buildTestnetSwitch() {
-    return SizedBox(
-      height: StyleConstants.linear48,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            StringConstants.testnetsOnly,
-            style: StyleConstants.buttonText,
-          ),
-          Switch(
-            value: _testnetOnly,
-            onChanged: (value) {
-              setState(() {
-                _testnetOnly = value;
-              });
-            },
-          ),
-        ],
-      ),
     );
   }
 
