@@ -23,9 +23,8 @@ class _W3MAddressState extends State<W3MAddress> {
   @override
   void initState() {
     super.initState();
-
-    widget.service.addListener(_w3mServiceUpdated);
     _w3mServiceUpdated();
+    widget.service.addListener(_w3mServiceUpdated);
   }
 
   @override
@@ -37,20 +36,11 @@ class _W3MAddressState extends State<W3MAddress> {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
-
     return Text(
-      // _address ?? '',
       Util.truncate(_address ?? ''),
-      style: widget.style ??
-          TextStyle(
-            color: themeData.colors.inverse100,
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-      // TODO instead of this, use style: themeData.textStyles.whateverNeeded
-      // overflow: TextOverflow.ellipsis,
-      // maxLines: 1,
-      // softWrap: false,
+      style: themeData.textStyles.paragraph600.copyWith(
+        color: themeData.colors.foreground100,
+      ),
     );
   }
 

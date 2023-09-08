@@ -4,8 +4,8 @@ import 'package:mockito/mockito.dart';
 import 'package:walletconnect_modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/utils/util.dart';
-import 'package:web3modal_flutter/widgets/w3m_balance.dart';
-import 'package:web3modal_flutter/widgets/w3m_connect.dart';
+import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
+import 'package:web3modal_flutter/widgets/w3m_connect_wallet_button.dart';
 
 import '../mock_classes.dart';
 
@@ -46,7 +46,7 @@ void main() {
               height: 100,
               child: Builder(
                 builder: (context) {
-                  return W3MConnect(
+                  return W3MConnectWalletButton(
                     key: key,
                     service: service,
                   );
@@ -97,7 +97,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text(W3MBalance.balanceDefault),
+        find.text(BalanceButton.balanceDefault),
         findsOneWidget,
       );
       expect(

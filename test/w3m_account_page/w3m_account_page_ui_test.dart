@@ -13,7 +13,7 @@ import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/utils/util.dart';
-import 'package:web3modal_flutter/widgets/w3m_balance.dart';
+import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 
 import '../mock_classes.dart';
 import '../mock_classes.mocks.dart';
@@ -123,7 +123,7 @@ void main() {
         // Balance
         expect(
           find.text(
-            W3MBalance.balanceDefault,
+            BalanceButton.balanceDefault,
             skipOffstage: false,
           ),
           findsOneWidget,

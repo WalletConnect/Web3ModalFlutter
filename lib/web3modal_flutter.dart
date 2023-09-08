@@ -9,6 +9,6 @@ export 'services/w3m_service/i_w3m_service.dart';
 export 'services/w3m_service/w3m_service.dart';
 
 // Widgets
-export 'widgets/w3m_connect.dart';
-export 'widgets/w3m_network_select.dart';
+export 'widgets/w3m_connect_wallet_button.dart';
+export 'widgets/w3m_network_select_button.dart';
 export 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_theme.dart';

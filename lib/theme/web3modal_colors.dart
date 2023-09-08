@@ -5,6 +5,7 @@ part 'web3modal_colors.freezed.dart';
 
 @freezed
 class Web3ModalColors with _$Web3ModalColors {
+  // TODO check colors names
   const factory Web3ModalColors({
     required Color blue100,
     required Color blue090,
