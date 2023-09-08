@@ -37,11 +37,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
       height: 40,
       decoration: BoxDecoration(
         color: themeData.colors.background200,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(
-            10, //themeData.radiusXS,
-          ),
-        ),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
         border: Border.all(
           color: themeData.colors.overgray025,
           width: 1.0,

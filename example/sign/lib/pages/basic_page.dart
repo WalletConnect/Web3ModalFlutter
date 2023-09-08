@@ -38,7 +38,6 @@ class _BasicPageState extends State<BasicPage>
     with SingleTickerProviderStateMixin {
   bool _initialized = false;
 
-  // bool _testnetOnly = false;
   final List<ChainMetadata> _selectedChains = [];
 
   bool _shouldDismissQrCode = true;
@@ -285,7 +284,6 @@ class _BasicPageState extends State<BasicPage>
     );
     // debugPrint('Connection created, connection response: ${res.uri}');
 
-    // print(res.uri!.toString());
     _showQrCode(res);
 
     debugPrint('Awaiting session proposal settlement');
@@ -299,7 +297,6 @@ class _BasicPageState extends State<BasicPage>
         );
 
         if (_shouldDismissQrCode) {
-          // ignore: use_build_context_synchronously
           Navigator.pop(context);
         }
       },
@@ -312,7 +309,6 @@ class _BasicPageState extends State<BasicPage>
       );
 
       if (_shouldDismissQrCode) {
-        // ignore: use_build_context_synchronously
         Navigator.pop(context);
       }
     });
@@ -321,9 +317,6 @@ class _BasicPageState extends State<BasicPage>
   Future<void> _showQrCode(
     ConnectResponse response,
   ) async {
-    // Show the QR code
-    debugPrint('Showing QR Code: ${response.uri}');
-
     _shouldDismissQrCode = true;
     await showDialog(
       context: context,
