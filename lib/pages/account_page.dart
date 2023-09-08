@@ -4,12 +4,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/widget_stack/widget_stack_singleton.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_provider.dart';
 import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/w3m_address.dart';
 import 'package:web3modal_flutter/widgets/w3m_avatar.dart';
 import 'package:web3modal_flutter/widgets/w3m_balance.dart';
@@ -27,13 +27,12 @@ class AccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
     final IW3MService service =
         WalletConnectModalProvider.of(context).service as IW3MService;
 
     final Widget divider = Divider(
-      color: themeData.overlay010,
+      color: themeData.colors.overgray010,
       height: 1,
       thickness: 1,
     );
@@ -74,7 +73,7 @@ class AccountPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
-                        color: themeData.foreground100,
+                        color: themeData.colors.foreground100,
                       ),
                     ),
                   ],

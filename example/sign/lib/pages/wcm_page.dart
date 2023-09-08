@@ -10,6 +10,7 @@ import 'package:walletconnect_flutter_dapp/widgets/chain_button.dart';
 import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 
 class WCMPage extends StatefulWidget {
   const WCMPage({
@@ -87,7 +88,7 @@ class _WCMPageState extends State<WCMPage> with SingleTickerProviderStateMixin {
     if (!_initialized) {
       return Center(
         child: CircularProgressIndicator(
-          color: WalletConnectModalTheme.getData(context).primary100,
+          color: Web3ModalTheme.getDataOf(context).colors.blue100,
         ),
       );
     }

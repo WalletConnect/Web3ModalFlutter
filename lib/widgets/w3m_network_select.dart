@@ -7,6 +7,7 @@ import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
 
 class W3MNetworkSelect extends StatefulWidget {
@@ -61,8 +62,7 @@ class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
   }
 
   Widget _buildButton(BuildContext context) {
-    final WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
 
     return WalletConnectModalButton(
       onPressed: () {
@@ -88,8 +88,9 @@ class _W3MNetworkSelectState extends State<W3MNetworkSelect> {
                 StringConstants.selectNetwork,
             style: TextStyle(
               color: Colors.white,
-              fontFamily: themeData.fontFamily,
+              fontFamily: themeData.textStyles.fontFamily,
             ),
+            // TODO instead of this, use style: themeData.textStyles.whateverNeeded
           ),
         ],
       ),

@@ -11,7 +11,7 @@ import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_dapp/widgets/event_widget.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -90,21 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
           title: StringConstants.w3mPageTitle,
           icon: Icons.looks_3,
         ),
-        // PageData(
-        //   page: PairingsPage(web3App: _web3App!),
-        //   title: StringConstants.pairingsPageTitle,
-        //   icon: Icons.connect_without_contact_sharp,
-        // ),
-        // PageData(
-        //   page: SessionsPage(web3App: _web3App!),
-        //   title: StringConstants.sessionsPageTitle,
-        //   icon: Icons.confirmation_number_outlined,
-        // ),
-        // PageData(
-        //   page: AuthPage(web3App: _web3App!),
-        //   title: StringConstants.authPageTitle,
-        //   icon: Icons.lock,
-        // ),
       ];
 
       _initialized = true;
@@ -123,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!_initialized) {
       return Center(
         child: CircularProgressIndicator(
-          color: WalletConnectModalTheme.getData(context).primary100,
+          color: Web3ModalTheme.getDataOf(context).colors.blue100,
         ),
       );
     }

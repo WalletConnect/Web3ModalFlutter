@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
 
 class W3MBalance extends StatefulWidget {
@@ -38,8 +38,7 @@ class _W3MBalanceState extends State<W3MBalance> {
 
   @override
   Widget build(BuildContext context) {
-    WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
 
     return Row(
       children: [
@@ -52,10 +51,11 @@ class _W3MBalanceState extends State<W3MBalance> {
         Text(
           _balance,
           style: TextStyle(
-            color: themeData.foreground100,
+            color: themeData.colors.foreground100,
             fontWeight: FontWeight.bold,
             fontSize: 16.0,
           ),
+          // TODO instead of this, use style: themeData.textStyles.whateverNeeded
         ),
         if (_tokenName != null)
           Row(
@@ -64,10 +64,11 @@ class _W3MBalanceState extends State<W3MBalance> {
               Text(
                 _tokenName!,
                 style: TextStyle(
-                  color: themeData.foreground100,
+                  color: themeData.colors.foreground100,
                   fontWeight: FontWeight.bold,
                   fontSize: 16.0,
                 ),
+                // TODO instead of this, use style: themeData.textStyles.whateverNeeded
               ),
             ],
           ),

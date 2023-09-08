@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 
 class W3MIconButton extends StatelessWidget {
   const W3MIconButton({
@@ -15,16 +15,15 @@ class W3MIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
 
     return MaterialButton(
       onPressed: onPressed,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
-      focusColor: themeData.overlay030,
-      hoverColor: themeData.overlay020,
+      focusColor: themeData.colors.overgray025,
+      hoverColor: themeData.colors.overgray020,
       child: Container(
         // constraints: const BoxConstraints(
         //   maxWidth: 100,
@@ -42,9 +41,10 @@ class W3MIconButton extends StatelessWidget {
               Text(
                 text,
                 style: TextStyle(
-                  color: themeData.primary100,
+                  color: themeData.colors.blue100,
                   fontSize: 12,
                 ),
+                // TODO instead of this, use style: themeData.textStyles.whateverNeeded
                 maxLines: 2,
                 textAlign: TextAlign.center,
               ),

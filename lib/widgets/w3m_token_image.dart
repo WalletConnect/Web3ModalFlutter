@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 
 class W3MTokenImage extends StatelessWidget {
   const W3MTokenImage({
@@ -22,8 +22,7 @@ class W3MTokenImage extends StatelessWidget {
   }
 
   Widget _buildToken(BuildContext context) {
-    final WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -34,7 +33,7 @@ class W3MTokenImage extends StatelessWidget {
         ),
         border: Border.fromBorderSide(
           BorderSide(
-            color: themeData.overlay020,
+            color: themeData.colors.overgray020,
             width: 1,
             strokeAlign: BorderSide.strokeAlignCenter,
           ),
@@ -60,8 +59,7 @@ class W3MTokenImage extends StatelessWidget {
   }
 
   Widget _buildChain(BuildContext context) {
-    final WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
 
     return Container(
       width: size,
@@ -69,7 +67,7 @@ class W3MTokenImage extends StatelessWidget {
       decoration: ShapeDecoration(
         shape: StarBorder.polygon(
           side: BorderSide(
-            color: themeData.overlay020,
+            color: themeData.colors.overgray020,
             width: 2,
             strokeAlign: BorderSide.strokeAlignCenter,
           ),

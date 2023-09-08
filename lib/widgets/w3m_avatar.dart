@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 
 class W3MAvatar extends StatefulWidget {
@@ -50,8 +50,7 @@ class _W3MAvatarState extends State<W3MAvatar> {
 
   Widget _buildGradientAvatar(BuildContext context) {
     List<Color> colors = Util.generateAvatarColors(_address!);
-    WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
 
     return Stack(
       children: [
@@ -63,7 +62,7 @@ class _W3MAvatarState extends State<W3MAvatar> {
             borderRadius: BorderRadius.circular(widget.size / 2.0),
             boxShadow: [
               BoxShadow(
-                color: themeData.overlay030,
+                color: themeData.colors.overgray025,
                 spreadRadius: 1.0,
                 blurRadius: 0.0,
               ),

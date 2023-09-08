@@ -48,41 +48,13 @@ class MethodDialogState extends State<MethodDialog> {
           if (snapshot.hasData) {
             final String t = jsonEncode(snapshot.data);
             return InkWell(
-              onTap: () async {
-                await Clipboard.setData(
-                  ClipboardData(
-                    text: t,
-                  ),
-                );
-                showPlatformToast(
-                  child: const Text(
-                    StringConstants.copiedToClipboard,
-                  ),
-                  context: context,
-                );
-              },
-              child: Text(
-                t,
-              ),
+              onTap: () => _copyToClipboard(t),
+              child: Text(t),
             );
           } else if (snapshot.hasError) {
             return InkWell(
-              onTap: () async {
-                await Clipboard.setData(
-                  ClipboardData(
-                    text: snapshot.data.toString(),
-                  ),
-                );
-                showPlatformToast(
-                  child: const Text(
-                    StringConstants.copiedToClipboard,
-                  ),
-                  context: context,
-                );
-              },
-              child: Text(
-                snapshot.error.toString(),
-              ),
+              onTap: () => _copyToClipboard(snapshot.data.toString()),
+              child: Text(snapshot.error.toString()),
             );
           } else {
             return const SizedBox(
@@ -103,6 +75,17 @@ class MethodDialogState extends State<MethodDialog> {
           ),
         ),
       ],
+    );
+  }
+
+  void _copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text)).then(
+      (_) => showPlatformToast(
+        child: const Text(
+          StringConstants.copiedToClipboard,
+        ),
+        context: context,
+      ),
     );
   }
 }

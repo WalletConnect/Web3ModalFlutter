@@ -13,6 +13,7 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   walletconnect_flutter_v2: ^2.0.6
+  walletconnect_modal_flutter: ^2.0.0
   flutter_svg: ^2.0.6
   qr_flutter: ^4.1.0
   json_annotation: ^4.8.1
@@ -24,7 +25,6 @@ dependencies:
   freezed_annotation: ^2.2.0
   flex_color_picker: ^3.2.2
   mockito: ^5.4.2
-  walletconnect_modal_flutter: ^2.0.0
   web3dart: ^2.6.1
   hexagon: ^0.2.0
   shared_preferences: ^2.2.0
