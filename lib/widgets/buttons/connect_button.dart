@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 
@@ -8,6 +9,7 @@ enum ConnectButtonState {
   disabled,
   connecting,
   connected,
+  none,
 }
 
 class ConnectButton extends StatelessWidget {
@@ -82,14 +84,15 @@ class ConnectButton extends StatelessWidget {
                   ),
                 ),
                 const SizedBox.square(dimension: 8.0),
-                Text(titleOverride ?? 'Connecting...'),
+                Text(titleOverride ?? StringConstants.connectButtonConnecting),
               ],
             )
           : connected
-              ? Text(titleOverride ?? 'Disconnect')
+              ? Text(titleOverride ?? StringConstants.connectButtonConnected)
               : size == BaseButtonSize.small
-                  ? Text(titleOverride ?? 'Connect')
-                  : Text(titleOverride ?? 'Connect Wallet'),
+                  ? Text(
+                      titleOverride ?? StringConstants.connectButtonIdleShort)
+                  : Text(titleOverride ?? StringConstants.connectButtonIdle),
     );
   }
 }

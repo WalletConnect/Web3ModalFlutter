@@ -26,4 +26,17 @@ abstract class IW3MService extends IWalletConnectModalService
     W3MChainInfo? chain, {
     bool switchChain = false,
   });
+
+  /// Variable that can be used to check if the modal is visible on screen.
+  @override
+  bool get isOpen;
+
+  /// Opens the modal with the provided [startState].
+  /// If none is provided, the default state will be used based on platform.
+  @override
+  Future<void> open({required BuildContext context, Widget? startWidget});
+
+  /// Closes the modal.
+  @override
+  void close();
 }

@@ -1,5 +1,7 @@
 class StringConstants {
   static const String selectNetwork = 'Select Network';
+  static const String selectNetworkShort = 'Network';
+
   static const String connected = 'Connected';
   static const String error = 'Error';
 
@@ -8,7 +10,7 @@ class StringConstants {
   static const String addressCopied = 'Address copied';
   static const String noChain = 'No Chain';
 
-  // From WalletConnectModalFlutter, will check on following PRs if they are really needed here
+  // TODO From WalletConnectModalFlutter, will check on following PRs if they are really needed here
   // URLS
   static const String getAWalletExploreWalletsUrl =
       'https://explorer.walletconnect.com/?type=wallet';
@@ -17,6 +19,7 @@ class StringConstants {
   static const String connectButtonError = 'Network Error';
   static const String connectButtonReconnecting = 'Reconnecting';
   static const String connectButtonIdle = 'Connect Wallet';
+  static const String connectButtonIdleShort = 'Connect Wallet';
   static const String connectButtonConnecting = 'Connecting...';
   static const String connectButtonConnected = 'Disconnect';
 

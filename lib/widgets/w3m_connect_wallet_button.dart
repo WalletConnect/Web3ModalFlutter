@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_modal_flutter/services/utils/logger/logger_util.dart';
+
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/utils/logger.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/connect_button.dart';
 
@@ -9,21 +10,24 @@ class W3MConnectWalletButton extends StatefulWidget {
     super.key,
     required this.service,
     this.size = BaseButtonSize.regular,
+    this.state,
   });
 
   final IW3MService service;
   final BaseButtonSize size;
+  final ConnectButtonState? state;
 
   @override
   State<W3MConnectWalletButton> createState() => _W3MConnectWalletButtonState();
 }
 
 class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
-  ConnectButtonState _state = ConnectButtonState.idle;
+  late ConnectButtonState _state;
 
   @override
   void initState() {
     super.initState();
+    _state = widget.state ?? ConnectButtonState.idle;
     _updateState();
     widget.service.addListener(_updateState);
   }
@@ -57,6 +61,9 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
       'isConnected: ${widget.service.isConnected}, '
       'isOpen: ${widget.service.isOpen}',
     );
+    if (_state == ConnectButtonState.none) {
+      return;
+    }
     // Case 0: init error
     if (widget.service.initError != null) {
       return setState(() => _state = ConnectButtonState.error);

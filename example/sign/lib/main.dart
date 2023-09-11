@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:logger/logger.dart';
 import 'package:walletconnect_flutter_dapp/home_page.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/utils/logger.dart';
 
 void main() {
   runApp(
@@ -30,7 +32,7 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitDown,
     ]);
 
-    // LoggerUtil.setLogLevel(Level.verbose);
+    LoggerUtil.setLogLevel(Level.error);
   }
 
   // This widget is the root of your application.

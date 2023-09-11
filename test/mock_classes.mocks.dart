@@ -686,10 +686,12 @@ class MockWalletConnectModalService extends _i1.Mock
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  _i4.Future<void> disconnect() => (super.noSuchMethod(
+  _i4.Future<void> disconnect({bool? disconnectAllSessions = true}) =>
+      (super.noSuchMethod(
         Invocation.method(
           #disconnect,
           [],
+          {#disconnectAllSessions: disconnectAllSessions},
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
@@ -753,6 +755,16 @@ class MockWalletConnectModalService extends _i1.Mock
         ),
         returnValue: '',
       ) as String);
+  @override
+  _i4.Future<void> disconnectSession(_i6.SessionData? toDisconnect) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #disconnectSession,
+          [toDisconnect],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
   @override
   void registerListeners() => super.noSuchMethod(
         Invocation.method(
@@ -1086,6 +1098,11 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
   }
 
   @override
+  bool get isOpen => (super.noSuchMethod(
+        Invocation.getter(#isOpen),
+        returnValue: false,
+      ) as bool);
+  @override
   set connectResponse(_i6.ConnectResponse? _connectResponse) =>
       super.noSuchMethod(
         Invocation.setter(
@@ -1112,11 +1129,6 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         Invocation.getter(#projectId),
         returnValue: '',
       ) as String);
-  @override
-  bool get isOpen => (super.noSuchMethod(
-        Invocation.getter(#isOpen),
-        returnValue: false,
-      ) as bool);
   @override
   bool get isConnected => (super.noSuchMethod(
         Invocation.getter(#isConnected),
@@ -1217,14 +1229,6 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  _i4.Future<Null> onDispose() => (super.noSuchMethod(
-        Invocation.method(
-          #onDispose,
-          [],
-        ),
-        returnValue: _i4.Future<Null>.value(),
-      ) as _i4.Future<Null>);
-  @override
   _i4.Future<void> open({
     required _i2.BuildContext? context,
     _i2.Widget? startWidget,
@@ -1250,6 +1254,14 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: null,
       );
   @override
+  _i4.Future<Null> onDispose() => (super.noSuchMethod(
+        Invocation.method(
+          #onDispose,
+          [],
+        ),
+        returnValue: _i4.Future<Null>.value(),
+      ) as _i4.Future<Null>);
+  @override
   _i4.Future<void> reconnectRelay() => (super.noSuchMethod(
         Invocation.method(
           #reconnectRelay,
@@ -1259,10 +1271,12 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  _i4.Future<void> disconnect() => (super.noSuchMethod(
+  _i4.Future<void> disconnect({bool? disconnectAllSessions = true}) =>
+      (super.noSuchMethod(
         Invocation.method(
           #disconnect,
           [],
+          {#disconnectAllSessions: disconnectAllSessions},
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
@@ -1326,6 +1340,16 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         ),
         returnValue: '',
       ) as String);
+  @override
+  _i4.Future<void> disconnectSession(_i6.SessionData? toDisconnect) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #disconnectSession,
+          [toDisconnect],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
   @override
   void onSessionDelete(_i6.SessionDelete? args) => super.noSuchMethod(
         Invocation.method(

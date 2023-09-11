@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
+
 import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
-import 'package:walletconnect_flutter_dapp/models/page_data.dart';
-import 'package:walletconnect_flutter_dapp/pages/basic_page.dart';
 import 'package:walletconnect_flutter_dapp/pages/w3m_page.dart';
-import 'package:walletconnect_flutter_dapp/pages/wcm_page.dart';
-import 'package:walletconnect_flutter_dapp/utils/constants.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/chain_data_wrapper.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/helpers.dart';
 import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_dapp/widgets/event_widget.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -29,13 +26,9 @@ class _MyHomePageState extends State<MyHomePage> {
   IWeb3App? _web3App;
   bool _initialized = false;
 
-  List<PageData> _pageDatas = [];
-  int _selectedIndex = 0;
-
   @override
   void initState() {
     super.initState();
-
     initialize();
   }
 
@@ -74,24 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     setState(() {
-      _pageDatas = [
-        PageData(
-          page: W3MPage(web3App: _web3App!),
-          title: StringConstants.w3mPageTitle,
-          icon: Icons.looks_3,
-        ),
-        PageData(
-          page: BasicPage(web3App: _web3App!),
-          title: StringConstants.basicPageTitle,
-          icon: Icons.looks_one,
-        ),
-        PageData(
-          page: WCMPage(web3App: _web3App!),
-          title: StringConstants.wcmPageTitle,
-          icon: Icons.looks_two,
-        ),
-      ];
-
       _initialized = true;
     });
   }
@@ -113,103 +88,22 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
 
-    final List<Widget> navRail = [];
-    if (MediaQuery.of(context).size.width >= Constants.smallScreen) {
-      navRail.add(_buildNavigationRail());
-    }
-    navRail.add(
-      Expanded(
-        child: _pageDatas[_selectedIndex].page,
-      ),
-    );
+    final isDarkMode = Web3ModalTheme.of(context).isDarkMode;
 
     return Scaffold(
-      bottomNavigationBar:
-          MediaQuery.of(context).size.width < Constants.smallScreen
-              ? _buildBottomNavBar()
-              : null,
-      body: Stack(
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: navRail,
-          ),
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: Row(
-              children: [
-                _buildIconButton(
-                  Icons.theater_comedy_outlined,
-                  widget.swapTheme,
-                ),
-              ],
-            ),
+      backgroundColor: Web3ModalTheme.getDataOf(context).colors.background300,
+      appBar: AppBar(
+        title: const Text(StringConstants.w3mPageTitleV3),
+        actions: [
+          IconButton(
+            icon: isDarkMode
+                ? const Icon(Icons.light_mode)
+                : const Icon(Icons.dark_mode),
+            onPressed: widget.swapTheme,
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      unselectedItemColor: Colors.grey,
-      selectedItemColor: Colors.indigoAccent,
-      // called when one tab is selected
-      onTap: (int index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
-      // bottom tab items
-      items: _pageDatas
-          .map(
-            (e) => BottomNavigationBarItem(
-              icon: Icon(e.icon),
-              label: e.title,
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget _buildNavigationRail() {
-    return NavigationRail(
-      selectedIndex: _selectedIndex,
-      onDestinationSelected: (int index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
-      labelType: NavigationRailLabelType.selected,
-      destinations: _pageDatas
-          .map(
-            (e) => NavigationRailDestination(
-              icon: Icon(e.icon),
-              label: Text(e.title),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget _buildIconButton(IconData icon, void Function()? onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: BorderRadius.circular(
-          48,
-        ),
-      ),
-      child: IconButton(
-        icon: Icon(
-          icon,
-          color: Colors.white,
-        ),
-        iconSize: 24,
-        onPressed: onPressed,
-      ),
+      body: W3MPage(web3App: _web3App!),
     );
   }
 
