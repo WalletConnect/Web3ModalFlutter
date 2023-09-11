@@ -109,7 +109,7 @@ void main() {
           imageId: anyNamed('imageId'),
         ),
       ).thenReturn('abc');
-      when(es.getRedirect(name: anyNamed("name"))).thenReturn(null);
+      when(es.getRedirect(name: anyNamed('name'))).thenReturn(null);
       when(mockEVMService.getBalance(any, any)).thenAnswer(
         (_) => Future.value(1.0),
       );

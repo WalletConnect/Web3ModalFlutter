@@ -1,16 +1,26 @@
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/explorer/i_explorer_service.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:flutter/material.dart';
+
+import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils_singleton.dart';
 import 'package:web3modal_flutter/services/network_service.dart/network_service_singleton.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/chain_data.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
+import 'package:web3modal_flutter/web3modal.dart';
+import 'package:web3modal_flutter/web3modal_provider.dart';
+
+import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+
+import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
+import 'package:walletconnect_modal_flutter/services/explorer/i_explorer_service.dart';
+import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
+import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
+import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 
 class W3MService extends WalletConnectModalService implements IW3MService {
   static const String selectedChainId = 'selectedChainId';
@@ -30,6 +40,10 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   double? _chainBalance;
   @override
   double? get chainBalance => _chainBalance;
+
+  bool _isOpen = false;
+  @override
+  bool get isOpen => _isOpen;
 
   W3MService({
     IWeb3App? web3App,
@@ -203,6 +217,18 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   @override
   void onSessionConnect(SessionConnect? args) {
     super.onSessionConnect(args);
+    LoggerUtil.logger.i('_onSessionConnect: ${args?.session}');
+    // _isConnected = true;
+    // _session = args!.session;
+    // _address = NamespaceUtils.getAccount(
+    //   _session!.namespaces.values.first.accounts.first,
+    // );
+
+    if (_isOpen) {
+      close();
+    } else {
+      notifyListeners();
+    }
 
     _loadAccountData();
   }
@@ -299,5 +325,92 @@ class W3MService extends WalletConnectModalService implements IW3MService {
         );
       },
     );
+  }
+
+  @override
+  Future<void> open({
+    required BuildContext context,
+    Widget? startWidget,
+  }) async {
+    checkInitialized();
+
+    if (_isOpen) {
+      return;
+    }
+
+    _isOpen = true;
+
+    rebuildConnectionUri();
+
+    // Reset the explorer
+    explorerService.instance!.filterList(
+      query: '',
+    );
+    widgetStack.instance.clear();
+
+    this.context = context;
+
+    final bool bottomSheet = platformUtils.instance.isBottomSheet();
+
+    notifyListeners();
+
+    final theme = Web3ModalTheme.maybeOf(context);
+    final Widget child = theme == null
+        ? Web3ModalTheme(
+            data: Web3ModalThemeData.lightMode,
+            child: Web3Modal(startWidget: startWidget),
+          )
+        : Web3Modal(startWidget: startWidget);
+
+    final Widget root = Web3ModalProvider(
+      service: this,
+      child: child,
+    );
+
+    if (bottomSheet) {
+      await showModalBottomSheet(
+        // enableDrag: false,
+        backgroundColor: Colors.transparent,
+        isDismissible: false,
+        isScrollControlled: true,
+        enableDrag: false,
+        constraints: BoxConstraints(
+          minWidth: MediaQuery.of(context).size.width,
+        ),
+        useSafeArea: true,
+        context: context,
+        builder: (context) {
+          return root;
+        },
+      );
+    } else {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return root;
+        },
+      );
+    }
+
+    _isOpen = false;
+
+    notifyListeners();
+  }
+
+  @override
+  void close() {
+    // If we aren't open, then we can't and shouldn't close
+    if (!_isOpen) {
+      return;
+    }
+
+    toastUtils.instance.clear();
+    if (context != null) {
+      // _isOpen and notifyListeners() are handled when we call Navigator.pop()
+      // by the open() method
+      Navigator.pop(context!);
+    } else {
+      notifyListeners();
+    }
   }
 }

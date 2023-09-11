@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/utils/widget_stack/widget_stack_singleton.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_provider.dart';
+
 import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
+import 'package:web3modal_flutter/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/w3m_address.dart';
 import 'package:web3modal_flutter/widgets/w3m_avatar.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
@@ -19,17 +18,16 @@ import 'package:web3modal_flutter/widgets/w3m_disconnect_button.dart';
 import 'package:web3modal_flutter/widgets/w3m_icon_button.dart';
 import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
 
+import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
+import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
+
 class AccountPage extends StatelessWidget {
-  const AccountPage()
-      : super(
-          key: Web3ModalConstants.accountPage,
-        );
+  const AccountPage() : super(key: Web3ModalConstants.accountPage);
 
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
-    final IW3MService service =
-        WalletConnectModalProvider.of(context).service as IW3MService;
+    final service = Web3ModalProvider.of(context).service;
 
     final Widget divider = Divider(
       color: themeData.colors.overgray010,

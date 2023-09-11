@@ -3,17 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:network_image_mock/network_image_mock.dart';
+
+import 'package:web3modal_flutter/constants/constants.dart';
+import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/pages/account_page.dart';
+import 'package:web3modal_flutter/utils/util.dart';
+import 'package:web3modal_flutter/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
+
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/platform/i_platform_utils.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/widget_stack/widget_stack_singleton.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_provider.dart';
-import 'package:web3modal_flutter/constants/constants.dart';
-import 'package:web3modal_flutter/constants/string_constants.dart';
-import 'package:web3modal_flutter/pages/account_page.dart';
-import 'package:web3modal_flutter/utils/util.dart';
-import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 
 import '../mock_classes.dart';
 import '../mock_classes.mocks.dart';
@@ -87,7 +89,7 @@ void main() {
               height: 800,
               width: 800,
               child: Center(
-                child: WalletConnectModalProvider(
+                child: Web3ModalProvider(
                   service: service,
                   child: Scaffold(
                     body: Builder(

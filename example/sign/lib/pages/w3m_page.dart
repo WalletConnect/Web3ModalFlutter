@@ -1,15 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/buttons/address_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
+import 'package:web3modal_flutter/widgets/buttons/connect_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/network_button.dart';
 import 'package:web3modal_flutter/widgets/w3m_account_button.dart';
+
+// import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 
 class W3MPage extends StatefulWidget {
   const W3MPage({
@@ -24,7 +25,7 @@ class W3MPage extends StatefulWidget {
 }
 
 class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
-  late IW3MService _w3mService;
+  late W3MService _w3mService;
   bool _isConnected = false;
 
   @override
@@ -92,130 +93,149 @@ class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
             ),
           );
         }
-        return Scaffold(
-          backgroundColor:
-              Web3ModalTheme.getDataOf(context).colors.background300,
-          appBar: AppBar(
-            title: const Text(StringConstants.w3mPageTitleV3),
-          ),
-          body: _isConnected
-              ? SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox.square(dimension: 12.0),
-                      W3MNetworkSelectButton(service: _w3mService),
-                      const SizedBox.square(dimension: 12.0),
-                      W3MConnectWalletButton(service: _w3mService),
-                      const SizedBox.square(dimension: 12.0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AddressButton(service: _w3mService, onTap: () {}),
-                          const SizedBox.square(dimension: 12.0),
-                          AddressButton(service: _w3mService),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AddressButton(
-                            service: _w3mService,
-                            size: BaseButtonSize.small,
-                            onTap: () {},
-                          ),
-                          const SizedBox.square(dimension: 12.0),
-                          AddressButton(
-                            service: _w3mService,
-                            size: BaseButtonSize.small,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          NetworkButton(service: _w3mService, onTap: () {}),
-                          const SizedBox.square(dimension: 12.0),
-                          NetworkButton(service: _w3mService),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          NetworkButton(
-                            service: _w3mService,
-                            size: BaseButtonSize.small,
-                            onTap: () {},
-                          ),
-                          const SizedBox.square(dimension: 12.0),
-                          NetworkButton(
-                            service: _w3mService,
-                            size: BaseButtonSize.small,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          BalanceButton(service: _w3mService, onTap: () {}),
-                          const SizedBox.square(dimension: 12.0),
-                          BalanceButton(service: _w3mService),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          BalanceButton(
-                            service: _w3mService,
-                            size: BaseButtonSize.small,
-                            onTap: () {},
-                          ),
-                          const SizedBox.square(dimension: 12.0),
-                          BalanceButton(
-                            service: _w3mService,
-                            size: BaseButtonSize.small,
-                          ),
-                        ],
-                      ),
-                      W3MAccountButton(service: _w3mService),
-                      W3MAccountButton(service: _w3mService),
-                      // Container(
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   child: SessionWidget(
-                      //     session: widget.web3App.sessions.getAll().first,
-                      //     web3App: widget.web3App,
-                      //     launchRedirect: () {
-                      //       _w3mService.launchCurrentWallet();
-                      //     },
-                      //   ),
-                      // ),
-                      const SizedBox.square(dimension: 12.0),
-                    ],
-                  ),
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const SizedBox.square(dimension: 12.0),
-                    W3MNetworkSelectButton(service: _w3mService),
-                    const SizedBox.square(dimension: 12.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        W3MConnectWalletButton(service: _w3mService),
-                        const SizedBox.square(dimension: 12.0),
-                        W3MConnectWalletButton(
-                          service: _w3mService,
-                          size: BaseButtonSize.small,
-                        ),
-                      ],
-                    ),
-                    const SizedBox.square(dimension: 12.0),
-                  ],
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox.square(dimension: 12.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                W3MNetworkSelectButton(service: _w3mService),
+                const SizedBox.square(dimension: 12.0),
+                W3MNetworkSelectButton(
+                  service: _w3mService,
+                  size: BaseButtonSize.small,
                 ),
+              ],
+            ),
+            const SizedBox.square(dimension: 12.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                W3MConnectWalletButton(
+                  service: _w3mService,
+                  state: ConnectButtonState.none,
+                ),
+                const SizedBox.square(dimension: 12.0),
+                W3MConnectWalletButton(
+                  service: _w3mService,
+                  size: BaseButtonSize.small,
+                  state: ConnectButtonState.none,
+                ),
+              ],
+            ),
+            const SizedBox.square(dimension: 12.0),
+            const Divider(height: 0.0),
+            if (_isConnected)
+              _ConnectedView(
+                w3mService: _w3mService,
+              )
+          ],
         );
       },
+    );
+  }
+}
+
+class _ConnectedView extends StatelessWidget {
+  const _ConnectedView({required this.w3mService});
+  final W3MService w3mService;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox.square(dimension: 12.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AddressButton(service: w3mService, onTap: () {}),
+              const SizedBox.square(dimension: 12.0),
+              AddressButton(service: w3mService),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AddressButton(
+                service: w3mService,
+                size: BaseButtonSize.small,
+                onTap: () {},
+              ),
+              const SizedBox.square(dimension: 12.0),
+              AddressButton(
+                service: w3mService,
+                size: BaseButtonSize.small,
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              NetworkButton(service: w3mService, onTap: () {}),
+              const SizedBox.square(dimension: 12.0),
+              NetworkButton(service: w3mService),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              NetworkButton(
+                service: w3mService,
+                size: BaseButtonSize.small,
+                onTap: () {},
+              ),
+              const SizedBox.square(dimension: 12.0),
+              NetworkButton(
+                service: w3mService,
+                size: BaseButtonSize.small,
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              BalanceButton(service: w3mService, onTap: () {}),
+              const SizedBox.square(dimension: 12.0),
+              BalanceButton(service: w3mService),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              BalanceButton(
+                service: w3mService,
+                size: BaseButtonSize.small,
+                onTap: () {},
+              ),
+              const SizedBox.square(dimension: 12.0),
+              BalanceButton(
+                service: w3mService,
+                size: BaseButtonSize.small,
+              ),
+            ],
+          ),
+          W3MAccountButton(service: w3mService),
+          W3MAccountButton(
+            service: w3mService,
+            size: BaseButtonSize.small,
+          ),
+          // Container(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: SessionWidget(
+          //     session: widget.web3App.sessions.getAll().first,
+          //     web3App: widget.web3App,
+          //     launchRedirect: () {
+          //       _w3mService.launchCurrentWallet();
+          //     },
+          //   ),
+          // ),
+          const SizedBox.square(dimension: 12.0),
+        ],
+      ),
     );
   }
 }

@@ -46,7 +46,7 @@ class _BalanceButtonState extends State<BalanceButton> {
       _balance = widget.service.chainBalance == null
           ? BalanceButton.balanceDefault
           : widget.service.chainBalance!.toStringAsPrecision(4);
-      RegExp regex = RegExp(r"([.]*0+)(?!.*\d)");
+      RegExp regex = RegExp(r'([.]*0+)(?!.*\d)');
       _balance = _balance.replaceAll(regex, '');
       _tokenName = widget.service.selectedChain == null
           ? null
