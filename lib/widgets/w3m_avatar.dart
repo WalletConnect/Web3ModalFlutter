@@ -8,10 +8,12 @@ class W3MAvatar extends StatefulWidget {
     super.key,
     required this.service,
     this.size = 40.0,
+    this.disabled = false,
   });
 
   final IW3MService service;
   final double size;
+  final bool disabled;
 
   @override
   State<W3MAvatar> createState() => _W3MAvatarState();
@@ -36,22 +38,31 @@ class _W3MAvatarState extends State<W3MAvatar> {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = Web3ModalTheme.getDataOf(context);
     return SizedBox(
       width: widget.size,
       height: widget.size,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(widget.size / 2),
-        child: _avatarUrl != null
-            ? Image.network(_avatarUrl!)
-            : _buildGradientAvatar(context),
+        child: ColorFiltered(
+          colorFilter: ColorFilter.mode(
+            widget.disabled
+                ? themeData.colors.foreground300
+                : Colors.transparent,
+            BlendMode.saturation,
+          ),
+          child: _avatarUrl != null
+              ? Image.network(_avatarUrl!)
+              : _buildGradientAvatar(context),
+        ),
       ),
     );
   }
 
   Widget _buildGradientAvatar(BuildContext context) {
+    if ((_address ?? '').isEmpty) return const SizedBox.shrink();
     List<Color> colors = Util.generateAvatarColors(_address!);
     final themeData = Web3ModalTheme.getDataOf(context);
-
     return Stack(
       children: [
         Container(

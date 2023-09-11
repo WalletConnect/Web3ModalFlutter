@@ -9,19 +9,23 @@ class W3MTokenImage extends StatelessWidget {
     this.isChain = false,
     this.size = 36,
     this.cornerRadius = 0.3,
+    this.disabled = false,
   });
 
   final String? imageUrl;
   final double size;
   final bool isChain;
   final double cornerRadius;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
-    return isChain ? _buildChain(context) : _buildToken(context);
+    return isChain
+        ? _buildChain(context, disabled)
+        : _buildToken(context, disabled);
   }
 
-  Widget _buildToken(BuildContext context) {
+  Widget _buildToken(BuildContext context, bool disabled) {
     final themeData = Web3ModalTheme.getDataOf(context);
 
     return Container(
@@ -42,23 +46,29 @@ class W3MTokenImage extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Transform.scale(
         scale: 1.05,
-        child: imageUrl == null
-            ? SvgPicture.asset(
-                'assets/token_placeholder.svg',
-                package: 'web3modal_flutter',
-                width: size,
-                height: size,
-              )
-            : Image.network(
-                imageUrl!,
-                width: size,
-                height: size,
-              ),
+        child: ColorFiltered(
+          colorFilter: ColorFilter.mode(
+            disabled ? themeData.colors.foreground300 : Colors.transparent,
+            BlendMode.saturation,
+          ),
+          child: imageUrl == null
+              ? SvgPicture.asset(
+                  'assets/token_placeholder.svg',
+                  package: 'web3modal_flutter',
+                  width: size,
+                  height: size,
+                )
+              : Image.network(
+                  imageUrl!,
+                  width: size,
+                  height: size,
+                ),
+        ),
       ),
     );
   }
 
-  Widget _buildChain(BuildContext context) {
+  Widget _buildChain(BuildContext context, bool disabled) {
     final themeData = Web3ModalTheme.getDataOf(context);
 
     return Container(
@@ -76,24 +86,30 @@ class W3MTokenImage extends StatelessWidget {
         ),
       ),
       clipBehavior: Clip.antiAlias,
-      child: imageUrl == null
-          ? Transform.scale(
-              scale: 1.25,
-              child: SvgPicture.asset(
-                'assets/network_placeholder.svg',
-                package: 'web3modal_flutter',
-                width: size,
-                height: size,
+      child: ColorFiltered(
+        colorFilter: ColorFilter.mode(
+          disabled ? themeData.colors.foreground300 : Colors.transparent,
+          BlendMode.saturation,
+        ),
+        child: imageUrl == null
+            ? Transform.scale(
+                scale: 1.25,
+                child: SvgPicture.asset(
+                  'assets/network_placeholder.svg',
+                  package: 'web3modal_flutter',
+                  width: size,
+                  height: size,
+                ),
+              )
+            : Transform.scale(
+                scale: 1.05,
+                child: Image.network(
+                  imageUrl!,
+                  width: size,
+                  height: size,
+                ),
               ),
-            )
-          : Transform.scale(
-              scale: 1.05,
-              child: Image.network(
-                imageUrl!,
-                width: size,
-                height: size,
-              ),
-            ),
+      ),
     );
   }
 }

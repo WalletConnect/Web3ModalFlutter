@@ -76,6 +76,11 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _pageDatas = [
         PageData(
+          page: W3MPage(web3App: _web3App!),
+          title: StringConstants.w3mPageTitle,
+          icon: Icons.looks_3,
+        ),
+        PageData(
           page: BasicPage(web3App: _web3App!),
           title: StringConstants.basicPageTitle,
           icon: Icons.looks_one,
@@ -84,11 +89,6 @@ class _MyHomePageState extends State<MyHomePage> {
           page: WCMPage(web3App: _web3App!),
           title: StringConstants.wcmPageTitle,
           icon: Icons.looks_two,
-        ),
-        PageData(
-          page: W3MPage(web3App: _web3App!),
-          title: StringConstants.w3mPageTitle,
-          icon: Icons.looks_3,
         ),
       ];
 

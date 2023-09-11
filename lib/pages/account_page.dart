@@ -12,7 +12,7 @@ import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/w3m_address.dart';
 import 'package:web3modal_flutter/widgets/w3m_avatar.dart';
-import 'package:web3modal_flutter/widgets/w3m_balance.dart';
+import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 import 'package:web3modal_flutter/widgets/w3m_circle_painter.dart';
 import 'package:web3modal_flutter/widgets/w3m_connected_chip.dart';
 import 'package:web3modal_flutter/widgets/w3m_disconnect_button.dart';
@@ -99,7 +99,7 @@ class AccountPage extends StatelessWidget {
               horizontal: paddingHorizontal,
               vertical: paddingVertical,
             ),
-            child: W3MBalance(
+            child: BalanceButton(
               service: service,
             ),
           ),
