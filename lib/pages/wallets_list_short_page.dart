@@ -29,32 +29,24 @@ class WalletListShortPage extends StatelessWidget {
       title: 'Connect wallet',
       child: ValueListenableBuilder(
         valueListenable: explorerService.instance!.initialized,
-        builder: (context, bool value, child) {
-          if (value) {
+        builder: (context, bool initialized, _) {
+          if (initialized) {
             return ValueListenableBuilder(
               valueListenable: explorerService.instance!.itemList,
               builder: (context, List<GridListItemModel<WalletData>> itemList,
                   child) {
-                // TODO ugly but temporary workaround for duplicate wallets
-                final walletsList = <GridListItemModel<WalletData>>[];
-                for (var wallet in itemList) {
-                  final i = walletsList.indexWhere((e) => e.id == wallet.id);
-                  if (i < 0) {
-                    walletsList.add(wallet);
-                  }
-                }
                 return WalletsList(
                   onTapWallet: (data) {
                     service.connectWallet(walletData: data);
                   },
-                  itemList: walletsList.getRange(0, kItemsCount - 2).toList(),
+                  itemList: itemList.getRange(0, kItemsCount - 2).toList(),
                   firstItem: WalletConnectItem(
                     onTap: () {
                       widgetStack.instance.add(const QRCodePage());
                     },
                   ),
                   lastItem: AllWalletsItem(
-                    trailing: WalletItemChip(value: '${walletsList.length}+'),
+                    trailing: WalletItemChip(value: '${itemList.length}+'),
                     onTap: () {
                       widgetStack.instance.add(const WalletListLongPage());
                     },
@@ -65,7 +57,7 @@ class WalletListShortPage extends StatelessWidget {
           } else {
             return Container(
               padding: const EdgeInsets.all(8.0),
-              height: 240,
+              height: (kListItemHeight * kItemsCount) + (8 * kItemsCount) + 12,
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),

@@ -29,7 +29,6 @@ class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
     super.initState();
     widget.web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
     widget.web3App.onSessionDelete.subscribe(_onWeb3AppDisconnect);
-    _initializeService();
   }
 
   Future<bool> _initializeService() async {
