@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
-import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+// import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
-import 'package:web3modal_flutter/utils/logger.dart';
+// import 'package:web3modal_flutter/utils/logger.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
 
@@ -13,11 +13,13 @@ import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_s
 class NetworkButton extends StatefulWidget {
   const NetworkButton({
     super.key,
-    required this.service,
+    // required this.service,
     this.size = BaseButtonSize.regular,
+    this.chainInfo,
     this.onTap,
   });
-  final IW3MService service;
+  // final IW3MService service;
+  final W3MChainInfo? chainInfo;
   final BaseButtonSize size;
   final VoidCallback? onTap;
 
@@ -26,29 +28,29 @@ class NetworkButton extends StatefulWidget {
 }
 
 class _NetworkButtonState extends State<NetworkButton> {
-  W3MChainInfo? _selectedChain;
+  // W3MChainInfo? _selectedChain;
 
   @override
   void initState() {
     super.initState();
-    _w3mServiceUpdated();
-    widget.service.addListener(_w3mServiceUpdated);
+    // _w3mServiceUpdated();
+    // widget.service.addListener(_w3mServiceUpdated);
   }
 
   @override
   void dispose() {
     super.dispose();
-    widget.service.removeListener(_w3mServiceUpdated);
+    // widget.service.removeListener(_w3mServiceUpdated);
   }
 
-  void _w3mServiceUpdated() {
-    LoggerUtil.logger.i(
-      'W3MNetworkSelectButton._onServiceUpdate(). isConnected: $_selectedChain.',
-    );
-    setState(() {
-      _selectedChain = widget.service.selectedChain;
-    });
-  }
+  // void _w3mServiceUpdated() {
+  //   LoggerUtil.logger.i(
+  //     'W3MNetworkSelectButton._onServiceUpdate(). isConnected: $_selectedChain.',
+  //   );
+  //   setState(() {
+  //     _selectedChain = widget.service.selectedChain;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -85,17 +87,17 @@ class _NetworkButtonState extends State<NetworkButton> {
         ),
       ),
       icon: W3MTokenImage(
-        imageUrl: _selectedChain?.chainIcon == null
+        imageUrl: widget.chainInfo?.chainIcon == null
             ? null
             : explorerService.instance!.getAssetImageUrl(
-                imageId: _selectedChain!.chainIcon,
+                imageId: widget.chainInfo!.chainIcon,
               ),
         isChain: true,
         size: widget.size.height - 12.0,
         disabled: widget.onTap == null,
       ),
       child: Text(
-        widget.service.selectedChain?.chainName ??
+        widget.chainInfo?.chainName ??
             (widget.size == BaseButtonSize.small
                 ? StringConstants.selectNetworkShort
                 : StringConstants.selectNetwork),

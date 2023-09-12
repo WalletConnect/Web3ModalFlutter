@@ -6,11 +6,7 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/buttons/address_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
-import 'package:web3modal_flutter/widgets/buttons/connect_button.dart';
-import 'package:web3modal_flutter/widgets/buttons/network_button.dart';
 import 'package:web3modal_flutter/widgets/w3m_account_button.dart';
-
-// import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 
 class W3MPage extends StatefulWidget {
   const W3MPage({
@@ -114,13 +110,11 @@ class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
               children: [
                 W3MConnectWalletButton(
                   service: _w3mService,
-                  state: ConnectButtonState.none,
                 ),
                 const SizedBox.square(dimension: 12.0),
                 W3MConnectWalletButton(
                   service: _w3mService,
                   size: BaseButtonSize.small,
-                  state: ConnectButtonState.none,
                 ),
               ],
             ),
@@ -175,21 +169,20 @@ class _ConnectedView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              NetworkButton(service: w3mService, onTap: () {}),
+              W3MNetworkSelectButton(service: w3mService),
               const SizedBox.square(dimension: 12.0),
-              NetworkButton(service: w3mService),
+              W3MNetworkSelectButton(
+                service: w3mService,
+                size: BaseButtonSize.small,
+              ),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              NetworkButton(
-                service: w3mService,
-                size: BaseButtonSize.small,
-                onTap: () {},
-              ),
+              W3MNetworkSelectButton(service: w3mService),
               const SizedBox.square(dimension: 12.0),
-              NetworkButton(
+              W3MNetworkSelectButton(
                 service: w3mService,
                 size: BaseButtonSize.small,
               ),

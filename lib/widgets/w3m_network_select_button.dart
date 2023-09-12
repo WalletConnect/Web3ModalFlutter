@@ -40,7 +40,7 @@ class _W3MNetworkSelectButtonState extends State<W3MNetworkSelectButton> {
   @override
   Widget build(BuildContext context) {
     return NetworkButton(
-      service: widget.service,
+      chainInfo: _selectedChain,
       size: widget.size,
       onTap: () => _onConnectPressed(context),
     );
@@ -51,6 +51,7 @@ class _W3MNetworkSelectButtonState extends State<W3MNetworkSelectButton> {
       context: context,
       startWidget: SelectNetworkPage(
         onSelect: (info) {
+          debugPrint(info.toString());
           widget.service.setSelectedChain(info);
           widgetStack.instance.addDefault();
         },
