@@ -343,9 +343,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     rebuildConnectionUri();
 
     // Reset the explorer
-    explorerService.instance!.filterList(
-      query: '',
-    );
+    explorerService.instance!.filterList(query: '');
     widgetStack.instance.clear();
 
     this.context = context;
@@ -377,7 +375,6 @@ class W3MService extends WalletConnectModalService implements IW3MService {
         constraints: BoxConstraints(
           minWidth: MediaQuery.of(context).size.width,
         ),
-        useSafeArea: true,
         context: context,
         builder: (context) {
           return root;

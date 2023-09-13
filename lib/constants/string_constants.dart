@@ -19,7 +19,7 @@ class StringConstants {
   static const String connectButtonError = 'Network Error';
   static const String connectButtonReconnecting = 'Reconnecting';
   static const String connectButtonIdle = 'Connect Wallet';
-  static const String connectButtonIdleShort = 'Connect Wallet';
+  static const String connectButtonIdleShort = 'Connect';
   static const String connectButtonConnecting = 'Connecting...';
   static const String connectButtonConnected = 'Disconnect';
 
