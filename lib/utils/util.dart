@@ -48,9 +48,4 @@ class Util {
 
     return colors;
   }
-
-  // static double valueRelationWithDesigns(
-  //     double deviceValue, double designsValue) {
-  //   return (deviceValue * designsValue) / 812;
-  // }
 }

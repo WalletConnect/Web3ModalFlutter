@@ -20,7 +20,6 @@ class QRCodePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final service = Web3ModalProvider.of(context).service;
     final themeData = Web3ModalTheme.getDataOf(context);
 
     return Web3ModalNavbar(
