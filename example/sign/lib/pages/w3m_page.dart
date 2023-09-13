@@ -21,7 +21,7 @@ class W3MPage extends StatefulWidget {
 }
 
 class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
-  late W3MService _w3mService;
+  W3MService? _w3mService;
   bool _isConnected = false;
 
   @override
@@ -33,6 +33,7 @@ class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
 
   Future<bool> _initializeService() async {
     try {
+      if (_w3mService != null) return true;
       _w3mService = W3MService(
         web3App: widget.web3App,
         recommendedWalletIds: {
@@ -42,7 +43,7 @@ class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
         },
       );
 
-      await _w3mService.init();
+      await _w3mService?.init();
       _isConnected = widget.web3App.sessions.getAll().isNotEmpty;
       return true;
     } catch (e) {
@@ -95,10 +96,10 @@ class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                W3MNetworkSelectButton(service: _w3mService),
+                W3MNetworkSelectButton(service: _w3mService!),
                 const SizedBox.square(dimension: 12.0),
                 W3MNetworkSelectButton(
-                  service: _w3mService,
+                  service: _w3mService!,
                   size: BaseButtonSize.small,
                 ),
               ],
@@ -108,11 +109,11 @@ class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 W3MConnectWalletButton(
-                  service: _w3mService,
+                  service: _w3mService!,
                 ),
                 const SizedBox.square(dimension: 12.0),
                 W3MConnectWalletButton(
-                  service: _w3mService,
+                  service: _w3mService!,
                   size: BaseButtonSize.small,
                 ),
               ],
@@ -121,7 +122,7 @@ class _W3MPageState extends State<W3MPage> with SingleTickerProviderStateMixin {
             const Divider(height: 0.0),
             if (_isConnected)
               _ConnectedView(
-                w3mService: _w3mService,
+                w3mService: _w3mService!,
               )
           ],
         );

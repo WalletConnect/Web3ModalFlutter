@@ -77,7 +77,7 @@ class WidgetStack extends IWidgetStack {
 
     // Choose the state based on platform
     if (pType == PlatformType.mobile) {
-      add(const WalletListShortPage());
+      add(const WalletsListShortPage());
     } else if (pType == PlatformType.desktop || pType == PlatformType.web) {
       add(const QRCodeAndWalletListPage());
     }
