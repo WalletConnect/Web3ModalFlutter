@@ -367,14 +367,11 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
     if (bottomSheet) {
       await showModalBottomSheet(
-        // enableDrag: false,
         backgroundColor: Colors.transparent,
         isDismissible: false,
         isScrollControlled: true,
         enableDrag: false,
-        constraints: BoxConstraints(
-          minWidth: MediaQuery.of(context).size.width,
-        ),
+        elevation: 0.0,
         context: context,
         builder: (context) {
           return root;
