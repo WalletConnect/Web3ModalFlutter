@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
+import 'package:web3modal_flutter/widgets/w3m_content_loading.dart';
 
 import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/widgets/toast/walletconnect_modal_toast_manager.dart';
@@ -31,7 +32,7 @@ class _Web3ModalState extends State<Web3Modal> {
       widgetStack.instance.addDefault();
     }
 
-    initialize();
+    _initialize();
   }
 
   @override
@@ -40,83 +41,47 @@ class _Web3ModalState extends State<Web3Modal> {
     super.dispose();
   }
 
-  Future<void> initialize() async {
-    setState(() {
-      _initialized = true;
-    });
-  }
+  void _initialize() => setState(() => _initialized = true);
+
+  void _widgetStackUpdated() => setState(() {
+        _body = widgetStack.instance.getCurrent();
+      });
+
+  bool get _isLoading => !_initialized || _body == null;
 
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
-
     final bool bottomSheet = platformUtils.instance.isBottomSheet();
-
     final BorderRadius innerContainerBorderRadius = bottomSheet
         ? const BorderRadius.only(
-            topLeft: Radius.circular(
-              kRadiusM,
-            ),
-            topRight: Radius.circular(
-              kRadiusM,
-            ),
+            topLeft: Radius.circular(kRadiusM),
+            topRight: Radius.circular(kRadiusM),
           )
         : const BorderRadius.only(
-            topLeft: Radius.circular(
-              kRadiusM,
-            ),
-            topRight: Radius.circular(
-              kRadiusM,
-            ),
-            bottomLeft: Radius.circular(
-              kRadiusM,
-            ),
-            bottomRight: Radius.circular(
-              kRadiusM,
-            ),
+            topLeft: Radius.circular(kRadiusM),
+            topRight: Radius.circular(kRadiusM),
+            bottomLeft: Radius.circular(kRadiusM),
+            bottomRight: Radius.circular(kRadiusM),
           );
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: innerContainerBorderRadius,
-        color: themeData.colors.background100,
+        border: Border.all(
+          color: themeData.colors.overgray005,
+          width: 1,
+        ),
+        color: themeData.colors.background125,
       ),
       child: Stack(
         children: [
-          SafeArea(
-            child: TransitionContainer(
-              child: _buildBody(),
-            ),
+          TransitionContainer(
+            child: _isLoading ? const ContentLoading() : _body!,
           ),
           const WalletConnectModalToastManager(),
         ],
       ),
     );
-  }
-
-  Widget _buildBody() {
-    if (!_initialized || _body == null) {
-      return Container(
-        constraints: const BoxConstraints(
-          minHeight: 300,
-        ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: CircularProgressIndicator(
-              color: Web3ModalTheme.getDataOf(context).colors.blue100,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return _body!;
-  }
-
-  void _widgetStackUpdated() {
-    setState(() {
-      _body = widgetStack.instance.getCurrent();
-    });
   }
 }

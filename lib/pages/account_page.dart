@@ -127,14 +127,7 @@ class AccountPage extends StatelessWidget {
                         text: service.selectedChain?.chainName ??
                             StringConstants.noChain,
                         onPressed: () {
-                          widgetStack.instance.add(
-                            SelectNetworkPage(
-                              onSelect: (chain) {
-                                service.setSelectedChain(chain);
-                                widgetStack.instance.pop();
-                              },
-                            ),
-                          );
+                          widgetStack.instance.add(const SelectNetworkPage());
                         },
                       );
                     },

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
@@ -49,13 +48,7 @@ class _W3MNetworkSelectButtonState extends State<W3MNetworkSelectButton> {
   void _onConnectPressed(BuildContext context) {
     widget.service.open(
       context: context,
-      startWidget: SelectNetworkPage(
-        onSelect: (info) {
-          debugPrint(info.toString());
-          widget.service.setSelectedChain(info);
-          widgetStack.instance.addDefault();
-        },
-      ),
+      startWidget: const SelectNetworkPage(),
     );
   }
 

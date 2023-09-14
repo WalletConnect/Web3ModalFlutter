@@ -9,7 +9,7 @@ import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item_simple.dart';
-import 'package:web3modal_flutter/widgets/w3m_navbar.dart';
+import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
@@ -24,27 +24,29 @@ class QRCodePage extends StatelessWidget {
 
     return Web3ModalNavbar(
       title: 'QR Code',
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _QRCodeWidget(),
-          ),
-          Text(
-            'Scan this QR code with your phone',
-            style: themeData.textStyles.paragraph500.copyWith(
-              color: themeData.colors.foreground100,
+      child: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _QRCodeWidget(),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: WalletListItemSimple(
-              title: 'Copy link',
-              icon: 'assets/icons/copy.svg',
-              onTap: () => _copyToClipboard(context),
+            Text(
+              'Scan this QR code with your phone',
+              style: themeData.textStyles.paragraph500.copyWith(
+                color: themeData.colors.foreground100,
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: WalletListItemSimple(
+                title: 'Copy link',
+                icon: 'assets/icons/copy.svg',
+                onTap: () => _copyToClipboard(context),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

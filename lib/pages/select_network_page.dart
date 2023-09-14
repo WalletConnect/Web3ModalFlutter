@@ -1,60 +1,37 @@
 import 'package:flutter/material.dart';
 
-import 'package:web3modal_flutter/models/w3m_chain_info.dart';
-import 'package:web3modal_flutter/services/network_service.dart/network_service_singleton.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
-import 'package:web3modal_flutter/widgets/w3m_navbar.dart';
-import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
-
-import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list.dart';
+import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
+import 'package:web3modal_flutter/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/lists/networks_grid.dart';
+import 'package:web3modal_flutter/widgets/value_listenable_builders/network_service_items_listener.dart';
+import 'package:web3modal_flutter/widgets/w3m_content_loading.dart';
+import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class SelectNetworkPage extends StatelessWidget {
-  const SelectNetworkPage({
-    super.key,
-    required this.onSelect,
-  });
-
-  final void Function(W3MChainInfo) onSelect;
+  const SelectNetworkPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final service = Web3ModalProvider.of(context).service;
 
     return Web3ModalNavbar(
       title: 'Select network',
-      child: GridList(
-        state: GridListState.long,
-        provider: networkService.instance,
-        onSelect: onSelect,
-        heightOverride: 380,
-        longBottomSheetHeightOverride: 240,
-        longBottomSheetAspectRatio: 0.85,
-        itemAspectRatio: 0.75,
-        createListItem: (info, height) {
-          return Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              W3MTokenImage(
-                imageUrl: info.image,
-                isChain: true,
-                size: 70,
-                cornerRadius: 18,
-              ),
-              const SizedBox(height: 4.0),
-              Text(
-                info.title,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.clip,
-                style: TextStyle(
-                  fontSize: 12.0,
-                  color: themeData.colors.foreground100,
-                ),
-                // TODO instead of this, use style: themeData.textStyles.whateverNeeded
-              ),
-            ],
-          );
-        },
+      child: SafeArea(
+        child: NetworkServiceItemsListener(
+          builder: (context, initialised, items) {
+            if (!initialised) {
+              return const ContentLoading();
+            }
+            return NetworksGrid(
+              viewPortRows: 3,
+              onTapNetwork: (info) {
+                service.setSelectedChain(info);
+                widgetStack.instance.addDefault();
+              },
+              itemList: items,
+            );
+          },
+        ),
       ),
     );
   }

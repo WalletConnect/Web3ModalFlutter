@@ -13,8 +13,7 @@ import 'package:walletconnect_modal_flutter/constants/string_constants.dart';
 import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_button.dart';
 import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 import 'package:walletconnect_modal_flutter/widgets/wallet_image.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_navbar.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_navbar_title.dart';
+import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class GetWalletPage extends StatelessWidget {
   const GetWalletPage() : super(key: Web3ModalKeyConstants.getAWalletPageKey);
@@ -52,80 +51,80 @@ class GetWalletPage extends StatelessWidget {
       }
     }
 
-    return WalletConnectModalNavBar(
-      title: const WalletConnectModalNavbarTitle(
-        title: 'Get a wallet',
-      ),
-      child: Column(
-        children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: walletWidgets,
-          ),
-          Divider(
-            height: 0,
-            thickness: 1,
-            // indent: 20,
-            // endIndent: 20,
-            color: themeData.colors.background300,
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            "Not what you're looking for?",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16.0,
-              color: themeData.colors.foreground100,
+    return Web3ModalNavbar(
+      title: 'Get a wallet',
+      child: SafeArea(
+        child: Column(
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: walletWidgets,
             ),
-          ),
-          const SizedBox(height: 4.0),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 40,
+            Divider(
+              height: 0,
+              thickness: 1,
+              // indent: 20,
+              // endIndent: 20,
+              color: themeData.colors.background300,
             ),
-            child: Text(
-              "With hundreds of wallets out there, there's something for everyone",
+            const SizedBox(height: 8.0),
+            Text(
+              "Not what you're looking for?",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 14.0,
-                color: themeData.colors.foreground200,
+                fontSize: 16.0,
+                color: themeData.colors.foreground100,
               ),
             ),
-          ),
-          const SizedBox(height: 8.0),
-          WalletConnectModalButton(
-            onPressed: () => urlUtils.instance.launchUrl(
-              Uri.parse(
-                StringConstants.getAWalletExploreWalletsUrl,
+            const SizedBox(height: 4.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 40,
               ),
-              mode: LaunchMode.externalApplication,
+              child: Text(
+                "With hundreds of wallets out there, there's something for everyone",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: themeData.colors.foreground200,
+                ),
+              ),
             ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10.0,
-              vertical: 2.0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Explore Wallets',
-                  style: TextStyle(
-                    fontFamily: themeData.textStyles.fontFamily,
+            const SizedBox(height: 8.0),
+            WalletConnectModalButton(
+              onPressed: () => urlUtils.instance.launchUrl(
+                Uri.parse(
+                  StringConstants.getAWalletExploreWalletsUrl,
+                ),
+                mode: LaunchMode.externalApplication,
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+                vertical: 2.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Explore Wallets',
+                    style: TextStyle(
+                      fontFamily: themeData.textStyles.fontFamily,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const Icon(
+                    Icons.arrow_outward,
+                    size: 18,
                     color: Colors.white,
                   ),
-                ),
-                const Icon(
-                  Icons.arrow_outward,
-                  size: 18,
-                  color: Colors.white,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8.0),
-        ],
+            const SizedBox(height: 8.0),
+          ],
+        ),
       ),
     );
   }

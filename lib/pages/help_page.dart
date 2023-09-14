@@ -11,8 +11,7 @@ import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_button.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_navbar.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_navbar_title.dart';
+import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class SvgImageInfo {
   final String path;
@@ -100,99 +99,99 @@ class _HelpPageState extends State<HelpPage> {
       MediaQuery.of(context).orientation,
     );
 
-    return WalletConnectModalNavBar(
-      title: const WalletConnectModalNavbarTitle(
-        title: 'What is a wallet?',
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          longBottomSheet ? _buildPageView() : _buildColumnSection(),
-          const SizedBox(height: 8),
-          Container(
-            constraints: const BoxConstraints(
-              minWidth: 250,
-              // maxWidth: 400,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                WalletConnectModalButton(
-                  key: Web3ModalKeyConstants.getAWalletButtonKey,
-                  onPressed: () {
-                    widgetStack.instance.add(
-                      const GetWalletPage(),
-                    );
-                  },
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 2,
-                    horizontal: 10,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/wallet.svg',
-                        width: 18,
-                        height: 18,
-                        package: 'walletconnect_modal_flutter',
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
+    return Web3ModalNavbar(
+      title: 'What is a wallet?',
+      child: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            longBottomSheet ? _buildPageView() : _buildColumnSection(),
+            const SizedBox(height: 8),
+            Container(
+              constraints: const BoxConstraints(
+                minWidth: 250,
+                // maxWidth: 400,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  WalletConnectModalButton(
+                    key: Web3ModalKeyConstants.getAWalletButtonKey,
+                    onPressed: () {
+                      widgetStack.instance.add(
+                        const GetWalletPage(),
+                      );
+                    },
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 2,
+                      horizontal: 10,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/wallet.svg',
+                          width: 18,
+                          height: 18,
+                          package: 'walletconnect_modal_flutter',
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 2),
-                      Text(
-                        'Get a Wallet',
-                        style: TextStyle(
-                          fontFamily: themeData.textStyles.fontFamily,
+                        const SizedBox(width: 2),
+                        Text(
+                          'Get a Wallet',
+                          style: TextStyle(
+                            fontFamily: themeData.textStyles.fontFamily,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  WalletConnectModalButton(
+                    onPressed: () {
+                      urlUtils.instance.launchUrl(
+                        Uri.parse(
+                          'https://ethereum.org/en/wallets/',
+                        ),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 2,
+                      horizontal: 10,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Learn More',
+                          style: TextStyle(
+                            fontFamily: themeData.textStyles.fontFamily,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        const Icon(
+                          size: 18,
+                          Icons.arrow_outward,
                           color: Colors.white,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                WalletConnectModalButton(
-                  onPressed: () {
-                    urlUtils.instance.launchUrl(
-                      Uri.parse(
-                        'https://ethereum.org/en/wallets/',
-                      ),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  },
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 2,
-                    horizontal: 10,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Learn More',
-                        style: TextStyle(
-                          fontFamily: themeData.textStyles.fontFamily,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(width: 2),
-                      const Icon(
-                        size: 18,
-                        Icons.arrow_outward,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8.0),
-        ],
+            const SizedBox(height: 8.0),
+          ],
+        ),
       ),
     );
   }
