@@ -15,14 +15,12 @@ class WalletsList extends StatelessWidget {
     this.lastItem,
     this.onTapWallet,
     this.viewPortRows = kShortWalletListCount,
-    this.disableScroll = false,
   });
   final List<GridListItemModel<WalletData>> itemList;
   final Widget? firstItem;
   final Widget? lastItem;
   final Function(WalletData)? onTapWallet;
   final int viewPortRows;
-  final bool disableScroll;
 
   double _listMaxHeight(BuildContext context) {
     return (kListItemHeight * viewPortRows) +
@@ -36,7 +34,7 @@ class WalletsList extends StatelessWidget {
     final walletsListItems = itemList.map(
       (e) => WalletListItem(
         onTap: () => onTapWallet?.call(e.data),
-        image: Image.network(e.image),
+        imageUrl: e.image,
         title: e.title,
         trailing:
             e.data.recent ? const WalletItemChip(value: ' RECENT ') : null,
@@ -62,7 +60,9 @@ class WalletsList extends StatelessWidget {
           dimension: kListViewSeparatorHeight,
         ),
         itemCount: items.length,
-        physics: disableScroll ? const NeverScrollableScrollPhysics() : null,
+        physics: viewPortRows <= items.length
+            ? const NeverScrollableScrollPhysics()
+            : null,
       ),
     );
   }

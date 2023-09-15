@@ -46,4 +46,7 @@ flutter:
     - assets/dark/
     - assets/light/
     - assets/icons/
+    - assets/png/
+    - assets/png/2.0x/
+    - assets/png/3.0x/
 

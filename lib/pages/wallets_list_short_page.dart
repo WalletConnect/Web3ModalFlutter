@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/pages/connect_wallet_page.dart';
 
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
@@ -33,9 +34,9 @@ class WalletsListShortPage extends StatelessWidget {
 
             final itemsToShow = items.getRange(0, kShortWalletListCount - 2);
             return WalletsList(
-              disableScroll: true,
               onTapWallet: (data) {
-                service.connectWallet(walletData: data);
+                service.selectWallet(walletData: data);
+                widgetStack.instance.add(const ConnectWalletPage());
               },
               itemList: itemsToShow.toList(),
               firstItem: WalletConnectItem(

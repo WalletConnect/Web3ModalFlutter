@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
+import 'package:web3modal_flutter/pages/connect_wallet_page.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/lists/wallets_grid.dart';
+import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
 import 'package:web3modal_flutter/widgets/w3m_all_wallets_header.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
-import 'package:walletconnect_modal_flutter/models/listings.dart';
 import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
-import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
+import 'package:web3modal_flutter/widgets/w3m_content_loading.dart';
 
 class WalletsListLongPage extends StatelessWidget {
   const WalletsListLongPage()
@@ -27,16 +28,18 @@ class WalletsListLongPage extends StatelessWidget {
       },
       child: Stack(
         children: [
-          ValueListenableBuilder(
-            valueListenable: explorerService.instance!.itemList,
-            builder:
-                (context, List<GridListItemModel<WalletData>> itemList, _) {
+          ExplorerServiceItemsListener(
+            builder: (context, initialised, items) {
+              if (!initialised) {
+                return const ContentLoading();
+              }
               return WalletsGrid(
                 viewPortRows: 5,
                 onTapWallet: (data) {
-                  service.connectWallet(walletData: data);
+                  service.selectWallet(walletData: data);
+                  widgetStack.instance.add(const ConnectWalletPage());
                 },
-                itemList: itemList,
+                itemList: items,
               );
             },
           ),

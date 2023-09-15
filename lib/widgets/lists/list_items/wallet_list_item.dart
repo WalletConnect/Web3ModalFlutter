@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/widgets/avatars/wallet_avatar.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/base_list_item.dart';
 
 class WalletListItem extends StatelessWidget {
   const WalletListItem({
     super.key,
-    required this.image,
     required this.title,
+    this.imageWidget,
+    this.imageUrl,
     this.trailing,
     this.onTap,
   });
-  final Widget image;
+  final Widget? imageWidget;
   final String title;
+  final String? imageUrl;
   final Widget? trailing;
   final VoidCallback? onTap;
 
@@ -23,18 +26,11 @@ class WalletListItem extends StatelessWidget {
       onTap: onTap,
       child: Row(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(kRadius3XS),
-              border: Border.all(
-                color: themeData.colors.overgray010,
-                width: 1.0,
-                strokeAlign: BorderSide.strokeAlignOutside,
+          imageWidget ??
+              WalletAvatar(
+                borderRadius: kRadius3XS,
+                imageUrl: imageUrl ?? '',
               ),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: image,
-          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),

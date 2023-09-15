@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/utils/widget_stack/transition_container.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/widgets/w3m_content_loading.dart';
 
 import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/widgets/toast/walletconnect_modal_toast_manager.dart';
-import 'package:walletconnect_modal_flutter/widgets/transition_container.dart';
 
 class Web3Modal extends StatefulWidget {
   const Web3Modal({super.key, this.startWidget});
