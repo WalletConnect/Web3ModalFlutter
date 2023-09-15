@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/widgets/avatars/wallet_avatar.dart';
 import 'package:web3modal_flutter/widgets/lists/grid_items/base_grid_item.dart';
 
 class WalletGridItem extends StatelessWidget {
   const WalletGridItem({
     super.key,
-    required this.image,
     required this.title,
+    this.imageWidget,
+    this.imageUrl,
     this.bottom,
     this.onTap,
     this.isSelected = false,
   });
 
-  final Widget image;
+  final Widget? imageWidget;
   final String title;
+  final String? imageUrl;
   final Widget? bottom;
   final VoidCallback? onTap;
   final bool isSelected;
@@ -28,20 +31,11 @@ class WalletGridItem extends StatelessWidget {
       isSelected: isSelected,
       child: Column(
         children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(kRadiusXS),
-              border: Border.all(
-                color: isSelected
-                    ? themeData.colors.overblue020
-                    : themeData.colors.overgray010,
-                width: 2.0,
-                strokeAlign: BorderSide.strokeAlignOutside,
+          imageWidget ??
+              WalletAvatar(
+                borderRadius: kRadiusXS,
+                imageUrl: imageUrl ?? '',
               ),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: image,
-          ),
           const SizedBox(height: 4.0),
           Expanded(
             child: Column(

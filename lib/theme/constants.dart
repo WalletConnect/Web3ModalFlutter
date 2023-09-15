@@ -20,3 +20,5 @@ const kGridAxisSpacing = 12.0;
 const kGridAxisCount = 4;
 
 const kListViewSeparatorHeight = 8.0;
+
+const kSelectedWalletIconHeight = 80.0;

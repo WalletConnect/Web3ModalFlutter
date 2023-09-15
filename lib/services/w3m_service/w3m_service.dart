@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:walletconnect_modal_flutter/models/listings.dart';
 
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
@@ -215,7 +216,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   }
 
   @override
-  void onSessionConnect(SessionConnect? args) {
+  void onSessionConnect(SessionConnect? args) async {
     super.onSessionConnect(args);
     LoggerUtil.logger.i('_onSessionConnect: ${args?.session}');
     // _isConnected = true;
@@ -224,13 +225,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     //   _session!.namespaces.values.first.accounts.first,
     // );
 
-    if (_isOpen) {
-      close();
-    } else {
-      notifyListeners();
-    }
-
-    _loadAccountData();
+    await _loadAccountData();
   }
 
   // void _onSessionUpdate(SessionUpdate? args) {
@@ -251,10 +246,10 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
   /// Loads account balance and avatar.
   /// Returns true if it was able to actually load data (i.e. there is a selected chain and session)
-  Future<bool> _loadAccountData() async {
+  Future<void> _loadAccountData() async {
     // If there is no selected chain or session, stop. No account to load in.
     if (selectedChain == null || session == null) {
-      return false;
+      return;
     }
 
     // Get the chain balance.
@@ -276,10 +271,11 @@ class W3MService extends WalletConnectModalService implements IW3MService {
       // Couldn't load avatar, default to address icon
     }
 
+    if (_isOpen) {
+      close();
+    }
     // Tell everyone we have loaded the things
     notifyListeners();
-
-    return true;
   }
 
   Future<void> _switchEthChain(
@@ -406,5 +402,15 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     } else {
       notifyListeners();
     }
+  }
+
+  WalletData? _walletData;
+
+  @override
+  WalletData? get selectedWallet => _walletData;
+
+  @override
+  void selectWallet({required WalletData? walletData}) {
+    _walletData = walletData;
   }
 }

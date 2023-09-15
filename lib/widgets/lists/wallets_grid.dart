@@ -62,7 +62,7 @@ class WalletsGrid extends StatelessWidget {
           final info = itemList[index];
           return WalletGridItem(
             onTap: () => onTapWallet?.call(info.data),
-            image: Image.network(info.image),
+            imageUrl: info.image,
             title: info.title,
             bottom: info.data.recent
                 ? Text(

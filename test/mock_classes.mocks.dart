@@ -1254,6 +1254,16 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: null,
       );
   @override
+  void selectWallet({required _i18.WalletData? walletData}) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #selectWallet,
+          [],
+          {#walletData: walletData},
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
   _i4.Future<Null> onDispose() => (super.noSuchMethod(
         Invocation.method(
           #onDispose,

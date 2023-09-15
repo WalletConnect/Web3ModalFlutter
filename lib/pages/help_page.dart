@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/pages/get_wallet_page.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
-
-import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_button.dart';
+import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class SvgImageInfo {
@@ -63,8 +58,6 @@ class _HelpPageState extends State<HelpPage> {
   ];
   List<Widget> _images = [];
 
-  final _pageController = PageController();
-
   @override
   void initState() {
     super.initState();
@@ -93,218 +86,92 @@ class _HelpPageState extends State<HelpPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
-
-    bool longBottomSheet = platformUtils.instance.isLongBottomSheet(
-      MediaQuery.of(context).orientation,
-    );
-
     return Web3ModalNavbar(
       title: 'What is a wallet?',
       child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            longBottomSheet ? _buildPageView() : _buildColumnSection(),
-            const SizedBox(height: 8),
-            Container(
-              constraints: const BoxConstraints(
-                minWidth: 250,
-                // maxWidth: 400,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  WalletConnectModalButton(
-                    key: Web3ModalKeyConstants.getAWalletButtonKey,
-                    onPressed: () {
-                      widgetStack.instance.add(
-                        const GetWalletPage(),
-                      );
-                    },
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 2,
-                      horizontal: 10,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.75,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Column(
+                  children: [
+                    _HelpSection(
+                      title: 'One login for all of web3',
+                      description:
+                          'Log in to any app by connecting your wallet. Say goodbye to countless passwords!',
+                      images: _images.sublist(3, 6),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/wallet.svg',
-                          width: 18,
-                          height: 18,
-                          package: 'walletconnect_modal_flutter',
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        const SizedBox(width: 2),
-                        Text(
-                          'Get a Wallet',
-                          style: TextStyle(
-                            fontFamily: themeData.textStyles.fontFamily,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
+                    _HelpSection(
+                      title: 'A home for your digital assets',
+                      description:
+                          'A wallet lets you store, send, and receive digital assets like cryptocurrencies and NFTs.',
+                      images: _images.sublist(0, 3),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  WalletConnectModalButton(
-                    onPressed: () {
-                      urlUtils.instance.launchUrl(
-                        Uri.parse(
-                          'https://ethereum.org/en/wallets/',
-                        ),
-                        mode: LaunchMode.externalApplication,
-                      );
-                    },
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 2,
-                      horizontal: 10,
+                    _HelpSection(
+                      title: 'Your gateway to a new web',
+                      description:
+                          'With your wallet, you can explore and interact with DeFi, NFTs, DAOS, and much more.',
+                      images: _images.sublist(6, 9),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Learn More',
-                          style: TextStyle(
-                            fontFamily: themeData.textStyles.fontFamily,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(width: 2),
-                        const Icon(
-                          size: 18,
-                          Icons.arrow_outward,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                SimpleIconButton(
+                  onTap: () {
+                    widgetStack.instance.add(const GetWalletPage());
+                  },
+                  svgIcon: 'assets/icons/wallet.svg',
+                  title: 'Get a wallet',
+                ),
+                const SizedBox(height: 8.0),
+              ],
             ),
-            const SizedBox(height: 8.0),
-          ],
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildPageView() {
-    final List<Widget> pages = _buildSections(
-      padding: 0,
-    );
+class _HelpSection extends StatelessWidget {
+  const _HelpSection({
+    required this.title,
+    required this.description,
+    required this.images,
+  });
+  final String title, description;
+  final List<Widget> images;
+
+  @override
+  Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          constraints: const BoxConstraints(
-            maxWidth: 600,
-            maxHeight: 160,
-          ),
-          child: PageView.builder(
-            controller: _pageController,
-            // itemCount: pages.length,
-            itemBuilder: (_, index) {
-              return pages[index % pages.length];
-            },
-          ),
-        ),
-        const SizedBox(height: 10),
-        SmoothPageIndicator(
-          controller: _pageController,
-          count: pages.length,
-          effect: ExpandingDotsEffect(
-            dotHeight: 8,
-            dotWidth: 8,
-            dotColor: themeData.colors.blue080,
-            activeDotColor: themeData.colors.blue100,
-          ),
-        ),
-        const SizedBox(height: 8.0),
-      ],
-    );
-  }
-
-  Widget _buildColumnSection() {
-    return Column(
-      children: _buildSections(),
-    );
-  }
-
-  List<Widget> _buildSections({
-    double padding = 10,
-  }) {
-    return [
-      _buildSection(
-        title: 'A home for your digital assets',
-        description:
-            'A wallet lets you store, send, and receive digital assets like cryptocurrencies and NFTs.',
-        images: _images.sublist(0, 3),
-        padding: padding,
-      ),
-      _buildSection(
-        title: 'One login for all of web3',
-        description:
-            'Log in to any app by connecting your wallet. Say goodbye to countless passwords!',
-        images: _images.sublist(3, 6),
-        padding: padding,
-      ),
-      _buildSection(
-        title: 'Your gateway to a new web',
-        description:
-            'With your wallet, you can explore and interact with DeFi, NFTs, DAOS, and much more.',
-        images: _images.sublist(6, 9),
-        padding: padding,
-      ),
-    ];
-  }
-
-  Widget _buildSection({
-    required String title,
-    required String description,
-    required List<Widget> images,
-    double padding = 10,
-  }) {
-    final themeData = Web3ModalTheme.getDataOf(context);
-
     return Container(
-      padding: EdgeInsets.all(padding),
-      constraints: const BoxConstraints(
-        maxWidth: 600,
-      ),
+      padding: const EdgeInsets.all(kPadding12),
       child: Column(
         children: <Widget>[
+          const SizedBox.square(dimension: 8.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: images,
           ),
-          const SizedBox(height: 10),
+          const SizedBox.square(dimension: kPadding12),
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+            style: themeData.textStyles.paragraph500.copyWith(
               color: themeData.colors.foreground100,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox.square(dimension: 8.0),
           Text(
             description,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+            style: themeData.textStyles.small500.copyWith(
               color: themeData.colors.foreground200,
             ),
           ),

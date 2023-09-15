@@ -63,7 +63,7 @@ class NetworksGrid extends StatelessWidget {
           return WalletGridItem(
             onTap: () => onTapNetwork?.call(info.data),
             isSelected: service.selectedChain?.chainId == info.id,
-            image: Image.network(info.image),
+            imageUrl: info.image,
             title: info.title,
           );
         },

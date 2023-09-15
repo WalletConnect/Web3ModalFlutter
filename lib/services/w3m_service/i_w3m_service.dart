@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:walletconnect_modal_flutter/models/listings.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 
@@ -39,4 +40,7 @@ abstract class IW3MService extends IWalletConnectModalService
   /// Closes the modal.
   @override
   void close();
+
+  WalletData? get selectedWallet;
+  void selectWallet({required WalletData? walletData});
 }
