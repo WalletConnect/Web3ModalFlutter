@@ -47,7 +47,7 @@ class ExploreAllWalletsItem extends StatelessWidget {
                     (e) => SizedBox(
                       width: (constraints.maxHeight / 2) - 4.0,
                       height: (constraints.maxHeight / 2) - 4.0,
-                      child: W3MWalletAvatar(
+                      child: W3MListAvatar(
                         borderRadius: kRadius4XS,
                         imageUrl: e,
                       ),

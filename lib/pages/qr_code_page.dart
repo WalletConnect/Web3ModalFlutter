@@ -7,7 +7,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
-import 'package:web3modal_flutter/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item_simple.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 

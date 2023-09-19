@@ -8,20 +8,21 @@ class SimpleIconButton extends StatelessWidget {
     super.key,
     required this.onTap,
     required this.title,
-    // TODO rename into leftIcon
-    this.svgIcon,
+    this.leftIcon,
     this.rightIcon,
     this.backgroundColor,
     this.foregroundColor,
     this.size = BaseButtonSize.regular,
     this.overlayColor,
+    this.withBorder = true,
   });
   final VoidCallback? onTap;
   final String title;
-  final String? svgIcon, rightIcon;
+  final String? leftIcon, rightIcon;
   final Color? backgroundColor, foregroundColor;
   final BaseButtonSize size;
   final MaterialStateProperty<Color>? overlayColor;
+  final bool withBorder;
 
   @override
   Widget build(BuildContext context) {
@@ -37,29 +38,31 @@ class SimpleIconButton extends StatelessWidget {
           foregroundColor ?? themeData.colors.inverse100,
         ),
         overlayColor: overlayColor,
-        shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
-          (states) {
-            return RoundedRectangleBorder(
-              side: BorderSide(
-                color: themeData.colors.overgray010,
-                width: 2.0,
-              ),
-              borderRadius: BorderRadius.circular(
-                BaseButtonSize.regular.height / 2,
-              ),
-            );
-          },
-        ),
+        shape: withBorder
+            ? MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
+                (states) {
+                  return RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: themeData.colors.overgray010,
+                      width: 2.0,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      BaseButtonSize.regular.height / 2,
+                    ),
+                  );
+                },
+              )
+            : null,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (svgIcon != null)
+          if (leftIcon != null)
             Row(
               children: [
                 SvgPicture.asset(
-                  svgIcon!,
+                  leftIcon!,
                   package: 'web3modal_flutter',
                   colorFilter: ColorFilter.mode(
                     foregroundColor ?? themeData.colors.inverse100,

@@ -12,8 +12,8 @@ import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/chain_data.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
-import 'package:web3modal_flutter/web3modal.dart';
-import 'package:web3modal_flutter/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/web3modal.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 

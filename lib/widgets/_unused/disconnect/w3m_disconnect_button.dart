@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
 import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
-import 'package:web3modal_flutter/widgets/w3m_circle_painter.dart';
-import 'package:web3modal_flutter/widgets/w3m_icon_button.dart';
+import 'package:web3modal_flutter/widgets/_unused/disconnect/w3m_circle_painter.dart';
+import 'package:web3modal_flutter/widgets/_unused/disconnect/w3m_icon_button.dart';
 
 class W3MDisconnectButton extends StatefulWidget {
   const W3MDisconnectButton({

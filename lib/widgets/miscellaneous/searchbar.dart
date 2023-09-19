@@ -59,7 +59,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
             borderRadius: BorderRadius.circular(kRadius2XS),
           ),
           filled: true,
-          fillColor: themeData.colors.background150,
+          fillColor: themeData.colors.background200,
           contentPadding: const EdgeInsets.all(0.0),
         ),
       ),

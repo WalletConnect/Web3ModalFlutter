@@ -3,7 +3,7 @@
 import 'package:event/event.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+
 import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils_singleton.dart';

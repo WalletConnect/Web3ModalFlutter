@@ -13,7 +13,7 @@ import 'package:web3modal_flutter/widgets/lists/list_items/explore_all_wallets_i
 import 'package:web3modal_flutter/widgets/lists/wallets_list.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
-import 'package:web3modal_flutter/widgets/w3m_content_loading.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 
 class GetWalletPage extends StatelessWidget {
   const GetWalletPage() : super(key: Web3ModalKeyConstants.getAWalletPageKey);

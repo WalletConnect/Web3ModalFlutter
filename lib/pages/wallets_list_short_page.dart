@@ -6,7 +6,7 @@ import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/pages/qr_code_page.dart';
 import 'package:web3modal_flutter/pages/wallets_list_long_page.dart';
-import 'package:web3modal_flutter/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/all_wallets_item.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_connect_item.dart';
@@ -14,7 +14,7 @@ import 'package:web3modal_flutter/widgets/lists/list_items/wallet_item_chip.dart
 import 'package:web3modal_flutter/widgets/lists/wallets_list.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar_action_button.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
-import 'package:web3modal_flutter/widgets/w3m_content_loading.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class WalletsListShortPage extends StatelessWidget {

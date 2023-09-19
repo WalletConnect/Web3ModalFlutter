@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/pages/about_networks.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
 
 import 'package:web3modal_flutter/widgets/lists/networks_grid.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/network_service_items_listener.dart';
-import 'package:web3modal_flutter/widgets/w3m_content_loading.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class SelectNetworkPage extends StatelessWidget {
@@ -50,33 +49,19 @@ class SelectNetworkPage extends StatelessWidget {
                 color: themeData.colors.foreground300,
               ),
             ),
-            const SizedBox.square(dimension: 16.0),
-            // TODO create widget
-            GestureDetector(
-              onTap: () async {
+            SimpleIconButton(
+              onTap: () {
                 widgetStack.instance.add(const AboutNetworks());
               },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    'assets/icons/help.svg',
-                    package: 'web3modal_flutter',
-                    colorFilter: ColorFilter.mode(
-                      themeData.colors.blue100,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  const SizedBox.square(dimension: 4.0),
-                  Text(
-                    'What is a Network?',
-                    textAlign: TextAlign.center,
-                    style: themeData.textStyles.small600.copyWith(
-                      color: themeData.colors.blue100,
-                    ),
-                  ),
-                ],
+              size: BaseButtonSize.small,
+              leftIcon: 'assets/icons/help.svg',
+              title: 'What is a Network?',
+              backgroundColor: Colors.transparent,
+              foregroundColor: themeData.colors.blue100,
+              overlayColor: MaterialStateProperty.all<Color>(
+                themeData.colors.background200,
               ),
+              withBorder: false,
             ),
           ],
         ),

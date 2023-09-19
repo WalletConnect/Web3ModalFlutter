@@ -4,7 +4,7 @@ import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
-import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
+import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 
 import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
 
@@ -22,6 +22,11 @@ class NetworkButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final imageUrl = chainInfo != null
+        ? explorerService.instance!.getAssetImageUrl(
+            imageId: chainInfo!.chainIcon,
+          )
+        : null;
     return BaseButton(
       size: size,
       onTap: onTap,
@@ -53,15 +58,12 @@ class NetworkButton extends StatelessWidget {
           },
         ),
       ),
-      icon: W3MTokenImage(
-        imageUrl: chainInfo?.chainIcon == null
-            ? null
-            : explorerService.instance!.getAssetImageUrl(
-                imageId: chainInfo!.chainIcon,
-              ),
-        isChain: true,
+      icon: RoundedIcon(
+        assetPath: 'assets/icons/network.svg',
+        imageUrl: imageUrl,
         size: size.height - 12.0,
-        disabled: onTap == null,
+        assetColor: themeData.colors.inverse100,
+        padding: 6.0,
       ),
       child: Text(
         chainInfo?.chainName ??

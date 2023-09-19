@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/pages/wallets_list_long_page.dart';
-import 'package:web3modal_flutter/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 
 import 'package:walletconnect_modal_flutter/models/listings.dart';

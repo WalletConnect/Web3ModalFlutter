@@ -4,14 +4,14 @@ import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
-import 'package:web3modal_flutter/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_account_orb.dart';
 import 'package:web3modal_flutter/widgets/buttons/address_copy_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
+import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/account_list_item.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar_action_button.dart';
-import 'package:web3modal_flutter/widgets/w3m_balance.dart';
-import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
+import 'package:web3modal_flutter/widgets/text/w3m_balance.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage() : super(key: Web3ModalConstants.accountPage);
@@ -42,7 +42,7 @@ class AccountPage extends StatelessWidget {
                         // TODO implement
                         debugPrint('Block Explorer');
                       },
-                      svgIcon: 'assets/icons/compass.svg',
+                      leftIcon: 'assets/icons/compass.svg',
                       rightIcon: 'assets/icons/arrow_top_right.svg',
                       title: 'Block Explorer',
                       backgroundColor: themeData.colors.background125,
@@ -57,7 +57,10 @@ class AccountPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: AccountListItem(
-                    iconWidget: W3MTokenImage(imageUrl: service.tokenImageUrl),
+                    iconWidget: RoundedIcon(
+                      imageUrl: service.tokenImageUrl,
+                      assetColor: themeData.colors.background100,
+                    ),
                     title: service.selectedChain?.chainName ?? '',
                     onTap: () {
                       widgetStack.instance.add(SelectNetworkPage(

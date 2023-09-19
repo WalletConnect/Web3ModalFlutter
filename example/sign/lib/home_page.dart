@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
+
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
-import 'package:walletconnect_flutter_dapp/pages/w3m_page.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/chain_data_wrapper.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/helpers.dart';
 import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_dapp/widgets/event_widget.dart';
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
+// TODO a refactor of the whole example app must be performed
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({
-    super.key,
-    required this.swapTheme,
-  });
-
+  const MyHomePage({super.key, required this.swapTheme});
   final void Function() swapTheme;
 
   @override
@@ -34,9 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> initialize() async {
     _web3App = Web3App(
-      core: Core(
-        projectId: DartDefines.projectId,
-      ),
+      core: Core(projectId: DartDefines.projectId),
       metadata: const PairingMetadata(
         name: 'Flutter Dapp Example',
         description: 'Flutter Dapp Example',
@@ -103,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: W3MPage(web3App: _web3App!),
+      body: _W3MPage(web3App: _web3App!),
     );
   }
 
@@ -129,6 +124,148 @@ class _MyHomePageState extends State<MyHomePage> {
               'Topic: ${args!.topic}\nEvent Name: ${args.name}\nEvent Data: ${args.data}',
         );
       },
+    );
+  }
+}
+
+class _W3MPage extends StatefulWidget {
+  const _W3MPage({required this.web3App});
+
+  final IWeb3App web3App;
+
+  @override
+  State<_W3MPage> createState() => _W3MPageState();
+}
+
+class _W3MPageState extends State<_W3MPage> {
+  W3MService? _w3mService;
+  bool _isConnected = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
+    widget.web3App.onSessionDelete.subscribe(_onWeb3AppDisconnect);
+  }
+
+  Future<bool> _initializeService() async {
+    try {
+      if (_w3mService != null) return true;
+      _w3mService = W3MService(
+        web3App: widget.web3App,
+        recommendedWalletIds: {
+          'afbd95522f4041c71dd4f1a065f971fd32372865b416f95a0b1db759ae33f2a7',
+          '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662',
+          'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+        },
+      );
+
+      await _w3mService?.init();
+      _isConnected = widget.web3App.sessions.getAll().isNotEmpty;
+      return true;
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.web3App.onSessionConnect.unsubscribe(_onWeb3AppConnect);
+    widget.web3App.onSessionDelete.unsubscribe(_onWeb3AppDisconnect);
+    super.dispose();
+  }
+
+  void _onWeb3AppConnect(SessionConnect? args) {
+    // If we connect, default to barebones
+    setState(() {
+      _isConnected = true;
+    });
+  }
+
+  void _onWeb3AppDisconnect(SessionDelete? args) {
+    setState(() {
+      _isConnected = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _initializeService(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError || snapshot.data == false) {
+          return const Center(
+            child: Text('Something went wrong'),
+          );
+        }
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: Web3ModalTheme.getDataOf(context).colors.blue100,
+            ),
+          );
+        }
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox.square(dimension: 8.0),
+              W3MNetworkSelectButton(service: _w3mService!),
+              W3MConnectWalletButton(service: _w3mService!),
+              const SizedBox.square(dimension: 8.0),
+              const Divider(height: 0.0),
+              if (_isConnected) _ConnectedView(w3mService: _w3mService!)
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ConnectedView extends StatelessWidget {
+  const _ConnectedView({required this.w3mService});
+  final W3MService w3mService;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox.square(dimension: 12.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            W3MNetworkSelectButton(service: w3mService),
+            const SizedBox.square(dimension: 12.0),
+            W3MNetworkSelectButton(
+              service: w3mService,
+              size: BaseButtonSize.small,
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            W3MNetworkSelectButton(service: w3mService),
+            const SizedBox.square(dimension: 12.0),
+            W3MNetworkSelectButton(
+              service: w3mService,
+              size: BaseButtonSize.small,
+            ),
+          ],
+        ),
+        W3MAccountButton(service: w3mService),
+        SessionWidget(
+          session: w3mService.web3App!.sessions.getAll().first,
+          web3App: w3mService.web3App!,
+          launchRedirect: () {
+            w3mService.launchCurrentWallet();
+          },
+        ),
+        const SizedBox.square(dimension: 12.0),
+      ],
     );
   }
 }

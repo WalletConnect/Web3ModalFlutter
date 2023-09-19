@@ -10,11 +10,13 @@ class LoadingBorder extends StatefulWidget {
     this.padding = 16.0,
     this.strokeWidth = 4.0,
     this.borderRadius = 32.0,
+    this.animate = true,
   });
   final Widget child;
   final double padding;
   final double strokeWidth;
   final double borderRadius;
+  final bool animate;
 
   @override
   State<LoadingBorder> createState() => _LoadingBorderState();
@@ -34,7 +36,9 @@ class _LoadingBorderState extends State<LoadingBorder>
       duration: const Duration(seconds: 1),
       vsync: this,
     );
-    _controller.repeat();
+    if (widget.animate) {
+      _controller.repeat();
+    }
 
     _tweenAnimation = Tween<double>(
       begin: 0.0,
@@ -67,6 +71,7 @@ class _LoadingBorderState extends State<LoadingBorder>
               turns: _tweenAnimation,
               child: CustomPaint(
                 painter: _CircularBorderPainter2(
+                  show: widget.animate,
                   backColor: themeData.colors.background125,
                 ),
               ),
@@ -118,10 +123,9 @@ class _CircularBorderPainter extends CustomPainter {
 }
 
 class _CircularBorderPainter2 extends CustomPainter {
-  const _CircularBorderPainter2({
-    required this.backColor,
-  });
+  const _CircularBorderPainter2({required this.backColor, this.show = true});
   final Color backColor;
+  final bool show;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -139,7 +143,7 @@ class _CircularBorderPainter2 extends CustomPainter {
     canvas.drawArc(
       rect2,
       0,
-      math.pi,
+      show ? math.pi : math.pi * 2,
       true,
       paint1,
     );

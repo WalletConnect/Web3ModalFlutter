@@ -6,7 +6,7 @@ import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_account_avatar.dart';
-import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
+import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 
 class W3MAccountButton extends StatefulWidget {
   const W3MAccountButton({
@@ -117,10 +117,9 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
             },
           ),
         ),
-        icon: W3MTokenImage(
+        icon: RoundedIcon(
           imageUrl: _tokenImage,
-          size: widget.size.iconSize,
-          disabled: false,
+          size: widget.size.iconSize + 4.0,
         ),
         child: Text('$_balance ${_tokenName ?? ''}'),
       ),

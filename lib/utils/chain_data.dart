@@ -49,6 +49,28 @@ class ChainData {
       },
       rpcUrl: 'https://arbitrum.blockpi.network/v1/rpc/public',
     ),
+    '137': W3MChainInfo(
+      chainName: 'Polygon',
+      namespace: 'eip155:137',
+      chainId: '137',
+      chainIcon: '41d04d42-da3b-4453-8506-668cc0727900',
+      tokenName: 'MATIC',
+      requiredNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethRequiredMethods,
+          chains: ['eip155:137'],
+          events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:137'],
+          events: [],
+        ),
+      },
+      rpcUrl: 'https://polygon.drpc.org',
+    ),
     '43114': W3MChainInfo(
       chainName: 'Avalanche',
       namespace: 'eip155:43114',
@@ -93,28 +115,6 @@ class ChainData {
       },
       rpcUrl: 'https://bsc-dataseed.binance.org/',
     ),
-    '250': W3MChainInfo(
-      chainName: 'Fantom',
-      namespace: 'eip155:250',
-      chainId: '250',
-      chainIcon: '06b26297-fe0c-4733-5d6b-ffa5498aac00',
-      tokenName: 'FTM',
-      requiredNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
-          chains: ['eip155:250'],
-          events: EthUtil.ethEvents,
-        ),
-      },
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
-          chains: ['eip155:250'],
-          events: [],
-        ),
-      },
-      rpcUrl: 'https://rpc.ftm.tools/',
-    ),
     '10': W3MChainInfo(
       chainName: 'Optimism',
       namespace: 'eip155:10',
@@ -137,34 +137,28 @@ class ChainData {
       },
       rpcUrl: 'https://mainnet.optimism.io/',
     ),
-    '137': W3MChainInfo(
-      chainName: 'Polygon',
-      namespace: 'eip155:137',
-      chainId: '137',
-      chainIcon: '41d04d42-da3b-4453-8506-668cc0727900',
-      tokenName: 'MATIC',
+    '250': W3MChainInfo(
+      chainName: 'Fantom',
+      namespace: 'eip155:250',
+      chainId: '250',
+      chainIcon: '06b26297-fe0c-4733-5d6b-ffa5498aac00',
+      tokenName: 'FTM',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
           methods: EthUtil.ethRequiredMethods,
-          chains: ['eip155:137'],
+          chains: ['eip155:250'],
           events: EthUtil.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
           methods: EthUtil.ethOptionalMethods,
-          chains: ['eip155:137'],
+          chains: ['eip155:250'],
           events: [],
         ),
       },
-      rpcUrl: 'https://polygon.drpc.org',
+      rpcUrl: 'https://rpc.ftm.tools/',
     ),
-    // '100': W3MChainInfo(
-    //   chainName: 'Gnosis',
-    //   chainId: '100',
-    //   chainIcon: '02b53f6a-e3d4-479e-1cb4-21178987d100',
-    //   tokenName: 'ETH',
-    // ),
     '9001': W3MChainInfo(
       chainName: 'EVMos',
       namespace: 'eip155:9001',
@@ -187,18 +181,6 @@ class ChainData {
       },
       rpcUrl: 'https://eth.bd.evmos.org:8545',
     ),
-    // '324': W3MChainInfo(
-    //   chainName: 'ZkSync',
-    //   chainId: '324',
-    //   chainIcon: 'b310f07f-4ef7-49f3-7073-2a0a39685800',
-    //   tokenName: 'ETH',
-    // ),
-    // '314': W3MChainInfo(
-    //   chainName: 'Filecoin',
-    //   chainId: '314',
-    //   chainIcon: '5a73b3dd-af74-424e-cae0-0de859ee9400',
-    //   tokenName: 'ETH',
-    // ),
     '4689': W3MChainInfo(
       chainName: 'Iotx',
       namespace: 'eip155:4689',
@@ -243,6 +225,24 @@ class ChainData {
       },
       rpcUrl: 'https://metis-mainnet.public.blastapi.io',
     ),
+    // '100': W3MChainInfo(
+    //   chainName: 'Gnosis',
+    //   chainId: '100',
+    //   chainIcon: '02b53f6a-e3d4-479e-1cb4-21178987d100',
+    //   tokenName: 'ETH',
+    // ),
+    // '324': W3MChainInfo(
+    //   chainName: 'ZkSync',
+    //   chainId: '324',
+    //   chainIcon: 'b310f07f-4ef7-49f3-7073-2a0a39685800',
+    //   tokenName: 'ETH',
+    // ),
+    // '314': W3MChainInfo(
+    //   chainName: 'Filecoin',
+    //   chainId: '314',
+    //   chainIcon: '5a73b3dd-af74-424e-cae0-0de859ee9400',
+    //   tokenName: 'ETH',
+    // ),
     // '1284': W3MChainInfo(
     //   chainName: 'Moonbeam',
     //   chainId: '1284',

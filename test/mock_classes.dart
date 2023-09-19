@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_v2/apis/core/relay_client/relay_client.dart';
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:walletconnect_modal_flutter/services/explorer/explorer_service.dart';
 import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils.dart';

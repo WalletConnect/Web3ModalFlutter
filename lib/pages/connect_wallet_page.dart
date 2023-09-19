@@ -5,12 +5,12 @@ import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
-import 'package:web3modal_flutter/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/download_wallet_item.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item_simple.dart';
-import 'package:web3modal_flutter/widgets/loading_border.dart';
+import 'package:web3modal_flutter/widgets/avatars/loading_border.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
@@ -69,6 +69,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     final imageId = service.selectedWallet?.listing.imageId ?? '';
     final imageUrl =
         explorerService.instance!.getWalletImageUrl(imageId: imageId);
+    final walletInstalled = _selectedWallet?.installed ?? false;
 
     return Web3ModalNavbar(
       title: walletName,
@@ -81,10 +82,11 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
           children: [
             const SizedBox.square(dimension: 30.0),
             LoadingBorder(
-              child: W3MWalletAvatar(imageUrl: imageUrl),
+              animate: walletInstalled,
+              child: W3MListAvatar(imageUrl: imageUrl),
             ),
             const SizedBox.square(dimension: 20.0),
-            (_selectedWallet?.installed == true)
+            walletInstalled
                 ? Text(
                     'Continue in $walletName',
                     style: themeData.textStyles.paragraph500.copyWith(
@@ -98,7 +100,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                     ),
                   ),
             const SizedBox.square(dimension: 8.0),
-            (_selectedWallet?.installed == true)
+            walletInstalled
                 ? Text(
                     'Accept connection request in the wallet',
                     style: themeData.textStyles.small500.copyWith(
@@ -116,7 +118,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
               onTap: () {
                 service.connectWallet(walletData: service.selectedWallet!);
               },
-              svgIcon: 'assets/icons/refresh.svg',
+              leftIcon: 'assets/icons/refresh.svg',
               title: 'Try again',
               backgroundColor: Colors.transparent,
               foregroundColor: themeData.colors.blue100,

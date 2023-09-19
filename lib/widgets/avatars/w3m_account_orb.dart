@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/theme/web3modal_theme.dart';
-import 'package:web3modal_flutter/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_account_avatar.dart';
 
 class W3MAccountOrb extends StatelessWidget {

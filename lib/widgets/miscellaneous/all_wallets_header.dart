@@ -5,7 +5,7 @@ import 'package:web3modal_flutter/pages/qr_code_page.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
-import 'package:web3modal_flutter/widgets/w3m_searchbar.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/searchbar.dart';
 
 import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
 

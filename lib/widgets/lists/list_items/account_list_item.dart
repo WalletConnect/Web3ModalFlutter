@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/base_list_item.dart';
 
 class AccountListItem extends StatelessWidget {
@@ -34,7 +35,7 @@ class AccountListItem extends StatelessWidget {
         children: [
           iconWidget ?? const SizedBox.shrink(),
           if (iconPath != null)
-            _IconWidget(
+            RoundedIcon(
               assetPath: iconPath!,
               assetColor: iconColor,
               circleColor: iconBGColor,
@@ -67,49 +68,6 @@ class AccountListItem extends StatelessWidget {
                 ),
               ),
         ],
-      ),
-    );
-  }
-}
-
-class _IconWidget extends StatelessWidget {
-  const _IconWidget({
-    required this.assetPath,
-    this.assetColor,
-    this.circleColor,
-    this.borderColor,
-  });
-  final String assetPath;
-  final Color? assetColor, circleColor, borderColor;
-
-  @override
-  Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
-    return Container(
-      width: 36.0,
-      height: 36.0,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(100)),
-        border: Border.fromBorderSide(
-          BorderSide(
-            color: borderColor ?? themeData.colors.overgray005,
-            width: 2,
-            strokeAlign: BorderSide.strokeAlignCenter,
-          ),
-        ),
-        color: circleColor ?? themeData.colors.overgray015,
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SvgPicture.asset(
-          assetPath,
-          package: 'web3modal_flutter',
-          colorFilter: ColorFilter.mode(
-            assetColor ?? themeData.colors.foreground200,
-            BlendMode.srcIn,
-          ),
-        ),
       ),
     );
   }
