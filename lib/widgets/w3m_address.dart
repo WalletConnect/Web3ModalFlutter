@@ -38,9 +38,10 @@ class _W3MAddressState extends State<W3MAddress> {
     final themeData = Web3ModalTheme.getDataOf(context);
     return Text(
       Util.truncate(_address ?? ''),
-      style: themeData.textStyles.paragraph600.copyWith(
-        color: themeData.colors.foreground100,
-      ),
+      style: widget.style ??
+          themeData.textStyles.paragraph600.copyWith(
+            color: themeData.colors.foreground100,
+          ),
     );
   }
 

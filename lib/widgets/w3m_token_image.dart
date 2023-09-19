@@ -30,15 +30,11 @@ class W3MTokenImage extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(
-          Radius.circular(
-            100,
-          ),
-        ),
+        borderRadius: const BorderRadius.all(Radius.circular(100)),
         border: Border.fromBorderSide(
           BorderSide(
-            color: themeData.colors.overgray020,
-            width: 1,
+            color: themeData.colors.overgray005,
+            width: 2,
             strokeAlign: BorderSide.strokeAlignCenter,
           ),
         ),
@@ -77,7 +73,7 @@ class W3MTokenImage extends StatelessWidget {
       decoration: ShapeDecoration(
         shape: StarBorder.polygon(
           side: BorderSide(
-            color: themeData.colors.overgray020,
+            color: themeData.colors.overgray005,
             width: 2,
             strokeAlign: BorderSide.strokeAlignCenter,
           ),

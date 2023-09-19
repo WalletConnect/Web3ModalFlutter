@@ -6,7 +6,7 @@ import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/web3modal_provider.dart';
-import 'package:web3modal_flutter/widgets/avatars/wallet_avatar.dart';
+import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/download_wallet_item.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item_simple.dart';
@@ -81,7 +81,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
           children: [
             const SizedBox.square(dimension: 30.0),
             LoadingBorder(
-              child: WalletAvatar(imageUrl: imageUrl),
+              child: W3MWalletAvatar(imageUrl: imageUrl),
             ),
             const SizedBox.square(dimension: 20.0),
             (_selectedWallet?.installed == true)

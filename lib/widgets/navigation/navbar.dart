@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:web3modal_flutter/pages/help_page.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/web3modal_provider.dart';
@@ -12,11 +11,13 @@ class Web3ModalNavbar extends StatelessWidget {
     this.onBack,
     required this.child,
     required this.title,
+    this.leftAction,
   }) : super(key: key);
 
   final VoidCallback? onBack;
   final Widget child;
   final String title;
+  final NavbarActionButton? leftAction;
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +35,8 @@ class Web3ModalNavbar extends StatelessWidget {
                       asset: 'assets/icons/chevron_left.svg',
                       action: onBack ?? widgetStack.instance.pop,
                     )
-                  : NavbarActionButton(
-                      asset: 'assets/icons/help.svg',
-                      action: () {
-                        widgetStack.instance.add(const HelpPage());
-                      },
-                    ),
+                  : (leftAction ??
+                      const SizedBox.square(dimension: kNavbarHeight)),
               Expanded(
                 child: Center(
                   child: Text(

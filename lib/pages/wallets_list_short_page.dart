@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/pages/about_wallets.dart';
 import 'package:web3modal_flutter/pages/connect_wallet_page.dart';
 
 import 'package:web3modal_flutter/theme/theme.dart';
@@ -11,6 +12,7 @@ import 'package:web3modal_flutter/widgets/lists/list_items/all_wallets_item.dart
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_connect_item.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_item_chip.dart';
 import 'package:web3modal_flutter/widgets/lists/wallets_list.dart';
+import 'package:web3modal_flutter/widgets/navigation/navbar_action_button.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
 import 'package:web3modal_flutter/widgets/w3m_content_loading.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
@@ -25,6 +27,12 @@ class WalletsListShortPage extends StatelessWidget {
 
     return Web3ModalNavbar(
       title: 'Connect wallet',
+      leftAction: NavbarActionButton(
+        asset: 'assets/icons/help.svg',
+        action: () {
+          widgetStack.instance.add(const AboutWallets());
+        },
+      ),
       child: SafeArea(
         child: ExplorerServiceItemsListener(
           builder: (context, initialised, items) {

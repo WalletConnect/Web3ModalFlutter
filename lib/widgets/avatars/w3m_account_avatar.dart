@@ -3,8 +3,8 @@ import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 
-class W3MAvatar extends StatefulWidget {
-  const W3MAvatar({
+class W3MAccountAvatar extends StatefulWidget {
+  const W3MAccountAvatar({
     super.key,
     required this.service,
     this.size = 40.0,
@@ -16,10 +16,10 @@ class W3MAvatar extends StatefulWidget {
   final bool disabled;
 
   @override
-  State<W3MAvatar> createState() => _W3MAvatarState();
+  State<W3MAccountAvatar> createState() => _W3MAccountAvatarState();
 }
 
-class _W3MAvatarState extends State<W3MAvatar> {
+class _W3MAccountAvatarState extends State<W3MAccountAvatar> {
   String? _avatarUrl;
   String? _address;
 
