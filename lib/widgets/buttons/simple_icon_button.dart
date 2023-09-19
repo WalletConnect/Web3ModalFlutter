@@ -7,21 +7,28 @@ class SimpleIconButton extends StatelessWidget {
   const SimpleIconButton({
     super.key,
     required this.onTap,
-    required this.svgIcon,
     required this.title,
+    // TODO rename into leftIcon
+    this.svgIcon,
+    this.rightIcon,
     this.backgroundColor,
     this.foregroundColor,
+    this.size = BaseButtonSize.regular,
+    this.overlayColor,
   });
   final VoidCallback? onTap;
-  final String svgIcon, title;
+  final String title;
+  final String? svgIcon, rightIcon;
   final Color? backgroundColor, foregroundColor;
+  final BaseButtonSize size;
+  final MaterialStateProperty<Color>? overlayColor;
 
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
     return BaseButton(
       onTap: onTap,
-      size: BaseButtonSize.regular,
+      size: size,
       buttonStyle: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(
           backgroundColor ?? themeData.colors.blue100,
@@ -29,12 +36,13 @@ class SimpleIconButton extends StatelessWidget {
         foregroundColor: MaterialStateProperty.all<Color>(
           foregroundColor ?? themeData.colors.inverse100,
         ),
+        overlayColor: overlayColor,
         shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
           (states) {
             return RoundedRectangleBorder(
               side: BorderSide(
                 color: themeData.colors.overgray010,
-                width: 1.0,
+                width: 2.0,
               ),
               borderRadius: BorderRadius.circular(
                 BaseButtonSize.regular.height / 2,
@@ -47,16 +55,35 @@ class SimpleIconButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-            svgIcon,
-            package: 'web3modal_flutter',
-            colorFilter: ColorFilter.mode(
-              foregroundColor ?? themeData.colors.inverse100,
-              BlendMode.srcIn,
+          if (svgIcon != null)
+            Row(
+              children: [
+                SvgPicture.asset(
+                  svgIcon!,
+                  package: 'web3modal_flutter',
+                  colorFilter: ColorFilter.mode(
+                    foregroundColor ?? themeData.colors.inverse100,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                const SizedBox.square(dimension: 8.0),
+              ],
             ),
-          ),
-          const SizedBox.square(dimension: 8.0),
           Text(title),
+          if (rightIcon != null)
+            Row(
+              children: [
+                const SizedBox.square(dimension: 8.0),
+                SvgPicture.asset(
+                  rightIcon!,
+                  package: 'web3modal_flutter',
+                  colorFilter: ColorFilter.mode(
+                    foregroundColor ?? themeData.colors.inverse100,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );

@@ -28,4 +28,8 @@ class StringConstants {
 
   // Storage
   static const String recentWallet = 'recentWallet';
+
+  // Help
+  static const String learnMoreUrl =
+      'https://ethereum.org/en/developers/docs/networks/';
 }

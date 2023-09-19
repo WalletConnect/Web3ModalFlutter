@@ -1193,7 +1193,7 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
   @override
   _i4.Future<void> setSelectedChain(
     _i23.W3MChainInfo? chain, {
-    bool? switchChain = true,
+    bool? switchChain = false,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

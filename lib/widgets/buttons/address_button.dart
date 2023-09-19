@@ -3,7 +3,7 @@ import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
-import 'package:web3modal_flutter/widgets/w3m_avatar.dart';
+import 'package:web3modal_flutter/widgets/avatars/w3m_account_avatar.dart';
 
 class AddressButton extends StatefulWidget {
   const AddressButton({
@@ -76,7 +76,7 @@ class _AddressButtonState extends State<AddressButton> {
           },
         ),
       ),
-      icon: W3MAvatar(
+      icon: W3MAccountAvatar(
         service: widget.service,
         size: widget.size.height - 12.0,
         disabled: widget.onTap == null,

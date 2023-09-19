@@ -1,25 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 
 import 'package:web3modal_flutter/constants/constants.dart';
-import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
-import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/web3modal_provider.dart';
-import 'package:web3modal_flutter/widgets/w3m_address.dart';
-import 'package:web3modal_flutter/widgets/w3m_avatar.dart';
-import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
-import 'package:web3modal_flutter/widgets/w3m_circle_painter.dart';
-import 'package:web3modal_flutter/widgets/w3m_connected_chip.dart';
-import 'package:web3modal_flutter/widgets/w3m_disconnect_button.dart';
-import 'package:web3modal_flutter/widgets/w3m_icon_button.dart';
+import 'package:web3modal_flutter/widgets/avatars/w3m_account_orb.dart';
+import 'package:web3modal_flutter/widgets/buttons/address_copy_button.dart';
+import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
+import 'package:web3modal_flutter/widgets/lists/list_items/account_list_item.dart';
+import 'package:web3modal_flutter/widgets/navigation/navbar_action_button.dart';
+import 'package:web3modal_flutter/widgets/w3m_balance.dart';
 import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
-
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage() : super(key: Web3ModalConstants.accountPage);
@@ -29,158 +21,85 @@ class AccountPage extends StatelessWidget {
     final themeData = Web3ModalTheme.getDataOf(context);
     final service = Web3ModalProvider.of(context).service;
 
-    final Widget divider = Divider(
-      color: themeData.colors.overgray010,
-      height: 1,
-      thickness: 1,
-    );
-
-    const double paddingHorizontal = 20;
-    const double paddingVertical = 10;
-
-    return Container(
-      padding: const EdgeInsets.only(
-        top: paddingVertical,
-        bottom: paddingVertical,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+    return SafeArea(
+      child: Stack(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: paddingHorizontal,
-                  top: paddingVertical,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          Padding(
+            padding: const EdgeInsets.only(top: kNavbarHeight / 2),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
                   children: [
-                    W3MAvatar(
-                      service: service,
-                      size: 60,
-                    ),
-                    const SizedBox(
-                      height: paddingVertical,
-                    ),
-                    W3MAddress(
-                      service: service,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: themeData.colors.foreground100,
+                    const W3MAccountOrb(size: 72.0),
+                    const SizedBox.square(dimension: 12.0),
+                    const W3MAddressWithCopyButton(),
+                    const W3MBalanceText(),
+                    const SizedBox.square(dimension: 12.0),
+                    SimpleIconButton(
+                      onTap: () {
+                        // TODO implement
+                        debugPrint('Block Explorer');
+                      },
+                      svgIcon: 'assets/icons/compass.svg',
+                      rightIcon: 'assets/icons/arrow_top_right.svg',
+                      title: 'Block Explorer',
+                      backgroundColor: themeData.colors.background125,
+                      foregroundColor: themeData.colors.foreground150,
+                      overlayColor: MaterialStateProperty.all<Color>(
+                        themeData.colors.background200,
                       ),
                     ),
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: paddingVertical,
-                  right: paddingHorizontal,
-                ),
-                child: W3MConnectedChip(
-                  service: service,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: paddingVertical,
-          ),
-          divider,
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: paddingHorizontal,
-              vertical: paddingVertical,
-            ),
-            child: BalanceButton(
-              service: service,
-            ),
-          ),
-          divider,
-          Padding(
-            padding: const EdgeInsets.only(
-              left: paddingHorizontal,
-              right: paddingHorizontal,
-              top: paddingVertical,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: ListenableBuilder(
-                    listenable: service,
-                    builder: (BuildContext context, Widget? child) {
-                      return W3MIconButton(
-                        key: Web3ModalConstants.chainSwapButton,
-                        icon: W3MTokenImage(
-                          imageUrl: service.tokenImageUrl,
-                          isChain: true,
-                          size: 34,
-                        ),
-                        text: service.selectedChain?.chainName ??
-                            StringConstants.noChain,
-                        onPressed: () {
-                          widgetStack.instance.add(const SelectNetworkPage());
+                const SizedBox.square(dimension: 20.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: AccountListItem(
+                    iconWidget: W3MTokenImage(imageUrl: service.tokenImageUrl),
+                    title: service.selectedChain?.chainName ?? '',
+                    onTap: () {
+                      widgetStack.instance.add(SelectNetworkPage(
+                        onTapNetwork: (chainInfo) {
+                          service.setSelectedChain(
+                            chainInfo,
+                            switchChain: true,
+                          );
+                          widgetStack.instance.pop();
                         },
-                      );
+                      ));
                     },
                   ),
                 ),
-                const SizedBox(
-                  width: 4,
-                ),
-                Flexible(
-                  child: W3MIconButton(
-                    key: Web3ModalConstants.addressCopyButton,
-                    icon: W3MCirclePainter(
-                      child: SvgPicture.asset(
-                        'assets/account_copy.svg',
-                        package: 'web3modal_flutter',
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
-                      ),
+                const SizedBox.square(dimension: 8.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: AccountListItem(
+                    iconPath: 'assets/icons/disconnect.svg',
+                    trailing: const SizedBox.shrink(),
+                    title: 'Disconnect',
+                    titleStyle: themeData.textStyles.paragraph600.copyWith(
+                      color: themeData.colors.foreground200,
                     ),
-                    text: StringConstants.copyAddress,
-                    onPressed: () {
-                      _copyAddress(service);
+                    onTap: () async {
+                      service.close();
+                      await service.disconnect();
                     },
-                  ),
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-                Flexible(
-                  child: W3MDisconnectButton(
-                    service: service,
                   ),
                 ),
               ],
             ),
           ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: NavbarActionButton(
+              asset: 'assets/icons/close.svg',
+              action: () => service.close(),
+            ),
+          ),
         ],
-      ),
-    );
-  }
-
-  void _copyAddress(IW3MService service) {
-    Clipboard.setData(
-      ClipboardData(
-        text: service.address ?? '',
-      ),
-    );
-    toastUtils.instance.show(
-      ToastMessage(
-        type: ToastType.info,
-        text: StringConstants.addressCopied,
       ),
     );
   }

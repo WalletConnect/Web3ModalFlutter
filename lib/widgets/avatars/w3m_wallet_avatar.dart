@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 
-class WalletAvatar extends StatelessWidget {
-  const WalletAvatar({
+// TODO rename this to W3MWalletIcon
+class W3MWalletAvatar extends StatelessWidget {
+  const W3MWalletAvatar({
     super.key,
     required this.imageUrl,
     this.borderRadius = kRadiusM,

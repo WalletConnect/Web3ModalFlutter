@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:web3modal_flutter/theme/theme.dart';
-import 'package:web3modal_flutter/widgets/avatars/wallet_avatar.dart';
+import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item.dart';
 
 class ExploreAllWalletsItem extends StatelessWidget {
@@ -47,7 +47,7 @@ class ExploreAllWalletsItem extends StatelessWidget {
                     (e) => SizedBox(
                       width: (constraints.maxHeight / 2) - 4.0,
                       height: (constraints.maxHeight / 2) - 4.0,
-                      child: WalletAvatar(
+                      child: W3MWalletAvatar(
                         borderRadius: kRadius4XS,
                         imageUrl: e,
                       ),

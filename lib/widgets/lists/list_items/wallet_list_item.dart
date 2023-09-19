@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/theme/theme.dart';
-import 'package:web3modal_flutter/widgets/avatars/wallet_avatar.dart';
+import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/base_list_item.dart';
 
 class WalletListItem extends StatelessWidget {
@@ -27,7 +27,7 @@ class WalletListItem extends StatelessWidget {
       child: Row(
         children: [
           imageWidget ??
-              WalletAvatar(
+              W3MWalletAvatar(
                 borderRadius: kRadius3XS,
                 imageUrl: imageUrl ?? '',
               ),

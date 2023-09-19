@@ -5,7 +5,7 @@ import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
-import 'package:web3modal_flutter/widgets/w3m_avatar.dart';
+import 'package:web3modal_flutter/widgets/avatars/w3m_account_avatar.dart';
 import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
 
 class W3MAccountButton extends StatefulWidget {
@@ -47,14 +47,12 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     setState(() {
       _address = widget.service.address;
       _tokenImage = widget.service.tokenImageUrl;
-      _balance = widget.service.chainBalance == null
-          ? BalanceButton.balanceDefault
-          : widget.service.chainBalance!.toStringAsPrecision(4);
-      RegExp regex = RegExp(r'([.]*0+)(?!.*\d)');
-      _balance = _balance.replaceAll(regex, '');
-      _tokenName = widget.service.selectedChain == null
-          ? null
-          : widget.service.selectedChain!.tokenName;
+      _balance = BalanceButton.balanceDefault;
+      if (widget.service.chainBalance != null) {
+        _balance = widget.service.chainBalance!.toStringAsPrecision(4);
+        _balance = _balance.replaceAll(RegExp(r'([.]*0+)(?!.*\d)'), '');
+      }
+      _tokenName = widget.service.selectedChain?.tokenName;
     });
   }
 
@@ -88,7 +86,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
             if (states.contains(MaterialState.disabled)) {
               return themeData.colors.overgray015;
             }
-            return themeData.colors.foreground100;
+            return themeData.colors.foreground175;
           },
         ),
         shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
@@ -146,7 +144,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
               if (states.contains(MaterialState.disabled)) {
                 return themeData.colors.overgray015;
               }
-              return themeData.colors.foreground100;
+              return themeData.colors.foreground175;
             },
           ),
           shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
@@ -154,16 +152,20 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
               return RoundedRectangleBorder(
                 side: states.contains(MaterialState.disabled)
                     ? BorderSide(
-                        color: themeData.colors.overgray005, width: 1.0)
+                        color: themeData.colors.overgray005,
+                        width: 1.0,
+                      )
                     : BorderSide(
-                        color: themeData.colors.overgray010, width: 1.0),
+                        color: themeData.colors.overgray010,
+                        width: 1.0,
+                      ),
                 borderRadius:
                     BorderRadius.circular(BaseButtonSize.small.height / 2),
               );
             },
           ),
         ),
-        icon: W3MAvatar(
+        icon: W3MAccountAvatar(
           service: widget.service,
           size: widget.size.iconSize,
           disabled: false,

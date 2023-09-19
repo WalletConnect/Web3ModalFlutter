@@ -134,7 +134,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   @override
   Future<void> setSelectedChain(
     W3MChainInfo? chain, {
-    bool switchChain = true,
+    bool switchChain = false,
   }) async {
     checkInitialized();
 
@@ -196,7 +196,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     );
 
     // Load the account data, notify listeners when done
-    await _loadAccountData();
+    await _loadAccountData(closeModal: !switchChain);
   }
 
   /// PRIVATE FUNCTIONS ///
@@ -246,7 +246,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
   /// Loads account balance and avatar.
   /// Returns true if it was able to actually load data (i.e. there is a selected chain and session)
-  Future<void> _loadAccountData() async {
+  Future<void> _loadAccountData({bool closeModal = true}) async {
     // If there is no selected chain or session, stop. No account to load in.
     if (selectedChain == null || session == null) {
       return;
@@ -271,7 +271,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
       // Couldn't load avatar, default to address icon
     }
 
-    if (_isOpen) {
+    if (_isOpen && closeModal) {
       close();
     }
     // Tell everyone we have loaded the things
