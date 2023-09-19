@@ -85,10 +85,7 @@ class SessionWidgetState extends State<SessionWidget> {
     ]);
     children.addAll(_buildChainEventsTiles(chainMetadata));
 
-    // final ChainMetadata
     return Container(
-      // width: double.infinity,
-      // height: StyleConstants.linear48,
       padding: const EdgeInsets.all(StyleConstants.linear8),
       margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
       decoration: BoxDecoration(
@@ -115,7 +112,6 @@ class SessionWidgetState extends State<SessionWidget> {
     for (final String method in getChainMethods(chainMetadata.type)) {
       buttons.add(
         Container(
-          // width: double.infinity,
           height: StyleConstants.linear48,
           margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
           child: ElevatedButton(
@@ -160,7 +156,6 @@ class SessionWidgetState extends State<SessionWidget> {
     for (final String event in getChainEvents(chainMetadata.type)) {
       values.add(
         Container(
-          // width: double.infinity,
           height: StyleConstants.linear48,
           margin: const EdgeInsets.symmetric(
             vertical: StyleConstants.linear8,
