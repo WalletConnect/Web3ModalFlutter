@@ -16,12 +16,15 @@ class W3MChainInfo with _$W3MChainInfo {
     required Map<String, RequiredNamespace> requiredNamespaces,
     required Map<String, RequiredNamespace> optionalNamespaces,
     required String rpcUrl,
+    BlockExplorer? blockExplorer,
     @Default(EVMService()) ILedgerService ledgerService,
   }) = _W3MChainInfo;
 }
 
-class W3MAssetIcon {
-  final String icon;
-
-  const W3MAssetIcon(this.icon);
+@freezed
+class BlockExplorer with _$BlockExplorer {
+  factory BlockExplorer({
+    required String name,
+    required String url,
+  }) = _BlockExplorer;
 }
