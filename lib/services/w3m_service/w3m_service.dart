@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:walletconnect_modal_flutter/models/listings.dart';
+import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
@@ -191,9 +193,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
     // Set the requiredNamespace to be the selected chain
     // This will also notify listeners
-    setRequiredNamespaces(
-      requiredNamespaces: chain.requiredNamespaces,
-    );
+    setRequiredNamespaces(requiredNamespaces: chain.requiredNamespaces);
 
     // Load the account data, notify listeners when done
     await _loadAccountData(closeModal: !switchChain);
@@ -412,5 +412,20 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   @override
   void selectWallet({required WalletData? walletData}) {
     _walletData = walletData;
+  }
+
+  @override
+  bool get hasBlockExplorer => _selectedChain?.blockExplorer != null;
+
+  @override
+  void launchBlockExplorer() async {
+    if (hasBlockExplorer) {
+      final blockExplorer = _selectedChain!.blockExplorer!.url;
+      final explorerUrl = '$blockExplorer/address/$address';
+      await urlUtils.instance.launchUrl(
+        Uri.parse(explorerUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    }
   }
 }

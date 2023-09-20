@@ -7,6 +7,7 @@ import 'package:web3modal_flutter/widgets/lists/grid_items/wallet_grid_item.dart
 
 import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 
+// TODO FOCUS 5 landscape support
 class NetworksGrid extends StatelessWidget {
   const NetworksGrid({
     super.key,

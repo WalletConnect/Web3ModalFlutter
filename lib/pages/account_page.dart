@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_account_orb.dart';
 import 'package:web3modal_flutter/widgets/buttons/address_copy_button.dart';
@@ -36,21 +36,23 @@ class AccountPage extends StatelessWidget {
                     const SizedBox.square(dimension: 12.0),
                     const W3MAddressWithCopyButton(),
                     const W3MBalanceText(),
-                    const SizedBox.square(dimension: 12.0),
-                    SimpleIconButton(
-                      onTap: () {
-                        // TODO implement
-                        debugPrint('Block Explorer');
-                      },
-                      leftIcon: 'assets/icons/compass.svg',
-                      rightIcon: 'assets/icons/arrow_top_right.svg',
-                      title: 'Block Explorer',
-                      backgroundColor: themeData.colors.background125,
-                      foregroundColor: themeData.colors.foreground150,
-                      overlayColor: MaterialStateProperty.all<Color>(
-                        themeData.colors.background200,
+                    if (service.hasBlockExplorer)
+                      Column(
+                        children: [
+                          const SizedBox.square(dimension: 12.0),
+                          SimpleIconButton(
+                            onTap: () => service.launchBlockExplorer(),
+                            leftIcon: 'assets/icons/compass.svg',
+                            rightIcon: 'assets/icons/arrow_top_right.svg',
+                            title: 'Block Explorer',
+                            backgroundColor: themeData.colors.background125,
+                            foregroundColor: themeData.colors.foreground150,
+                            overlayColor: MaterialStateProperty.all<Color>(
+                              themeData.colors.background200,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
                   ],
                 ),
                 const SizedBox.square(dimension: 20.0),
@@ -64,8 +66,8 @@ class AccountPage extends StatelessWidget {
                     title: service.selectedChain?.chainName ?? '',
                     onTap: () {
                       widgetStack.instance.add(SelectNetworkPage(
-                        onTapNetwork: (chainInfo) {
-                          // TODO check what happens when switch can not be done
+                        onTapNetwork: (W3MChainInfo chainInfo) {
+                          // TODO FOCUS 2 check what happens when switch can not be done
                           service.setSelectedChain(
                             chainInfo,
                             switchChain: true,

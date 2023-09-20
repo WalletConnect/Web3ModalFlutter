@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
+
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/chain_data.dart';
 
@@ -9,7 +11,9 @@ class AssetUtil {
   }
 
   static String getTokenIconAssetId(String tokenName) {
-    return ChainData.tokenPresets[tokenName]?.icon ??
+    return ChainData.chainPresets.values
+            .firstWhereOrNull((element) => element.tokenName == tokenName)
+            ?.chainIcon ??
         '692ed6ba-e569-459a-556a-776476829e00';
   }
 

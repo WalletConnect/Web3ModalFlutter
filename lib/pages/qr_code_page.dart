@@ -15,6 +15,7 @@ import 'package:walletconnect_modal_flutter/services/utils/platform/platform_uti
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
 
+// TODO FOCUS 4 better QR code
 class QRCodePage extends StatelessWidget {
   const QRCodePage() : super(key: Web3ModalKeyConstants.qrCodePageKey);
 

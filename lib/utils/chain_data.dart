@@ -26,6 +26,10 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://eth.drpc.org',
+      blockExplorer: BlockExplorer(
+        name: 'Etherscan',
+        url: 'https://etherscan.io',
+      ),
     ),
     '42161': W3MChainInfo(
       chainName: 'Arbitrum',
@@ -48,6 +52,10 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://arbitrum.blockpi.network/v1/rpc/public',
+      blockExplorer: BlockExplorer(
+        name: 'Arbiscan',
+        url: 'https://arbiscan.io/',
+      ),
     ),
     '137': W3MChainInfo(
       chainName: 'Polygon',
@@ -70,6 +78,10 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://polygon.drpc.org',
+      blockExplorer: BlockExplorer(
+        name: 'Explorer',
+        url: 'https://explorer.matic.network/',
+      ),
     ),
     '43114': W3MChainInfo(
       chainName: 'Avalanche',
@@ -92,6 +104,10 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
+      blockExplorer: BlockExplorer(
+        name: 'Snowtrace',
+        url: 'https://snowtrace.io',
+      ),
     ),
     '56': W3MChainInfo(
       chainName: 'Binance Smart Chain',
@@ -114,6 +130,10 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://bsc-dataseed.binance.org/',
+      blockExplorer: BlockExplorer(
+        name: 'BSC Scan',
+        url: 'https://bscscan.com',
+      ),
     ),
     '10': W3MChainInfo(
       chainName: 'Optimism',
@@ -158,6 +178,10 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://rpc.ftm.tools/',
+      blockExplorer: BlockExplorer(
+        name: 'FTM Scan',
+        url: 'https://ftmscan.com',
+      ),
     ),
     '9001': W3MChainInfo(
       chainName: 'EVMos',
@@ -202,6 +226,10 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://rpc.ankr.com/iotex',
+      blockExplorer: BlockExplorer(
+        name: 'IOTEX Scan',
+        url: 'https://iotexscan.io/',
+      ),
     ),
     '1088': W3MChainInfo(
       chainName: 'Metis',
@@ -255,19 +283,5 @@ class ChainData {
     //   chainIcon: 'f1d73bb6-5450-4e18-38f7-fb6484264a00',
     //   tokenName: 'ETH',
     // ),
-  };
-
-  static const Map<String, W3MAssetIcon> tokenPresets = {
-    'ETH': W3MAssetIcon('692ed6ba-e569-459a-556a-776476829e00'),
-    'WETH': W3MAssetIcon('692ed6ba-e569-459a-556a-776476829e00'),
-    'AVAX': W3MAssetIcon('30c46e53-e989-45fb-4549-be3bd4eb3b00'),
-    'FTM': W3MAssetIcon('06b26297-fe0c-4733-5d6b-ffa5498aac00'),
-    'BNB': W3MAssetIcon('93564157-2e8e-4ce7-81df-b264dbee9b00'),
-    'MATIC': W3MAssetIcon('41d04d42-da3b-4453-8506-668cc0727900'),
-    'OP': W3MAssetIcon('ab9c186a-c52f-464b-2906-ca59d760a400'),
-    'xDAI': W3MAssetIcon('02b53f6a-e3d4-479e-1cb4-21178987d100'),
-    'EVMOS': W3MAssetIcon('f926ff41-260d-4028-635e-91913fc28e00'),
-    'METIS': W3MAssetIcon('3897a66d-40b9-4833-162f-a2c90531c900'),
-    'IOTX': W3MAssetIcon('34e68754-e536-40da-c153-6ef2e7188a00'),
   };
 }
