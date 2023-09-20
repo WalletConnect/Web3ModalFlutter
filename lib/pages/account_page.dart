@@ -65,6 +65,7 @@ class AccountPage extends StatelessWidget {
                     onTap: () {
                       widgetStack.instance.add(SelectNetworkPage(
                         onTapNetwork: (chainInfo) {
+                          // TODO check what happens when switch can not be done
                           service.setSelectedChain(
                             chainInfo,
                             switchChain: true,

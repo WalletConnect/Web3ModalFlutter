@@ -36,14 +36,20 @@ class _LoadingBorderState extends State<LoadingBorder>
       duration: const Duration(seconds: 1),
       vsync: this,
     );
-    if (widget.animate) {
-      _controller.repeat();
-    }
 
     _tweenAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(_controller);
+  }
+
+  @override
+  void didUpdateWidget(covariant LoadingBorder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!oldWidget.animate && widget.animate) {
+      _controller.repeat();
+      setState(() {});
+    }
   }
 
   @override
