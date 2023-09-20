@@ -86,7 +86,6 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
               color: themeData.colors.foreground100,
               fontFamily: themeData.textStyles.fontFamily,
             ),
-            // TODO instead of this, use style: themeData.textStyles.whateverNeeded
           ),
         ],
       ),

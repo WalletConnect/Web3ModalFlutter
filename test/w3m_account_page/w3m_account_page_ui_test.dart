@@ -8,7 +8,7 @@ import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/utils/util.dart';
-import 'package:web3modal_flutter/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';

@@ -63,7 +63,7 @@ class AboutWallets extends StatelessWidget {
                   onTap: () {
                     widgetStack.instance.add(const GetWalletPage());
                   },
-                  svgIcon: 'assets/icons/wallet.svg',
+                  leftIcon: 'assets/icons/wallet.svg',
                   title: 'Get a wallet',
                 ),
                 const SizedBox(height: 8.0),

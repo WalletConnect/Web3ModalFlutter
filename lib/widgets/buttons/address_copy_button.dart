@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:web3modal_flutter/theme/theme.dart';
-import 'package:web3modal_flutter/web3modal_provider.dart';
-import 'package:web3modal_flutter/widgets/w3m_address.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/text/w3m_address.dart';
 
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';

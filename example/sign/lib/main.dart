@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:logger/logger.dart';
+
 import 'package:walletconnect_flutter_dapp/home_page.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
-import 'package:web3modal_flutter/utils/logger.dart';
+
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 void main() {
-  runApp(
-    const MyApp(),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -32,7 +30,7 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitDown,
     ]);
 
-    LoggerUtil.setLogLevel(Level.error);
+    LoggerUtil.setLogLevel(LogLevel.error);
   }
 
   // This widget is the root of your application.

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
-import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
+import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 
 class BalanceButton extends StatefulWidget {
   static const balanceDefault = '_._';
@@ -88,10 +88,9 @@ class _BalanceButtonState extends State<BalanceButton> {
           },
         ),
       ),
-      icon: W3MTokenImage(
+      icon: RoundedIcon(
         imageUrl: _tokenImage,
         size: widget.size.height - 12.0,
-        disabled: widget.onTap == null,
       ),
       child: Text('$_balance ${_tokenName ?? ''}'),
     );

@@ -13,6 +13,7 @@ class WalletGridItem extends StatelessWidget {
     this.bottom,
     this.onTap,
     this.isSelected = false,
+    this.isNetwork = false,
   });
 
   final Widget? imageWidget;
@@ -20,7 +21,7 @@ class WalletGridItem extends StatelessWidget {
   final String? imageUrl;
   final Widget? bottom;
   final VoidCallback? onTap;
-  final bool isSelected;
+  final bool isSelected, isNetwork;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +33,11 @@ class WalletGridItem extends StatelessWidget {
       child: Column(
         children: <Widget>[
           imageWidget ??
-              W3MWalletAvatar(
+              W3MListAvatar(
                 borderRadius: kRadiusXS,
                 imageUrl: imageUrl ?? '',
+                isNetwork: isNetwork,
+                color: isSelected ? themeData.colors.blue100 : null,
               ),
           const SizedBox(height: 4.0),
           Expanded(

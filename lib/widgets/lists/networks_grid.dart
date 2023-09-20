@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
-import 'package:web3modal_flutter/web3modal_provider.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/lists/grid_items/wallet_grid_item.dart';
 
 import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
@@ -65,6 +65,7 @@ class NetworksGrid extends StatelessWidget {
             isSelected: service.selectedChain?.chainId == info.id,
             imageUrl: info.image,
             title: info.title,
+            isNetwork: true,
           );
         },
       ),
