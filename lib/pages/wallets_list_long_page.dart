@@ -41,8 +41,8 @@ class WalletsListLongPage extends StatelessWidget {
                 ),
                 child: ExplorerServiceItemsListener(
                   builder: (context, initialised, items) {
-                    if (!initialised) {
-                      return const ContentLoading();
+                    if (!initialised || items.isEmpty) {
+                      return const Center(child: ContentLoading());
                     }
                     return WalletsGrid(
                       onTapWallet: (data) async {
