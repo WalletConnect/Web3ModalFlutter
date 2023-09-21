@@ -2,6 +2,7 @@ name: web3modal_flutter
 description: The Web3Modal for WalletConnect built using Flutter.
 version: 2.0.1
 repository: https://github.com/WalletConnect/Web3ModalFlutter
+publish_to: none # remove this when publish
 
 environment:
   sdk: '>=2.17.0 <4.0.0'
@@ -19,7 +20,10 @@ dependencies:
   json_annotation: ^4.8.1
   logger: ^1.4.0
   mockito: ^5.4.2
-  qr_flutter: ^4.1.0
+  qr_flutter_wc:
+    git: 
+      url: https://github.com/WalletConnect/qr.flutter.git
+      ref: feature/modifying_painter
   shared_preferences: ^2.2.0
   smooth_page_indicator: ^1.1.0
   universal_io: ^2.2.0
