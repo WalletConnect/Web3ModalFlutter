@@ -195,8 +195,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     // This will also notify listeners
     setRequiredNamespaces(requiredNamespaces: chain.requiredNamespaces);
 
-    // Load the account data, notify listeners when done
-    await _loadAccountData(closeModal: !switchChain);
+    _loadAccountData();
   }
 
   /// PRIVATE FUNCTIONS ///
@@ -225,7 +224,11 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     //   _session!.namespaces.values.first.accounts.first,
     // );
 
-    await _loadAccountData();
+    if (_isOpen) {
+      close();
+    }
+
+    _loadAccountData();
   }
 
   // void _onSessionUpdate(SessionUpdate? args) {
@@ -246,7 +249,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
   /// Loads account balance and avatar.
   /// Returns true if it was able to actually load data (i.e. there is a selected chain and session)
-  Future<void> _loadAccountData({bool closeModal = true}) async {
+  void _loadAccountData() async {
     // If there is no selected chain or session, stop. No account to load in.
     if (selectedChain == null || session == null) {
       return;
@@ -262,19 +265,12 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     try {
       final blockchainId = await blockchainApiUtils.instance!.getIdentity(
         address!,
-        int.parse(
-          selectedChain!.chainId,
-        ),
+        int.parse(selectedChain!.chainId),
       );
       _avatarUrl = blockchainId.avatar;
     } catch (_) {
       // Couldn't load avatar, default to address icon
     }
-
-    if (_isOpen && closeModal) {
-      close();
-    }
-    // Tell everyone we have loaded the things
     notifyListeners();
   }
 
