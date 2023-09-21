@@ -6,6 +6,7 @@ import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
 class QRCodeWidget extends StatefulWidget {
@@ -39,7 +40,15 @@ class _QRCodeWidgetState extends State<QRCodeWidget> {
       return const ContentLoading();
     }
 
+    final responsiveData = ResponsiveData.of(context);
+    final isPortrait = ResponsiveData.isPortrait(context);
+    final imageSize = isPortrait ? 90.0 : 60.0;
     return Container(
+      constraints: BoxConstraints(
+        maxWidth: isPortrait
+            ? responsiveData.maxWidth
+            : (responsiveData.maxHeight - kNavbarHeight - 32.0),
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(kRadiusL),
@@ -60,8 +69,8 @@ class _QRCodeWidgetState extends State<QRCodeWidget> {
         embeddedImage: widget.logoPath.isNotEmpty
             ? AssetImage(widget.logoPath, package: 'web3modal_flutter')
             : null,
-        embeddedImageStyle: const QrEmbeddedImageStyle(
-          size: Size(90.0, 90.0),
+        embeddedImageStyle: QrEmbeddedImageStyle(
+          size: Size(imageSize, imageSize),
         ),
         embeddedImageEmitsError: true,
       ),

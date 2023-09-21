@@ -364,9 +364,9 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     if (bottomSheet) {
       await showModalBottomSheet(
         backgroundColor: Colors.transparent,
-        isDismissible: false,
+        isDismissible: true,
         isScrollControlled: true,
-        enableDrag: false,
+        enableDrag: true,
         elevation: 0.0,
         context: context,
         builder: (context) {
@@ -410,8 +410,9 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   WalletData? get selectedWallet => _walletData;
 
   @override
-  void selectWallet({required WalletData? walletData}) {
+  Future<void> selectWallet({required WalletData? walletData}) async {
     _walletData = walletData;
+    return;
   }
 
   @override

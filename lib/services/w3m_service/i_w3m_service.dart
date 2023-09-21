@@ -42,7 +42,8 @@ abstract class IW3MService extends IWalletConnectModalService
   void close();
 
   WalletData? get selectedWallet;
-  void selectWallet({required WalletData? walletData});
+
+  Future<void> selectWallet({required WalletData? walletData});
 
   bool get hasBlockExplorer;
 

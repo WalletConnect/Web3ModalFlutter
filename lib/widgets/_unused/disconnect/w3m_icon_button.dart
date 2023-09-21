@@ -25,13 +25,7 @@ class W3MIconButton extends StatelessWidget {
       focusColor: themeData.colors.overgray025,
       hoverColor: themeData.colors.overgray020,
       child: Container(
-        // constraints: const BoxConstraints(
-        //   maxWidth: 100,
-        // ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 10,
-          // horizontal: 4,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -40,11 +34,9 @@ class W3MIconButton extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 text,
-                style: TextStyle(
+                style: themeData.textStyles.tiny500.copyWith(
                   color: themeData.colors.blue100,
-                  fontSize: 12,
                 ),
-                // TODO instead of this, use style: themeData.textStyles.whateverNeeded
                 maxLines: 2,
                 textAlign: TextAlign.center,
               ),

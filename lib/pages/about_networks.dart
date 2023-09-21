@@ -14,53 +14,46 @@ class AboutNetworks extends StatelessWidget {
   Widget build(BuildContext context) {
     return Web3ModalNavbar(
       title: 'What is a network?',
-      child: SafeArea(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.75,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const Column(
-                  children: [
-                    HelpSection(
-                      title: 'The system’s nuts and bolts',
-                      description:
-                          'A network is what brings the blockchain to life, as this technical infrastructure allows apps to access the ledger and smart contract services.',
-                      images: [
-                        'assets/help/network.svg',
-                        'assets/help/layers.svg',
-                        'assets/help/system.svg',
-                      ],
-                    ),
-                    HelpSection(
-                      title: 'Designed for different uses',
-                      description:
-                          'Each network is designed differently, and may therefore suit certain apps and experiences.',
-                      images: [
-                        'assets/help/noun.svg',
-                        'assets/help/defi.svg',
-                        'assets/help/dao.svg',
-                      ],
-                    ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Column(
+              children: [
+                HelpSection(
+                  title: 'The system’s nuts and bolts',
+                  description:
+                      'A network is what brings the blockchain to life, as this technical infrastructure allows apps to access the ledger and smart contract services.',
+                  images: [
+                    'assets/help/network.svg',
+                    'assets/help/layers.svg',
+                    'assets/help/system.svg',
                   ],
                 ),
-                const SizedBox(height: 8),
-                SimpleIconButton(
-                  onTap: () => launchUrlString(
-                    StringConstants.learnMoreUrl,
-                    mode: LaunchMode.externalApplication,
-                  ),
-                  rightIcon: 'assets/icons/arrow_top_right.svg',
-                  title: 'Learn more',
+                HelpSection(
+                  title: 'Designed for different uses',
+                  description:
+                      'Each network is designed differently, and may therefore suit certain apps and experiences.',
+                  images: [
+                    'assets/help/noun.svg',
+                    'assets/help/defi.svg',
+                    'assets/help/dao.svg',
+                  ],
                 ),
-                const SizedBox(height: 8.0),
               ],
             ),
-          ),
+            const SizedBox(height: 8),
+            SimpleIconButton(
+              onTap: () => launchUrlString(
+                StringConstants.learnMoreUrl,
+                mode: LaunchMode.externalApplication,
+              ),
+              rightIcon: 'assets/icons/arrow_top_right.svg',
+              title: 'Learn more',
+            ),
+            const SizedBox(height: 8.0),
+          ],
         ),
       ),
     );

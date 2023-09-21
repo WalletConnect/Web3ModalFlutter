@@ -6,6 +6,7 @@ import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/pages/qr_code_page.dart';
 import 'package:web3modal_flutter/pages/wallets_list_long_page.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/all_wallets_item.dart';
@@ -24,7 +25,10 @@ class WalletsListShortPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final service = Web3ModalProvider.of(context).service;
-
+    final isPortrait = ResponsiveData.isPortrait(context);
+    final maxHeight = isPortrait
+        ? (kListItemHeight * 6)
+        : ResponsiveData.maxHeightOf(context);
     return Web3ModalNavbar(
       title: 'Connect wallet',
       leftAction: NavbarActionButton(
@@ -33,7 +37,8 @@ class WalletsListShortPage extends StatelessWidget {
           widgetStack.instance.add(const AboutWallets());
         },
       ),
-      child: SafeArea(
+      body: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxHeight),
         child: ExplorerServiceItemsListener(
           builder: (context, initialised, items) {
             if (!initialised) {

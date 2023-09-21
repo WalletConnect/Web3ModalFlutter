@@ -5,6 +5,7 @@ import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
@@ -61,6 +62,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     super.dispose();
   }
 
+  // TODO I don't like this whole widget, must be refactored
   @override
   Widget build(BuildContext context) {
     final service = Web3ModalProvider.of(context).service;
@@ -70,83 +72,100 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     final imageUrl =
         explorerService.instance!.getWalletImageUrl(imageId: imageId);
     final walletInstalled = _selectedWallet?.installed ?? false;
-
+    final isPortrait = ResponsiveData.isPortrait(context);
+    final maxWidth = isPortrait
+        ? ResponsiveData.maxWidthOf(context)
+        : ResponsiveData.maxHeightOf(context) -
+            kNavbarHeight -
+            (kPadding16 * 2);
     return Web3ModalNavbar(
       title: walletName,
       onBack: () {
-        service.selectWallet(walletData: null);
+        // TODO service.selectWallet(walletData: null);
         widgetStack.instance.pop();
       },
-      child: SafeArea(
-        child: Column(
+      // safeAreaLeft: true,
+      // safeAreaRight: true,
+      body: SingleChildScrollView(
+        scrollDirection: isPortrait ? Axis.vertical : Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: kPadding16),
+        child: Flex(
+          direction: isPortrait ? Axis.vertical : Axis.horizontal,
           children: [
-            const SizedBox.square(dimension: 30.0),
-            LoadingBorder(
-              animate: walletInstalled,
-              child: W3MListAvatar(imageUrl: imageUrl),
-            ),
-            const SizedBox.square(dimension: 20.0),
-            walletInstalled
-                ? Text(
-                    'Continue in $walletName',
-                    style: themeData.textStyles.paragraph500.copyWith(
-                      color: themeData.colors.foreground100,
-                    ),
-                  )
-                : Text(
-                    'Not detected',
-                    style: themeData.textStyles.paragraph500.copyWith(
-                      color: themeData.colors.foreground100,
-                    ),
-                  ),
-            const SizedBox.square(dimension: 8.0),
-            walletInstalled
-                ? Text(
-                    'Accept connection request in the wallet',
-                    style: themeData.textStyles.small500.copyWith(
-                      color: themeData.colors.foreground200,
-                    ),
-                  )
-                : Text(
-                    'Download and install $walletName to continue',
-                    style: themeData.textStyles.small500.copyWith(
-                      color: themeData.colors.foreground200,
-                    ),
-                  ),
-            const SizedBox.square(dimension: 16.0),
-            SimpleIconButton(
-              onTap: () {
-                service.connectWallet(walletData: service.selectedWallet!);
-              },
-              leftIcon: 'assets/icons/refresh.svg',
-              title: 'Try again',
-              backgroundColor: Colors.transparent,
-              foregroundColor: themeData.colors.blue100,
-            ),
-            const SizedBox.square(dimension: 32.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: WalletListItemSimple(
-                title: 'Copy link',
-                icon: 'assets/icons/copy.svg',
-                onTap: () => _copyToClipboard(context),
-              ),
-            ),
-            if (_selectedWallet?.installed == false)
-              Column(
+            Container(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox.square(dimension: 16.0),
-                  Divider(
-                    color: themeData.colors.overgray005,
-                    height: 0.0,
+                  if (isPortrait) const SizedBox.square(dimension: 30.0),
+                  LoadingBorder(
+                    animate: walletInstalled,
+                    child: W3MListAvatar(imageUrl: imageUrl),
+                  ),
+                  const SizedBox.square(dimension: 20.0),
+                  Text(
+                    walletInstalled
+                        ? 'Continue in $walletName'
+                        : 'Not detected',
+                    textAlign: TextAlign.center,
+                    style: themeData.textStyles.paragraph500.copyWith(
+                      color: themeData.colors.foreground100,
+                    ),
+                  ),
+                  const SizedBox.square(dimension: 8.0),
+                  Text(
+                    walletInstalled
+                        ? 'Accept connection request in the wallet'
+                        : 'Download and install $walletName to continue',
+                    textAlign: TextAlign.center,
+                    style: themeData.textStyles.small500.copyWith(
+                      color: themeData.colors.foreground200,
+                    ),
                   ),
                   const SizedBox.square(dimension: 16.0),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: DownloadWalletItem(walletData: _selectedWallet!),
+                  SimpleIconButton(
+                    onTap: () {
+                      service.connectWallet(
+                          walletData: service.selectedWallet!);
+                    },
+                    leftIcon: 'assets/icons/refresh.svg',
+                    title: 'Try again',
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: themeData.colors.blue100,
                   ),
                 ],
               ),
+            ),
+            if (!isPortrait) const SizedBox.square(dimension: kPadding16),
+            Container(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (isPortrait) const SizedBox.square(dimension: 32.0),
+                  WalletListItemSimple(
+                    title: 'Copy link',
+                    icon: 'assets/icons/copy.svg',
+                    onTap: () => _copyToClipboard(context),
+                  ),
+                  if (!walletInstalled)
+                    Column(
+                      children: [
+                        const SizedBox.square(dimension: 16.0),
+                        if (isPortrait)
+                          Divider(
+                            color: themeData.colors.overgray005,
+                            height: 0.0,
+                          ),
+                        if (isPortrait) const SizedBox.square(dimension: 16.0),
+                        if (_selectedWallet != null)
+                          DownloadWalletItem(walletData: _selectedWallet!),
+                        const SizedBox.square(dimension: 16.0),
+                      ],
+                    ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

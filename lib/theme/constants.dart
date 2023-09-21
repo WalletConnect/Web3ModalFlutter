@@ -15,9 +15,11 @@ const kShortWalletListCount = 5;
 
 const kPadding16 = 16.0;
 const kPadding12 = 12.0;
+const kPadding6 = 6.0;
 
 const kGridAxisSpacing = 12.0;
-const kGridAxisCount = 4;
+const kGridAxisCountP = 4;
+const kGridAxisCountL = 6;
 
 const kListViewSeparatorHeight = 8.0;
 
