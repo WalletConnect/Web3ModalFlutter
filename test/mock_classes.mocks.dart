@@ -1278,6 +1278,14 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: null,
       );
   @override
+  void launchBlockExplorer() => super.noSuchMethod(
+        Invocation.method(
+          #launchBlockExplorer,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
   _i4.Future<Null> onDispose() => (super.noSuchMethod(
         Invocation.method(
           #onDispose,
