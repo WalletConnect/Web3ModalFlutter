@@ -14,62 +14,55 @@ class AboutWallets extends StatelessWidget {
   Widget build(BuildContext context) {
     return Web3ModalNavbar(
       title: 'What is a wallet?',
-      child: SafeArea(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.75,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const Column(
-                  children: [
-                    HelpSection(
-                      title: 'One login for all of web3',
-                      description:
-                          'Log in to any app by connecting your wallet. Say goodbye to countless passwords!',
-                      images: [
-                        'assets/help/key.svg',
-                        'assets/help/user.svg',
-                        'assets/help/lock.svg',
-                      ],
-                    ),
-                    HelpSection(
-                      title: 'A home for your digital assets',
-                      description:
-                          'A wallet lets you store, send, and receive digital assets like cryptocurrencies and NFTs.',
-                      images: [
-                        'assets/help/chart.svg',
-                        'assets/help/painting.svg',
-                        'assets/help/eth.svg',
-                      ],
-                    ),
-                    HelpSection(
-                      title: 'Your gateway to a new web',
-                      description:
-                          'With your wallet, you can explore and interact with DeFi, NFTs, DAOS, and much more.',
-                      images: [
-                        'assets/help/compass.svg',
-                        'assets/help/noun.svg',
-                        'assets/help/dao.svg',
-                      ],
-                    ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Column(
+              children: [
+                HelpSection(
+                  title: 'One login for all of web3',
+                  description:
+                      'Log in to any app by connecting your wallet. Say goodbye to countless passwords!',
+                  images: [
+                    'assets/help/key.svg',
+                    'assets/help/user.svg',
+                    'assets/help/lock.svg',
                   ],
                 ),
-                const SizedBox(height: 8),
-                SimpleIconButton(
-                  onTap: () {
-                    widgetStack.instance.add(const GetWalletPage());
-                  },
-                  leftIcon: 'assets/icons/wallet.svg',
-                  title: 'Get a wallet',
+                HelpSection(
+                  title: 'A home for your digital assets',
+                  description:
+                      'A wallet lets you store, send, and receive digital assets like cryptocurrencies and NFTs.',
+                  images: [
+                    'assets/help/chart.svg',
+                    'assets/help/painting.svg',
+                    'assets/help/eth.svg',
+                  ],
                 ),
-                const SizedBox(height: 8.0),
+                HelpSection(
+                  title: 'Your gateway to a new web',
+                  description:
+                      'With your wallet, you can explore and interact with DeFi, NFTs, DAOS, and much more.',
+                  images: [
+                    'assets/help/compass.svg',
+                    'assets/help/noun.svg',
+                    'assets/help/dao.svg',
+                  ],
+                ),
               ],
             ),
-          ),
+            const SizedBox(height: 8),
+            SimpleIconButton(
+              onTap: () {
+                widgetStack.instance.add(const GetWalletPage());
+              },
+              leftIcon: 'assets/icons/wallet.svg',
+              title: 'Get a wallet',
+            ),
+            const SizedBox(height: 8.0),
+          ],
         ),
       ),
     );

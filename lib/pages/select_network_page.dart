@@ -21,7 +21,7 @@ class SelectNetworkPage extends StatelessWidget {
     final themeData = Web3ModalTheme.getDataOf(context);
     return Web3ModalNavbar(
       title: 'Select network',
-      child: SafeArea(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -31,16 +31,12 @@ class SelectNetworkPage extends StatelessWidget {
                   return const ContentLoading();
                 }
                 return NetworksGrid(
-                  viewPortRows: 3,
                   onTapNetwork: onTapNetwork,
                   itemList: items,
                 );
               },
             ),
-            Divider(
-              color: themeData.colors.overgray005,
-              height: 0.0,
-            ),
+            Divider(color: themeData.colors.overgray005, height: 0.0),
             const SizedBox.square(dimension: 8.0),
             Text(
               'Your connected wallet may not support some of the networks available for this dApp',

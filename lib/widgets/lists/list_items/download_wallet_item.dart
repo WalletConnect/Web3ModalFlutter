@@ -62,7 +62,10 @@ class DownloadWalletItem extends StatelessWidget {
       ),
       onTap: () {
         try {
-          launchUrlString(_storeUrl);
+          launchUrlString(
+            _storeUrl,
+            mode: LaunchMode.externalApplication,
+          );
         } catch (e) {
           Web3ModalProvider.of(context).service.connectWallet(
                 walletData: walletData,

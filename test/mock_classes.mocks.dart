@@ -1103,6 +1103,11 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValue: false,
       ) as bool);
   @override
+  bool get hasBlockExplorer => (super.noSuchMethod(
+        Invocation.getter(#hasBlockExplorer),
+        returnValue: false,
+      ) as bool);
+  @override
   set connectResponse(_i6.ConnectResponse? _connectResponse) =>
       super.noSuchMethod(
         Invocation.setter(
@@ -1254,12 +1259,21 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  void selectWallet({required _i18.WalletData? walletData}) =>
-      super.noSuchMethod(
+  _i4.Future<void> selectWallet({required _i18.WalletData? walletData}) =>
+      (super.noSuchMethod(
         Invocation.method(
           #selectWallet,
           [],
           {#walletData: walletData},
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
+  void launchBlockExplorer() => super.noSuchMethod(
+        Invocation.method(
+          #launchBlockExplorer,
+          [],
         ),
         returnValueForMissingStub: null,
       );

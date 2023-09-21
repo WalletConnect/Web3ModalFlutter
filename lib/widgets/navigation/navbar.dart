@@ -9,15 +9,19 @@ class Web3ModalNavbar extends StatelessWidget {
   const Web3ModalNavbar({
     Key? key,
     this.onBack,
-    required this.child,
+    required this.body,
     required this.title,
     this.leftAction,
+    this.safeAreaLeft = false,
+    this.safeAreaRight = false,
+    this.safeAreaBottom = true,
   }) : super(key: key);
 
   final VoidCallback? onBack;
-  final Widget child;
+  final Widget body;
   final String title;
   final NavbarActionButton? leftAction;
+  final bool safeAreaLeft, safeAreaRight, safeAreaBottom;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +64,14 @@ class Web3ModalNavbar extends StatelessWidget {
           color: themeData.colors.overgray005,
           height: 0.0,
         ),
-        child,
+        Flexible(
+          child: SafeArea(
+            left: safeAreaLeft,
+            right: safeAreaRight,
+            bottom: safeAreaBottom,
+            child: body,
+          ),
+        ),
       ],
     );
   }

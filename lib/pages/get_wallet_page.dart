@@ -9,20 +9,27 @@ import 'package:web3modal_flutter/constants/string_constants.dart';
 
 import 'package:walletconnect_modal_flutter/models/listings.dart';
 import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/explore_all_wallets_item.dart';
 import 'package:web3modal_flutter/widgets/lists/wallets_list.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 
 class GetWalletPage extends StatelessWidget {
   const GetWalletPage() : super(key: Web3ModalKeyConstants.getAWalletPageKey);
 
   @override
   Widget build(BuildContext context) {
+    final isPortrait = ResponsiveData.isPortrait(context);
+    final maxHeight = isPortrait
+        ? (kListItemHeight * 7)
+        : ResponsiveData.maxHeightOf(context);
     return Web3ModalNavbar(
       title: 'Get a Wallet',
-      child: SafeArea(
+      body: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxHeight),
         child: ExplorerServiceItemsListener(
           builder: (context, initialised, items) {
             if (!initialised) {
@@ -35,18 +42,16 @@ class GetWalletPage extends StatelessWidget {
             final itemsToShow = notInstalledItems
                 .getRange(0, min(5, notInstalledItems.length))
                 .toList();
-            final itemsExplore = notInstalledItems
+            final itemsExploreMore = notInstalledItems
                 .getRange(min(5, notInstalledItems.length),
                     min(9, notInstalledItems.length))
                 .toList();
 
             return WalletsList(
-              viewPortRows:
-                  itemsToShow.length + (itemsExplore.isNotEmpty ? 1 : 0),
               itemList: itemsToShow,
-              lastItem: itemsExplore.isNotEmpty
+              lastItem: itemsExploreMore.isNotEmpty
                   ? ExploreAllWalletsItem(
-                      images: itemsExplore.map((e) => e.image).toList(),
+                      images: itemsExploreMore.map((e) => e.image).toList(),
                       onTap: () => urlUtils.instance.launchUrl(
                         Uri.parse(StringConstants.getAWalletExploreWalletsUrl),
                         mode: LaunchMode.externalApplication,

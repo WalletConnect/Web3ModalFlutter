@@ -14,9 +14,9 @@ class ExplorerServiceItemsListener extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
+    return ValueListenableBuilder<bool>(
       valueListenable: explorerService.instance!.initialized,
-      builder: (context, bool initialised, _) {
+      builder: (context, initialised, _) {
         if (!initialised) {
           return builder(context, initialised, []);
         }

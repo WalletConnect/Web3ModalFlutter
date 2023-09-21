@@ -211,7 +211,7 @@ class _W3MPageState extends State<_W3MPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const SizedBox.square(dimension: 8.0),
-              W3MNetworkSelectButton(service: _w3mService!),
+              if (!_isConnected) W3MNetworkSelectButton(service: _w3mService!),
               W3MConnectWalletButton(service: _w3mService!),
               const SizedBox.square(dimension: 8.0),
               const Divider(height: 0.0),
@@ -234,28 +234,6 @@ class _ConnectedView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox.square(dimension: 12.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            W3MNetworkSelectButton(service: w3mService),
-            const SizedBox.square(dimension: 12.0),
-            W3MNetworkSelectButton(
-              service: w3mService,
-              size: BaseButtonSize.small,
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            W3MNetworkSelectButton(service: w3mService),
-            const SizedBox.square(dimension: 12.0),
-            W3MNetworkSelectButton(
-              service: w3mService,
-              size: BaseButtonSize.small,
-            ),
-          ],
-        ),
         W3MAccountButton(service: w3mService),
         SessionWidget(
           session: w3mService.web3App!.sessions.getAll().first,
