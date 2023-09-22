@@ -10,7 +10,7 @@
             "request": "launch",
             "type": "dart",
             "args": [
-                "--dart-define=PROJECT_ID=cad4956f31a5e40a00b62865b030c6f8",
+                "--dart-define=PROJECT_ID={YOUR_PROJECT_ID}",
                 "-v"
             ]
         },
