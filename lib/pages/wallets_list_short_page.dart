@@ -58,7 +58,7 @@ class WalletsListShortPage extends StatelessWidget {
                 },
               ),
               lastItem: AllWalletsItem(
-                trailing: WalletItemChip(value: '${items.length}+'),
+                trailing: WalletItemChip(value: items.length.lazyCount),
                 onTap: () {
                   widgetStack.instance.add(const WalletsListLongPage());
                 },
@@ -68,5 +68,12 @@ class WalletsListShortPage extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+extension on int {
+  String get lazyCount {
+    if (this <= 10) return toString();
+    return '${toString().substring(0, toString().length - 1)}0+';
   }
 }
