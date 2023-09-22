@@ -43,3 +43,6 @@ app.*.map.json
 
 # Run scripts
 *.sh
+
+.vscode/launch.json
+*.xcconfig
