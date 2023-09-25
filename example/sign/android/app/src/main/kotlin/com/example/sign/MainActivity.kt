@@ -1,4 +1,4 @@
-package com.walletconnect.flutterdapp
+package com.web3modal.flutterExample
 
 import io.flutter.embedding.android.FlutterActivity
 

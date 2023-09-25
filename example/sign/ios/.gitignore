@@ -34,3 +34,8 @@ Runner/GeneratedPluginRegistrant.*
 !default.perspectivev3
 
 *.xcconfig
+Gemfile*
+*.xcconfig
+fastlane/
+*.zip
+*.ipa

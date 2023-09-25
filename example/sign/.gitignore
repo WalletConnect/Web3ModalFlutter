@@ -46,3 +46,9 @@ app.*.map.json
 
 .vscode/launch.json
 *.xcconfig
+ios/fastlane/
+Gemfile*
+*.xcconfig
+fastlane/
+*.zip
+*.ipa
