@@ -692,8 +692,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "feature/modifying_painter"
-      resolved-ref: "42cb4399a8dcda6d51d366efef3ae1ee7de8faf0"
+      ref: HEAD
+      resolved-ref: bc1199ab7f670a715fcca8a8b95e7b65f252c91d
       url: "https://github.com/WalletConnect/qr.flutter.git"
     source: git
     version: "4.1.0"

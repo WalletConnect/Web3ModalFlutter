@@ -1,3 +1,7 @@
+## 3.0.0-alpha01
+
+- [BREAKING CHANGES] First alpha release of new Web3Modal V3
+
 ## 2.0.1
 
 - Updated to WalletConnectModal `2.1.8`
