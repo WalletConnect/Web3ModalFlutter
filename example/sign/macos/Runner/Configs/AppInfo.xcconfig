@@ -8,7 +8,7 @@
 PRODUCT_NAME = WC Flutter dApp
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.walletconnect.flutterdapp
+PRODUCT_BUNDLE_IDENTIFIER = com.web3modal.flutterExample
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2023 com.example. All rights reserved.

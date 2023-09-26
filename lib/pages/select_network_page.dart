@@ -1,61 +1,69 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
-import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_navbar.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_navbar_title.dart';
-import 'package:web3modal_flutter/models/w3m_chain_info.dart';
-import 'package:web3modal_flutter/services/network_service.dart/network_service_singleton.dart';
-import 'package:web3modal_flutter/widgets/w3m_token_image.dart';
+import 'package:web3modal_flutter/pages/about_networks.dart';
+import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
+
+import 'package:web3modal_flutter/widgets/lists/networks_grid.dart';
+import 'package:web3modal_flutter/widgets/value_listenable_builders/network_service_items_listener.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
+import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
 class SelectNetworkPage extends StatelessWidget {
   const SelectNetworkPage({
     super.key,
-    required this.onSelect,
+    required this.onTapNetwork,
   });
-
-  final void Function(W3MChainInfo) onSelect;
+  final Function(W3MChainInfo)? onTapNetwork;
 
   @override
   Widget build(BuildContext context) {
-    final WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
-
-    return WalletConnectModalNavBar(
-      title: const WalletConnectModalNavbarTitle(
-        title: 'Select network',
-      ),
-      child: GridList(
-        state: GridListState.long,
-        provider: networkService.instance,
-        onSelect: onSelect,
-        heightOverride: 380,
-        longBottomSheetHeightOverride: 240,
-        longBottomSheetAspectRatio: 0.85,
-        itemAspectRatio: 0.8,
-        createListItem: (info, height) {
-          return Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              W3MTokenImage(
-                imageUrl: info.image,
-                isChain: true,
-                size: 70,
-                cornerRadius: 18,
+    final themeData = Web3ModalTheme.getDataOf(context);
+    final service = Web3ModalProvider.of(context).service;
+    final isSwitch = service.selectedChain != null;
+    return Web3ModalNavbar(
+      title: isSwitch ? 'Change Network' : 'Select Network',
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            NetworkServiceItemsListener(
+              builder: (context, initialised, items) {
+                if (!initialised) {
+                  return const ContentLoading();
+                }
+                return NetworksGrid(
+                  onTapNetwork: onTapNetwork,
+                  itemList: items,
+                );
+              },
+            ),
+            Divider(color: themeData.colors.overgray005, height: 0.0),
+            const SizedBox.square(dimension: 8.0),
+            Text(
+              'Your connected wallet may not support some of the networks available for this dApp',
+              textAlign: TextAlign.center,
+              style: themeData.textStyles.small500.copyWith(
+                color: themeData.colors.foreground300,
               ),
-              const SizedBox(height: 4.0),
-              Text(
-                info.title,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.clip,
-                style: TextStyle(
-                  fontSize: 12.0,
-                  color: themeData.foreground100,
-                ),
+            ),
+            SimpleIconButton(
+              onTap: () {
+                widgetStack.instance.add(const AboutNetworks());
+              },
+              size: BaseButtonSize.small,
+              leftIcon: 'assets/icons/help.svg',
+              title: 'What is a Network',
+              backgroundColor: Colors.transparent,
+              foregroundColor: themeData.colors.blue100,
+              overlayColor: MaterialStateProperty.all<Color>(
+                themeData.colors.background200,
               ),
-            ],
-          );
-        },
+              withBorder: false,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,16 +1,29 @@
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/explorer/i_explorer_service.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:walletconnect_modal_flutter/models/listings.dart';
+import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
+
+import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils_singleton.dart';
 import 'package:web3modal_flutter/services/network_service.dart/network_service_singleton.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/chain_data.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
+import 'package:web3modal_flutter/widgets/web3modal.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
+
+import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+
+import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
+import 'package:walletconnect_modal_flutter/services/explorer/i_explorer_service.dart';
+import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
+import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
+import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 
 class W3MService extends WalletConnectModalService implements IW3MService {
   static const String selectedChainId = 'selectedChainId';
@@ -30,6 +43,10 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   double? _chainBalance;
   @override
   double? get chainBalance => _chainBalance;
+
+  bool _isOpen = false;
+  @override
+  bool get isOpen => _isOpen;
 
   W3MService({
     IWeb3App? web3App,
@@ -119,7 +136,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   @override
   Future<void> setSelectedChain(
     W3MChainInfo? chain, {
-    bool switchChain = true,
+    bool switchChain = false,
   }) async {
     checkInitialized();
 
@@ -176,12 +193,9 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
     // Set the requiredNamespace to be the selected chain
     // This will also notify listeners
-    setRequiredNamespaces(
-      requiredNamespaces: chain.requiredNamespaces,
-    );
+    setRequiredNamespaces(requiredNamespaces: chain.requiredNamespaces);
 
-    // Load the account data, notify listeners when done
-    await _loadAccountData();
+    _loadAccountData();
   }
 
   /// PRIVATE FUNCTIONS ///
@@ -201,8 +215,18 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   }
 
   @override
-  void onSessionConnect(SessionConnect? args) {
+  void onSessionConnect(SessionConnect? args) async {
     super.onSessionConnect(args);
+    LoggerUtil.logger.i('_onSessionConnect: ${args?.session}');
+    // _isConnected = true;
+    // _session = args!.session;
+    // _address = NamespaceUtils.getAccount(
+    //   _session!.namespaces.values.first.accounts.first,
+    // );
+
+    if (_isOpen) {
+      close();
+    }
 
     _loadAccountData();
   }
@@ -225,10 +249,10 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
   /// Loads account balance and avatar.
   /// Returns true if it was able to actually load data (i.e. there is a selected chain and session)
-  Future<bool> _loadAccountData() async {
+  void _loadAccountData() async {
     // If there is no selected chain or session, stop. No account to load in.
     if (selectedChain == null || session == null) {
-      return false;
+      return;
     }
 
     // Get the chain balance.
@@ -241,19 +265,13 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     try {
       final blockchainId = await blockchainApiUtils.instance!.getIdentity(
         address!,
-        int.parse(
-          selectedChain!.chainId,
-        ),
+        int.parse(selectedChain!.chainId),
       );
       _avatarUrl = blockchainId.avatar;
     } catch (_) {
       // Couldn't load avatar, default to address icon
     }
-
-    // Tell everyone we have loaded the things
     notifyListeners();
-
-    return true;
   }
 
   Future<void> _switchEthChain(
@@ -299,5 +317,112 @@ class W3MService extends WalletConnectModalService implements IW3MService {
         );
       },
     );
+  }
+
+  @override
+  Future<void> open({
+    required BuildContext context,
+    Widget? startWidget,
+  }) async {
+    checkInitialized();
+
+    if (_isOpen) {
+      return;
+    }
+
+    _isOpen = true;
+
+    rebuildConnectionUri();
+
+    // Reset the explorer
+    explorerService.instance!.filterList(query: '');
+    widgetStack.instance.clear();
+
+    this.context = context;
+
+    final bool bottomSheet = platformUtils.instance.isBottomSheet();
+
+    notifyListeners();
+
+    final theme = Web3ModalTheme.maybeOf(context);
+    final Widget child = theme == null
+        ? Web3ModalTheme(
+            data: Web3ModalThemeData.lightMode,
+            child: Web3Modal(startWidget: startWidget),
+          )
+        : Web3Modal(startWidget: startWidget);
+
+    final Widget root = Web3ModalProvider(
+      service: this,
+      child: child,
+    );
+
+    if (bottomSheet) {
+      await showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        isDismissible: true,
+        isScrollControlled: true,
+        enableDrag: true,
+        elevation: 0.0,
+        context: context,
+        builder: (context) {
+          return root;
+        },
+      );
+    } else {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return root;
+        },
+      );
+    }
+
+    _isOpen = false;
+
+    notifyListeners();
+  }
+
+  @override
+  void close() {
+    // If we aren't open, then we can't and shouldn't close
+    if (!_isOpen) {
+      return;
+    }
+
+    toastUtils.instance.clear();
+    if (context != null) {
+      // _isOpen and notifyListeners() are handled when we call Navigator.pop()
+      // by the open() method
+      Navigator.pop(context!);
+    } else {
+      notifyListeners();
+    }
+  }
+
+  WalletData? _walletData;
+
+  @override
+  WalletData? get selectedWallet => _walletData;
+
+  @override
+  Future<void> selectWallet({required WalletData? walletData}) async {
+    _walletData = walletData;
+    return;
+  }
+
+  @override
+  bool get hasBlockExplorer => _selectedChain?.blockExplorer != null;
+
+  @override
+  void launchBlockExplorer() async {
+    if (hasBlockExplorer) {
+      final blockExplorer = _selectedChain!.blockExplorer!.url;
+      final explorerUrl = '$blockExplorer/address/$address';
+      await urlUtils.instance.launchUrl(
+        Uri.parse(explorerUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    }
   }
 }

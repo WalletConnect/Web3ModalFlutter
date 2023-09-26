@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
+
+import 'package:web3modal_flutter/web3modal_flutter.dart';
+
 import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
-import 'package:walletconnect_flutter_dapp/models/page_data.dart';
-import 'package:walletconnect_flutter_dapp/pages/basic_page.dart';
-import 'package:walletconnect_flutter_dapp/pages/w3m_page.dart';
-import 'package:walletconnect_flutter_dapp/pages/wcm_page.dart';
-import 'package:walletconnect_flutter_dapp/utils/constants.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/chain_data_wrapper.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/helpers.dart';
 import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_dapp/widgets/event_widget.dart';
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 
+// TODO a refactor of the whole example app must be performed
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({
-    super.key,
-    required this.swapTheme,
-  });
-
+  const MyHomePage({super.key, required this.swapTheme});
   final void Function() swapTheme;
 
   @override
@@ -29,21 +23,15 @@ class _MyHomePageState extends State<MyHomePage> {
   IWeb3App? _web3App;
   bool _initialized = false;
 
-  List<PageData> _pageDatas = [];
-  int _selectedIndex = 0;
-
   @override
   void initState() {
     super.initState();
-
     initialize();
   }
 
   Future<void> initialize() async {
     _web3App = Web3App(
-      core: Core(
-        projectId: DartDefines.projectId,
-      ),
+      core: Core(projectId: DartDefines.projectId),
       metadata: const PairingMetadata(
         name: 'Flutter Dapp Example',
         description: 'Flutter Dapp Example',
@@ -74,39 +62,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     setState(() {
-      _pageDatas = [
-        PageData(
-          page: BasicPage(web3App: _web3App!),
-          title: StringConstants.basicPageTitle,
-          icon: Icons.looks_one,
-        ),
-        PageData(
-          page: WCMPage(web3App: _web3App!),
-          title: StringConstants.wcmPageTitle,
-          icon: Icons.looks_two,
-        ),
-        PageData(
-          page: W3MPage(web3App: _web3App!),
-          title: StringConstants.w3mPageTitle,
-          icon: Icons.looks_3,
-        ),
-        // PageData(
-        //   page: PairingsPage(web3App: _web3App!),
-        //   title: StringConstants.pairingsPageTitle,
-        //   icon: Icons.connect_without_contact_sharp,
-        // ),
-        // PageData(
-        //   page: SessionsPage(web3App: _web3App!),
-        //   title: StringConstants.sessionsPageTitle,
-        //   icon: Icons.confirmation_number_outlined,
-        // ),
-        // PageData(
-        //   page: AuthPage(web3App: _web3App!),
-        //   title: StringConstants.authPageTitle,
-        //   icon: Icons.lock,
-        // ),
-      ];
-
       _initialized = true;
     });
   }
@@ -123,108 +78,27 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!_initialized) {
       return Center(
         child: CircularProgressIndicator(
-          color: WalletConnectModalTheme.getData(context).primary100,
+          color: Web3ModalTheme.getDataOf(context).colors.blue100,
         ),
       );
     }
 
-    final List<Widget> navRail = [];
-    if (MediaQuery.of(context).size.width >= Constants.smallScreen) {
-      navRail.add(_buildNavigationRail());
-    }
-    navRail.add(
-      Expanded(
-        child: _pageDatas[_selectedIndex].page,
-      ),
-    );
+    final isDarkMode = Web3ModalTheme.of(context).isDarkMode;
 
     return Scaffold(
-      bottomNavigationBar:
-          MediaQuery.of(context).size.width < Constants.smallScreen
-              ? _buildBottomNavBar()
-              : null,
-      body: Stack(
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: navRail,
-          ),
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: Row(
-              children: [
-                _buildIconButton(
-                  Icons.theater_comedy_outlined,
-                  widget.swapTheme,
-                ),
-              ],
-            ),
+      backgroundColor: Web3ModalTheme.getDataOf(context).colors.background300,
+      appBar: AppBar(
+        title: const Text(StringConstants.w3mPageTitleV3),
+        actions: [
+          IconButton(
+            icon: isDarkMode
+                ? const Icon(Icons.light_mode)
+                : const Icon(Icons.dark_mode),
+            onPressed: widget.swapTheme,
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      unselectedItemColor: Colors.grey,
-      selectedItemColor: Colors.indigoAccent,
-      // called when one tab is selected
-      onTap: (int index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
-      // bottom tab items
-      items: _pageDatas
-          .map(
-            (e) => BottomNavigationBarItem(
-              icon: Icon(e.icon),
-              label: e.title,
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget _buildNavigationRail() {
-    return NavigationRail(
-      selectedIndex: _selectedIndex,
-      onDestinationSelected: (int index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-      },
-      labelType: NavigationRailLabelType.selected,
-      destinations: _pageDatas
-          .map(
-            (e) => NavigationRailDestination(
-              icon: Icon(e.icon),
-              label: Text(e.title),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  Widget _buildIconButton(IconData icon, void Function()? onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: BorderRadius.circular(
-          48,
-        ),
-      ),
-      child: IconButton(
-        icon: Icon(
-          icon,
-          color: Colors.white,
-        ),
-        iconSize: 24,
-        onPressed: onPressed,
-      ),
+      body: _W3MPage(web3App: _web3App!),
     );
   }
 
@@ -250,6 +124,126 @@ class _MyHomePageState extends State<MyHomePage> {
               'Topic: ${args!.topic}\nEvent Name: ${args.name}\nEvent Data: ${args.data}',
         );
       },
+    );
+  }
+}
+
+class _W3MPage extends StatefulWidget {
+  const _W3MPage({required this.web3App});
+
+  final IWeb3App web3App;
+
+  @override
+  State<_W3MPage> createState() => _W3MPageState();
+}
+
+class _W3MPageState extends State<_W3MPage> {
+  W3MService? _w3mService;
+  bool _isConnected = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
+    widget.web3App.onSessionDelete.subscribe(_onWeb3AppDisconnect);
+  }
+
+  Future<bool> _initializeService() async {
+    try {
+      if (_w3mService != null) return true;
+      _w3mService = W3MService(
+        web3App: widget.web3App,
+        recommendedWalletIds: {
+          'afbd95522f4041c71dd4f1a065f971fd32372865b416f95a0b1db759ae33f2a7',
+          '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662',
+          'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+        },
+      );
+
+      await _w3mService?.init();
+      _isConnected = widget.web3App.sessions.getAll().isNotEmpty;
+      return true;
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.web3App.onSessionConnect.unsubscribe(_onWeb3AppConnect);
+    widget.web3App.onSessionDelete.unsubscribe(_onWeb3AppDisconnect);
+    super.dispose();
+  }
+
+  void _onWeb3AppConnect(SessionConnect? args) {
+    // If we connect, default to barebones
+    setState(() {
+      _isConnected = true;
+    });
+  }
+
+  void _onWeb3AppDisconnect(SessionDelete? args) {
+    setState(() {
+      _isConnected = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _initializeService(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError || snapshot.data == false) {
+          return const Center(
+            child: Text('Something went wrong'),
+          );
+        }
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: Web3ModalTheme.getDataOf(context).colors.blue100,
+            ),
+          );
+        }
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox.square(dimension: 8.0),
+              if (!_isConnected) W3MNetworkSelectButton(service: _w3mService!),
+              W3MConnectWalletButton(service: _w3mService!),
+              const SizedBox.square(dimension: 8.0),
+              const Divider(height: 0.0),
+              if (_isConnected) _ConnectedView(w3mService: _w3mService!)
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ConnectedView extends StatelessWidget {
+  const _ConnectedView({required this.w3mService});
+  final W3MService w3mService;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox.square(dimension: 12.0),
+        W3MAccountButton(service: w3mService),
+        SessionWidget(
+          session: w3mService.web3App!.sessions.getAll().first,
+          web3App: w3mService.web3App!,
+          launchRedirect: () {
+            w3mService.launchCurrentWallet();
+          },
+        ),
+        const SizedBox.square(dimension: 12.0),
+      ],
     );
   }
 }

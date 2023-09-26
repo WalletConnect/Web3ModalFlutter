@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
-import 'package:walletconnect_modal_flutter/widgets/walletconnect_modal_button.dart';
-import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/widgets/w3m_address.dart';
-import 'package:web3modal_flutter/widgets/w3m_avatar.dart';
-import 'package:web3modal_flutter/widgets/w3m_balance.dart';
+import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/utils/util.dart';
+import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
+import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
+import 'package:web3modal_flutter/widgets/avatars/w3m_account_avatar.dart';
+import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 
 class W3MAccountButton extends StatefulWidget {
   const W3MAccountButton({
     super.key,
     required this.service,
+    this.size = BaseButtonSize.regular,
     this.avatar,
   });
 
   final IW3MService service;
+  final BaseButtonSize size;
   final String? avatar;
 
   @override
@@ -23,94 +25,151 @@ class W3MAccountButton extends StatefulWidget {
 }
 
 class _W3MAccountButtonState extends State<W3MAccountButton> {
-  static const double _scaleDefault = 1.0;
-  static const double _scaleTapped = 0.9;
+  String? _address;
+  String? _tokenImage;
+  String _balance = BalanceButton.balanceDefault;
+  String? _tokenName;
 
-  double scale = 1.0;
+  @override
+  void initState() {
+    super.initState();
+    _w3mServiceUpdated();
+    widget.service.addListener(_w3mServiceUpdated);
+  }
+
+  @override
+  void dispose() {
+    widget.service.removeListener(_w3mServiceUpdated);
+    super.dispose();
+  }
+
+  void _w3mServiceUpdated() {
+    setState(() {
+      _address = widget.service.address;
+      _tokenImage = widget.service.tokenImageUrl;
+      _balance = BalanceButton.balanceDefault;
+      if (widget.service.chainBalance != null) {
+        _balance = widget.service.chainBalance!.toStringAsPrecision(4);
+        _balance = _balance.replaceAll(RegExp(r'([.]*0+)(?!.*\d)'), '');
+      }
+      _tokenName = widget.service.selectedChain?.tokenName;
+    });
+  }
+
+  void _onTap() => widget.service.open(
+        context: context,
+        startWidget: const AccountPage(),
+      );
 
   @override
   Widget build(BuildContext context) {
-    WalletConnectModalThemeData themeData =
-        WalletConnectModalTheme.getData(context);
-
-    return Container(
-      padding: const EdgeInsets.all(4.0),
-      height: 40,
-      decoration: BoxDecoration(
-        color: themeData.background200,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(
-            10, //themeData.radiusXS,
-          ),
+    final themeData = Web3ModalTheme.getDataOf(context);
+    // TODO this button should be able to be disable by passing a null onTap action
+    // I should decouple an AccountButton from W3MAccountButton like on ConnectButton and NetworkButton
+    return BaseButton(
+      size: widget.size,
+      onTap: _onTap,
+      overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+        const EdgeInsets.only(right: 4.0),
+      ),
+      buttonStyle: ButtonStyle(
+        backgroundColor: MaterialStateProperty.resolveWith<Color>(
+          (states) {
+            if (states.contains(MaterialState.disabled)) {
+              return themeData.colors.overgray005;
+            }
+            return themeData.colors.overgray010;
+          },
         ),
-        border: Border.all(
-          color: themeData.overlay030,
-          width: 1.0,
+        foregroundColor: MaterialStateProperty.resolveWith<Color>(
+          (states) {
+            if (states.contains(MaterialState.disabled)) {
+              return themeData.colors.overgray015;
+            }
+            return themeData.colors.foreground175;
+          },
+        ),
+        shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
+          (states) {
+            return RoundedRectangleBorder(
+              side: states.contains(MaterialState.disabled)
+                  ? BorderSide(color: themeData.colors.overgray005, width: 1.0)
+                  : BorderSide(color: themeData.colors.overgray010, width: 1.0),
+              borderRadius: BorderRadius.circular(widget.size.height / 2),
+            );
+          },
         ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 4,
-            ),
-            child: W3MBalance(service: widget.service),
+      icon: BaseButton(
+        size: BaseButtonSize.small,
+        onTap: _onTap,
+        overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+          const EdgeInsets.only(left: 8.0),
+        ),
+        buttonStyle: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+          foregroundColor: MaterialStateProperty.resolveWith<Color>(
+            (states) {
+              if (states.contains(MaterialState.disabled)) {
+                return themeData.colors.overgray015;
+              }
+              return themeData.colors.foreground100;
+            },
           ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            key: Web3ModalConstants.w3mAccountButton,
-            onTapDown: (details) {
-              setState(() {
-                scale = _scaleTapped;
-              });
+        ),
+        icon: RoundedIcon(
+          imageUrl: _tokenImage,
+          size: widget.size.iconSize + 4.0,
+        ),
+        child: Text('$_balance ${_tokenName ?? ''}'),
+      ),
+      child: BaseButton(
+        size: BaseButtonSize.small,
+        onTap: _onTap,
+        overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+          const EdgeInsets.only(left: 8.0, right: 8.0),
+        ),
+        buttonStyle: ButtonStyle(
+          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+            (states) {
+              if (states.contains(MaterialState.disabled)) {
+                return themeData.colors.overgray005;
+              }
+              return themeData.colors.overgray010;
             },
-            onTapUp: (details) {
-              setState(() {
-                scale = _scaleDefault;
-              });
-            },
-            onTapCancel: () {
-              setState(() {
-                scale = _scaleDefault;
-              });
-            },
-            child: AnimatedScale(
-              scale: scale,
-              duration: const Duration(milliseconds: 100),
-              child: WalletConnectModalButton(
-                height: 32,
-                padding: const EdgeInsets.only(
-                  left: 4.0,
-                  right: 10.0,
-                  top: 3.0,
-                  bottom: 3.0,
-                ),
-                onPressed: () {
-                  widget.service.open(
-                    context: context,
-                    startWidget: const AccountPage(),
-                  );
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Rainbow circle avatar (assuming you use the Image widget)
-                    W3MAvatar(
-                      service: widget.service,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 4.0),
-                    // Address
-                    W3MAddress(
-                      service: widget.service,
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ),
-        ],
+          foregroundColor: MaterialStateProperty.resolveWith<Color>(
+            (states) {
+              if (states.contains(MaterialState.disabled)) {
+                return themeData.colors.overgray015;
+              }
+              return themeData.colors.foreground175;
+            },
+          ),
+          shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
+            (states) {
+              return RoundedRectangleBorder(
+                side: states.contains(MaterialState.disabled)
+                    ? BorderSide(
+                        color: themeData.colors.overgray005,
+                        width: 1.0,
+                      )
+                    : BorderSide(
+                        color: themeData.colors.overgray010,
+                        width: 1.0,
+                      ),
+                borderRadius:
+                    BorderRadius.circular(BaseButtonSize.small.height / 2),
+              );
+            },
+          ),
+        ),
+        icon: W3MAccountAvatar(
+          service: widget.service,
+          size: widget.size.iconSize,
+          disabled: false,
+        ),
+        child: Text(Util.truncate(_address ?? '')),
       ),
     );
   }

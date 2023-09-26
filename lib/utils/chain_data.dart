@@ -26,6 +26,10 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://eth.drpc.org',
+      blockExplorer: BlockExplorer(
+        name: 'Etherscan',
+        url: 'https://etherscan.io',
+      ),
     ),
     '42161': W3MChainInfo(
       chainName: 'Arbitrum',
@@ -48,6 +52,36 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://arbitrum.blockpi.network/v1/rpc/public',
+      blockExplorer: BlockExplorer(
+        name: 'Arbiscan',
+        url: 'https://arbiscan.io/',
+      ),
+    ),
+    '137': W3MChainInfo(
+      chainName: 'Polygon',
+      namespace: 'eip155:137',
+      chainId: '137',
+      chainIcon: '41d04d42-da3b-4453-8506-668cc0727900',
+      tokenName: 'MATIC',
+      requiredNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethRequiredMethods,
+          chains: ['eip155:137'],
+          events: EthUtil.ethEvents,
+        ),
+      },
+      optionalNamespaces: {
+        'eip155': const RequiredNamespace(
+          methods: EthUtil.ethOptionalMethods,
+          chains: ['eip155:137'],
+          events: [],
+        ),
+      },
+      rpcUrl: 'https://polygon.drpc.org',
+      blockExplorer: BlockExplorer(
+        name: 'Explorer',
+        url: 'https://explorer.matic.network/',
+      ),
     ),
     '43114': W3MChainInfo(
       chainName: 'Avalanche',
@@ -70,6 +104,10 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
+      blockExplorer: BlockExplorer(
+        name: 'Snowtrace',
+        url: 'https://snowtrace.io',
+      ),
     ),
     '56': W3MChainInfo(
       chainName: 'Binance Smart Chain',
@@ -92,28 +130,10 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://bsc-dataseed.binance.org/',
-    ),
-    '250': W3MChainInfo(
-      chainName: 'Fantom',
-      namespace: 'eip155:250',
-      chainId: '250',
-      chainIcon: '06b26297-fe0c-4733-5d6b-ffa5498aac00',
-      tokenName: 'FTM',
-      requiredNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
-          chains: ['eip155:250'],
-          events: EthUtil.ethEvents,
-        ),
-      },
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
-          chains: ['eip155:250'],
-          events: [],
-        ),
-      },
-      rpcUrl: 'https://rpc.ftm.tools/',
+      blockExplorer: BlockExplorer(
+        name: 'BSC Scan',
+        url: 'https://bscscan.com',
+      ),
     ),
     '10': W3MChainInfo(
       chainName: 'Optimism',
@@ -137,34 +157,32 @@ class ChainData {
       },
       rpcUrl: 'https://mainnet.optimism.io/',
     ),
-    '137': W3MChainInfo(
-      chainName: 'Polygon',
-      namespace: 'eip155:137',
-      chainId: '137',
-      chainIcon: '41d04d42-da3b-4453-8506-668cc0727900',
-      tokenName: 'MATIC',
+    '250': W3MChainInfo(
+      chainName: 'Fantom',
+      namespace: 'eip155:250',
+      chainId: '250',
+      chainIcon: '06b26297-fe0c-4733-5d6b-ffa5498aac00',
+      tokenName: 'FTM',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
           methods: EthUtil.ethRequiredMethods,
-          chains: ['eip155:137'],
+          chains: ['eip155:250'],
           events: EthUtil.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
           methods: EthUtil.ethOptionalMethods,
-          chains: ['eip155:137'],
+          chains: ['eip155:250'],
           events: [],
         ),
       },
-      rpcUrl: 'https://polygon.drpc.org',
+      rpcUrl: 'https://rpc.ftm.tools/',
+      blockExplorer: BlockExplorer(
+        name: 'FTM Scan',
+        url: 'https://ftmscan.com',
+      ),
     ),
-    // '100': W3MChainInfo(
-    //   chainName: 'Gnosis',
-    //   chainId: '100',
-    //   chainIcon: '02b53f6a-e3d4-479e-1cb4-21178987d100',
-    //   tokenName: 'ETH',
-    // ),
     '9001': W3MChainInfo(
       chainName: 'EVMos',
       namespace: 'eip155:9001',
@@ -187,18 +205,6 @@ class ChainData {
       },
       rpcUrl: 'https://eth.bd.evmos.org:8545',
     ),
-    // '324': W3MChainInfo(
-    //   chainName: 'ZkSync',
-    //   chainId: '324',
-    //   chainIcon: 'b310f07f-4ef7-49f3-7073-2a0a39685800',
-    //   tokenName: 'ETH',
-    // ),
-    // '314': W3MChainInfo(
-    //   chainName: 'Filecoin',
-    //   chainId: '314',
-    //   chainIcon: '5a73b3dd-af74-424e-cae0-0de859ee9400',
-    //   tokenName: 'ETH',
-    // ),
     '4689': W3MChainInfo(
       chainName: 'Iotx',
       namespace: 'eip155:4689',
@@ -220,6 +226,10 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://rpc.ankr.com/iotex',
+      blockExplorer: BlockExplorer(
+        name: 'IOTEX Scan',
+        url: 'https://iotexscan.io/',
+      ),
     ),
     '1088': W3MChainInfo(
       chainName: 'Metis',
@@ -243,6 +253,24 @@ class ChainData {
       },
       rpcUrl: 'https://metis-mainnet.public.blastapi.io',
     ),
+    // '100': W3MChainInfo(
+    //   chainName: 'Gnosis',
+    //   chainId: '100',
+    //   chainIcon: '02b53f6a-e3d4-479e-1cb4-21178987d100',
+    //   tokenName: 'ETH',
+    // ),
+    // '324': W3MChainInfo(
+    //   chainName: 'ZkSync',
+    //   chainId: '324',
+    //   chainIcon: 'b310f07f-4ef7-49f3-7073-2a0a39685800',
+    //   tokenName: 'ETH',
+    // ),
+    // '314': W3MChainInfo(
+    //   chainName: 'Filecoin',
+    //   chainId: '314',
+    //   chainIcon: '5a73b3dd-af74-424e-cae0-0de859ee9400',
+    //   tokenName: 'ETH',
+    // ),
     // '1284': W3MChainInfo(
     //   chainName: 'Moonbeam',
     //   chainId: '1284',
@@ -255,19 +283,5 @@ class ChainData {
     //   chainIcon: 'f1d73bb6-5450-4e18-38f7-fb6484264a00',
     //   tokenName: 'ETH',
     // ),
-  };
-
-  static const Map<String, W3MAssetIcon> tokenPresets = {
-    'ETH': W3MAssetIcon('692ed6ba-e569-459a-556a-776476829e00'),
-    'WETH': W3MAssetIcon('692ed6ba-e569-459a-556a-776476829e00'),
-    'AVAX': W3MAssetIcon('30c46e53-e989-45fb-4549-be3bd4eb3b00'),
-    'FTM': W3MAssetIcon('06b26297-fe0c-4733-5d6b-ffa5498aac00'),
-    'BNB': W3MAssetIcon('93564157-2e8e-4ce7-81df-b264dbee9b00'),
-    'MATIC': W3MAssetIcon('41d04d42-da3b-4453-8506-668cc0727900'),
-    'OP': W3MAssetIcon('ab9c186a-c52f-464b-2906-ca59d760a400'),
-    'xDAI': W3MAssetIcon('02b53f6a-e3d4-479e-1cb4-21178987d100'),
-    'EVMOS': W3MAssetIcon('f926ff41-260d-4028-635e-91913fc28e00'),
-    'METIS': W3MAssetIcon('3897a66d-40b9-4833-162f-a2c90531c900'),
-    'IOTX': W3MAssetIcon('34e68754-e536-40da-c153-6ef2e7188a00'),
   };
 }

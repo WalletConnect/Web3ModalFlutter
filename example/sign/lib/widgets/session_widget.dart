@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+
+import 'package:web3modal_flutter/web3modal_flutter.dart';
+
 import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
 import 'package:walletconnect_flutter_dapp/utils/constants.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/eip155.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/helpers.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_dapp/widgets/method_dialog.dart';
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
 class SessionWidget extends StatefulWidget {
   const SessionWidget({
@@ -32,12 +34,8 @@ class SessionWidgetState extends State<SessionWidget> {
         style: StyleConstants.titleText,
         textAlign: TextAlign.center,
       ),
-      const SizedBox(
-        height: StyleConstants.linear16,
-      ),
-      Text(
-        '${StringConstants.sessionTopic}${widget.session.topic}',
-      ),
+      const SizedBox(height: StyleConstants.linear16),
+      Text('${StringConstants.sessionTopic}${widget.session.topic}'),
     ];
 
     // Get all of the accounts
@@ -50,20 +48,14 @@ class SessionWidgetState extends State<SessionWidget> {
 
     // Loop through the namespace accounts and build the widgets
     for (final String namespaceAccount in namespaceAccounts) {
-      children.add(
-        _buildAccountWidget(
-          namespaceAccount,
-        ),
-      );
+      children.add(_buildAccountWidget(namespaceAccount));
     }
 
-    // Add a delete button
-    // children.add(
-
-    // );
-
-    return ListView(
-      children: children,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        children: children,
+      ),
     );
   }
 
@@ -81,58 +73,25 @@ class SessionWidgetState extends State<SessionWidget> {
         chainMetadata.w3mChainInfo.chainName,
         style: StyleConstants.subtitleText,
       ),
-      const SizedBox(
-        height: StyleConstants.linear8,
-      ),
-      Text(
-        account,
-        textAlign: TextAlign.center,
-      ),
-      const SizedBox(
-        height: StyleConstants.linear8,
-      ),
-      const Text(
-        StringConstants.methods,
-        style: StyleConstants.subtitleText,
-      ),
+      const SizedBox(height: StyleConstants.linear8),
+      Text(account, textAlign: TextAlign.center),
+      const SizedBox(height: StyleConstants.linear8),
+      const Text(StringConstants.methods, style: StyleConstants.subtitleText),
     ];
 
-    children.addAll(
-      _buildChainMethodButtons(
-        chainMetadata,
-        account,
-      ),
-    );
+    children.addAll(_buildChainMethodButtons(chainMetadata, account));
 
     children.addAll([
-      const SizedBox(
-        height: StyleConstants.linear8,
-      ),
-      const Text(
-        StringConstants.events,
-        style: StyleConstants.subtitleText,
-      ),
+      const SizedBox(height: StyleConstants.linear8),
+      const Text(StringConstants.events, style: StyleConstants.subtitleText),
     ]);
-    children.addAll(
-      _buildChainEventsTiles(
-        chainMetadata,
-      ),
-    );
+    children.addAll(_buildChainEventsTiles(chainMetadata));
 
-    // final ChainMetadata
     return Container(
-      width: double.infinity,
-      // height: StyleConstants.linear48,
-      padding: const EdgeInsets.all(
-        StyleConstants.linear8,
-      ),
-      margin: const EdgeInsets.symmetric(
-        vertical: StyleConstants.linear8,
-      ),
+      padding: const EdgeInsets.all(StyleConstants.linear8),
+      margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: chainMetadata.color,
-        ),
+        border: Border.all(color: chainMetadata.color),
         borderRadius: const BorderRadius.all(
           Radius.circular(
             StyleConstants.linear8,
@@ -140,6 +99,7 @@ class SessionWidgetState extends State<SessionWidget> {
         ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: children,
       ),
     );
@@ -154,24 +114,17 @@ class SessionWidgetState extends State<SessionWidget> {
     for (final String method in getChainMethods(chainMetadata.type)) {
       buttons.add(
         Container(
-          width: double.infinity,
           height: StyleConstants.linear48,
-          margin: const EdgeInsets.symmetric(
-            vertical: StyleConstants.linear8,
-          ),
+          margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
           child: ElevatedButton(
             onPressed: () async {
-              Future<dynamic> future = callChainMethod(
+              final future = callChainMethod(
                 chainMetadata.type,
                 method,
                 chainMetadata,
                 address,
               );
-              MethodDialog.show(
-                context,
-                method,
-                future,
-              );
+              MethodDialog.show(context, method, future);
               widget.launchRedirect();
             },
             style: ButtonStyle(
@@ -205,7 +158,6 @@ class SessionWidgetState extends State<SessionWidget> {
     for (final String event in getChainEvents(chainMetadata.type)) {
       values.add(
         Container(
-          width: double.infinity,
           height: StyleConstants.linear48,
           margin: const EdgeInsets.symmetric(
             vertical: StyleConstants.linear8,
@@ -215,9 +167,7 @@ class SessionWidgetState extends State<SessionWidget> {
               color: chainMetadata.color,
             ),
             borderRadius: const BorderRadius.all(
-              Radius.circular(
-                StyleConstants.linear8,
-              ),
+              Radius.circular(StyleConstants.linear8),
             ),
           ),
           child: Center(

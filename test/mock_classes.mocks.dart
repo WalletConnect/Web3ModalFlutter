@@ -452,6 +452,14 @@ class MockExplorerService extends _i1.Mock implements _i15.ExplorerService {
         returnValue: '',
       ) as String);
   @override
+  set previousRecentWallet(String? _previousRecentWallet) => super.noSuchMethod(
+        Invocation.setter(
+          #previousRecentWallet,
+          _previousRecentWallet,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
   _i4.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
           #init,
@@ -466,6 +474,14 @@ class MockExplorerService extends _i1.Mock implements _i15.ExplorerService {
           #filterList,
           [],
           {#query: query},
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void updateSort() => super.noSuchMethod(
+        Invocation.method(
+          #updateSort,
+          [],
         ),
         returnValueForMissingStub: null,
       );
@@ -670,10 +686,12 @@ class MockWalletConnectModalService extends _i1.Mock
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  _i4.Future<void> disconnect() => (super.noSuchMethod(
+  _i4.Future<void> disconnect({bool? disconnectAllSessions = true}) =>
+      (super.noSuchMethod(
         Invocation.method(
           #disconnect,
           [],
+          {#disconnectAllSessions: disconnectAllSessions},
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
@@ -682,6 +700,15 @@ class MockWalletConnectModalService extends _i1.Mock
   _i4.Future<void> launchCurrentWallet() => (super.noSuchMethod(
         Invocation.method(
           #launchCurrentWallet,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
+  _i4.Future<void> rebuildConnectionUri() => (super.noSuchMethod(
+        Invocation.method(
+          #rebuildConnectionUri,
           [],
         ),
         returnValue: _i4.Future<void>.value(),
@@ -729,10 +756,11 @@ class MockWalletConnectModalService extends _i1.Mock
         returnValue: '',
       ) as String);
   @override
-  _i4.Future<void> rebuildConnectionUri() => (super.noSuchMethod(
+  _i4.Future<void> disconnectSession(_i6.SessionData? toDisconnect) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #rebuildConnectionUri,
-          [],
+          #disconnectSession,
+          [toDisconnect],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
@@ -1070,6 +1098,16 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
   }
 
   @override
+  bool get isOpen => (super.noSuchMethod(
+        Invocation.getter(#isOpen),
+        returnValue: false,
+      ) as bool);
+  @override
+  bool get hasBlockExplorer => (super.noSuchMethod(
+        Invocation.getter(#hasBlockExplorer),
+        returnValue: false,
+      ) as bool);
+  @override
   set connectResponse(_i6.ConnectResponse? _connectResponse) =>
       super.noSuchMethod(
         Invocation.setter(
@@ -1096,11 +1134,6 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         Invocation.getter(#projectId),
         returnValue: '',
       ) as String);
-  @override
-  bool get isOpen => (super.noSuchMethod(
-        Invocation.getter(#isOpen),
-        returnValue: false,
-      ) as bool);
   @override
   bool get isConnected => (super.noSuchMethod(
         Invocation.getter(#isConnected),
@@ -1165,7 +1198,7 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
   @override
   _i4.Future<void> setSelectedChain(
     _i23.W3MChainInfo? chain, {
-    bool? switchChain = true,
+    bool? switchChain = false,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1201,14 +1234,6 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  _i4.Future<Null> onDispose() => (super.noSuchMethod(
-        Invocation.method(
-          #onDispose,
-          [],
-        ),
-        returnValue: _i4.Future<Null>.value(),
-      ) as _i4.Future<Null>);
-  @override
   _i4.Future<void> open({
     required _i2.BuildContext? context,
     _i2.Widget? startWidget,
@@ -1234,6 +1259,33 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: null,
       );
   @override
+  _i4.Future<void> selectWallet({required _i18.WalletData? walletData}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #selectWallet,
+          [],
+          {#walletData: walletData},
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
+  void launchBlockExplorer() => super.noSuchMethod(
+        Invocation.method(
+          #launchBlockExplorer,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  _i4.Future<Null> onDispose() => (super.noSuchMethod(
+        Invocation.method(
+          #onDispose,
+          [],
+        ),
+        returnValue: _i4.Future<Null>.value(),
+      ) as _i4.Future<Null>);
+  @override
   _i4.Future<void> reconnectRelay() => (super.noSuchMethod(
         Invocation.method(
           #reconnectRelay,
@@ -1243,10 +1295,12 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  _i4.Future<void> disconnect() => (super.noSuchMethod(
+  _i4.Future<void> disconnect({bool? disconnectAllSessions = true}) =>
+      (super.noSuchMethod(
         Invocation.method(
           #disconnect,
           [],
+          {#disconnectAllSessions: disconnectAllSessions},
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
@@ -1255,6 +1309,15 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
   _i4.Future<void> launchCurrentWallet() => (super.noSuchMethod(
         Invocation.method(
           #launchCurrentWallet,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
+  _i4.Future<void> rebuildConnectionUri() => (super.noSuchMethod(
+        Invocation.method(
+          #rebuildConnectionUri,
           [],
         ),
         returnValue: _i4.Future<void>.value(),
@@ -1302,10 +1365,11 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValue: '',
       ) as String);
   @override
-  _i4.Future<void> rebuildConnectionUri() => (super.noSuchMethod(
+  _i4.Future<void> disconnectSession(_i6.SessionData? toDisconnect) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #rebuildConnectionUri,
-          [],
+          #disconnectSession,
+          [toDisconnect],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
@@ -1619,6 +1683,11 @@ class MockUrlUtils extends _i1.Mock implements _i24.UrlUtils {
   }
 
   @override
+  _i4.Future<bool> Function(String) get androidAppCheck => (super.noSuchMethod(
+        Invocation.getter(#androidAppCheck),
+        returnValue: (String uri) => _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool> Function(String));
+  @override
   _i4.Future<bool> Function(
     Uri, {
     _i25.LaunchMode? mode,
@@ -1705,6 +1774,14 @@ class MockPlatformUtils extends _i1.Mock implements _i26.PlatformUtils {
     _i1.throwOnMissingStub(this);
   }
 
+  @override
+  _i27.PlatformExact getPlatformExact() => (super.noSuchMethod(
+        Invocation.method(
+          #getPlatformExact,
+          [],
+        ),
+        returnValue: _i27.PlatformExact.iOS,
+      ) as _i27.PlatformExact);
   @override
   _i27.PlatformType getPlatformType() => (super.noSuchMethod(
         Invocation.method(
@@ -1807,14 +1884,6 @@ class MockToastUtils extends _i1.Mock implements _i28.ToastUtils {
         ),
         returnValueForMissingStub: null,
       );
-  @override
-  _i4.Future<Null> onDispose() => (super.noSuchMethod(
-        Invocation.method(
-          #onDispose,
-          [],
-        ),
-        returnValue: _i4.Future<Null>.value(),
-      ) as _i4.Future<Null>);
   @override
   _i4.Future<T> awaitBeforeDispose<T>(_i4.Future<T>? future) =>
       (super.noSuchMethod(
@@ -2040,6 +2109,14 @@ class MockToastUtils extends _i1.Mock implements _i28.ToastUtils {
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  _i4.Future<Null> onDispose() => (super.noSuchMethod(
+        Invocation.method(
+          #onDispose,
+          [],
+        ),
+        returnValue: _i4.Future<Null>.value(),
+      ) as _i4.Future<Null>);
   @override
   _i4.Future<Null> onWillDispose() => (super.noSuchMethod(
         Invocation.method(
@@ -3196,6 +3273,14 @@ class MockNetworkService extends _i1.Mock implements _i34.NetworkService {
           #filterList,
           [],
           {#query: query},
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void updateSort() => super.noSuchMethod(
+        Invocation.method(
+          #updateSort,
+          [],
         ),
         returnValueForMissingStub: null,
       );

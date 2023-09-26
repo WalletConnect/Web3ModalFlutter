@@ -26,6 +26,7 @@ mixin _$W3MChainInfo {
   Map<String, RequiredNamespace> get optionalNamespaces =>
       throw _privateConstructorUsedError;
   String get rpcUrl => throw _privateConstructorUsedError;
+  BlockExplorer? get blockExplorer => throw _privateConstructorUsedError;
   ILedgerService get ledgerService => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -48,7 +49,10 @@ abstract class $W3MChainInfoCopyWith<$Res> {
       Map<String, RequiredNamespace> requiredNamespaces,
       Map<String, RequiredNamespace> optionalNamespaces,
       String rpcUrl,
+      BlockExplorer? blockExplorer,
       ILedgerService ledgerService});
+
+  $BlockExplorerCopyWith<$Res>? get blockExplorer;
 }
 
 /// @nodoc
@@ -72,6 +76,7 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
     Object? requiredNamespaces = null,
     Object? optionalNamespaces = null,
     Object? rpcUrl = null,
+    Object? blockExplorer = freezed,
     Object? ledgerService = null,
   }) {
     return _then(_value.copyWith(
@@ -107,11 +112,27 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
           ? _value.rpcUrl
           : rpcUrl // ignore: cast_nullable_to_non_nullable
               as String,
+      blockExplorer: freezed == blockExplorer
+          ? _value.blockExplorer
+          : blockExplorer // ignore: cast_nullable_to_non_nullable
+              as BlockExplorer?,
       ledgerService: null == ledgerService
           ? _value.ledgerService
           : ledgerService // ignore: cast_nullable_to_non_nullable
               as ILedgerService,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $BlockExplorerCopyWith<$Res>? get blockExplorer {
+    if (_value.blockExplorer == null) {
+      return null;
+    }
+
+    return $BlockExplorerCopyWith<$Res>(_value.blockExplorer!, (value) {
+      return _then(_value.copyWith(blockExplorer: value) as $Val);
+    });
   }
 }
 
@@ -132,7 +153,11 @@ abstract class _$$_W3MChainInfoCopyWith<$Res>
       Map<String, RequiredNamespace> requiredNamespaces,
       Map<String, RequiredNamespace> optionalNamespaces,
       String rpcUrl,
+      BlockExplorer? blockExplorer,
       ILedgerService ledgerService});
+
+  @override
+  $BlockExplorerCopyWith<$Res>? get blockExplorer;
 }
 
 /// @nodoc
@@ -154,6 +179,7 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
     Object? requiredNamespaces = null,
     Object? optionalNamespaces = null,
     Object? rpcUrl = null,
+    Object? blockExplorer = freezed,
     Object? ledgerService = null,
   }) {
     return _then(_$_W3MChainInfo(
@@ -189,6 +215,10 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
           ? _value.rpcUrl
           : rpcUrl // ignore: cast_nullable_to_non_nullable
               as String,
+      blockExplorer: freezed == blockExplorer
+          ? _value.blockExplorer
+          : blockExplorer // ignore: cast_nullable_to_non_nullable
+              as BlockExplorer?,
       ledgerService: null == ledgerService
           ? _value.ledgerService
           : ledgerService // ignore: cast_nullable_to_non_nullable
@@ -209,6 +239,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
       required final Map<String, RequiredNamespace> requiredNamespaces,
       required final Map<String, RequiredNamespace> optionalNamespaces,
       required this.rpcUrl,
+      this.blockExplorer,
       this.ledgerService = const EVMService()})
       : _requiredNamespaces = requiredNamespaces,
         _optionalNamespaces = optionalNamespaces;
@@ -244,12 +275,14 @@ class _$_W3MChainInfo implements _W3MChainInfo {
   @override
   final String rpcUrl;
   @override
+  final BlockExplorer? blockExplorer;
+  @override
   @JsonKey()
   final ILedgerService ledgerService;
 
   @override
   String toString() {
-    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, namespace: $namespace, chainIcon: $chainIcon, tokenName: $tokenName, requiredNamespaces: $requiredNamespaces, optionalNamespaces: $optionalNamespaces, rpcUrl: $rpcUrl, ledgerService: $ledgerService)';
+    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, namespace: $namespace, chainIcon: $chainIcon, tokenName: $tokenName, requiredNamespaces: $requiredNamespaces, optionalNamespaces: $optionalNamespaces, rpcUrl: $rpcUrl, blockExplorer: $blockExplorer, ledgerService: $ledgerService)';
   }
 
   @override
@@ -271,6 +304,8 @@ class _$_W3MChainInfo implements _W3MChainInfo {
             const DeepCollectionEquality()
                 .equals(other._optionalNamespaces, _optionalNamespaces) &&
             (identical(other.rpcUrl, rpcUrl) || other.rpcUrl == rpcUrl) &&
+            (identical(other.blockExplorer, blockExplorer) ||
+                other.blockExplorer == blockExplorer) &&
             (identical(other.ledgerService, ledgerService) ||
                 other.ledgerService == ledgerService));
   }
@@ -286,6 +321,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
       const DeepCollectionEquality().hash(_requiredNamespaces),
       const DeepCollectionEquality().hash(_optionalNamespaces),
       rpcUrl,
+      blockExplorer,
       ledgerService);
 
   @JsonKey(ignore: true)
@@ -305,6 +341,7 @@ abstract class _W3MChainInfo implements W3MChainInfo {
       required final Map<String, RequiredNamespace> requiredNamespaces,
       required final Map<String, RequiredNamespace> optionalNamespaces,
       required final String rpcUrl,
+      final BlockExplorer? blockExplorer,
       final ILedgerService ledgerService}) = _$_W3MChainInfo;
 
   @override
@@ -324,9 +361,146 @@ abstract class _W3MChainInfo implements W3MChainInfo {
   @override
   String get rpcUrl;
   @override
+  BlockExplorer? get blockExplorer;
+  @override
   ILedgerService get ledgerService;
   @override
   @JsonKey(ignore: true)
   _$$_W3MChainInfoCopyWith<_$_W3MChainInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+mixin _$BlockExplorer {
+  String get name => throw _privateConstructorUsedError;
+  String get url => throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $BlockExplorerCopyWith<BlockExplorer> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BlockExplorerCopyWith<$Res> {
+  factory $BlockExplorerCopyWith(
+          BlockExplorer value, $Res Function(BlockExplorer) then) =
+      _$BlockExplorerCopyWithImpl<$Res, BlockExplorer>;
+  @useResult
+  $Res call({String name, String url});
+}
+
+/// @nodoc
+class _$BlockExplorerCopyWithImpl<$Res, $Val extends BlockExplorer>
+    implements $BlockExplorerCopyWith<$Res> {
+  _$BlockExplorerCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? url = null,
+  }) {
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: null == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$_BlockExplorerCopyWith<$Res>
+    implements $BlockExplorerCopyWith<$Res> {
+  factory _$$_BlockExplorerCopyWith(
+          _$_BlockExplorer value, $Res Function(_$_BlockExplorer) then) =
+      __$$_BlockExplorerCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String name, String url});
+}
+
+/// @nodoc
+class __$$_BlockExplorerCopyWithImpl<$Res>
+    extends _$BlockExplorerCopyWithImpl<$Res, _$_BlockExplorer>
+    implements _$$_BlockExplorerCopyWith<$Res> {
+  __$$_BlockExplorerCopyWithImpl(
+      _$_BlockExplorer _value, $Res Function(_$_BlockExplorer) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? url = null,
+  }) {
+    return _then(_$_BlockExplorer(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: null == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$_BlockExplorer implements _BlockExplorer {
+  _$_BlockExplorer({required this.name, required this.url});
+
+  @override
+  final String name;
+  @override
+  final String url;
+
+  @override
+  String toString() {
+    return 'BlockExplorer(name: $name, url: $url)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_BlockExplorer &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.url, url) || other.url == url));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, name, url);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_BlockExplorerCopyWith<_$_BlockExplorer> get copyWith =>
+      __$$_BlockExplorerCopyWithImpl<_$_BlockExplorer>(this, _$identity);
+}
+
+abstract class _BlockExplorer implements BlockExplorer {
+  factory _BlockExplorer(
+      {required final String name,
+      required final String url}) = _$_BlockExplorer;
+
+  @override
+  String get name;
+  @override
+  String get url;
+  @override
+  @JsonKey(ignore: true)
+  _$$_BlockExplorerCopyWith<_$_BlockExplorer> get copyWith =>
       throw _privateConstructorUsedError;
 }

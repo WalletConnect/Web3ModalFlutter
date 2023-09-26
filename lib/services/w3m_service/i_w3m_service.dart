@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:walletconnect_modal_flutter/models/listings.dart';
 import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 
@@ -26,4 +27,25 @@ abstract class IW3MService extends IWalletConnectModalService
     W3MChainInfo? chain, {
     bool switchChain = false,
   });
+
+  /// Variable that can be used to check if the modal is visible on screen.
+  @override
+  bool get isOpen;
+
+  /// Opens the modal with the provided [startState].
+  /// If none is provided, the default state will be used based on platform.
+  @override
+  Future<void> open({required BuildContext context, Widget? startWidget});
+
+  /// Closes the modal.
+  @override
+  void close();
+
+  WalletData? get selectedWallet;
+
+  Future<void> selectWallet({required WalletData? walletData});
+
+  bool get hasBlockExplorer;
+
+  void launchBlockExplorer();
 }
