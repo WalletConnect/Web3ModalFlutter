@@ -10,12 +10,16 @@ For a full reference please check the [Official Documentation](http://docs.walle
 
 Please check the [example](example/sign/) folder for the example.
 
+## Run the example app
+
+`$ cd example/sign` then `$ flutter run --dart-define=PROJECT_ID={YOUR_PROJECT_ID}`
+
 ## Useful Commands
 
 If you are cloning this repo do the following inside the root folder
 
-`flutter pub get` to get dependencies
+`$ flutter pub get` to get dependencies
 
-`dart run build_runner build --delete-conflicting-outputs` to generate files
+`$ dart run build_runner build --delete-conflicting-outputs` to generate files
 
 do the same inside `example/sign` folder
