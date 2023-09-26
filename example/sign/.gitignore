@@ -16,7 +16,9 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# VSCode related
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
 .vscode/
 
 # Flutter/Dart/Pub related
@@ -41,14 +43,12 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Run scripts
-*.sh
-
-.vscode/launch.json
+# iOS
 *.xcconfig
-ios/fastlane/
-Gemfile*
-*.xcconfig
-fastlane/
 *.zip
 *.ipa
+
+# Scripts
+*.sh
+ios/fastlane/
+Gemfile*
