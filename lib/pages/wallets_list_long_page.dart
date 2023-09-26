@@ -21,7 +21,7 @@ class WalletsListLongPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final service = Web3ModalProvider.of(context).service;
     return Web3ModalNavbar(
-      title: 'All wallets',
+      title: 'All Wallets',
       onBack: () {
         explorerService.instance!.filterList(query: null);
         widgetStack.instance.pop();

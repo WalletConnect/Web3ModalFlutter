@@ -33,7 +33,7 @@ class _LoadingBorderState extends State<LoadingBorder>
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
@@ -113,19 +113,19 @@ class _CircularBorderPainter extends CustomPainter {
 
     final rect1 = Rect.fromCenter(
       center: Offset(w / 2, h / 2),
-      width: w,
-      height: h,
+      width: w * 0.95,
+      height: h * 0.95,
     );
 
     final rrect1 = RRect.fromRectAndRadius(
       rect1,
-      Radius.circular(borderRadius),
+      Radius.circular(borderRadius + 4.0),
     );
     canvas.drawRRect(rrect1, paint2);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
 class _CircularBorderPainter2 extends CustomPainter {
@@ -149,12 +149,12 @@ class _CircularBorderPainter2 extends CustomPainter {
     canvas.drawArc(
       rect2,
       0,
-      show ? math.pi : math.pi * 2,
+      show ? math.pi * 1.5 : math.pi * 2,
       true,
       paint1,
     );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

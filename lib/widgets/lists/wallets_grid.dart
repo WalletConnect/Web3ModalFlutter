@@ -18,10 +18,8 @@ class WalletsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
-
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: kPadding12),
+      padding: const EdgeInsets.only(bottom: kPadding12),
       child: Wrap(
         spacing: kGridAxisSpacing,
         runSpacing: kGridAxisSpacing,
@@ -37,18 +35,6 @@ class WalletsGrid extends StatelessWidget {
                   onTap: () => onTapWallet?.call(info.data),
                   imageUrl: info.image,
                   title: info.title,
-                  bottom: info.data.recent
-                      ? Text(
-                          'Recent',
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.clip,
-                          style: themeData.textStyles.micro600.copyWith(
-                            color: themeData.colors.foreground200,
-                            height: 1.0,
-                          ),
-                        )
-                      : null,
                 ),
               ),
             )

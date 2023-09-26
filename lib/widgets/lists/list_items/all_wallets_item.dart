@@ -35,7 +35,7 @@ class AllWalletsItem extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: Text(
-                'All wallets',
+                'All Wallets',
                 style: themeData.textStyles.paragraph500.copyWith(
                   color: themeData.colors.foreground100,
                 ),

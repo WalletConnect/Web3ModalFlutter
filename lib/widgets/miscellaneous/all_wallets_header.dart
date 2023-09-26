@@ -16,12 +16,8 @@ class AllWalletsHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
     return Container(
-      height: kNavbarHeight,
       decoration: BoxDecoration(color: themeData.colors.background125),
-      padding: const EdgeInsets.symmetric(
-        horizontal: kPadding16,
-        vertical: kPadding12,
-      ),
+      padding: const EdgeInsets.all(kPadding12),
       child: Row(
         children: [
           Expanded(
@@ -35,12 +31,15 @@ class AllWalletsHeader extends StatelessWidget {
           const SizedBox.square(dimension: 12.0),
           IconButton(
             padding: const EdgeInsets.all(0.0),
+            visualDensity: VisualDensity.compact,
             onPressed: () {
               widgetStack.instance.add(const QRCodePage());
             },
             icon: SvgPicture.asset(
               AssetUtil.getThemedAsset(context, 'qr_code.svg'),
               package: 'web3modal_flutter',
+              width: kSearchFieldHeight,
+              height: kSearchFieldHeight,
             ),
           ),
         ],

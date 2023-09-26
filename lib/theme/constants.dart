@@ -12,6 +12,7 @@ const kGridItemHeight = 98.0;
 
 const kNavbarHeight = 64.0;
 const kShortWalletListCount = 5;
+const kSearchFieldHeight = 40.0;
 
 const kPadding16 = 16.0;
 const kPadding12 = 12.0;

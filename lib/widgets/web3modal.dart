@@ -52,7 +52,6 @@ class _Web3ModalState extends State<Web3Modal> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('screen height 1 ${MediaQuery.of(context).size.height}');
     final themeData = Web3ModalTheme.getDataOf(context);
     final bool bottomSheet = platformUtils.instance.isBottomSheet();
     final BorderRadius innerContainerBorderRadius = bottomSheet

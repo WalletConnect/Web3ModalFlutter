@@ -45,7 +45,7 @@ class Web3ModalNavbar extends StatelessWidget {
                 child: Center(
                   child: Text(
                     title,
-                    style: themeData.textStyles.paragraph700.copyWith(
+                    style: themeData.textStyles.paragraph600.copyWith(
                       color: themeData.colors.foreground100,
                     ),
                   ),

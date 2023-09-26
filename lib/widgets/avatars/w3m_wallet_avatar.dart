@@ -18,6 +18,7 @@ class W3MListAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
     return Container(
+      margin: const EdgeInsets.all(2.0),
       decoration: isNetwork
           ? ShapeDecoration(
               shape: StarBorder.polygon(

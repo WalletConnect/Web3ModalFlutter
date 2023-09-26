@@ -8,6 +8,7 @@ import 'package:web3modal_flutter/widgets/lists/networks_grid.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/network_service_items_listener.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
 class SelectNetworkPage extends StatelessWidget {
   const SelectNetworkPage({
@@ -19,8 +20,10 @@ class SelectNetworkPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final service = Web3ModalProvider.of(context).service;
+    final isSwitch = service.selectedChain != null;
     return Web3ModalNavbar(
-      title: 'Select network',
+      title: isSwitch ? 'Change Network' : 'Select Network',
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -51,7 +54,7 @@ class SelectNetworkPage extends StatelessWidget {
               },
               size: BaseButtonSize.small,
               leftIcon: 'assets/icons/help.svg',
-              title: 'What is a Network?',
+              title: 'What is a Network',
               backgroundColor: Colors.transparent,
               foregroundColor: themeData.colors.blue100,
               overlayColor: MaterialStateProperty.all<Color>(

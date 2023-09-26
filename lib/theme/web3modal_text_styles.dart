@@ -24,7 +24,7 @@ class Web3ModalTextStyles with _$Web3ModalTextStyles {
     required TextStyle micro700,
   }) = _Web3ModalTextStyles;
 
-  static const _ff = 'roboto'; // TODO change to SF Pro Text
+  static const _ff = '.SF Pro Text';
 
   static const textStyle = Web3ModalTextStyles(
     fontFamily: _ff,
