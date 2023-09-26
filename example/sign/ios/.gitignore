@@ -33,9 +33,7 @@ Runner/GeneratedPluginRegistrant.*
 !default.pbxuser
 !default.perspectivev3
 
-*.xcconfig
 Gemfile*
-*.xcconfig
 fastlane/
 *.zip
 *.ipa

@@ -691,12 +691,11 @@ packages:
   qr_flutter_wc:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: bc1199ab7f670a715fcca8a8b95e7b65f252c91d
-      url: "https://github.com/WalletConnect/qr.flutter.git"
-    source: git
-    version: "4.1.0"
+      name: qr_flutter_wc
+      sha256: "1939a737eded2bdbcc96fefede3edbfbe252d06ad3bba0195237096a068e4db2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   sec:
     dependency: transitive
     description:

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter_wc/qr_flutter.dart';
+import 'package:qr_flutter_wc/qr_flutter_wc.dart';
 
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
