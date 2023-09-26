@@ -2,15 +2,20 @@
 
 A new Flutter project.
 
-## Getting Started
+## Documentation
 
-This project is a starting point for a Flutter application.
+For a full reference please check the [Official Documentation](http://docs.walletconnect.com/2.0/web3modal/flutter/installation)
 
-A few resources to get you started if this is your first Flutter project:
+## Example
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Please check the [example](example/sign/) folder for the example.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Useful Commands
+
+If you are cloning this repo do the following inside the root folder
+
+`flutter pub get` to get dependencies
+
+`dart run build_runner build --delete-conflicting-outputs` to generate files
+
+do the same inside `example/sign` folder

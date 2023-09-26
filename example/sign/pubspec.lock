@@ -724,8 +724,8 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: "feature/modifying_painter"
-      resolved-ref: "42cb4399a8dcda6d51d366efef3ae1ee7de8faf0"
+      ref: HEAD
+      resolved-ref: "1c3a2f6c5e4782250f1cdbeff6f0b615002700e6"
       url: "https://github.com/WalletConnect/qr.flutter.git"
     source: git
     version: "4.1.0"
@@ -1084,7 +1084,7 @@ packages:
       path: "../.."
       relative: true
     source: path
-    version: "2.0.1"
+    version: "3.0.0-alpha01"
   web_socket_channel:
     dependency: transitive
     description:
