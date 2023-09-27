@@ -29,6 +29,7 @@ class SessionWidgetState extends State<SessionWidget> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> children = [
+      const SizedBox(height: StyleConstants.linear16),
       Text(
         widget.session.peer.metadata.name,
         style: StyleConstants.titleText,
@@ -76,16 +77,19 @@ class SessionWidgetState extends State<SessionWidget> {
       const SizedBox(height: StyleConstants.linear8),
       Text(account, textAlign: TextAlign.center),
       const SizedBox(height: StyleConstants.linear8),
-      const Text(StringConstants.methods, style: StyleConstants.subtitleText),
+      const Text(
+        StringConstants.methods,
+        style: StyleConstants.buttonText,
+      ),
     ];
 
     children.addAll(_buildChainMethodButtons(chainMetadata, account));
 
     children.addAll([
       const SizedBox(height: StyleConstants.linear8),
-      const Text(StringConstants.events, style: StyleConstants.subtitleText),
+      const Text(StringConstants.events, style: StyleConstants.buttonText),
     ]);
-    children.addAll(_buildChainEventsTiles(chainMetadata));
+    children.add(_buildChainEventsTiles(chainMetadata));
 
     return Container(
       padding: const EdgeInsets.all(StyleConstants.linear8),
@@ -93,9 +97,7 @@ class SessionWidgetState extends State<SessionWidget> {
       decoration: BoxDecoration(
         border: Border.all(color: chainMetadata.color),
         borderRadius: const BorderRadius.all(
-          Radius.circular(
-            StyleConstants.linear8,
-          ),
+          Radius.circular(StyleConstants.linear8),
         ),
       ),
       child: Column(
@@ -114,7 +116,8 @@ class SessionWidgetState extends State<SessionWidget> {
     for (final String method in getChainMethods(chainMetadata.type)) {
       buttons.add(
         Container(
-          height: StyleConstants.linear48,
+          height: StyleConstants.linear40,
+          width: double.infinity,
           margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
           child: ElevatedButton(
             onPressed: () async {
@@ -152,16 +155,19 @@ class SessionWidgetState extends State<SessionWidget> {
     return buttons;
   }
 
-  List<Widget> _buildChainEventsTiles(ChainMetadata chainMetadata) {
+  Widget _buildChainEventsTiles(ChainMetadata chainMetadata) {
     final List<Widget> values = [];
     // Add Methods
     for (final String event in getChainEvents(chainMetadata.type)) {
       values.add(
         Container(
-          height: StyleConstants.linear48,
+          // alignment: Alignment.center,
+          // height: StyleConstants.linear40,
           margin: const EdgeInsets.symmetric(
             vertical: StyleConstants.linear8,
+            horizontal: StyleConstants.linear8,
           ),
+          padding: const EdgeInsets.all(StyleConstants.linear8),
           decoration: BoxDecoration(
             border: Border.all(
               color: chainMetadata.color,
@@ -170,18 +176,19 @@ class SessionWidgetState extends State<SessionWidget> {
               Radius.circular(StyleConstants.linear8),
             ),
           ),
-          child: Center(
-            child: Text(
-              event,
-              style: StyleConstants.buttonText,
-              textAlign: TextAlign.center,
-            ),
+          child: Text(
+            event,
+            style: StyleConstants.buttonText,
+            textAlign: TextAlign.center,
           ),
         ),
       );
     }
 
-    return values;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: values,
+    );
   }
 
   Future<dynamic> callChainMethod(

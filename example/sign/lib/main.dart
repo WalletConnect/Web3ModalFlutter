@@ -54,10 +54,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       data: _web3modalThemeData,
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
         home: SizedBox(
           width: double.infinity,
           child: MyHomePage(swapTheme: () => _swapTheme()),

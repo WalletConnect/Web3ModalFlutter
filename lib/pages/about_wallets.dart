@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/pages/get_wallet_page.dart';
-import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
+import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
 import 'package:web3modal_flutter/widgets/help/help_section.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/constants.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
-import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
+import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_account_orb.dart';
