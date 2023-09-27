@@ -32,35 +32,38 @@ class WalletGridItem extends StatelessWidget {
       isSelected: isSelected,
       child: Column(
         children: <Widget>[
-          imageWidget ??
-              W3MListAvatar(
-                borderRadius: kRadiusXS,
-                imageUrl: imageUrl ?? '',
-                isNetwork: isNetwork,
-                color: isSelected ? themeData.colors.blue100 : null,
-              ),
-          const SizedBox(height: 4.0),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.clip,
-                  style: themeData.textStyles.tiny500.copyWith(
-                    color: isSelected
-                        ? themeData.colors.blue100
-                        : themeData.colors.foreground100,
-                    height: 1.0,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: imageWidget ??
+                  W3MListAvatar(
+                    borderRadius: kRadiusXS,
+                    imageUrl: imageUrl ?? '',
+                    isNetwork: isNetwork,
+                    color: isSelected ? themeData.colors.blue100 : null,
                   ),
-                ),
-                bottom ?? const SizedBox.shrink(),
-              ],
             ),
           ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.clip,
+                style: themeData.textStyles.tiny500.copyWith(
+                  color: isSelected
+                      ? themeData.colors.blue100
+                      : themeData.colors.foreground100,
+                  height: 1.0,
+                ),
+              ),
+              bottom ?? const SizedBox.shrink(),
+            ],
+          ),
+          const SizedBox(height: 2.0),
         ],
       ),
     );

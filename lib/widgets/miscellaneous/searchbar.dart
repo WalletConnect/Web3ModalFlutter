@@ -19,6 +19,13 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final unfocusedBorder = OutlineInputBorder(
+      borderSide: BorderSide(color: themeData.colors.overgray015, width: 1.0),
+      borderRadius: BorderRadius.circular(kRadius2XS),
+    );
+    final focusedBorder = unfocusedBorder.copyWith(
+      borderSide: BorderSide(color: themeData.colors.blue100, width: 1.0),
+    );
     return SizedBox(
       height: kSearchFieldHeight,
       child: TextFormField(
@@ -56,20 +63,11 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
             color: themeData.colors.foreground275,
             height: 1.5,
           ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: themeData.colors.overgray015,
-              width: 1.0,
-            ),
-            borderRadius: BorderRadius.circular(kRadius2XS),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: themeData.colors.blue100,
-              width: 1.0,
-            ),
-            borderRadius: BorderRadius.circular(kRadius2XS),
-          ),
+          border: unfocusedBorder,
+          errorBorder: unfocusedBorder,
+          enabledBorder: unfocusedBorder,
+          disabledBorder: unfocusedBorder,
+          focusedBorder: focusedBorder,
           filled: true,
           fillColor: themeData.colors.overgray005,
           contentPadding: const EdgeInsets.all(0.0),
