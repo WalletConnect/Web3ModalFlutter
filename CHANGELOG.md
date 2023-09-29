@@ -1,3 +1,7 @@
+## 3.0.0-alpha02
+
+- Minor fixes on example app and project structure
+
 ## 3.0.0-alpha01
 
 - [BREAKING CHANGES] First alpha release of new Web3Modal V3
