@@ -1,5 +1,6 @@
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
+// TODO this is not used on package side, check if it's needed.
 class NamespaceConstants {
   static const Map<String, RequiredNamespace> ethereum = {
     'eip155': RequiredNamespace(

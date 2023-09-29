@@ -1,4 +1,6 @@
 class StringConstants {
+  static const WEB3MODAL_VERSION = '3.0.0-alpha01';
+
   static const String selectNetwork = 'Select Network';
   static const String selectNetworkShort = 'Network';
 
@@ -9,11 +11,6 @@ class StringConstants {
   static const String disconnect = 'Disconnect';
   static const String addressCopied = 'Address copied';
   static const String noChain = 'No Chain';
-
-  // TODO From WalletConnectModalFlutter, will check on following PRs if they are really needed here
-  // URLS
-  static const String getAWalletExploreWalletsUrl =
-      'https://explorer.walletconnect.com/?type=wallet';
 
   // TEXT
   static const String connectButtonError = 'Network Error';
@@ -28,8 +25,4 @@ class StringConstants {
 
   // Storage
   static const String recentWallet = 'recentWallet';
-
-  // Help
-  static const String learnMoreUrl =
-      'https://ethereum.org/en/developers/docs/networks/';
 }

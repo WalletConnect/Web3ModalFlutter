@@ -31,7 +31,7 @@ class ChainDataWrapper {
     ),
     ChainMetadata(
       type: ChainType.eip155,
-      color: Colors.blue.shade300,
+      color: const Color(0xFF123962),
       w3mChainInfo: ChainData.chainPresets['250']!,
     ),
     ChainMetadata(

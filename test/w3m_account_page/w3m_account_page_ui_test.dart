@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 
-import 'package:web3modal_flutter/constants/constants.dart';
+import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/utils/util.dart';
@@ -140,7 +140,7 @@ void main() {
           findsOneWidget,
         );
         await tester.tap(find.byKey(
-          Web3ModalConstants.chainSwapButton,
+          Web3ModalKeyConstants.chainSwapButton,
         ));
 
         await tester.pump();
@@ -156,7 +156,7 @@ void main() {
           findsOneWidget,
         );
         await tester.tap(find.byKey(
-          Web3ModalConstants.addressCopyButton,
+          Web3ModalKeyConstants.addressCopyButton,
         ));
 
         verify(mockToastUtils.show(any)).called(1);
@@ -170,7 +170,7 @@ void main() {
           findsOneWidget,
         );
         await tester.tap(find.byKey(
-          Web3ModalConstants.disconnectButton,
+          Web3ModalKeyConstants.disconnectButton,
         ));
 
         verify(service.disconnect()).called(1);

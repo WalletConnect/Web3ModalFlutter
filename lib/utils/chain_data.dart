@@ -253,35 +253,5 @@ class ChainData {
       },
       rpcUrl: 'https://metis-mainnet.public.blastapi.io',
     ),
-    // '100': W3MChainInfo(
-    //   chainName: 'Gnosis',
-    //   chainId: '100',
-    //   chainIcon: '02b53f6a-e3d4-479e-1cb4-21178987d100',
-    //   tokenName: 'ETH',
-    // ),
-    // '324': W3MChainInfo(
-    //   chainName: 'ZkSync',
-    //   chainId: '324',
-    //   chainIcon: 'b310f07f-4ef7-49f3-7073-2a0a39685800',
-    //   tokenName: 'ETH',
-    // ),
-    // '314': W3MChainInfo(
-    //   chainName: 'Filecoin',
-    //   chainId: '314',
-    //   chainIcon: '5a73b3dd-af74-424e-cae0-0de859ee9400',
-    //   tokenName: 'ETH',
-    // ),
-    // '1284': W3MChainInfo(
-    //   chainName: 'Moonbeam',
-    //   chainId: '1284',
-    //   chainIcon: '161038da-44ae-4ec7-1208-0ea569454b00',
-    //   tokenName: 'ETH',
-    // ),
-    // '1285': W3MChainInfo(
-    //   chainName: 'Moonriver',
-    //   chainId: '1285',
-    //   chainIcon: 'f1d73bb6-5450-4e18-38f7-fb6484264a00',
-    //   tokenName: 'ETH',
-    // ),
   };
 }

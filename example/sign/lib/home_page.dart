@@ -26,10 +26,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    initialize();
+    _initialize();
   }
 
-  Future<void> initialize() async {
+  void _initialize() async {
     _web3App = Web3App(
       core: Core(projectId: DartDefines.projectId),
       metadata: const PairingMetadata(
@@ -61,9 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
-    setState(() {
-      _initialized = true;
-    });
+    setState(() => _initialized = true);
   }
 
   @override
@@ -83,15 +81,16 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
 
-    final isDarkMode = Web3ModalTheme.of(context).isDarkMode;
-
     return Scaffold(
       backgroundColor: Web3ModalTheme.getDataOf(context).colors.background300,
       appBar: AppBar(
+        elevation: 0.0,
         title: const Text(StringConstants.w3mPageTitleV3),
+        backgroundColor: Web3ModalTheme.getDataOf(context).colors.background100,
+        foregroundColor: Web3ModalTheme.getDataOf(context).colors.foreground100,
         actions: [
           IconButton(
-            icon: isDarkMode
+            icon: Web3ModalTheme.of(context).isDarkMode
                 ? const Icon(Icons.light_mode)
                 : const Icon(Icons.dark_mode),
             onPressed: widget.swapTheme,
@@ -102,30 +101,27 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _onSessionPing(SessionPing? args) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return EventWidget(
-          title: StringConstants.receivedPing,
-          content: 'Topic: ${args!.topic}',
-        );
-      },
-    );
-  }
+  void _onSessionPing(SessionPing? args) => showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return EventWidget(
+            title: StringConstants.receivedPing,
+            content: 'Topic: ${args!.topic}',
+          );
+        },
+      );
 
-  void _onSessionEvent(SessionEvent? args) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return EventWidget(
-          title: StringConstants.receivedEvent,
-          content:
-              'Topic: ${args!.topic}\nEvent Name: ${args.name}\nEvent Data: ${args.data}',
-        );
-      },
-    );
-  }
+  void _onSessionEvent(SessionEvent? args) => showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return EventWidget(
+            title: StringConstants.receivedEvent,
+            content: 'Topic: ${args!.topic}\n'
+                'Event Name: ${args.name}\n'
+                'Event Data: ${args.data}',
+          );
+        },
+      );
 }
 
 class _W3MPage extends StatefulWidget {
@@ -138,41 +134,41 @@ class _W3MPage extends StatefulWidget {
 }
 
 class _W3MPageState extends State<_W3MPage> {
-  W3MService? _w3mService;
+  late IWeb3App _web3App;
+  late W3MService _w3mService;
   bool _isConnected = false;
 
   @override
   void initState() {
     super.initState();
-    widget.web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
-    widget.web3App.onSessionDelete.subscribe(_onWeb3AppDisconnect);
+    _web3App = widget.web3App;
+    _web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
+    _web3App.onSessionDelete.subscribe(_onWeb3AppDisconnect);
+
+    _initializeService();
   }
 
-  Future<bool> _initializeService() async {
-    try {
-      if (_w3mService != null) return true;
-      _w3mService = W3MService(
-        web3App: widget.web3App,
-        recommendedWalletIds: {
-          'afbd95522f4041c71dd4f1a065f971fd32372865b416f95a0b1db759ae33f2a7',
-          '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662',
-          'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
-        },
-      );
+  void _initializeService() async {
+    _w3mService = W3MService(
+      web3App: _web3App,
+      recommendedWalletIds: {
+        'afbd95522f4041c71dd4f1a065f971fd32372865b416f95a0b1db759ae33f2a7',
+        '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662',
+        'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+      },
+    );
 
-      await _w3mService?.init();
-      _isConnected = widget.web3App.sessions.getAll().isNotEmpty;
-      return true;
-    } catch (e) {
-      debugPrint(e.toString());
-      return false;
-    }
+    await _w3mService.init();
+
+    setState(() {
+      _isConnected = _web3App.sessions.getAll().isNotEmpty;
+    });
   }
 
   @override
   void dispose() {
-    widget.web3App.onSessionConnect.unsubscribe(_onWeb3AppConnect);
-    widget.web3App.onSessionDelete.unsubscribe(_onWeb3AppDisconnect);
+    _web3App.onSessionConnect.unsubscribe(_onWeb3AppConnect);
+    _web3App.onSessionDelete.unsubscribe(_onWeb3AppDisconnect);
     super.dispose();
   }
 
@@ -191,35 +187,20 @@ class _W3MPageState extends State<_W3MPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _initializeService(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError || snapshot.data == false) {
-          return const Center(
-            child: Text('Something went wrong'),
-          );
-        }
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(
-              color: Web3ModalTheme.getDataOf(context).colors.blue100,
-            ),
-          );
-        }
-        return SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox.square(dimension: 8.0),
-              if (!_isConnected) W3MNetworkSelectButton(service: _w3mService!),
-              W3MConnectWalletButton(service: _w3mService!),
-              const SizedBox.square(dimension: 8.0),
-              const Divider(height: 0.0),
-              if (_isConnected) _ConnectedView(w3mService: _w3mService!)
-            ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const SizedBox.square(dimension: 8.0),
+          if (!_isConnected) W3MNetworkSelectButton(service: _w3mService),
+          W3MConnectWalletButton(
+            service: _w3mService,
           ),
-        );
-      },
+          const SizedBox.square(dimension: 8.0),
+          const Divider(height: 0.0),
+          if (_isConnected) _ConnectedView(w3mService: _w3mService)
+        ],
+      ),
     );
   }
 }

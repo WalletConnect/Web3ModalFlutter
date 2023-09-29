@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:walletconnect_flutter_dapp/home_page.dart';
 
@@ -16,42 +15,57 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  bool _isDark = false;
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  var _web3modalThemeData = Web3ModalThemeData.lightMode;
 
   @override
   void initState() {
     super.initState();
-
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-
+    WidgetsBinding.instance.addObserver(this);
     LoggerUtil.setLogLevel(LogLevel.error);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    if (mounted) {
+      setState(() {
+        final platformDispatcher = View.of(context).platformDispatcher;
+        final platformBrightness = platformDispatcher.platformBrightness;
+        if (platformBrightness == Brightness.dark) {
+          _web3modalThemeData = Web3ModalThemeData.darkMode;
+        } else {
+          _web3modalThemeData = Web3ModalThemeData.lightMode;
+        }
+      });
+    }
+    super.didChangePlatformBrightness();
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Web3ModalTheme(
-      data:
-          _isDark ? Web3ModalThemeData.darkMode : Web3ModalThemeData.lightMode,
+      data: _web3modalThemeData,
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: SizedBox(
-          width: double.infinity,
-          child: MyHomePage(
-            swapTheme: () => setState(() => _isDark = !_isDark),
-          ),
-        ),
+        home: MyHomePage(swapTheme: () => _swapTheme()),
       ),
     );
+  }
+
+  void _swapTheme() {
+    setState(() {
+      if (_web3modalThemeData == Web3ModalThemeData.darkMode) {
+        _web3modalThemeData = Web3ModalThemeData.lightMode;
+      } else {
+        _web3modalThemeData = Web3ModalThemeData.darkMode;
+      }
+    });
   }
 }

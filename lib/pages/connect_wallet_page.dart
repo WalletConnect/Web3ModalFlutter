@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
-import 'package:web3modal_flutter/utils/widget_stack/widget_stack_singleton.dart';
+import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
@@ -81,11 +81,9 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     return Web3ModalNavbar(
       title: walletName,
       onBack: () {
-        // TODO service.selectWallet(walletData: null);
+        // TODO check if needed => service.selectWallet(walletData: null);
         widgetStack.instance.pop();
       },
-      // safeAreaLeft: true,
-      // safeAreaRight: true,
       body: SingleChildScrollView(
         scrollDirection: isPortrait ? Axis.vertical : Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: kPadding16),
