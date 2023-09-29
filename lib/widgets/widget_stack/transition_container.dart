@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// TODO FOCUS 3 change transition
+// TODO change transition type to reflect Web implementation
 class TransitionContainer extends StatefulWidget {
   const TransitionContainer({
     super.key,

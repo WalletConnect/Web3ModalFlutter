@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:web3modal_flutter/constants/constants.dart';
+import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -14,7 +14,7 @@ import 'package:web3modal_flutter/widgets/navigation/navbar_action_button.dart';
 import 'package:web3modal_flutter/widgets/text/w3m_balance.dart';
 
 class AccountPage extends StatelessWidget {
-  const AccountPage() : super(key: Web3ModalConstants.accountPage);
+  const AccountPage() : super(key: Web3ModalKeyConstants.accountPage);
 
   @override
   Widget build(BuildContext context) {

@@ -33,6 +33,13 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
   }
 
   @override
+  void didUpdateWidget(covariant W3MConnectWalletButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _state = widget.state ?? ConnectButtonState.idle;
+    _updateState();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     widget.service.removeListener(_updateState);
@@ -61,7 +68,9 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
       'isConnected: ${widget.service.isConnected}, '
       'isOpen: ${widget.service.isOpen}',
     );
-    if (_state == ConnectButtonState.none) {
+
+    final isConnected = widget.service.isConnected;
+    if (_state == ConnectButtonState.none && !isConnected) {
       return;
     }
     // Case 0: init error

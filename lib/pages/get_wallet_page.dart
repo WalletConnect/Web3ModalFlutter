@@ -2,13 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
-import 'package:web3modal_flutter/constants/string_constants.dart';
-
-import 'package:walletconnect_modal_flutter/models/listings.dart';
-import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
+import 'package:web3modal_flutter/constants/urls_constants.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/explore_all_wallets_item.dart';
 import 'package:web3modal_flutter/widgets/lists/wallets_list.dart';
@@ -16,6 +12,10 @@ import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
+
+import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
+import 'package:walletconnect_modal_flutter/models/listings.dart';
+import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 
 class GetWalletPage extends StatelessWidget {
   const GetWalletPage() : super(key: Web3ModalKeyConstants.getAWalletPageKey);
@@ -53,7 +53,7 @@ class GetWalletPage extends StatelessWidget {
                   ? ExploreAllWalletsItem(
                       images: itemsExploreMore.map((e) => e.image).toList(),
                       onTap: () => urlUtils.instance.launchUrl(
-                        Uri.parse(StringConstants.getAWalletExploreWalletsUrl),
+                        Uri.parse(UrlsConstants.exploreAllWallets),
                         mode: LaunchMode.externalApplication,
                       ),
                     )

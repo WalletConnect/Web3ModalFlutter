@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:walletconnect_modal_flutter/constants/string_constants.dart';
-import 'package:web3modal_flutter/constants/constants.dart';
+import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 import 'package:web3modal_flutter/widgets/w3m_connect_wallet_button.dart';
@@ -117,7 +117,7 @@ void main() {
       // Opens modal
       await tester.tap(
         find.byKey(
-          Web3ModalConstants.w3mAccountButton,
+          Web3ModalKeyConstants.w3mAccountButton,
         ),
       );
 

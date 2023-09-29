@@ -135,18 +135,20 @@ class _W3MPage extends StatefulWidget {
 
 class _W3MPageState extends State<_W3MPage> {
   late IWeb3App _web3App;
-  W3MService? _w3mService;
+  late W3MService _w3mService;
   bool _isConnected = false;
 
   @override
   void initState() {
     super.initState();
     _web3App = widget.web3App;
+    _web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
+    _web3App.onSessionDelete.subscribe(_onWeb3AppDisconnect);
+
     _initializeService();
   }
 
   void _initializeService() async {
-    if (_w3mService != null) return;
     _w3mService = W3MService(
       web3App: _web3App,
       recommendedWalletIds: {
@@ -156,10 +158,7 @@ class _W3MPageState extends State<_W3MPage> {
       },
     );
 
-    _web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
-    _web3App.onSessionDelete.subscribe(_onWeb3AppDisconnect);
-
-    await _w3mService?.init();
+    await _w3mService.init();
 
     setState(() {
       _isConnected = _web3App.sessions.getAll().isNotEmpty;
@@ -188,23 +187,18 @@ class _W3MPageState extends State<_W3MPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isConnected) {
-      return Center(
-        child: CircularProgressIndicator(
-          color: Web3ModalTheme.getDataOf(context).colors.blue100,
-        ),
-      );
-    }
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const SizedBox.square(dimension: 8.0),
-          if (!_isConnected) W3MNetworkSelectButton(service: _w3mService!),
-          W3MConnectWalletButton(service: _w3mService!),
+          if (!_isConnected) W3MNetworkSelectButton(service: _w3mService),
+          W3MConnectWalletButton(
+            service: _w3mService,
+          ),
           const SizedBox.square(dimension: 8.0),
           const Divider(height: 0.0),
-          if (_isConnected) _ConnectedView(w3mService: _w3mService!)
+          if (_isConnected) _ConnectedView(w3mService: _w3mService)
         ],
       ),
     );

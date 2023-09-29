@@ -1,6 +1,5 @@
-# web3modal_flutter
-
-WalletConnect Web3Modal implementation for Flutter.
+|![wc](assets/png/logo_wc.png)|Web3Modal Flutter<br />WalletConnect Web3Modal implementation for Flutter|
+|----|-----|
 
 ## Documentation
 
