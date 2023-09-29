@@ -1080,10 +1080,10 @@ packages:
   web3modal_flutter:
     dependency: "direct main"
     description:
-      path: "../.."
+      path: ".."
       relative: true
     source: path
-    version: "3.0.0-alpha01"
+    version: "3.0.0-alpha03"
   web_socket_channel:
     dependency: transitive
     description:
