@@ -1,6 +1,6 @@
 name: web3modal_flutter
-description: The Web3Modal for WalletConnect built using Flutter.
-version: 3.0.0-alpha02
+description: "Web3Modal: Simple, intuitive wallet login. With this drop-in UI SDK, enable any wallet's users to seamlessly log in to your app and enjoy a smooth, unified experience."
+version: 3.0.0-alpha03
 repository: https://github.com/WalletConnect/Web3ModalFlutter
 
 environment:

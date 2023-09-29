@@ -49,5 +49,6 @@ app.*.map.json
 
 # Scripts
 *.sh
-ios/fastlane/
-Gemfile*
+
+# Fastlane
+fastlane/

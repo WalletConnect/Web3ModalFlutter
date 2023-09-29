@@ -1,3 +1,7 @@
+## 3.0.0-alpha03
+
+- Removed /sign subfolder under example/ and changed documentation to improve pub points.
+
 ## 3.0.0-alpha02
 
 - Minor fixes on example app and project structure
