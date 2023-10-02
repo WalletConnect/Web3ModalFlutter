@@ -9,7 +9,7 @@ import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.d
 
 import 'package:web3modal_flutter/services/w3m_service/walletconnect_modal_service.dart';
 import 'package:web3modal_flutter/services/w3m_service/walletconnect_modal_services.dart';
-import 'package:web3modal_flutter/utils/logger.dart';
+import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart';
@@ -17,9 +17,9 @@ import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api
 import 'package:web3modal_flutter/services/network_service.dart/network_service_singleton.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
-import 'package:web3modal_flutter/utils/chain_data.dart';
+import 'package:web3modal_flutter/models/w3m_chains_presets.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 import 'package:web3modal_flutter/widgets/web3modal.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
@@ -96,7 +96,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
     // Set the optional namespaces to everything in our asset util.
     final List<String> chainIds = [];
-    for (final String id in ChainData.chainPresets.keys) {
+    for (final String id in W3MChainPresets.chains.keys) {
       chainIds.add('eip155:$id');
     }
     final Map<String, RequiredNamespace> optionalNamespaces = {
@@ -115,8 +115,8 @@ class W3MService extends WalletConnectModalService implements IW3MService {
 
       // If we had a chainId stored, use it!
       if (chainId != null && chainId.isNotEmpty) {
-        if (ChainData.chainPresets.containsKey(chainId)) {
-          await setSelectedChain(ChainData.chainPresets[chainId]!);
+        if (W3MChainPresets.chains.containsKey(chainId)) {
+          await setSelectedChain(W3MChainPresets.chains[chainId]!);
         }
       } else {
         // Otherwise, just get the first chainId from the namespaces of the session and use that
@@ -126,13 +126,13 @@ class W3MService extends WalletConnectModalService implements IW3MService {
         if (chainIds.isNotEmpty) {
           final String chainId = chainIds.first.split(':')[1];
           // If we have the chain in our presets, set it as the selected chain
-          if (ChainData.chainPresets.containsKey(chainId)) {
-            await setSelectedChain(ChainData.chainPresets[chainId]!);
+          if (W3MChainPresets.chains.containsKey(chainId)) {
+            await setSelectedChain(W3MChainPresets.chains[chainId]!);
           }
         }
       }
     }
-    LoggerUtil.logger.i('W3MService initialized');
+    W3MLoggerUtil.logger.i('W3MService initialized');
   }
 
   @override
@@ -219,7 +219,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   @override
   void onSessionConnect(SessionConnect? args) async {
     super.onSessionConnect(args);
-    LoggerUtil.logger.i('_onSessionConnect: ${args?.session}');
+    W3MLoggerUtil.logger.i('_onSessionConnect: ${args?.session}');
     // _isConnected = true;
     // _session = args!.session;
     // _address = NamespaceUtils.getAccount(
@@ -234,15 +234,15 @@ class W3MService extends WalletConnectModalService implements IW3MService {
   }
 
   // void _onSessionUpdate(SessionUpdate? args) {
-  //   LoggerUtil.logger.i(args?.namespaces);
+  //   W3MLoggerUtil.logger.i(args?.namespaces);
   //   // _loadAccountData();
   // }
 
   void _onSessionEvent(SessionEvent? args) {
     if (args?.name == EthUtil.chainChanged) {
-      if (ChainData.chainPresets.containsKey(args?.data.toString())) {
+      if (W3MChainPresets.chains.containsKey(args?.data.toString())) {
         setSelectedChain(
-          ChainData.chainPresets[args?.data.toString()]!,
+          W3MChainPresets.chains[args?.data.toString()]!,
           switchChain: false,
         );
       }

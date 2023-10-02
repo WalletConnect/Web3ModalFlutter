@@ -15,7 +15,7 @@ import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.d
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_walletconnect_modal_service.dart';
 import 'package:web3modal_flutter/services/w3m_service/walletconnect_modal_services.dart';
-import 'package:web3modal_flutter/utils/logger.dart';
+import 'package:web3modal_flutter/utils/w3m_logger.dart';
 
 import 'package:walletconnect_modal_flutter/models/launch_url_exception.dart';
 import 'package:walletconnect_modal_flutter/services/utils/core/core_utils_singleton.dart';
@@ -156,7 +156,7 @@ class WalletConnectModalService extends ChangeNotifier
     }
 
     _isInitialized = true;
-    LoggerUtil.logger.i('WalletConnectModalService initialized');
+    W3MLoggerUtil.logger.i('WalletConnectModalService initialized');
     notifyListeners();
   }
 
@@ -302,7 +302,7 @@ class WalletConnectModalService extends ChangeNotifier
 
     final Redirect? redirect = constructRedirect();
 
-    LoggerUtil.logger.i(
+    W3MLoggerUtil.logger.i(
       'Launching wallet: $redirect, ${_session?.peer.metadata}',
     );
 
@@ -335,7 +335,7 @@ class WalletConnectModalService extends ChangeNotifier
   Future<void> rebuildConnectionUri() async {
     // If we aren't connected, connect!
     if (!_isConnected) {
-      LoggerUtil.logger.i(
+      W3MLoggerUtil.logger.i(
         'Connecting to WalletConnect, required namespaces: $requiredNamespaces, optional namespaces: $optionalNamespaces',
       );
 
@@ -402,7 +402,7 @@ class WalletConnectModalService extends ChangeNotifier
   }) {
     checkInitialized();
 
-    LoggerUtil.logger.i('Setting required namespaces: $requiredNamespaces');
+    W3MLoggerUtil.logger.i('Setting required namespaces: $requiredNamespaces');
 
     _requiredNamespaces = requiredNamespaces;
 
@@ -415,7 +415,7 @@ class WalletConnectModalService extends ChangeNotifier
   }) {
     checkInitialized();
 
-    LoggerUtil.logger.i('Setting optional namespaces: $optionalNamespaces');
+    W3MLoggerUtil.logger.i('Setting optional namespaces: $optionalNamespaces');
 
     _optionalNamespaces = optionalNamespaces;
 
@@ -518,7 +518,7 @@ class WalletConnectModalService extends ChangeNotifier
 
   @protected
   void onSessionConnect(SessionConnect? args) {
-    LoggerUtil.logger.i('_onSessionConnect: ${args?.session}');
+    W3MLoggerUtil.logger.i('_onSessionConnect: ${args?.session}');
     _isConnected = true;
     _session = args!.session;
     _address = NamespaceUtils.getAccount(
@@ -534,7 +534,7 @@ class WalletConnectModalService extends ChangeNotifier
 
   @protected
   void onSessionDelete(SessionDelete? args) {
-    LoggerUtil.logger.i('_onSessionDelete: $args');
+    W3MLoggerUtil.logger.i('_onSessionDelete: $args');
     _isConnected = false;
     _address = '';
     _session = null;
@@ -544,7 +544,7 @@ class WalletConnectModalService extends ChangeNotifier
 
   @protected
   void onRelayClientConnect(EventArgs? args) {
-    LoggerUtil.logger.i('_onRelayClientConnect: $args');
+    W3MLoggerUtil.logger.i('_onRelayClientConnect: $args');
     _initError = null;
 
     notifyListeners();
@@ -552,7 +552,7 @@ class WalletConnectModalService extends ChangeNotifier
 
   @protected
   void onRelayClientError(ErrorEvent? args) {
-    LoggerUtil.logger.e('_onRelayClientError: ${args?.error}');
+    W3MLoggerUtil.logger.e('_onRelayClientError: ${args?.error}');
     _initError = args?.error;
 
     notifyListeners();
@@ -574,10 +574,10 @@ class WalletConnectModalService extends ChangeNotifier
     try {
       await connectResponse!.session.future;
     } on TimeoutException {
-      LoggerUtil.logger.i('Rebuilding session, ending future');
+      W3MLoggerUtil.logger.i('Rebuilding session, ending future');
       return;
     } catch (e) {
-      LoggerUtil.logger.e('Error connecting to wallet: $e');
+      W3MLoggerUtil.logger.e('Error connecting to wallet: $e');
       await toastUtils.instance.show(
         ToastMessage(
           type: ToastType.error,

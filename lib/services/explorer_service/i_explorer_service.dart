@@ -16,8 +16,7 @@ abstract class IExplorerService {
   /// The project ID used when querying the explorer API.
   String get projectId;
 
-  ValueNotifier<List<GridItemModel<W3MWalletInfo>>> itemList =
-      ValueNotifier([]);
+  ValueNotifier<List<GridItem<W3MWalletInfo>>> itemList = ValueNotifier([]);
 
   ValueNotifier<bool> initialized = ValueNotifier(false);
 

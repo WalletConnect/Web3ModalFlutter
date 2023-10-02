@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'web3modal_text_styles.freezed.dart';
+part 'w3m_text_styles.freezed.dart';
 
 @freezed
 class Web3ModalTextStyles with _$Web3ModalTextStyles {

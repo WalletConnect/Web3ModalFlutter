@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:web3modal_flutter/theme/web3modal_colors.dart';
-import 'package:web3modal_flutter/theme/web3modal_text_styles.dart';
+import 'package:web3modal_flutter/theme/w3m_colors.dart';
+import 'package:web3modal_flutter/theme/w3m_text_styles.dart';
 
-part 'web3modal_theme_data.freezed.dart';
+part 'w3m_theme_data.freezed.dart';
 
 @freezed
 class Web3ModalThemeData with _$Web3ModalThemeData {

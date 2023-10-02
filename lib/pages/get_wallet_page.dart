@@ -37,7 +37,7 @@ class GetWalletPage extends StatelessWidget {
             }
 
             final notInstalledItems = items
-                .where((GridItemModel<W3MWalletInfo> w) => !w.data.installed)
+                .where((GridItem<W3MWalletInfo> w) => !w.data.installed)
                 .toList();
             final itemsToShow = notInstalledItems
                 .getRange(0, min(5, notInstalledItems.length))

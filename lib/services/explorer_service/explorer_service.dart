@@ -11,7 +11,7 @@ import 'package:web3modal_flutter/models/grid_item_modal.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
-import 'package:web3modal_flutter/utils/logger.dart';
+import 'package:web3modal_flutter/utils/w3m_logger.dart';
 
 import 'package:walletconnect_modal_flutter/services/utils/core/core_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/platform/i_platform_utils.dart';
@@ -35,12 +35,11 @@ class ExplorerService implements IExplorerService {
   Set<String>? excludedWalletIds;
 
   List<Listing> _listings = [];
-  List<GridItemModel<W3MWalletInfo>> _walletListUnsorted = [];
-  List<GridItemModel<W3MWalletInfo>> _walletListSorted = [];
+  List<GridItem<W3MWalletInfo>> _walletListUnsorted = [];
+  List<GridItem<W3MWalletInfo>> _walletListSorted = [];
 
   @override
-  ValueNotifier<List<GridItemModel<W3MWalletInfo>>> itemList =
-      ValueNotifier([]);
+  ValueNotifier<List<GridItem<W3MWalletInfo>>> itemList = ValueNotifier([]);
 
   @override
   ValueNotifier<bool> initialized = ValueNotifier(false);
@@ -88,7 +87,7 @@ class ExplorerService implements IExplorerService {
         platform = null;
     }
 
-    LoggerUtil.logger.i('Fetching wallet listings. Platform: $platform');
+    W3MLoggerUtil.logger.i('Fetching wallet listings. Platform: $platform');
     _listings = await fetchListings(
       endpoint: '/w3m/v1/get${platform}Listings',
       referer: referer,
@@ -134,11 +133,11 @@ class ExplorerService implements IExplorerService {
       bool installed = await urlUtils.instance.isInstalled(uri);
       bool recent = recentWallet == item.id;
       if (installed) {
-        LoggerUtil.logger.v('Wallet ${item.name} installed: $installed');
+        W3MLoggerUtil.logger.v('Wallet ${item.name} installed: $installed');
       }
 
       _walletListUnsorted.add(
-        GridItemModel<W3MWalletInfo>(
+        GridItem<W3MWalletInfo>(
           title: item.name,
           id: item.id,
           description: recent
@@ -161,7 +160,7 @@ class ExplorerService implements IExplorerService {
     updateSort();
 
     initialized.value = true;
-    LoggerUtil.logger.i('ExplorerService initialized');
+    W3MLoggerUtil.logger.i('ExplorerService initialized');
   }
 
   @override
@@ -173,7 +172,7 @@ class ExplorerService implements IExplorerService {
       return;
     }
 
-    final List<GridItemModel<W3MWalletInfo>> filtered = _walletListSorted
+    final List<GridItem<W3MWalletInfo>> filtered = _walletListSorted
         .where(
           (wallet) => wallet.title.toLowerCase().contains(
                 query.toLowerCase(),
@@ -185,7 +184,7 @@ class ExplorerService implements IExplorerService {
 
   @override
   void updateSort() async {
-    final List<GridItemModel<W3MWalletInfo>> newList = [];
+    final List<GridItem<W3MWalletInfo>> newList = [];
 
     final String? recentWallet =
         storageService.instance.getString(StringConstants.recentWallet);
@@ -251,7 +250,7 @@ class ExplorerService implements IExplorerService {
   @override
   Redirect? getRedirect({required String name}) {
     try {
-      LoggerUtil.logger.i('Getting redirect for $name');
+      W3MLoggerUtil.logger.i('Getting redirect for $name');
       final Listing listing = _listings.firstWhere(
         (listing) => listing.name.contains(name) || name.contains(listing.name),
       );
@@ -268,12 +267,12 @@ class ExplorerService implements IExplorerService {
     required String referer,
     ListingParams? params,
   }) async {
-    LoggerUtil.logger.i('Fetching wallet listings. Endpoint: $endpoint');
+    W3MLoggerUtil.logger.i('Fetching wallet listings. Endpoint: $endpoint');
     final Map<String, String> headers = {
       'user-agent': coreUtils.instance.getUserAgent(),
       'referer': referer,
     };
-    LoggerUtil.logger.i('Fetching wallet listings. Headers: $headers');
+    W3MLoggerUtil.logger.i('Fetching wallet listings. Headers: $headers');
     final Uri uri = Uri.parse(explorerUriRoot + endpoint);
     final Map<String, dynamic> queryParameters = {
       'projectId': projectId,
@@ -303,7 +302,7 @@ class ExplorerService implements IExplorerService {
     }
 
     final Uri playstore = Uri.parse(playstoreLink);
-    LoggerUtil.logger.i(
+    W3MLoggerUtil.logger.i(
       'getAndroidPackageId: $playstoreLink, id: ${playstore.queryParameters['id']}',
     );
 
@@ -320,7 +319,7 @@ class ExplorerService implements IExplorerService {
       if (excludedWalletIds!.contains(
         listing.id,
       )) {
-        LoggerUtil.logger.i('Excluding wallet from list: $listing');
+        W3MLoggerUtil.logger.i('Excluding wallet from list: $listing');
         return false;
       }
 

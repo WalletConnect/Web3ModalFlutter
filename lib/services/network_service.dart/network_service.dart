@@ -11,11 +11,11 @@ class NetworkService implements INetworkService {
   @override
   ValueNotifier<bool> initialized = ValueNotifier<bool>(false);
 
-  List<GridItemModel<W3MChainInfo>> itemListComplete = [];
+  List<GridItem<W3MChainInfo>> itemListComplete = [];
 
   @override
-  ValueNotifier<List<GridItemModel<W3MChainInfo>>> itemList =
-      ValueNotifier<List<GridItemModel<W3MChainInfo>>>([]);
+  ValueNotifier<List<GridItem<W3MChainInfo>>> itemList =
+      ValueNotifier<List<GridItem<W3MChainInfo>>>([]);
 
   @override
   Future<void> init() async {
@@ -23,9 +23,9 @@ class NetworkService implements INetworkService {
       return;
     }
 
-    for (var value in ChainData.chainPresets.values) {
+    for (var value in W3MChainPresets.chains.values) {
       itemListComplete.add(
-        GridItemModel<W3MChainInfo>(
+        GridItem<W3MChainInfo>(
           image: explorerService.instance!.getAssetImageUrl(
             imageId: AssetUtil.getChainIconAssetId(
               value.chainId,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/theme/web3modal_theme_data.dart';
+import 'package:web3modal_flutter/theme/w3m_theme_data.dart';
 
 class Web3ModalTheme extends InheritedWidget {
   const Web3ModalTheme({

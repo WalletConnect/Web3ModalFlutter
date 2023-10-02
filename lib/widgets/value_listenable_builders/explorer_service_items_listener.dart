@@ -10,7 +10,7 @@ class ExplorerServiceItemsListener extends StatelessWidget {
     required this.builder,
   });
   final Function(BuildContext context, bool initialised,
-      List<GridItemModel<W3MWalletInfo>> items) builder;
+      List<GridItem<W3MWalletInfo>> items) builder;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class ExplorerServiceItemsListener extends StatelessWidget {
         if (!initialised) {
           return builder(context, initialised, []);
         }
-        return ValueListenableBuilder<List<GridItemModel<W3MWalletInfo>>>(
+        return ValueListenableBuilder<List<GridItem<W3MWalletInfo>>>(
           valueListenable: explorerService.instance!.itemList,
           builder: (context, items, _) {
             return builder(context, initialised, items);

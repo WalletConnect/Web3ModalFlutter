@@ -16,15 +16,15 @@ class W3MChainInfo with _$W3MChainInfo {
     required Map<String, RequiredNamespace> requiredNamespaces,
     required Map<String, RequiredNamespace> optionalNamespaces,
     required String rpcUrl,
-    BlockExplorer? blockExplorer,
+    W3MBlockExplorer? blockExplorer,
     @Default(LedgerService()) ILedgerService ledgerService,
   }) = _W3MChainInfo;
 }
 
 @freezed
-class BlockExplorer with _$BlockExplorer {
-  factory BlockExplorer({
+class W3MBlockExplorer with _$W3MBlockExplorer {
+  factory W3MBlockExplorer({
     required String name,
     required String url,
-  }) = _BlockExplorer;
+  }) = _W3MBlockExplorer;
 }

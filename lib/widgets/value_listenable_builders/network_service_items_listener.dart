@@ -10,7 +10,7 @@ class NetworkServiceItemsListener extends StatelessWidget {
     required this.builder,
   });
   final Function(BuildContext context, bool initialised,
-      List<GridItemModel<W3MChainInfo>> items) builder;
+      List<GridItem<W3MChainInfo>> items) builder;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class NetworkServiceItemsListener extends StatelessWidget {
         }
         return ValueListenableBuilder(
           valueListenable: networkService.instance.itemList,
-          builder: (context, List<GridItemModel<W3MChainInfo>> items, _) {
+          builder: (context, List<GridItem<W3MChainInfo>> items, _) {
             return builder(context, initialised, items);
           },
         );

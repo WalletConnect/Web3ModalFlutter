@@ -199,7 +199,7 @@ class EIP155 {
     required String chainId,
     required String address,
   }) async {
-    final W3MChainInfo ethChain = ChainData.chainPresets['1']!;
+    final W3MChainInfo ethChain = W3MChainPresets.chains['1']!;
 
     final DeployedContract contract = DeployedContract(
       ContractAbi.fromJson(

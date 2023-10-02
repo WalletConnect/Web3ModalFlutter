@@ -3223,14 +3223,14 @@ class MockNetworkService extends _i1.Mock implements _i35.NetworkService {
         returnValueForMissingStub: null,
       );
   @override
-  List<_i36.GridItemModel<_i23.W3MChainInfo>> get itemListComplete =>
+  List<_i36.GridItem<_i23.W3MChainInfo>> get itemListComplete =>
       (super.noSuchMethod(
         Invocation.getter(#itemListComplete),
-        returnValue: <_i36.GridItemModel<_i23.W3MChainInfo>>[],
-      ) as List<_i36.GridItemModel<_i23.W3MChainInfo>>);
+        returnValue: <_i36.GridItem<_i23.W3MChainInfo>>[],
+      ) as List<_i36.GridItem<_i23.W3MChainInfo>>);
   @override
   set itemListComplete(
-          List<_i36.GridItemModel<_i23.W3MChainInfo>>? _itemListComplete) =>
+          List<_i36.GridItem<_i23.W3MChainInfo>>? _itemListComplete) =>
       super.noSuchMethod(
         Invocation.setter(
           #itemListComplete,
@@ -3239,18 +3239,18 @@ class MockNetworkService extends _i1.Mock implements _i35.NetworkService {
         returnValueForMissingStub: null,
       );
   @override
-  _i2.ValueNotifier<List<_i36.GridItemModel<_i23.W3MChainInfo>>> get itemList =>
+  _i2.ValueNotifier<List<_i36.GridItem<_i23.W3MChainInfo>>> get itemList =>
       (super.noSuchMethod(
         Invocation.getter(#itemList),
         returnValue:
-            _FakeValueNotifier_0<List<_i36.GridItemModel<_i23.W3MChainInfo>>>(
+            _FakeValueNotifier_0<List<_i36.GridItem<_i23.W3MChainInfo>>>(
           this,
           Invocation.getter(#itemList),
         ),
-      ) as _i2.ValueNotifier<List<_i36.GridItemModel<_i23.W3MChainInfo>>>);
+      ) as _i2.ValueNotifier<List<_i36.GridItem<_i23.W3MChainInfo>>>);
   @override
   set itemList(
-          _i2.ValueNotifier<List<_i36.GridItemModel<_i23.W3MChainInfo>>>?
+          _i2.ValueNotifier<List<_i36.GridItem<_i23.W3MChainInfo>>>?
               _itemList) =>
       super.noSuchMethod(
         Invocation.setter(

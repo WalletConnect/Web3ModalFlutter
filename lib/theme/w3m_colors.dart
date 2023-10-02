@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'web3modal_colors.freezed.dart';
+part 'w3m_colors.freezed.dart';
 
 @freezed
 class Web3ModalColors with _$Web3ModalColors {

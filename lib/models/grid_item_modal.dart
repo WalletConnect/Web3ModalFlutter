@@ -1,11 +1,11 @@
-class GridItemModel<T> {
+class GridItem<T> {
   final String image;
   final String id;
   final String title;
   final String? description;
   final T data;
 
-  GridItemModel({
+  GridItem({
     required this.image,
     required this.id,
     required this.title,
@@ -13,14 +13,14 @@ class GridItemModel<T> {
     required this.data,
   });
 
-  GridItemModel<T> copyWith({
+  GridItem<T> copyWith({
     String? image,
     String? id,
     String? title,
     String? description,
     T? data,
   }) {
-    return GridItemModel<T>(
+    return GridItem<T>(
       image: image ?? this.image,
       id: id ?? this.id,
       title: title ?? this.title,

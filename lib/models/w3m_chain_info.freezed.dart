@@ -26,7 +26,7 @@ mixin _$W3MChainInfo {
   Map<String, RequiredNamespace> get optionalNamespaces =>
       throw _privateConstructorUsedError;
   String get rpcUrl => throw _privateConstructorUsedError;
-  BlockExplorer? get blockExplorer => throw _privateConstructorUsedError;
+  W3MBlockExplorer? get blockExplorer => throw _privateConstructorUsedError;
   ILedgerService get ledgerService => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -49,10 +49,10 @@ abstract class $W3MChainInfoCopyWith<$Res> {
       Map<String, RequiredNamespace> requiredNamespaces,
       Map<String, RequiredNamespace> optionalNamespaces,
       String rpcUrl,
-      BlockExplorer? blockExplorer,
+      W3MBlockExplorer? blockExplorer,
       ILedgerService ledgerService});
 
-  $BlockExplorerCopyWith<$Res>? get blockExplorer;
+  $W3MBlockExplorerCopyWith<$Res>? get blockExplorer;
 }
 
 /// @nodoc
@@ -115,7 +115,7 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
       blockExplorer: freezed == blockExplorer
           ? _value.blockExplorer
           : blockExplorer // ignore: cast_nullable_to_non_nullable
-              as BlockExplorer?,
+              as W3MBlockExplorer?,
       ledgerService: null == ledgerService
           ? _value.ledgerService
           : ledgerService // ignore: cast_nullable_to_non_nullable
@@ -125,12 +125,12 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
 
   @override
   @pragma('vm:prefer-inline')
-  $BlockExplorerCopyWith<$Res>? get blockExplorer {
+  $W3MBlockExplorerCopyWith<$Res>? get blockExplorer {
     if (_value.blockExplorer == null) {
       return null;
     }
 
-    return $BlockExplorerCopyWith<$Res>(_value.blockExplorer!, (value) {
+    return $W3MBlockExplorerCopyWith<$Res>(_value.blockExplorer!, (value) {
       return _then(_value.copyWith(blockExplorer: value) as $Val);
     });
   }
@@ -153,11 +153,11 @@ abstract class _$$_W3MChainInfoCopyWith<$Res>
       Map<String, RequiredNamespace> requiredNamespaces,
       Map<String, RequiredNamespace> optionalNamespaces,
       String rpcUrl,
-      BlockExplorer? blockExplorer,
+      W3MBlockExplorer? blockExplorer,
       ILedgerService ledgerService});
 
   @override
-  $BlockExplorerCopyWith<$Res>? get blockExplorer;
+  $W3MBlockExplorerCopyWith<$Res>? get blockExplorer;
 }
 
 /// @nodoc
@@ -218,7 +218,7 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
       blockExplorer: freezed == blockExplorer
           ? _value.blockExplorer
           : blockExplorer // ignore: cast_nullable_to_non_nullable
-              as BlockExplorer?,
+              as W3MBlockExplorer?,
       ledgerService: null == ledgerService
           ? _value.ledgerService
           : ledgerService // ignore: cast_nullable_to_non_nullable
@@ -275,7 +275,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
   @override
   final String rpcUrl;
   @override
-  final BlockExplorer? blockExplorer;
+  final W3MBlockExplorer? blockExplorer;
   @override
   @JsonKey()
   final ILedgerService ledgerService;
@@ -341,7 +341,7 @@ abstract class _W3MChainInfo implements W3MChainInfo {
       required final Map<String, RequiredNamespace> requiredNamespaces,
       required final Map<String, RequiredNamespace> optionalNamespaces,
       required final String rpcUrl,
-      final BlockExplorer? blockExplorer,
+      final W3MBlockExplorer? blockExplorer,
       final ILedgerService ledgerService}) = _$_W3MChainInfo;
 
   @override
@@ -361,7 +361,7 @@ abstract class _W3MChainInfo implements W3MChainInfo {
   @override
   String get rpcUrl;
   @override
-  BlockExplorer? get blockExplorer;
+  W3MBlockExplorer? get blockExplorer;
   @override
   ILedgerService get ledgerService;
   @override
@@ -371,28 +371,28 @@ abstract class _W3MChainInfo implements W3MChainInfo {
 }
 
 /// @nodoc
-mixin _$BlockExplorer {
+mixin _$W3MBlockExplorer {
   String get name => throw _privateConstructorUsedError;
   String get url => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $BlockExplorerCopyWith<BlockExplorer> get copyWith =>
+  $W3MBlockExplorerCopyWith<W3MBlockExplorer> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $BlockExplorerCopyWith<$Res> {
-  factory $BlockExplorerCopyWith(
-          BlockExplorer value, $Res Function(BlockExplorer) then) =
-      _$BlockExplorerCopyWithImpl<$Res, BlockExplorer>;
+abstract class $W3MBlockExplorerCopyWith<$Res> {
+  factory $W3MBlockExplorerCopyWith(
+          W3MBlockExplorer value, $Res Function(W3MBlockExplorer) then) =
+      _$W3MBlockExplorerCopyWithImpl<$Res, W3MBlockExplorer>;
   @useResult
   $Res call({String name, String url});
 }
 
 /// @nodoc
-class _$BlockExplorerCopyWithImpl<$Res, $Val extends BlockExplorer>
-    implements $BlockExplorerCopyWith<$Res> {
-  _$BlockExplorerCopyWithImpl(this._value, this._then);
+class _$W3MBlockExplorerCopyWithImpl<$Res, $Val extends W3MBlockExplorer>
+    implements $W3MBlockExplorerCopyWith<$Res> {
+  _$W3MBlockExplorerCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -419,22 +419,22 @@ class _$BlockExplorerCopyWithImpl<$Res, $Val extends BlockExplorer>
 }
 
 /// @nodoc
-abstract class _$$_BlockExplorerCopyWith<$Res>
-    implements $BlockExplorerCopyWith<$Res> {
-  factory _$$_BlockExplorerCopyWith(
-          _$_BlockExplorer value, $Res Function(_$_BlockExplorer) then) =
-      __$$_BlockExplorerCopyWithImpl<$Res>;
+abstract class _$$_W3MBlockExplorerCopyWith<$Res>
+    implements $W3MBlockExplorerCopyWith<$Res> {
+  factory _$$_W3MBlockExplorerCopyWith(
+          _$_W3MBlockExplorer value, $Res Function(_$_W3MBlockExplorer) then) =
+      __$$_W3MBlockExplorerCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String name, String url});
 }
 
 /// @nodoc
-class __$$_BlockExplorerCopyWithImpl<$Res>
-    extends _$BlockExplorerCopyWithImpl<$Res, _$_BlockExplorer>
-    implements _$$_BlockExplorerCopyWith<$Res> {
-  __$$_BlockExplorerCopyWithImpl(
-      _$_BlockExplorer _value, $Res Function(_$_BlockExplorer) _then)
+class __$$_W3MBlockExplorerCopyWithImpl<$Res>
+    extends _$W3MBlockExplorerCopyWithImpl<$Res, _$_W3MBlockExplorer>
+    implements _$$_W3MBlockExplorerCopyWith<$Res> {
+  __$$_W3MBlockExplorerCopyWithImpl(
+      _$_W3MBlockExplorer _value, $Res Function(_$_W3MBlockExplorer) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -443,7 +443,7 @@ class __$$_BlockExplorerCopyWithImpl<$Res>
     Object? name = null,
     Object? url = null,
   }) {
-    return _then(_$_BlockExplorer(
+    return _then(_$_W3MBlockExplorer(
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -458,8 +458,8 @@ class __$$_BlockExplorerCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_BlockExplorer implements _BlockExplorer {
-  _$_BlockExplorer({required this.name, required this.url});
+class _$_W3MBlockExplorer implements _W3MBlockExplorer {
+  _$_W3MBlockExplorer({required this.name, required this.url});
 
   @override
   final String name;
@@ -468,14 +468,14 @@ class _$_BlockExplorer implements _BlockExplorer {
 
   @override
   String toString() {
-    return 'BlockExplorer(name: $name, url: $url)';
+    return 'W3MBlockExplorer(name: $name, url: $url)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_BlockExplorer &&
+            other is _$_W3MBlockExplorer &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.url, url) || other.url == url));
   }
@@ -486,14 +486,14 @@ class _$_BlockExplorer implements _BlockExplorer {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_BlockExplorerCopyWith<_$_BlockExplorer> get copyWith =>
-      __$$_BlockExplorerCopyWithImpl<_$_BlockExplorer>(this, _$identity);
+  _$$_W3MBlockExplorerCopyWith<_$_W3MBlockExplorer> get copyWith =>
+      __$$_W3MBlockExplorerCopyWithImpl<_$_W3MBlockExplorer>(this, _$identity);
 }
 
-abstract class _BlockExplorer implements BlockExplorer {
-  factory _BlockExplorer(
+abstract class _W3MBlockExplorer implements W3MBlockExplorer {
+  factory _W3MBlockExplorer(
       {required final String name,
-      required final String url}) = _$_BlockExplorer;
+      required final String url}) = _$_W3MBlockExplorer;
 
   @override
   String get name;
@@ -501,6 +501,6 @@ abstract class _BlockExplorer implements BlockExplorer {
   String get url;
   @override
   @JsonKey(ignore: true)
-  _$$_BlockExplorerCopyWith<_$_BlockExplorer> get copyWith =>
+  _$$_W3MBlockExplorerCopyWith<_$_W3MBlockExplorer> get copyWith =>
       throw _privateConstructorUsedError;
 }

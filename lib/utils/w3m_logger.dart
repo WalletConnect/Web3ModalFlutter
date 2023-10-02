@@ -1,6 +1,6 @@
 import 'package:logger/logger.dart';
 
-enum LogLevel {
+enum W3MLogLevel {
   verbose,
   debug,
   info,
@@ -11,17 +11,17 @@ enum LogLevel {
 
   Level toLevel() {
     switch (this) {
-      case LogLevel.verbose:
+      case W3MLogLevel.verbose:
         return Level.verbose;
-      case LogLevel.debug:
+      case W3MLogLevel.debug:
         return Level.debug;
-      case LogLevel.info:
+      case W3MLogLevel.info:
         return Level.info;
-      case LogLevel.warning:
+      case W3MLogLevel.warning:
         return Level.warning;
-      case LogLevel.error:
+      case W3MLogLevel.error:
         return Level.error;
-      case LogLevel.wtf:
+      case W3MLogLevel.wtf:
         return Level.wtf;
       default:
         return Level.nothing;
@@ -29,13 +29,13 @@ enum LogLevel {
   }
 }
 
-class LoggerUtil {
+class W3MLoggerUtil {
   static Logger logger = Logger(
     level: Level.nothing,
     printer: PrettyPrinter(),
   );
 
-  static void setLogLevel(LogLevel level) {
+  static void setLogLevel(W3MLogLevel level) {
     logger = Logger(
       level: level.toLevel(),
       printer: PrettyPrinter(

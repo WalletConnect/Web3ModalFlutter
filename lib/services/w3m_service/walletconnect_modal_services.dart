@@ -2,7 +2,7 @@ import 'package:web3modal_flutter/services/explorer_service/explorer_service_sin
 import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.dart';
 import 'package:web3modal_flutter/services/storage_service/i_storage_service.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
-import 'package:web3modal_flutter/utils/logger.dart';
+import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/i_widget_stack.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 
@@ -41,7 +41,7 @@ class WalletConnectModalServices {
     // await network.init();
     await explorer.init();
     for (final entry in _initFunctions.entries) {
-      LoggerUtil.logger
+      W3MLoggerUtil.logger
           .v('WalletConnectModalServices init service: ${entry.key}');
       await entry.value();
     }

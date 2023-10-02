@@ -2,12 +2,12 @@ library web3modal_flutter;
 
 // Utils
 export 'constants/namespaces.dart';
-export 'utils/chain_data.dart';
+export 'models/w3m_chains_presets.dart';
 export 'models/w3m_chain_info.dart';
-export 'utils/logger.dart';
+export 'utils/w3m_logger.dart';
 
 // Theme
-export 'theme/theme.dart';
+export 'theme/w3m_theme.dart';
 
 // Services
 export 'services/w3m_service/w3m_service.dart';

@@ -92,8 +92,8 @@ void main() {
       urlUtils.instance = mockUrlUtils;
 
       // Change all chain presets to use our mock EVMService
-      for (var entry in ChainData.chainPresets.entries) {
-        ChainData.chainPresets[entry.key] = entry.value.copyWith(
+      for (var entry in W3MChainPresets.chains.entries) {
+        W3MChainPresets.chains[entry.key] = entry.value.copyWith(
           ledgerService: mockEVMService,
         );
       }
@@ -165,7 +165,7 @@ void main() {
 
         expect(service.isInitialized, isTrue);
         final List<String> chainIds = [];
-        for (final String id in ChainData.chainPresets.keys) {
+        for (final String id in W3MChainPresets.chains.keys) {
           chainIds.add('eip155:$id');
         }
         final Map<String, RequiredNamespace> optionalNamespaces = {
@@ -217,7 +217,7 @@ void main() {
         verify(es.getAssetImageUrl(imageId: anyNamed('imageId'))).called(1);
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
-        expect(service.selectedChain, ChainData.chainPresets['1']);
+        expect(service.selectedChain, W3MChainPresets.chains['1']);
         expect(counter, 4);
 
         service.removeListener(f);
@@ -227,7 +227,7 @@ void main() {
     group('setSelectedChain', () {
       test('throws if _checkInitialized fails', () async {
         expect(
-          () => service.setSelectedChain(ChainData.chainPresets['1']!),
+          () => service.setSelectedChain(W3MChainPresets.chains['1']!),
           throwsA(isA<StateError>()),
         );
       });
@@ -254,14 +254,14 @@ void main() {
         verify(es.getAssetImageUrl(imageId: anyNamed('imageId'))).called(1);
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
-        expect(service.selectedChain, ChainData.chainPresets['1']);
+        expect(service.selectedChain, W3MChainPresets.chains['1']);
         expect(
           service.requiredNamespaces,
-          ChainData.chainPresets['1']!.requiredNamespaces,
+          W3MChainPresets.chains['1']!.requiredNamespaces,
         );
 
         // Chain swap to polygon
-        await service.setSelectedChain(ChainData.chainPresets['137']!);
+        await service.setSelectedChain(W3MChainPresets.chains['137']!);
 
         //
         expect(counter, 6);
@@ -271,10 +271,10 @@ void main() {
         verify(es.getAssetImageUrl(imageId: anyNamed('imageId'))).called(1);
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
-        expect(service.selectedChain, ChainData.chainPresets['137']);
+        expect(service.selectedChain, W3MChainPresets.chains['137']);
         expect(
           service.requiredNamespaces,
-          ChainData.chainPresets['137']!.requiredNamespaces,
+          W3MChainPresets.chains['137']!.requiredNamespaces,
         );
 
         // Setting selected chain to null will disconnect
@@ -312,8 +312,8 @@ void main() {
 
         await service.init();
 
-        await service.setSelectedChain(ChainData.chainPresets['1']!);
-        await service.setSelectedChain(ChainData.chainPresets['137']!);
+        await service.setSelectedChain(W3MChainPresets.chains['1']!);
+        await service.setSelectedChain(W3MChainPresets.chains['137']!);
 
         // Check that we switched wallets
         verify(

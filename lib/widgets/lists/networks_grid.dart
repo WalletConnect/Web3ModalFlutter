@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/models/grid_item_modal.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/lists/grid_items/wallet_grid_item.dart';
@@ -13,7 +13,7 @@ class NetworksGrid extends StatelessWidget {
     required this.itemList,
     this.onTapNetwork,
   });
-  final List<GridItemModel<W3MChainInfo>> itemList;
+  final List<GridItem<W3MChainInfo>> itemList;
   final Function(W3MChainInfo)? onTapNetwork;
 
   @override
