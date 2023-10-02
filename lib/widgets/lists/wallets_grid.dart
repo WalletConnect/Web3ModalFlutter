@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:web3modal_flutter/models/grid_item_modal.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/lists/grid_items/wallet_grid_item.dart';
+import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 
-import 'package:walletconnect_modal_flutter/models/listings.dart';
-import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 
 class WalletsGrid extends StatelessWidget {
@@ -13,8 +13,8 @@ class WalletsGrid extends StatelessWidget {
     required this.itemList,
     this.onTapWallet,
   });
-  final List<GridListItemModel<WalletData>> itemList;
-  final Function(WalletData)? onTapWallet;
+  final List<GridItemModel<W3MWalletInfo>> itemList;
+  final Function(W3MWalletInfo walletInfo)? onTapWallet;
 
   @override
   Widget build(BuildContext context) {

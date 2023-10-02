@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:web3modal_flutter/pages/qr_code_page.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/searchbar.dart';
-
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
 
 class AllWalletsHeader extends StatelessWidget {
   const AllWalletsHeader({super.key});

@@ -240,7 +240,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
       required final Map<String, RequiredNamespace> optionalNamespaces,
       required this.rpcUrl,
       this.blockExplorer,
-      this.ledgerService = const EVMService()})
+      this.ledgerService = const LedgerService()})
       : _requiredNamespaces = requiredNamespaces,
         _optionalNamespaces = optionalNamespaces;
 

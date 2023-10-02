@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
-
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
 
 class NetworkButton extends StatelessWidget {
   const NetworkButton({

@@ -9,7 +9,7 @@ import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart';
-import 'package:web3modal_flutter/services/ledger_service.dart/evm_service.dart';
+import 'package:web3modal_flutter/services/ledger_service.dart/ledger_service.dart';
 import 'package:web3modal_flutter/services/network_service.dart/network_service.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -29,7 +29,7 @@ import 'mock_classes.mocks.dart';
   http.Client,
   NetworkService,
   BlockchainApiUtils,
-  EVMService,
+  LedgerService,
   StorageService,
   WidgetStack,
 ])

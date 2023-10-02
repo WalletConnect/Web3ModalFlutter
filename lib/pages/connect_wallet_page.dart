@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
+import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
@@ -16,8 +18,6 @@ import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/models/listings.dart';
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
 
 class ConnectWalletPage extends StatefulWidget {
   const ConnectWalletPage()
@@ -30,7 +30,7 @@ class ConnectWalletPage extends StatefulWidget {
 class _ConnectWalletPageState extends State<ConnectWalletPage>
     with WidgetsBindingObserver {
   IW3MService? _service;
-  WalletData? _selectedWallet;
+  W3MWalletInfo? _selectedWallet;
 
   @override
   void initState() {
@@ -40,7 +40,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
       _service = Web3ModalProvider.of(context).service;
       _selectedWallet = _service?.selectedWallet;
       if (_selectedWallet?.installed == true) {
-        _service?.connectWallet(walletData: _selectedWallet!);
+        _service?.connectWallet(walletInfo: _selectedWallet!);
       }
       setState(() {});
     });
@@ -124,7 +124,8 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                   SimpleIconButton(
                     onTap: () {
                       service.connectWallet(
-                          walletData: service.selectedWallet!);
+                        walletInfo: service.selectedWallet!,
+                      );
                     },
                     leftIcon: 'assets/icons/refresh.svg',
                     title: 'Try again',
@@ -157,7 +158,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                           ),
                         if (isPortrait) const SizedBox.square(dimension: 16.0),
                         if (_selectedWallet != null)
-                          DownloadWalletItem(walletData: _selectedWallet!),
+                          DownloadWalletItem(walletInfo: _selectedWallet!),
                         const SizedBox.square(dimension: 16.0),
                       ],
                     ),

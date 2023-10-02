@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:web3modal_flutter/pages/qr_code_and_wallet_list_page.dart';
+// import 'package:web3modal_flutter/pages/qr_code_and_wallet_list_page.dart';
 import 'package:web3modal_flutter/pages/wallets_list_short_page.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/i_widget_stack.dart';
 //
@@ -79,7 +79,8 @@ class WidgetStack extends IWidgetStack {
     if (pType == PlatformType.mobile) {
       add(const WalletsListShortPage());
     } else if (pType == PlatformType.desktop || pType == PlatformType.web) {
-      add(const QRCodeAndWalletListPage());
+      // add(const QRCodeAndWalletListPage());
+      // TODO fix non mobile page
     }
   }
 }

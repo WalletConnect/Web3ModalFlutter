@@ -27,7 +27,7 @@ void main() {
     late MockNetworkService mockNetworkService;
     late MockStorageService mockStorageService;
     late MockBlockchainApiUtils mockBlockchainApiUtils;
-    late MockEVMService mockEVMService;
+    late MockLedgerService mockEVMService;
     late MockUrlUtils mockUrlUtils;
 
     late Event<SessionDelete> onSessionDelete = Event<SessionDelete>();
@@ -83,7 +83,7 @@ void main() {
       mockStorageService = MockStorageService();
       mockBlockchainApiUtils = MockBlockchainApiUtils();
       es = MockExplorerService();
-      mockEVMService = MockEVMService();
+      mockEVMService = MockLedgerService();
       mockUrlUtils = MockUrlUtils();
       networkService.instance = mockNetworkService;
       storageService.instance = mockStorageService;

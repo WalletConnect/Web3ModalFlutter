@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:walletconnect_modal_flutter/models/listings.dart';
-import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 
+import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+
+import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.dart';
+
+import 'package:web3modal_flutter/services/w3m_service/walletconnect_modal_service.dart';
+import 'package:web3modal_flutter/services/w3m_service/walletconnect_modal_services.dart';
+import 'package:web3modal_flutter/utils/logger.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart';
@@ -17,13 +24,9 @@ import 'package:web3modal_flutter/utils/eth_util.dart';
 import 'package:web3modal_flutter/widgets/web3modal.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/explorer/i_explorer_service.dart';
 import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 
 class W3MService extends WalletConnectModalService implements IW3MService {
   static const String selectedChainId = 'selectedChainId';
@@ -103,9 +106,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
         events: EthUtil.ethEvents,
       ),
     };
-    setOptionalNamespaces(
-      optionalNamespaces: optionalNamespaces,
-    );
+    setOptionalNamespaces(optionalNamespaces: optionalNamespaces);
 
     // Get the chainId of the chain we are connected to.
     if (session != null) {
@@ -131,6 +132,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
         }
       }
     }
+    LoggerUtil.logger.i('W3MService initialized');
   }
 
   @override
@@ -400,14 +402,14 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     }
   }
 
-  WalletData? _walletData;
+  W3MWalletInfo? _walletInfo;
 
   @override
-  WalletData? get selectedWallet => _walletData;
+  W3MWalletInfo? get selectedWallet => _walletInfo;
 
   @override
-  Future<void> selectWallet({required WalletData? walletData}) async {
-    _walletData = walletData;
+  Future<void> selectWallet({required W3MWalletInfo? walletInfo}) async {
+    _walletInfo = walletInfo;
     return;
   }
 

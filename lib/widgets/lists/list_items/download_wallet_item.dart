@@ -7,15 +7,14 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:web3modal_flutter/theme/theme.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item.dart';
-
-import 'package:walletconnect_modal_flutter/models/listings.dart';
+import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 
 class DownloadWalletItem extends StatelessWidget {
   const DownloadWalletItem({
     super.key,
-    required this.walletData,
+    required this.walletInfo,
   });
-  final WalletData walletData;
+  final W3MWalletInfo walletInfo;
 
   String get _storeIcon {
     if (Platform.isIOS) {
@@ -29,10 +28,10 @@ class DownloadWalletItem extends StatelessWidget {
 
   String get _storeUrl {
     if (Platform.isIOS) {
-      return walletData.listing.app.ios ?? '';
+      return walletInfo.listing.app.ios ?? '';
     }
     if (Platform.isAndroid) {
-      return walletData.listing.app.android ?? '';
+      return walletInfo.listing.app.android ?? '';
     }
     return '';
   }
@@ -68,7 +67,7 @@ class DownloadWalletItem extends StatelessWidget {
           );
         } catch (e) {
           Web3ModalProvider.of(context).service.connectWallet(
-                walletData: walletData,
+                walletInfo: walletInfo,
               );
         }
       },
