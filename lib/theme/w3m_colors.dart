@@ -5,29 +5,12 @@ part 'w3m_colors.freezed.dart';
 
 @freezed
 class Web3ModalColors with _$Web3ModalColors {
-  // TODO check colors names
   const factory Web3ModalColors({
-    required Color blue100,
-    required Color blue090,
-    required Color blue080,
-    required Color overblue090,
-    required Color overblue080,
-    required Color overblue020,
-    required Color overblue015,
-    required Color overblue010,
-    required Color overblue005,
-    required Color overblue002,
+    required Color accent100,
+    required Color accent090,
+    required Color accent080,
     //
-    required Color overgray001,
-    required Color overgray002,
-    required Color overgray005,
-    required Color overgray010,
-    required Color overgray015,
-    required Color overgray020,
-    required Color overgray025,
-    required Color overgray030,
-    required Color overgray060,
-    required Color overgray080,
+    required Color grayGlass100,
     //
     required Color foreground100,
     required Color foreground125,
@@ -62,27 +45,11 @@ class Web3ModalColors with _$Web3ModalColors {
   }) = _Web3ModalColors;
 
   static const darkMode = Web3ModalColors(
-    blue100: Color.fromRGBO(71, 161, 255, 1.0),
-    blue090: Color(0xFF59AAFF),
-    blue080: Color(0xFF6CB4FF),
-    overblue090: Color.fromRGBO(71, 161, 255, 0.9),
-    overblue080: Color.fromRGBO(71, 161, 255, 0.8),
-    overblue020: Color.fromRGBO(71, 161, 255, 0.2),
-    overblue015: Color.fromRGBO(71, 161, 255, 0.15),
-    overblue010: Color.fromRGBO(71, 161, 255, 0.1),
-    overblue005: Color.fromRGBO(71, 161, 255, 0.05),
-    overblue002: Color.fromRGBO(71, 161, 255, 0.02),
+    accent100: Color(0xFF47A1FF),
+    accent090: Color(0xFF59AAFF),
+    accent080: Color(0xFF6CB4FF),
     //
-    overgray001: Color.fromRGBO(255, 255, 255, 0.01),
-    overgray002: Color.fromRGBO(255, 255, 255, 0.02),
-    overgray005: Color.fromRGBO(255, 255, 255, 0.05),
-    overgray010: Color.fromRGBO(255, 255, 255, 0.1),
-    overgray015: Color.fromRGBO(255, 255, 255, 0.15),
-    overgray020: Color.fromRGBO(255, 255, 255, 0.2),
-    overgray025: Color.fromRGBO(255, 255, 255, 0.25),
-    overgray030: Color.fromRGBO(255, 255, 255, 0.3),
-    overgray060: Color.fromRGBO(255, 255, 255, 0.6),
-    overgray080: Color.fromRGBO(255, 255, 255, 0.8),
+    grayGlass100: Color(0xFFFFFFFF),
     //
     foreground100: Color(0xFFE4E7E7),
     foreground125: Color(0xFFD0D5D5),
@@ -117,27 +84,11 @@ class Web3ModalColors with _$Web3ModalColors {
   );
 
   static const lightMode = Web3ModalColors(
-    blue100: Color.fromRGBO(51, 150, 255, 1.0),
-    blue090: Color(0xFF2D7DD2),
-    blue080: Color(0xFF2978CC),
-    overblue090: Color.fromRGBO(51, 150, 255, 0.9),
-    overblue080: Color.fromRGBO(51, 150, 255, 0.8),
-    overblue020: Color.fromRGBO(51, 150, 255, 0.2),
-    overblue015: Color.fromRGBO(51, 150, 255, 0.15),
-    overblue010: Color.fromRGBO(51, 150, 255, 0.1),
-    overblue005: Color.fromRGBO(51, 150, 255, 0.05),
-    overblue002: Color.fromRGBO(51, 150, 255, 0.02),
+    accent100: Color(0xFF3396FF),
+    accent090: Color(0xFF2D7DD2),
+    accent080: Color(0xFF2978CC),
     //
-    overgray001: Color.fromRGBO(0, 0, 0, 0.01),
-    overgray002: Color.fromRGBO(0, 0, 0, 0.02),
-    overgray005: Color.fromRGBO(0, 0, 0, 0.05),
-    overgray010: Color.fromRGBO(0, 0, 0, 0.1),
-    overgray015: Color.fromRGBO(0, 0, 0, 0.15),
-    overgray020: Color.fromRGBO(0, 0, 0, 0.2),
-    overgray025: Color.fromRGBO(0, 0, 0, 0.25),
-    overgray030: Color.fromRGBO(0, 0, 0, 0.3),
-    overgray060: Color.fromRGBO(0, 0, 0, 0.6),
-    overgray080: Color.fromRGBO(0, 0, 0, 0.8),
+    grayGlass100: Color(0xFF000000),
     //
     foreground100: Color(0xFF141414),
     foreground125: Color(0xFF2D3131),
@@ -170,4 +121,26 @@ class Web3ModalColors with _$Web3ModalColors {
     purple100: Color(0xFF794CFF),
     yellow100: Color(0xFFEECC1C),
   );
+}
+
+extension Web3ModalColorsExtension on Web3ModalColors {
+  Color get accenGlass090 => accent100.withOpacity(0.9);
+  Color get accenGlass080 => accent100.withOpacity(0.8);
+  Color get accenGlass020 => accent100.withOpacity(0.2);
+  Color get accenGlass015 => accent100.withOpacity(0.15);
+  Color get accenGlass010 => accent100.withOpacity(0.1);
+  Color get accenGlass005 => accent100.withOpacity(0.05);
+  Color get accenGlass002 => accent100.withOpacity(0.02);
+  //
+  Color get grayGlass001 => grayGlass100.withOpacity(0.01);
+  Color get grayGlass002 => grayGlass100.withOpacity(0.02);
+  Color get grayGlass005 => grayGlass100.withOpacity(0.05);
+  Color get grayGlass010 => grayGlass100.withOpacity(0.1);
+  Color get grayGlass015 => grayGlass100.withOpacity(0.15);
+  Color get grayGlass020 => grayGlass100.withOpacity(0.2);
+  Color get grayGlass025 => grayGlass100.withOpacity(0.25);
+  Color get grayGlass030 => grayGlass100.withOpacity(0.3);
+  Color get grayGlass060 => grayGlass100.withOpacity(0.6);
+  Color get grayGlass080 => grayGlass100.withOpacity(0.8);
+  Color get grayGlass090 => grayGlass100.withOpacity(0.9);
 }

@@ -16,7 +16,10 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$Web3ModalThemeData {
-  Web3ModalColors get colors => throw _privateConstructorUsedError;
+// @Default(Web3ModalColors.lightMode) Web3ModalColors colors,
+// @Default(false) bool isDarkMode,
+  Web3ModalColors get lightColors => throw _privateConstructorUsedError;
+  Web3ModalColors get darkColors => throw _privateConstructorUsedError;
   Web3ModalTextStyles get textStyles => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -30,9 +33,13 @@ abstract class $Web3ModalThemeDataCopyWith<$Res> {
           Web3ModalThemeData value, $Res Function(Web3ModalThemeData) then) =
       _$Web3ModalThemeDataCopyWithImpl<$Res, Web3ModalThemeData>;
   @useResult
-  $Res call({Web3ModalColors colors, Web3ModalTextStyles textStyles});
+  $Res call(
+      {Web3ModalColors lightColors,
+      Web3ModalColors darkColors,
+      Web3ModalTextStyles textStyles});
 
-  $Web3ModalColorsCopyWith<$Res> get colors;
+  $Web3ModalColorsCopyWith<$Res> get lightColors;
+  $Web3ModalColorsCopyWith<$Res> get darkColors;
   $Web3ModalTextStylesCopyWith<$Res> get textStyles;
 }
 
@@ -49,13 +56,18 @@ class _$Web3ModalThemeDataCopyWithImpl<$Res, $Val extends Web3ModalThemeData>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? colors = null,
+    Object? lightColors = null,
+    Object? darkColors = null,
     Object? textStyles = null,
   }) {
     return _then(_value.copyWith(
-      colors: null == colors
-          ? _value.colors
-          : colors // ignore: cast_nullable_to_non_nullable
+      lightColors: null == lightColors
+          ? _value.lightColors
+          : lightColors // ignore: cast_nullable_to_non_nullable
+              as Web3ModalColors,
+      darkColors: null == darkColors
+          ? _value.darkColors
+          : darkColors // ignore: cast_nullable_to_non_nullable
               as Web3ModalColors,
       textStyles: null == textStyles
           ? _value.textStyles
@@ -66,9 +78,17 @@ class _$Web3ModalThemeDataCopyWithImpl<$Res, $Val extends Web3ModalThemeData>
 
   @override
   @pragma('vm:prefer-inline')
-  $Web3ModalColorsCopyWith<$Res> get colors {
-    return $Web3ModalColorsCopyWith<$Res>(_value.colors, (value) {
-      return _then(_value.copyWith(colors: value) as $Val);
+  $Web3ModalColorsCopyWith<$Res> get lightColors {
+    return $Web3ModalColorsCopyWith<$Res>(_value.lightColors, (value) {
+      return _then(_value.copyWith(lightColors: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $Web3ModalColorsCopyWith<$Res> get darkColors {
+    return $Web3ModalColorsCopyWith<$Res>(_value.darkColors, (value) {
+      return _then(_value.copyWith(darkColors: value) as $Val);
     });
   }
 
@@ -89,10 +109,15 @@ abstract class _$$_Web3ModalThemeDataCopyWith<$Res>
       __$$_Web3ModalThemeDataCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Web3ModalColors colors, Web3ModalTextStyles textStyles});
+  $Res call(
+      {Web3ModalColors lightColors,
+      Web3ModalColors darkColors,
+      Web3ModalTextStyles textStyles});
 
   @override
-  $Web3ModalColorsCopyWith<$Res> get colors;
+  $Web3ModalColorsCopyWith<$Res> get lightColors;
+  @override
+  $Web3ModalColorsCopyWith<$Res> get darkColors;
   @override
   $Web3ModalTextStylesCopyWith<$Res> get textStyles;
 }
@@ -108,13 +133,18 @@ class __$$_Web3ModalThemeDataCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? colors = null,
+    Object? lightColors = null,
+    Object? darkColors = null,
     Object? textStyles = null,
   }) {
     return _then(_$_Web3ModalThemeData(
-      colors: null == colors
-          ? _value.colors
-          : colors // ignore: cast_nullable_to_non_nullable
+      lightColors: null == lightColors
+          ? _value.lightColors
+          : lightColors // ignore: cast_nullable_to_non_nullable
+              as Web3ModalColors,
+      darkColors: null == darkColors
+          ? _value.darkColors
+          : darkColors // ignore: cast_nullable_to_non_nullable
               as Web3ModalColors,
       textStyles: null == textStyles
           ? _value.textStyles
@@ -127,16 +157,26 @@ class __$$_Web3ModalThemeDataCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Web3ModalThemeData implements _Web3ModalThemeData {
-  const _$_Web3ModalThemeData({required this.colors, required this.textStyles});
+  const _$_Web3ModalThemeData(
+      {this.lightColors = Web3ModalColors.lightMode,
+      this.darkColors = Web3ModalColors.darkMode,
+      this.textStyles = Web3ModalTextStyles.textStyle});
 
+// @Default(Web3ModalColors.lightMode) Web3ModalColors colors,
+// @Default(false) bool isDarkMode,
   @override
-  final Web3ModalColors colors;
+  @JsonKey()
+  final Web3ModalColors lightColors;
   @override
+  @JsonKey()
+  final Web3ModalColors darkColors;
+  @override
+  @JsonKey()
   final Web3ModalTextStyles textStyles;
 
   @override
   String toString() {
-    return 'Web3ModalThemeData(colors: $colors, textStyles: $textStyles)';
+    return 'Web3ModalThemeData(lightColors: $lightColors, darkColors: $darkColors, textStyles: $textStyles)';
   }
 
   @override
@@ -144,13 +184,17 @@ class _$_Web3ModalThemeData implements _Web3ModalThemeData {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Web3ModalThemeData &&
-            (identical(other.colors, colors) || other.colors == colors) &&
+            (identical(other.lightColors, lightColors) ||
+                other.lightColors == lightColors) &&
+            (identical(other.darkColors, darkColors) ||
+                other.darkColors == darkColors) &&
             (identical(other.textStyles, textStyles) ||
                 other.textStyles == textStyles));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, colors, textStyles);
+  int get hashCode =>
+      Object.hash(runtimeType, lightColors, darkColors, textStyles);
 
   @JsonKey(ignore: true)
   @override
@@ -162,11 +206,15 @@ class _$_Web3ModalThemeData implements _Web3ModalThemeData {
 
 abstract class _Web3ModalThemeData implements Web3ModalThemeData {
   const factory _Web3ModalThemeData(
-      {required final Web3ModalColors colors,
-      required final Web3ModalTextStyles textStyles}) = _$_Web3ModalThemeData;
+      {final Web3ModalColors lightColors,
+      final Web3ModalColors darkColors,
+      final Web3ModalTextStyles textStyles}) = _$_Web3ModalThemeData;
 
+  @override // @Default(Web3ModalColors.lightMode) Web3ModalColors colors,
+// @Default(false) bool isDarkMode,
+  Web3ModalColors get lightColors;
   @override
-  Web3ModalColors get colors;
+  Web3ModalColors get darkColors;
   @override
   Web3ModalTextStyles get textStyles;
   @override

@@ -17,6 +17,7 @@ class AllWalletsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return BaseListItem(
       onTap: onTap,
       child: Row(
@@ -37,7 +38,7 @@ class AllWalletsItem extends StatelessWidget {
               child: Text(
                 'All Wallets',
                 style: themeData.textStyles.paragraph500.copyWith(
-                  color: themeData.colors.foreground100,
+                  color: themeColors.foreground100,
                 ),
               ),
             ),

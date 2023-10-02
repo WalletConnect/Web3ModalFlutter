@@ -67,6 +67,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
   Widget build(BuildContext context) {
     final service = Web3ModalProvider.of(context).service;
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final walletName = service.selectedWallet?.listing.name ?? 'Wallet';
     final imageId = service.selectedWallet?.listing.imageId ?? '';
     final imageUrl =
@@ -107,7 +108,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                         : 'Not detected',
                     textAlign: TextAlign.center,
                     style: themeData.textStyles.paragraph500.copyWith(
-                      color: themeData.colors.foreground100,
+                      color: themeColors.foreground100,
                     ),
                   ),
                   const SizedBox.square(dimension: 8.0),
@@ -117,7 +118,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                         : 'Download and install $walletName to continue',
                     textAlign: TextAlign.center,
                     style: themeData.textStyles.small500.copyWith(
-                      color: themeData.colors.foreground200,
+                      color: themeColors.foreground200,
                     ),
                   ),
                   const SizedBox.square(dimension: 16.0),
@@ -130,7 +131,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                     leftIcon: 'assets/icons/refresh.svg',
                     title: 'Try again',
                     backgroundColor: Colors.transparent,
-                    foregroundColor: themeData.colors.blue100,
+                    foregroundColor: themeColors.accent100,
                   ),
                 ],
               ),
@@ -153,7 +154,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                         const SizedBox.square(dimension: 16.0),
                         if (isPortrait)
                           Divider(
-                            color: themeData.colors.overgray005,
+                            color: themeColors.grayGlass005,
                             height: 0.0,
                           ),
                         if (isPortrait) const SizedBox.square(dimension: 16.0),

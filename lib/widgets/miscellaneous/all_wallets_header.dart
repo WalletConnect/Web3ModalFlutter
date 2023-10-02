@@ -13,9 +13,9 @@ class AllWalletsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Container(
-      decoration: BoxDecoration(color: themeData.colors.background125),
+      decoration: BoxDecoration(color: themeColors.background125),
       padding: const EdgeInsets.all(kPadding12),
       child: Row(
         children: [

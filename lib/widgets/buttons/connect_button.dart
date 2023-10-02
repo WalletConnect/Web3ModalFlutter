@@ -28,6 +28,7 @@ class ConnectButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final textStyle = size == BaseButtonSize.small
         ? themeData.textStyles.small600
         : themeData.textStyles.paragraph600;
@@ -41,30 +42,30 @@ class ConnectButton extends StatelessWidget {
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (connecting) {
-              return themeData.colors.overgray010;
+              return themeColors.grayGlass010;
             }
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray005;
+              return themeColors.grayGlass005;
             }
-            return themeData.colors.blue100;
+            return themeColors.accent100;
           },
         ),
         foregroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (connecting) {
-              return themeData.colors.blue100;
+              return themeColors.accent100;
             }
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray015;
+              return themeColors.grayGlass015;
             }
-            return themeData.colors.inverse100;
+            return themeColors.inverse100;
           },
         ),
         shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
           (states) {
             return RoundedRectangleBorder(
               side: (states.contains(MaterialState.disabled) || connecting)
-                  ? BorderSide(color: themeData.colors.overgray010, width: 1.0)
+                  ? BorderSide(color: themeColors.grayGlass010, width: 1.0)
                   : BorderSide.none,
               borderRadius: BorderRadius.circular(size.height / 2),
             );
@@ -79,7 +80,7 @@ class ConnectButton extends StatelessWidget {
                   height: (textStyle.fontSize ?? 20.0) * 0.8,
                   width: (textStyle.fontSize ?? 20.0) * 0.8,
                   child: CircularProgressIndicator(
-                    color: themeData.colors.blue100,
+                    color: themeColors.accent100,
                     strokeWidth: 2.0,
                   ),
                 ),

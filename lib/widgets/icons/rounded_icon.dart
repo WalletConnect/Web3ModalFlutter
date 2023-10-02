@@ -19,7 +19,7 @@ class RoundedIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Container(
       width: size,
       height: size,
@@ -27,12 +27,12 @@ class RoundedIcon extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(size)),
         border: Border.fromBorderSide(
           BorderSide(
-            color: borderColor ?? themeData.colors.overgray005,
+            color: borderColor ?? themeColors.grayGlass005,
             width: 2,
             strokeAlign: BorderSide.strokeAlignCenter,
           ),
         ),
-        color: circleColor ?? themeData.colors.overgray015,
+        color: circleColor ?? themeColors.grayGlass015,
       ),
       clipBehavior: Clip.antiAlias,
       child: (imageUrl != null)
@@ -49,7 +49,7 @@ class RoundedIcon extends StatelessWidget {
               padding: EdgeInsets.all(padding),
               child: SvgPicture.asset(
                 colorFilter: ColorFilter.mode(
-                  assetColor ?? themeData.colors.foreground200,
+                  assetColor ?? themeColors.foreground200,
                   BlendMode.srcIn,
                 ),
                 assetPath ?? 'assets/icons/coin.svg',

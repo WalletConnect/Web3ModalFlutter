@@ -52,7 +52,7 @@ class _Web3ModalState extends State<Web3Modal> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final bool bottomSheet = platformUtils.instance.isBottomSheet();
     final BorderRadius innerContainerBorderRadius = bottomSheet
         ? const BorderRadius.only(
@@ -71,10 +71,10 @@ class _Web3ModalState extends State<Web3Modal> {
         decoration: BoxDecoration(
           borderRadius: innerContainerBorderRadius,
           border: Border.all(
-            color: themeData.colors.overgray005,
+            color: themeColors.grayGlass005,
             width: 1,
           ),
-          color: themeData.colors.background125,
+          color: themeColors.background125,
         ),
         child: Stack(
           children: [

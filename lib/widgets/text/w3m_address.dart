@@ -36,11 +36,12 @@ class _W3MAddressState extends State<W3MAddress> {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Text(
       Util.truncate(_address ?? ''),
       style: widget.style ??
           themeData.textStyles.paragraph600.copyWith(
-            color: themeData.colors.foreground100,
+            color: themeColors.foreground100,
           ),
     );
   }

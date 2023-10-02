@@ -26,6 +26,7 @@ class Web3ModalNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -46,7 +47,7 @@ class Web3ModalNavbar extends StatelessWidget {
                   child: Text(
                     title,
                     style: themeData.textStyles.paragraph600.copyWith(
-                      color: themeData.colors.foreground100,
+                      color: themeColors.foreground100,
                     ),
                   ),
                 ),
@@ -61,7 +62,7 @@ class Web3ModalNavbar extends StatelessWidget {
           ),
         ),
         Divider(
-          color: themeData.colors.overgray005,
+          color: themeColors.grayGlass005,
           height: 0.0,
         ),
         Flexible(

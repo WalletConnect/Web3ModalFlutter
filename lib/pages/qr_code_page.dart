@@ -18,6 +18,7 @@ class QRCodePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final isPortrait = ResponsiveData.isPortrait(context);
 
     return Web3ModalNavbar(
@@ -47,7 +48,7 @@ class QRCodePage extends StatelessWidget {
                     'Scan this QR code with your phone',
                     textAlign: TextAlign.center,
                     style: themeData.textStyles.paragraph500.copyWith(
-                      color: themeData.colors.foreground100,
+                      color: themeColors.foreground100,
                     ),
                   ),
                   Padding(

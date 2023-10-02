@@ -15,6 +15,7 @@ class HelpSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Container(
       padding: const EdgeInsets.all(kPadding12),
       child: Column(
@@ -39,7 +40,7 @@ class HelpSection extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: themeData.textStyles.paragraph500.copyWith(
-              color: themeData.colors.foreground100,
+              color: themeColors.foreground100,
             ),
           ),
           const SizedBox.square(dimension: 8.0),
@@ -47,7 +48,7 @@ class HelpSection extends StatelessWidget {
             description,
             textAlign: TextAlign.center,
             style: themeData.textStyles.small500.copyWith(
-              color: themeData.colors.foreground200,
+              color: themeColors.foreground200,
             ),
           ),
         ],

@@ -20,6 +20,7 @@ class SelectNetworkPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final service = Web3ModalProvider.of(context).service;
     final isSwitch = service.selectedChain != null;
     return Web3ModalNavbar(
@@ -39,13 +40,13 @@ class SelectNetworkPage extends StatelessWidget {
                 );
               },
             ),
-            Divider(color: themeData.colors.overgray005, height: 0.0),
+            Divider(color: themeColors.grayGlass005, height: 0.0),
             const SizedBox.square(dimension: 8.0),
             Text(
               'Your connected wallet may not support some of the networks available for this dApp',
               textAlign: TextAlign.center,
               style: themeData.textStyles.small500.copyWith(
-                color: themeData.colors.foreground300,
+                color: themeColors.foreground300,
               ),
             ),
             SimpleIconButton(
@@ -56,9 +57,9 @@ class SelectNetworkPage extends StatelessWidget {
               leftIcon: 'assets/icons/help.svg',
               title: 'What is a Network',
               backgroundColor: Colors.transparent,
-              foregroundColor: themeData.colors.blue100,
+              foregroundColor: themeColors.accent100,
               overlayColor: MaterialStateProperty.all<Color>(
-                themeData.colors.background200,
+                themeColors.background200,
               ),
               withBorder: false,
             ),

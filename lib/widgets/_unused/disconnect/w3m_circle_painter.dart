@@ -11,12 +11,12 @@ class W3MCirclePainter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
 
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: themeData.colors.blue100,
+        color: themeColors.accent100,
         borderRadius: BorderRadius.circular(100),
       ),
       child: child,

@@ -349,7 +349,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     final theme = Web3ModalTheme.maybeOf(context);
     final Widget child = theme == null
         ? Web3ModalTheme(
-            data: Web3ModalThemeData.lightMode,
+            data: const Web3ModalThemeData(),
             child: Web3Modal(startWidget: startWidget),
           )
         : Web3Modal(startWidget: startWidget);

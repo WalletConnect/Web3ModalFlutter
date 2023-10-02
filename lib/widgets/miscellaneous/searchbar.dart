@@ -19,12 +19,13 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final unfocusedBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: themeData.colors.overgray015, width: 1.0),
+      borderSide: BorderSide(color: themeColors.grayGlass015, width: 1.0),
       borderRadius: BorderRadius.circular(kRadius2XS),
     );
     final focusedBorder = unfocusedBorder.copyWith(
-      borderSide: BorderSide(color: themeData.colors.blue100, width: 1.0),
+      borderSide: BorderSide(color: themeColors.accent100, width: 1.0),
     );
     return SizedBox(
       height: kSearchFieldHeight,
@@ -32,10 +33,10 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
         onChanged: widget.onTextChanged,
         textAlignVertical: TextAlignVertical.center,
         style: TextStyle(
-          color: themeData.colors.foreground100,
+          color: themeColors.foreground100,
           height: 1.5,
         ),
-        cursorColor: themeData.colors.blue100,
+        cursorColor: themeColors.accent100,
         cursorHeight: 20.0,
         decoration: InputDecoration(
           isDense: true,
@@ -44,7 +45,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
               'assets/icons/search.svg',
               package: 'web3modal_flutter',
               colorFilter: ColorFilter.mode(
-                themeData.colors.foreground275,
+                themeColors.foreground275,
                 BlendMode.srcIn,
               ),
             ),
@@ -56,11 +57,11 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
             minWidth: kSearchFieldHeight,
           ),
           labelStyle: themeData.textStyles.paragraph500.copyWith(
-            color: themeData.colors.inverse100,
+            color: themeColors.inverse100,
           ),
           hintText: widget.hint,
           hintStyle: themeData.textStyles.paragraph500.copyWith(
-            color: themeData.colors.foreground275,
+            color: themeColors.foreground275,
             height: 1.5,
           ),
           border: unfocusedBorder,
@@ -69,7 +70,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
           disabledBorder: unfocusedBorder,
           focusedBorder: focusedBorder,
           filled: true,
-          fillColor: themeData.colors.overgray005,
+          fillColor: themeColors.grayGlass005,
           contentPadding: const EdgeInsets.all(0.0),
         ),
       ),

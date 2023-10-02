@@ -7,7 +7,7 @@ class ContentLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Container(
       padding: const EdgeInsets.all(8.0),
       height: viewHeight ?? 300.0,
@@ -15,7 +15,7 @@ class ContentLoading extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircularProgressIndicator(
-            color: themeData.colors.blue100,
+            color: themeColors.accent100,
           ),
         ),
       ),

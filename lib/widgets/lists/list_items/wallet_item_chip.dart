@@ -15,9 +15,10 @@ class WalletItemChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Container(
       decoration: BoxDecoration(
-        color: color ?? themeData.colors.overgray010,
+        color: color ?? themeColors.grayGlass010,
         borderRadius: const BorderRadius.all(
           Radius.circular(5.0),
         ),
@@ -28,7 +29,7 @@ class WalletItemChip extends StatelessWidget {
         value,
         style: textStyle ??
             themeData.textStyles.micro700.copyWith(
-              color: themeData.colors.foreground150,
+              color: themeColors.foreground150,
             ),
       ),
     );

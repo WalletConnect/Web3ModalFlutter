@@ -16,7 +16,7 @@ class BaseGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return FilledButton(
       onPressed: onTap,
       style: ButtonStyle(
@@ -24,14 +24,10 @@ class BaseGridItem extends StatelessWidget {
           const Size(1000.0, kGridItemHeight),
         ),
         backgroundColor: MaterialStateProperty.all<Color>(
-          isSelected
-              ? themeData.colors.overblue020
-              : themeData.colors.overgray002,
+          isSelected ? themeColors.accenGlass020 : themeColors.grayGlass002,
         ),
         overlayColor: MaterialStateProperty.all<Color>(
-          isSelected
-              ? themeData.colors.overblue020
-              : themeData.colors.overgray005,
+          isSelected ? themeColors.accenGlass020 : themeColors.grayGlass005,
         ),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(

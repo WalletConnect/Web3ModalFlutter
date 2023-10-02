@@ -26,7 +26,7 @@ class WalletGridItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
-
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return BaseGridItem(
       onTap: onTap,
       isSelected: isSelected,
@@ -40,7 +40,7 @@ class WalletGridItem extends StatelessWidget {
                     borderRadius: kRadiusXS,
                     imageUrl: imageUrl ?? '',
                     isNetwork: isNetwork,
-                    color: isSelected ? themeData.colors.blue100 : null,
+                    color: isSelected ? themeColors.accent100 : null,
                   ),
             ),
           ),
@@ -55,8 +55,8 @@ class WalletGridItem extends StatelessWidget {
                 overflow: TextOverflow.clip,
                 style: themeData.textStyles.tiny500.copyWith(
                   color: isSelected
-                      ? themeData.colors.blue100
-                      : themeData.colors.foreground100,
+                      ? themeColors.accent100
+                      : themeColors.foreground100,
                   height: 1.0,
                 ),
               ),

@@ -19,6 +19,7 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final service = Web3ModalProvider.of(context).service;
 
     return SafeArea(
@@ -45,10 +46,10 @@ class AccountPage extends StatelessWidget {
                             leftIcon: 'assets/icons/compass.svg',
                             rightIcon: 'assets/icons/arrow_top_right.svg',
                             title: 'Block Explorer',
-                            backgroundColor: themeData.colors.background125,
-                            foregroundColor: themeData.colors.foreground150,
+                            backgroundColor: themeColors.background125,
+                            foregroundColor: themeColors.foreground150,
                             overlayColor: MaterialStateProperty.all<Color>(
-                              themeData.colors.background200,
+                              themeColors.background200,
                             ),
                           ),
                         ],
@@ -61,7 +62,7 @@ class AccountPage extends StatelessWidget {
                   child: AccountListItem(
                     iconWidget: RoundedIcon(
                       imageUrl: service.tokenImageUrl,
-                      assetColor: themeData.colors.background100,
+                      assetColor: themeColors.background100,
                     ),
                     title: service.selectedChain?.chainName ?? '',
                     onTap: () {
@@ -86,7 +87,7 @@ class AccountPage extends StatelessWidget {
                     trailing: const SizedBox.shrink(),
                     title: 'Disconnect',
                     titleStyle: themeData.textStyles.paragraph600.copyWith(
-                      color: themeData.colors.foreground200,
+                      color: themeColors.foreground200,
                     ),
                     onTap: () async {
                       service.close();

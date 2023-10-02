@@ -16,6 +16,7 @@ class WalletConnectItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return BaseListItem(
       onTap: onTap,
       child: Row(
@@ -36,16 +37,16 @@ class WalletConnectItem extends StatelessWidget {
               child: Text(
                 'WalletConnect',
                 style: themeData.textStyles.paragraph500.copyWith(
-                  color: themeData.colors.foreground100,
+                  color: themeColors.foreground100,
                 ),
               ),
             ),
           ),
           WalletItemChip(
             value: ' QR CODE ',
-            color: themeData.colors.overblue015,
+            color: themeColors.accenGlass015,
             textStyle: themeData.textStyles.micro700.copyWith(
-              color: themeData.colors.blue100,
+              color: themeColors.accent100,
             ),
           ),
         ],

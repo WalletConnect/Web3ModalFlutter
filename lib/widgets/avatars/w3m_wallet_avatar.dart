@@ -16,14 +16,14 @@ class W3MListAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Container(
       margin: const EdgeInsets.all(2.0),
       decoration: isNetwork
           ? ShapeDecoration(
               shape: StarBorder.polygon(
                 side: BorderSide(
-                  color: color ?? themeData.colors.overgray010,
+                  color: color ?? themeColors.grayGlass010,
                   width: 1.0,
                   strokeAlign: BorderSide.strokeAlignOutside,
                 ),
@@ -34,7 +34,7 @@ class W3MListAvatar extends StatelessWidget {
           : BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
-                color: color ?? themeData.colors.overgray010,
+                color: color ?? themeColors.grayGlass010,
                 width: 1.0,
                 strokeAlign: BorderSide.strokeAlignOutside,
               ),

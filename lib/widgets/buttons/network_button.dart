@@ -20,7 +20,7 @@ class NetworkButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final imageUrl = chainInfo != null
         ? explorerService.instance!.getAssetImageUrl(
             imageId: chainInfo!.chainIcon,
@@ -33,25 +33,25 @@ class NetworkButton extends StatelessWidget {
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray005;
+              return themeColors.grayGlass005;
             }
-            return themeData.colors.overgray010;
+            return themeColors.grayGlass010;
           },
         ),
         foregroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray015;
+              return themeColors.grayGlass015;
             }
-            return themeData.colors.foreground100;
+            return themeColors.foreground100;
           },
         ),
         shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
           (states) {
             return RoundedRectangleBorder(
               side: states.contains(MaterialState.disabled)
-                  ? BorderSide(color: themeData.colors.overgray005, width: 1.0)
-                  : BorderSide(color: themeData.colors.overgray010, width: 1.0),
+                  ? BorderSide(color: themeColors.grayGlass005, width: 1.0)
+                  : BorderSide(color: themeColors.grayGlass010, width: 1.0),
               borderRadius: BorderRadius.circular(size.height / 2),
             );
           },
@@ -61,7 +61,7 @@ class NetworkButton extends StatelessWidget {
         assetPath: 'assets/icons/network.svg',
         imageUrl: imageUrl,
         size: size.height - 12.0,
-        assetColor: themeData.colors.inverse100,
+        assetColor: themeColors.inverse100,
         padding: 6.0,
       ),
       child: Text(

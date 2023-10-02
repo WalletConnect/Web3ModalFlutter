@@ -63,7 +63,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     // TODO this button should be able to be disable by passing a null onTap action
     // I should decouple an AccountButton from W3MAccountButton like on ConnectButton and NetworkButton
     return BaseButton(
@@ -76,25 +76,25 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray005;
+              return themeColors.grayGlass005;
             }
-            return themeData.colors.overgray010;
+            return themeColors.grayGlass010;
           },
         ),
         foregroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray015;
+              return themeColors.grayGlass015;
             }
-            return themeData.colors.foreground175;
+            return themeColors.foreground175;
           },
         ),
         shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
           (states) {
             return RoundedRectangleBorder(
               side: states.contains(MaterialState.disabled)
-                  ? BorderSide(color: themeData.colors.overgray005, width: 1.0)
-                  : BorderSide(color: themeData.colors.overgray010, width: 1.0),
+                  ? BorderSide(color: themeColors.grayGlass005, width: 1.0)
+                  : BorderSide(color: themeColors.grayGlass010, width: 1.0),
               borderRadius: BorderRadius.circular(widget.size.height / 2),
             );
           },
@@ -111,9 +111,9 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
           foregroundColor: MaterialStateProperty.resolveWith<Color>(
             (states) {
               if (states.contains(MaterialState.disabled)) {
-                return themeData.colors.overgray015;
+                return themeColors.grayGlass015;
               }
-              return themeData.colors.foreground100;
+              return themeColors.foreground100;
             },
           ),
         ),
@@ -133,17 +133,17 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
           backgroundColor: MaterialStateProperty.resolveWith<Color>(
             (states) {
               if (states.contains(MaterialState.disabled)) {
-                return themeData.colors.overgray005;
+                return themeColors.grayGlass005;
               }
-              return themeData.colors.overgray010;
+              return themeColors.grayGlass010;
             },
           ),
           foregroundColor: MaterialStateProperty.resolveWith<Color>(
             (states) {
               if (states.contains(MaterialState.disabled)) {
-                return themeData.colors.overgray015;
+                return themeColors.grayGlass015;
               }
-              return themeData.colors.foreground175;
+              return themeColors.foreground175;
             },
           ),
           shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
@@ -151,11 +151,11 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
               return RoundedRectangleBorder(
                 side: states.contains(MaterialState.disabled)
                     ? BorderSide(
-                        color: themeData.colors.overgray005,
+                        color: themeColors.grayGlass005,
                         width: 1.0,
                       )
                     : BorderSide(
-                        color: themeData.colors.overgray010,
+                        color: themeColors.grayGlass010,
                         width: 1.0,
                       ),
                 borderRadius:

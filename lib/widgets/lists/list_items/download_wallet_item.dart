@@ -38,8 +38,7 @@ class DownloadWalletItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
-
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return WalletListItem(
       imageWidget: Image.asset(
         _storeIcon,
@@ -52,7 +51,7 @@ class DownloadWalletItem extends StatelessWidget {
           'assets/icons/chevron_right.svg',
           package: 'web3modal_flutter',
           colorFilter: ColorFilter.mode(
-            themeData.colors.foreground200,
+            themeColors.foreground200,
             BlendMode.srcIn,
           ),
           width: 18.0,

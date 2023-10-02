@@ -13,7 +13,7 @@ class NavbarActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return SizedBox.square(
       dimension: kNavbarHeight,
       child: IconButton(
@@ -22,7 +22,7 @@ class NavbarActionButton extends StatelessWidget {
           asset,
           package: 'web3modal_flutter',
           colorFilter: ColorFilter.mode(
-            themeData.colors.foreground100,
+            themeColors.foreground100,
             BlendMode.srcIn,
           ),
           width: 18.0,

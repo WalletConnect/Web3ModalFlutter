@@ -14,7 +14,7 @@ class BaseListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return FilledButton(
       onPressed: onTap,
       style: ButtonStyle(
@@ -22,10 +22,10 @@ class BaseListItem extends StatelessWidget {
           const Size(1000.0, kListItemHeight),
         ),
         backgroundColor: MaterialStateProperty.all<Color>(
-          themeData.colors.overgray002,
+          themeColors.grayGlass002,
         ),
         overlayColor: MaterialStateProperty.all<Color>(
-          themeData.colors.overgray005,
+          themeColors.grayGlass005,
         ),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(

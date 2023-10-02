@@ -56,7 +56,7 @@ class _BalanceButtonState extends State<BalanceButton> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return BaseButton(
       size: widget.size,
       onTap: widget.onTap,
@@ -64,25 +64,25 @@ class _BalanceButtonState extends State<BalanceButton> {
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray005;
+              return themeColors.grayGlass005;
             }
-            return themeData.colors.overgray010;
+            return themeColors.grayGlass010;
           },
         ),
         foregroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray015;
+              return themeColors.grayGlass015;
             }
-            return themeData.colors.foreground100;
+            return themeColors.foreground100;
           },
         ),
         shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
           (states) {
             return RoundedRectangleBorder(
               side: states.contains(MaterialState.disabled)
-                  ? BorderSide(color: themeData.colors.overgray005, width: 1.0)
-                  : BorderSide(color: themeData.colors.overgray010, width: 1.0),
+                  ? BorderSide(color: themeColors.grayGlass005, width: 1.0)
+                  : BorderSide(color: themeColors.grayGlass010, width: 1.0),
               borderRadius: BorderRadius.circular(widget.size.height / 2),
             );
           },

@@ -59,10 +59,11 @@ class _W3MBalanceTextState extends State<W3MBalanceText> {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Text(
       '$_balance ${_tokenName ?? ''}',
       style: themeData.textStyles.paragraph500.copyWith(
-        color: themeData.colors.foreground200,
+        color: themeColors.foreground200,
       ),
     );
   }

@@ -35,12 +35,12 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
-
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Container(
       decoration: BoxDecoration(
-        color: themeData.colors.background200,
+        color: themeColors.background200,
         border: Border.all(
-          color: themeData.colors.overgray010,
+          color: themeColors.grayGlass010,
           width: 1,
         ),
         borderRadius: BorderRadius.circular(100),
@@ -61,15 +61,13 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
             width: 10,
             height: 10,
             decoration: BoxDecoration(
-              color: _connected
-                  ? themeData.colors.success100
-                  : themeData.colors.error100,
+              color: _connected ? themeColors.success100 : themeColors.error100,
               borderRadius: BorderRadius.circular(100),
               boxShadow: [
                 BoxShadow(
                   color: _connected
-                      ? themeData.colors.success100
-                      : themeData.colors.error100,
+                      ? themeColors.success100
+                      : themeColors.error100,
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
@@ -83,7 +81,7 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
           Text(
             _connected ? StringConstants.connected : StringConstants.error,
             style: TextStyle(
-              color: themeData.colors.foreground100,
+              color: themeColors.foreground100,
               fontFamily: themeData.textStyles.fontFamily,
             ),
           ),

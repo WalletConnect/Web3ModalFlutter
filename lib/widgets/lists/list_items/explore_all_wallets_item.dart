@@ -18,7 +18,7 @@ class ExploreAllWalletsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return WalletListItem(
       onTap: onTap,
       imageWidget: LayoutBuilder(
@@ -29,11 +29,11 @@ class ExploreAllWalletsItem extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(kRadius3XS),
               border: Border.all(
-                color: themeData.colors.overgray010,
+                color: themeColors.grayGlass010,
                 width: 1.0,
                 strokeAlign: BorderSide.strokeAlignOutside,
               ),
-              color: themeData.colors.overgray010,
+              color: themeColors.grayGlass010,
             ),
             clipBehavior: Clip.antiAlias,
             child: Wrap(
@@ -65,7 +65,7 @@ class ExploreAllWalletsItem extends StatelessWidget {
           'assets/icons/arrow_top_right.svg',
           package: 'web3modal_flutter',
           colorFilter: ColorFilter.mode(
-            themeData.colors.foreground200,
+            themeColors.foreground200,
             BlendMode.srcIn,
           ),
           width: 18.0,

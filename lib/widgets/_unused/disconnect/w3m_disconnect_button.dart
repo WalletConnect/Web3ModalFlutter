@@ -24,8 +24,7 @@ class _W3MDisconnectButtonState extends State<W3MDisconnectButton> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
-
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return W3MIconButton(
       icon: W3MCirclePainter(
         child: _disconnecting
@@ -33,7 +32,7 @@ class _W3MDisconnectButtonState extends State<W3MDisconnectButton> {
                 width: 12,
                 height: 12,
                 child: CircularProgressIndicator(
-                  color: themeData.colors.inverse100,
+                  color: themeColors.inverse100,
                   strokeWidth: 2,
                 ),
               )

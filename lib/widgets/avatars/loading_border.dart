@@ -60,7 +60,7 @@ class _LoadingBorderState extends State<LoadingBorder>
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -70,7 +70,7 @@ class _LoadingBorderState extends State<LoadingBorder>
           child: CustomPaint(
             painter: _CircularBorderPainter(
               borderRadius: widget.borderRadius,
-              frontColor: themeData.colors.blue100,
+              frontColor: themeColors.accent100,
               strokeWidth: widget.strokeWidth,
             ),
             child: RotationTransition(
@@ -78,7 +78,7 @@ class _LoadingBorderState extends State<LoadingBorder>
               child: CustomPaint(
                 painter: _CircularBorderPainter2(
                   show: widget.animate,
-                  backColor: themeData.colors.background125,
+                  backColor: themeColors.background125,
                 ),
               ),
             ),
