@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Web3ModalTheme(
       isDarkMode: _isDarkMode,
-      data: _themeData,
+      themeData: _themeData,
       child: MaterialApp(
         title: 'Flutter Demo',
         home: MyHomePage(swapTheme: () => _swapTheme()),

@@ -16,8 +16,6 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$Web3ModalThemeData {
-// @Default(Web3ModalColors.lightMode) Web3ModalColors colors,
-// @Default(false) bool isDarkMode,
   Web3ModalColors get lightColors => throw _privateConstructorUsedError;
   Web3ModalColors get darkColors => throw _privateConstructorUsedError;
   Web3ModalTextStyles get textStyles => throw _privateConstructorUsedError;
@@ -162,8 +160,6 @@ class _$_Web3ModalThemeData implements _Web3ModalThemeData {
       this.darkColors = Web3ModalColors.darkMode,
       this.textStyles = Web3ModalTextStyles.textStyle});
 
-// @Default(Web3ModalColors.lightMode) Web3ModalColors colors,
-// @Default(false) bool isDarkMode,
   @override
   @JsonKey()
   final Web3ModalColors lightColors;
@@ -210,8 +206,7 @@ abstract class _Web3ModalThemeData implements Web3ModalThemeData {
       final Web3ModalColors darkColors,
       final Web3ModalTextStyles textStyles}) = _$_Web3ModalThemeData;
 
-  @override // @Default(Web3ModalColors.lightMode) Web3ModalColors colors,
-// @Default(false) bool isDarkMode,
+  @override
   Web3ModalColors get lightColors;
   @override
   Web3ModalColors get darkColors;

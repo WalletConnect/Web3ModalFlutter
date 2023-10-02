@@ -6,11 +6,11 @@ class Web3ModalTheme extends InheritedWidget {
   const Web3ModalTheme({
     super.key,
     required super.child,
-    this.data,
+    this.themeData,
     this.isDarkMode = false,
   });
 
-  final Web3ModalThemeData? data;
+  final Web3ModalThemeData? themeData;
   final bool isDarkMode;
 
   static Web3ModalTheme of(BuildContext context) {
@@ -25,15 +25,15 @@ class Web3ModalTheme extends InheritedWidget {
 
   static Web3ModalThemeData getDataOf(BuildContext context) {
     final Web3ModalTheme? theme = maybeOf(context);
-    return theme?.data ?? const Web3ModalThemeData();
+    return theme?.themeData ?? const Web3ModalThemeData();
   }
 
   static Web3ModalColors colorsOf(BuildContext context) {
     final Web3ModalTheme? theme = maybeOf(context);
     if (theme?.isDarkMode == true) {
-      return theme?.data?.darkColors ?? Web3ModalColors.darkMode;
+      return theme?.themeData?.darkColors ?? Web3ModalColors.darkMode;
     }
-    return theme?.data?.lightColors ?? Web3ModalColors.lightMode;
+    return theme?.themeData?.lightColors ?? Web3ModalColors.lightMode;
   }
 
   @override

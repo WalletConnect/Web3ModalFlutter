@@ -6,9 +6,6 @@ import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.dart';
-
-import 'package:web3modal_flutter/services/w3m_service/walletconnect_modal_service.dart';
-import 'package:web3modal_flutter/services/w3m_service/walletconnect_modal_services.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
@@ -23,6 +20,8 @@ import 'package:web3modal_flutter/models/w3m_chains_presets.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 import 'package:web3modal_flutter/widgets/web3modal.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
+import 'package:web3modal_flutter/services/w3m_service/walletconnect_modal_service.dart';
+import 'package:web3modal_flutter/services/w3m_service/walletconnect_modal_services.dart';
 
 import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
@@ -349,7 +348,7 @@ class W3MService extends WalletConnectModalService implements IW3MService {
     final theme = Web3ModalTheme.maybeOf(context);
     final Widget child = theme == null
         ? Web3ModalTheme(
-            data: const Web3ModalThemeData(),
+            themeData: const Web3ModalThemeData(),
             child: Web3Modal(startWidget: startWidget),
           )
         : Web3Modal(startWidget: startWidget);
