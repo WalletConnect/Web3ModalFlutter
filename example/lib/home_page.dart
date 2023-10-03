@@ -90,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
         actions: [
           IconButton(
-            icon: Web3ModalTheme.of(context).isDarkMode
+            icon: Web3ModalTheme.maybeOf(context)?.isDarkMode ?? false
                 ? const Icon(Icons.light_mode)
                 : const Icon(Icons.dark_mode),
             onPressed: widget.swapTheme,
