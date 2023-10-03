@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 
 class Web3ModalSearchBar extends StatefulWidget {
@@ -20,9 +21,10 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     final unfocusedBorder = OutlineInputBorder(
       borderSide: BorderSide(color: themeColors.grayGlass015, width: 1.0),
-      borderRadius: BorderRadius.circular(kRadius2XS),
+      borderRadius: BorderRadius.circular(radiuses.radius2XS),
     );
     final focusedBorder = unfocusedBorder.copyWith(
       borderSide: BorderSide(color: themeColors.accent100, width: 1.0),

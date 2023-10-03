@@ -26,6 +26,8 @@ class NetworkButton extends StatelessWidget {
             imageId: chainInfo!.chainIcon,
           )
         : null;
+    final radiuses = Web3ModalTheme.radiusesOf(context);
+    final borderRadius = radiuses.isSquare() ? 0.0 : size.height / 2;
     return BaseButton(
       size: size,
       onTap: onTap,
@@ -52,7 +54,7 @@ class NetworkButton extends StatelessWidget {
               side: states.contains(MaterialState.disabled)
                   ? BorderSide(color: themeColors.grayGlass005, width: 1.0)
                   : BorderSide(color: themeColors.grayGlass010, width: 1.0),
-              borderRadius: BorderRadius.circular(size.height / 2),
+              borderRadius: BorderRadius.circular(borderRadius),
             );
           },
         ),

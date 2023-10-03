@@ -27,6 +27,7 @@ class WalletGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     return BaseGridItem(
       onTap: onTap,
       isSelected: isSelected,
@@ -37,7 +38,7 @@ class WalletGridItem extends StatelessWidget {
               alignment: Alignment.topCenter,
               child: imageWidget ??
                   W3MListAvatar(
-                    borderRadius: kRadiusXS,
+                    borderRadius: radiuses.radiusXS,
                     imageUrl: imageUrl ?? '',
                     isNetwork: isNetwork,
                     color: isSelected ? themeColors.accent100 : null,

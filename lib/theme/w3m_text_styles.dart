@@ -22,8 +22,8 @@ class Web3ModalTextStyles with _$Web3ModalTextStyles {
     required TextStyle tiny400,
     required TextStyle tiny500,
     required TextStyle tiny600,
-    required TextStyle micro500,
     required TextStyle micro600,
+    required TextStyle micro700,
   }) = _Web3ModalTextStyles;
 
   static const _ff = '.SF Pro Text';
@@ -120,15 +120,15 @@ class Web3ModalTextStyles with _$Web3ModalTextStyles {
       fontFamily: _ff,
       letterSpacing: -0.04,
     ),
-    micro500: TextStyle(
-      fontSize: 10.0,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.02,
-      fontFamily: _ff,
-    ),
     micro600: TextStyle(
       fontSize: 10.0,
       fontWeight: FontWeight.w600,
+      letterSpacing: 0.02,
+      fontFamily: _ff,
+    ),
+    micro700: TextStyle(
+      fontSize: 10.0,
+      fontWeight: FontWeight.w700,
       letterSpacing: 0.02,
       fontFamily: _ff,
     ),

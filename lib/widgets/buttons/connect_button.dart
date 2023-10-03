@@ -35,6 +35,8 @@ class ConnectButton extends StatelessWidget {
     final connecting = state == ConnectButtonState.connecting;
     final disabled = state == ConnectButtonState.disabled;
     final connected = state == ConnectButtonState.connected;
+    final radiuses = Web3ModalTheme.radiusesOf(context);
+    final borderRadius = radiuses.isSquare() ? 0.0 : size.height / 2;
     return BaseButton(
       onTap: disabled || connecting ? null : onTap,
       size: size,
@@ -67,7 +69,7 @@ class ConnectButton extends StatelessWidget {
               side: (states.contains(MaterialState.disabled) || connecting)
                   ? BorderSide(color: themeColors.grayGlass010, width: 1.0)
                   : BorderSide.none,
-              borderRadius: BorderRadius.circular(size.height / 2),
+              borderRadius: BorderRadius.circular(borderRadius),
             );
           },
         ),

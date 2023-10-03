@@ -19,6 +19,7 @@ class ExploreAllWalletsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     return WalletListItem(
       onTap: onTap,
       imageWidget: LayoutBuilder(
@@ -27,7 +28,7 @@ class ExploreAllWalletsItem extends StatelessWidget {
             height: constraints.maxHeight,
             width: constraints.maxHeight,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(kRadius3XS),
+              borderRadius: BorderRadius.circular(radiuses.radius3XS),
               border: Border.all(
                 color: themeColors.grayGlass010,
                 width: 1.0,
@@ -48,7 +49,7 @@ class ExploreAllWalletsItem extends StatelessWidget {
                       width: (constraints.maxHeight / 2) - 4.0,
                       height: (constraints.maxHeight / 2) - 4.0,
                       child: W3MListAvatar(
-                        borderRadius: kRadius4XS,
+                        borderRadius: radiuses.radius4XS,
                         imageUrl: e,
                       ),
                     ),

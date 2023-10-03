@@ -27,6 +27,9 @@ class SimpleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
+    final borderRadius =
+        radiuses.isSquare() ? 0.0 : (BaseButtonSize.regular.height / 2);
     return BaseButton(
       onTap: onTap,
       size: size,
@@ -46,9 +49,7 @@ class SimpleIconButton extends StatelessWidget {
                       color: themeColors.grayGlass010,
                       width: 2.0,
                     ),
-                    borderRadius: BorderRadius.circular(
-                      BaseButtonSize.regular.height / 2,
-                    ),
+                    borderRadius: BorderRadius.circular(borderRadius),
                   );
                 },
               )

@@ -23,13 +23,14 @@ class WalletListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     return BaseListItem(
       onTap: onTap,
       child: Row(
         children: [
           imageWidget ??
               W3MListAvatar(
-                borderRadius: kRadius3XS,
+                borderRadius: radiuses.radius3XS,
                 imageUrl: imageUrl ?? '',
               ),
           Expanded(

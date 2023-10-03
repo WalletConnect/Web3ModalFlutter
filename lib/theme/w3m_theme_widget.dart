@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/theme/w3m_colors.dart';
+import 'package:web3modal_flutter/theme/w3m_radiuses.dart';
 import 'package:web3modal_flutter/theme/w3m_theme_data.dart';
 
 class Web3ModalTheme extends InheritedWidget {
@@ -34,6 +35,11 @@ class Web3ModalTheme extends InheritedWidget {
       return theme?.themeData?.darkColors ?? Web3ModalColors.darkMode;
     }
     return theme?.themeData?.lightColors ?? Web3ModalColors.lightMode;
+  }
+
+  static Web3ModalRadiuses radiusesOf(BuildContext context) {
+    final Web3ModalTheme? theme = maybeOf(context);
+    return theme?.themeData?.radiuses ?? const Web3ModalRadiuses();
   }
 
   @override

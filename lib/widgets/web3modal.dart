@@ -53,17 +53,18 @@ class _Web3ModalState extends State<Web3Modal> {
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     final bool bottomSheet = platformUtils.instance.isBottomSheet();
     final BorderRadius innerContainerBorderRadius = bottomSheet
-        ? const BorderRadius.only(
-            topLeft: Radius.circular(kRadiusM),
-            topRight: Radius.circular(kRadiusM),
+        ? BorderRadius.only(
+            topLeft: Radius.circular(radiuses.radiusM),
+            topRight: Radius.circular(radiuses.radiusM),
           )
-        : const BorderRadius.only(
-            topLeft: Radius.circular(kRadiusM),
-            topRight: Radius.circular(kRadiusM),
-            bottomLeft: Radius.circular(kRadiusM),
-            bottomRight: Radius.circular(kRadiusM),
+        : BorderRadius.only(
+            topLeft: Radius.circular(radiuses.radiusM),
+            topRight: Radius.circular(radiuses.radiusM),
+            bottomLeft: Radius.circular(radiuses.radiusM),
+            bottomRight: Radius.circular(radiuses.radiusM),
           );
 
     return ResponsiveContainer(

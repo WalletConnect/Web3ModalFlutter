@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/models/grid_item_modal.dart';
-import 'package:web3modal_flutter/theme/w3m_theme.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/lists/grid_items/wallet_grid_item.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 

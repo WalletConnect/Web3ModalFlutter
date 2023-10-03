@@ -5,18 +5,19 @@ class W3MListAvatar extends StatelessWidget {
   const W3MListAvatar({
     super.key,
     required this.imageUrl,
-    this.borderRadius = kRadiusM,
+    this.borderRadius,
     this.isNetwork = false,
     this.color,
   });
   final String imageUrl;
-  final double borderRadius;
+  final double? borderRadius;
   final bool isNetwork;
   final Color? color;
 
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     return Container(
       margin: const EdgeInsets.all(2.0),
       decoration: isNetwork
@@ -32,7 +33,8 @@ class W3MListAvatar extends StatelessWidget {
               ),
             )
           : BoxDecoration(
-              borderRadius: BorderRadius.circular(borderRadius),
+              borderRadius:
+                  BorderRadius.circular(borderRadius ?? radiuses.radiusM),
               border: Border.all(
                 color: color ?? themeColors.grayGlass010,
                 width: 1.0,

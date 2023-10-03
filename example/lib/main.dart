@@ -22,6 +22,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     darkColors: Web3ModalColors.darkMode.copyWith(
       accent100: Colors.green,
     ),
+    radiuses: Web3ModalRadiuses.square,
   );
 
   @override
