@@ -7,27 +7,35 @@ part 'w3m_text_styles.freezed.dart';
 class Web3ModalTextStyles with _$Web3ModalTextStyles {
   const factory Web3ModalTextStyles({
     required String fontFamily,
+    required TextStyle title400,
     required TextStyle title500,
     required TextStyle title600,
-    required TextStyle title700,
+    required TextStyle large400,
     required TextStyle large500,
     required TextStyle large600,
-    required TextStyle large700,
+    required TextStyle paragraph400,
     required TextStyle paragraph500,
     required TextStyle paragraph600,
-    required TextStyle paragraph700,
+    required TextStyle small400,
     required TextStyle small500,
     required TextStyle small600,
+    required TextStyle tiny400,
     required TextStyle tiny500,
     required TextStyle tiny600,
+    required TextStyle micro500,
     required TextStyle micro600,
-    required TextStyle micro700,
   }) = _Web3ModalTextStyles;
 
   static const _ff = '.SF Pro Text';
 
   static const textStyle = Web3ModalTextStyles(
     fontFamily: _ff,
+    title400: TextStyle(
+      fontFamily: _ff,
+      letterSpacing: -0.04,
+      fontWeight: FontWeight.w400,
+      fontSize: 24.0,
+    ),
     title500: TextStyle(
       fontFamily: _ff,
       letterSpacing: -0.04,
@@ -40,11 +48,11 @@ class Web3ModalTextStyles with _$Web3ModalTextStyles {
       letterSpacing: -0.04,
       fontSize: 24.0,
     ),
-    title700: TextStyle(
-      fontWeight: FontWeight.w700,
+    large400: TextStyle(
+      fontSize: 20.0,
       fontFamily: _ff,
       letterSpacing: -0.04,
-      fontSize: 24.0,
+      fontWeight: FontWeight.w400,
     ),
     large500: TextStyle(
       fontSize: 20.0,
@@ -58,11 +66,11 @@ class Web3ModalTextStyles with _$Web3ModalTextStyles {
       fontFamily: _ff,
       letterSpacing: -0.04,
     ),
-    large700: TextStyle(
-      fontSize: 20.0,
-      fontWeight: FontWeight.w700,
+    paragraph400: TextStyle(
+      fontSize: 16.0,
       fontFamily: _ff,
       letterSpacing: -0.04,
+      fontWeight: FontWeight.w400,
     ),
     paragraph500: TextStyle(
       fontSize: 16.0,
@@ -76,11 +84,11 @@ class Web3ModalTextStyles with _$Web3ModalTextStyles {
       fontFamily: _ff,
       letterSpacing: -0.04,
     ),
-    paragraph700: TextStyle(
-      fontSize: 16.0,
-      fontWeight: FontWeight.w700,
+    small400: TextStyle(
+      fontSize: 14.0,
       fontFamily: _ff,
       letterSpacing: -0.04,
+      fontWeight: FontWeight.w400,
     ),
     small500: TextStyle(
       fontSize: 14.0,
@@ -94,6 +102,12 @@ class Web3ModalTextStyles with _$Web3ModalTextStyles {
       fontFamily: _ff,
       letterSpacing: -0.04,
     ),
+    tiny400: TextStyle(
+      fontSize: 12.0,
+      fontFamily: _ff,
+      letterSpacing: -0.04,
+      fontWeight: FontWeight.w400,
+    ),
     tiny500: TextStyle(
       fontSize: 12.0,
       fontFamily: _ff,
@@ -106,15 +120,15 @@ class Web3ModalTextStyles with _$Web3ModalTextStyles {
       fontFamily: _ff,
       letterSpacing: -0.04,
     ),
-    micro600: TextStyle(
+    micro500: TextStyle(
       fontSize: 10.0,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w500,
       letterSpacing: 0.02,
       fontFamily: _ff,
     ),
-    micro700: TextStyle(
+    micro600: TextStyle(
       fontSize: 10.0,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w600,
       letterSpacing: 0.02,
       fontFamily: _ff,
     ),

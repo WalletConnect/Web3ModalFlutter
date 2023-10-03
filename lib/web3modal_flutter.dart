@@ -1,7 +1,7 @@
 library web3modal_flutter;
 
 // Utils
-export 'constants/namespaces.dart';
+export 'constants/namespaces.dart'; // TODO check if this export is needed
 export 'models/w3m_chains_presets.dart';
 export 'models/w3m_chain_info.dart';
 export 'utils/w3m_logger.dart';

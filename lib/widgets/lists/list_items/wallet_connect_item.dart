@@ -45,7 +45,7 @@ class WalletConnectItem extends StatelessWidget {
           WalletItemChip(
             value: ' QR CODE ',
             color: themeColors.accenGlass015,
-            textStyle: themeData.textStyles.micro700.copyWith(
+            textStyle: themeData.textStyles.micro600.copyWith(
               color: themeColors.accent100,
             ),
           ),

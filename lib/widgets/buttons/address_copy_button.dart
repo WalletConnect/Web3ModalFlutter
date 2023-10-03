@@ -32,7 +32,7 @@ class W3MAddressWithCopyButton extends StatelessWidget {
         children: [
           W3MAddress(
             service: service,
-            style: themeData.textStyles.title700.copyWith(
+            style: themeData.textStyles.title600.copyWith(
               color: themeColors.foreground100,
             ),
           ),

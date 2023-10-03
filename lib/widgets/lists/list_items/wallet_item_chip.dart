@@ -28,7 +28,7 @@ class WalletItemChip extends StatelessWidget {
       child: Text(
         value,
         style: textStyle ??
-            themeData.textStyles.micro700.copyWith(
+            themeData.textStyles.micro600.copyWith(
               color: themeColors.foreground150,
             ),
       ),
