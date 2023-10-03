@@ -64,6 +64,10 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
+    final borderRadius = radiuses.isSquare() ? 0.0 : widget.size.height / 2;
+    final innerBorderRadius =
+        radiuses.isSquare() ? 0.0 : BaseButtonSize.small.height / 2;
     // TODO this button should be able to be disable by passing a null onTap action
     // I should decouple an AccountButton from W3MAccountButton like on ConnectButton and NetworkButton
     return BaseButton(
@@ -95,7 +99,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
               side: states.contains(MaterialState.disabled)
                   ? BorderSide(color: themeColors.grayGlass005, width: 1.0)
                   : BorderSide(color: themeColors.grayGlass010, width: 1.0),
-              borderRadius: BorderRadius.circular(widget.size.height / 2),
+              borderRadius: BorderRadius.circular(borderRadius),
             );
           },
         ),
@@ -158,8 +162,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
                         color: themeColors.grayGlass010,
                         width: 1.0,
                       ),
-                borderRadius:
-                    BorderRadius.circular(BaseButtonSize.small.height / 2),
+                borderRadius: BorderRadius.circular(innerBorderRadius),
               );
             },
           ),
