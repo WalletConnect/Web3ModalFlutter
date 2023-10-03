@@ -57,9 +57,9 @@ import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api
     as _i37;
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart'
     as _i13;
-import 'package:web3modal_flutter/services/ledger_service.dart/ledger_service.dart'
+import 'package:web3modal_flutter/services/ledger_service/ledger_service.dart'
     as _i38;
-import 'package:web3modal_flutter/services/network_service.dart/network_service.dart'
+import 'package:web3modal_flutter/services/network_service/network_service.dart'
     as _i35;
 import 'package:web3modal_flutter/services/storage_service/storage_service.dart'
     as _i39;

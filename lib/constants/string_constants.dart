@@ -1,6 +1,4 @@
 class StringConstants {
-  static const WEB3MODAL_VERSION = '3.0.0-alpha04';
-
   static const String selectNetwork = 'Select Network';
   static const String selectNetworkShort = 'Network';
 

@@ -8,7 +8,7 @@ import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_s
 import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils_singleton.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart';
-import 'package:web3modal_flutter/services/network_service.dart/network_service_singleton.dart';
+import 'package:web3modal_flutter/services/network_service/network_service_singleton.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -93,9 +93,7 @@ void main() {
 
       // Change all chain presets to use our mock EVMService
       for (var entry in W3MChainPresets.chains.entries) {
-        W3MChainPresets.chains[entry.key] = entry.value.copyWith(
-          ledgerService: mockEVMService,
-        );
+        W3MChainPresets.chains[entry.key] = entry.value;
       }
 
       when(es.init()).thenAnswer((_) async {});
