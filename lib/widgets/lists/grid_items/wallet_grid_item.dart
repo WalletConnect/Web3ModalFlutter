@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
 import 'package:web3modal_flutter/widgets/lists/grid_items/base_grid_item.dart';
 
@@ -26,7 +26,8 @@ class WalletGridItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
-
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     return BaseGridItem(
       onTap: onTap,
       isSelected: isSelected,
@@ -37,10 +38,10 @@ class WalletGridItem extends StatelessWidget {
               alignment: Alignment.topCenter,
               child: imageWidget ??
                   W3MListAvatar(
-                    borderRadius: kRadiusXS,
+                    borderRadius: radiuses.radiusXS,
                     imageUrl: imageUrl ?? '',
                     isNetwork: isNetwork,
-                    color: isSelected ? themeData.colors.blue100 : null,
+                    color: isSelected ? themeColors.accent100 : null,
                   ),
             ),
           ),
@@ -55,8 +56,8 @@ class WalletGridItem extends StatelessWidget {
                 overflow: TextOverflow.clip,
                 style: themeData.textStyles.tiny500.copyWith(
                   color: isSelected
-                      ? themeData.colors.blue100
-                      : themeData.colors.foreground100,
+                      ? themeColors.accent100
+                      : themeColors.foreground100,
                   height: 1.0,
                 ),
               ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 
 class ExagonIcon extends StatelessWidget {
   const ExagonIcon({
@@ -20,21 +20,21 @@ class ExagonIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Container(
       width: size,
       height: size,
       decoration: ShapeDecoration(
         shape: StarBorder.polygon(
           side: BorderSide(
-            color: borderColor ?? themeData.colors.overgray005,
+            color: borderColor ?? themeColors.grayGlass005,
             width: 2,
             strokeAlign: BorderSide.strokeAlignCenter,
           ),
           pointRounding: 0.3,
           sides: 6,
         ),
-        color: circleColor ?? themeData.colors.overgray015,
+        color: circleColor ?? themeColors.grayGlass015,
       ),
       clipBehavior: Clip.hardEdge,
       child: (imageUrl != null)
@@ -47,7 +47,7 @@ class ExagonIcon extends StatelessWidget {
               padding: EdgeInsets.all(padding),
               child: SvgPicture.asset(
                 colorFilter: ColorFilter.mode(
-                  assetColor ?? themeData.colors.foreground200,
+                  assetColor ?? themeColors.foreground200,
                   BlendMode.srcIn,
                 ),
                 assetPath,

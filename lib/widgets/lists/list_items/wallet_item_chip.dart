@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 
 class WalletItemChip extends StatelessWidget {
   const WalletItemChip({
@@ -15,12 +15,13 @@ class WalletItemChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
+    final borderRadius = radiuses.isSquare() ? 0.0 : 5.0;
     return Container(
       decoration: BoxDecoration(
-        color: color ?? themeData.colors.overgray010,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(5.0),
-        ),
+        color: color ?? themeColors.grayGlass010,
+        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
       ),
       padding: const EdgeInsets.all(5.0),
       margin: const EdgeInsets.only(right: 8.0),
@@ -28,7 +29,7 @@ class WalletItemChip extends StatelessWidget {
         value,
         style: textStyle ??
             themeData.textStyles.micro700.copyWith(
-              color: themeData.colors.foreground150,
+              color: themeColors.foreground150,
             ),
       ),
     );

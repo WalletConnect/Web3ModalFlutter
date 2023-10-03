@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:walletconnect_modal_flutter/models/listings.dart';
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
-import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
+import 'package:web3modal_flutter/models/grid_item_modal.dart';
+import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 
 class ExplorerServiceItemsListener extends StatelessWidget {
   const ExplorerServiceItemsListener({
@@ -10,7 +10,7 @@ class ExplorerServiceItemsListener extends StatelessWidget {
     required this.builder,
   });
   final Function(BuildContext context, bool initialised,
-      List<GridListItemModel<WalletData>> items) builder;
+      List<GridItem<W3MWalletInfo>> items) builder;
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +20,9 @@ class ExplorerServiceItemsListener extends StatelessWidget {
         if (!initialised) {
           return builder(context, initialised, []);
         }
-        return ValueListenableBuilder(
+        return ValueListenableBuilder<List<GridItem<W3MWalletInfo>>>(
           valueListenable: explorerService.instance!.itemList,
-          builder: (context, List<GridListItemModel<WalletData>> items, _) {
+          builder: (context, items, _) {
             return builder(context, initialised, items);
           },
         );

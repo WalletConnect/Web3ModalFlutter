@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/transition_container.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
@@ -52,18 +52,19 @@ class _Web3ModalState extends State<Web3Modal> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     final bool bottomSheet = platformUtils.instance.isBottomSheet();
     final BorderRadius innerContainerBorderRadius = bottomSheet
-        ? const BorderRadius.only(
-            topLeft: Radius.circular(kRadiusM),
-            topRight: Radius.circular(kRadiusM),
+        ? BorderRadius.only(
+            topLeft: Radius.circular(radiuses.radiusM),
+            topRight: Radius.circular(radiuses.radiusM),
           )
-        : const BorderRadius.only(
-            topLeft: Radius.circular(kRadiusM),
-            topRight: Radius.circular(kRadiusM),
-            bottomLeft: Radius.circular(kRadiusM),
-            bottomRight: Radius.circular(kRadiusM),
+        : BorderRadius.only(
+            topLeft: Radius.circular(radiuses.radiusM),
+            topRight: Radius.circular(radiuses.radiusM),
+            bottomLeft: Radius.circular(radiuses.radiusM),
+            bottomRight: Radius.circular(radiuses.radiusM),
           );
 
     return ResponsiveContainer(
@@ -71,10 +72,10 @@ class _Web3ModalState extends State<Web3Modal> {
         decoration: BoxDecoration(
           borderRadius: innerContainerBorderRadius,
           border: Border.all(
-            color: themeData.colors.overgray005,
+            color: themeColors.grayGlass005,
             width: 1,
           ),
-          color: themeData.colors.background125,
+          color: themeColors.background125,
         ),
         child: Stack(
           children: [

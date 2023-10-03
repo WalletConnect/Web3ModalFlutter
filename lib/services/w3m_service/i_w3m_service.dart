@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_modal_flutter/models/listings.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
+import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
+import 'package:web3modal_flutter/services/w3m_service/i_walletconnect_modal_service.dart';
 
 abstract class IW3MService extends IWalletConnectModalService
     with ChangeNotifier {
@@ -41,9 +41,9 @@ abstract class IW3MService extends IWalletConnectModalService
   @override
   void close();
 
-  WalletData? get selectedWallet;
+  W3MWalletInfo? get selectedWallet;
 
-  Future<void> selectWallet({required WalletData? walletData});
+  Future<void> selectWallet({required W3MWalletInfo? walletInfo});
 
   bool get hasBlockExplorer;
 

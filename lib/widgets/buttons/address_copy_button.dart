@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/text/w3m_address.dart';
 
@@ -16,6 +16,7 @@ class W3MAddressWithCopyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final service = Web3ModalProvider.of(context).service;
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return GestureDetector(
       onTap: () async {
         await Clipboard.setData(ClipboardData(text: service.address!));
@@ -31,8 +32,8 @@ class W3MAddressWithCopyButton extends StatelessWidget {
         children: [
           W3MAddress(
             service: service,
-            style: themeData.textStyles.title700.copyWith(
-              color: themeData.colors.foreground100,
+            style: themeData.textStyles.title600.copyWith(
+              color: themeColors.foreground100,
             ),
           ),
           const SizedBox.square(dimension: 8.0),
@@ -40,7 +41,7 @@ class W3MAddressWithCopyButton extends StatelessWidget {
             'assets/icons/copy.svg',
             package: 'web3modal_flutter',
             colorFilter: ColorFilter.mode(
-              themeData.colors.foreground250,
+              themeColors.foreground250,
               BlendMode.srcIn,
             ),
             width: 20.0,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/base_list_item.dart';
 
 class WalletListItemSimple extends StatelessWidget {
@@ -18,6 +18,7 @@ class WalletListItemSimple extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return BaseListItem(
       onTap: onTap,
       child: Row(
@@ -27,7 +28,7 @@ class WalletListItemSimple extends StatelessWidget {
             icon,
             package: 'web3modal_flutter',
             colorFilter: ColorFilter.mode(
-              themeData.colors.foreground200,
+              themeColors.foreground200,
               BlendMode.srcIn,
             ),
           ),
@@ -36,7 +37,7 @@ class WalletListItemSimple extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: themeData.textStyles.paragraph600.copyWith(
-              color: themeData.colors.foreground200,
+              color: themeColors.foreground200,
             ),
           ),
         ],

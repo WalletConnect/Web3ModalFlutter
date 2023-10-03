@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'package:walletconnect_flutter_dapp/home_page.dart';
-
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 void main() {
@@ -16,13 +14,24 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  var _web3modalThemeData = Web3ModalThemeData.lightMode;
+  bool _isDarkMode = false;
+  final _themeData = Web3ModalThemeData(
+    lightColors: Web3ModalColors.lightMode.copyWith(
+      accent100: Colors.red,
+      background125: Colors.yellow.shade300,
+    ),
+    darkColors: Web3ModalColors.darkMode.copyWith(
+      accent100: Colors.green,
+      background125: Colors.brown,
+    ),
+    radiuses: Web3ModalRadiuses.square,
+  );
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    LoggerUtil.setLogLevel(LogLevel.error);
+    W3MLoggerUtil.setLogLevel(W3MLogLevel.error);
   }
 
   @override
@@ -37,11 +46,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       setState(() {
         final platformDispatcher = View.of(context).platformDispatcher;
         final platformBrightness = platformDispatcher.platformBrightness;
-        if (platformBrightness == Brightness.dark) {
-          _web3modalThemeData = Web3ModalThemeData.darkMode;
-        } else {
-          _web3modalThemeData = Web3ModalThemeData.lightMode;
-        }
+        _isDarkMode = platformBrightness == Brightness.dark;
       });
     }
     super.didChangePlatformBrightness();
@@ -51,7 +56,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Web3ModalTheme(
-      data: _web3modalThemeData,
+      isDarkMode: _isDarkMode,
+      themeData: _themeData,
       child: MaterialApp(
         title: 'Flutter Demo',
         home: MyHomePage(swapTheme: () => _swapTheme()),
@@ -61,11 +67,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void _swapTheme() {
     setState(() {
-      if (_web3modalThemeData == Web3ModalThemeData.darkMode) {
-        _web3modalThemeData = Web3ModalThemeData.lightMode;
-      } else {
-        _web3modalThemeData = Web3ModalThemeData.darkMode;
-      }
+      _isDarkMode = !_isDarkMode;
     });
   }
 }

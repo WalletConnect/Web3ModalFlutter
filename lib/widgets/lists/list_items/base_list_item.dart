@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 
 class BaseListItem extends StatelessWidget {
   const BaseListItem({
@@ -14,7 +15,8 @@ class BaseListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     return FilledButton(
       onPressed: onTap,
       style: ButtonStyle(
@@ -22,14 +24,14 @@ class BaseListItem extends StatelessWidget {
           const Size(1000.0, kListItemHeight),
         ),
         backgroundColor: MaterialStateProperty.all<Color>(
-          themeData.colors.overgray002,
+          themeColors.grayGlass002,
         ),
         overlayColor: MaterialStateProperty.all<Color>(
-          themeData.colors.overgray005,
+          themeColors.grayGlass005,
         ),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(kRadiusXS),
+            borderRadius: BorderRadius.circular(radiuses.radiusXS),
           ),
         ),
         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(

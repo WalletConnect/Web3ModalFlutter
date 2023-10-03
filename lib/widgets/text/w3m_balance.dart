@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
@@ -59,10 +59,11 @@ class _W3MBalanceTextState extends State<W3MBalanceText> {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Text(
       '$_balance ${_tokenName ?? ''}',
       style: themeData.textStyles.paragraph500.copyWith(
-        color: themeData.colors.foreground200,
+        color: themeColors.foreground200,
       ),
     );
   }

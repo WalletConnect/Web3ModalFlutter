@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter_wc/qr_flutter_wc.dart';
 
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 
@@ -36,6 +37,7 @@ class _QRCodeWidgetState extends State<QRCodeWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     final responsiveData = ResponsiveData.of(context);
     final isPortrait = ResponsiveData.isPortrait(context);
     final imageSize = isPortrait ? 90.0 : 60.0;
@@ -47,7 +49,7 @@ class _QRCodeWidgetState extends State<QRCodeWidget> {
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(kRadiusL),
+        borderRadius: BorderRadius.circular(radiuses.radiusL),
       ),
       padding: const EdgeInsets.all(16.0),
       child: AspectRatio(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 
 class W3MAddress extends StatefulWidget {
@@ -36,11 +36,12 @@ class _W3MAddressState extends State<W3MAddress> {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Text(
       Util.truncate(_address ?? ''),
       style: widget.style ??
           themeData.textStyles.paragraph600.copyWith(
-            color: themeData.colors.foreground100,
+            color: themeColors.foreground100,
           ),
     );
   }

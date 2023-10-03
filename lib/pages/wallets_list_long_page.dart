@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/pages/connect_wallet_page.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
@@ -9,8 +10,6 @@ import 'package:web3modal_flutter/widgets/lists/wallets_grid.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/all_wallets_header.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
-
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 
 class WalletsListLongPage extends StatelessWidget {
@@ -46,7 +45,7 @@ class WalletsListLongPage extends StatelessWidget {
                     }
                     return WalletsGrid(
                       onTapWallet: (data) async {
-                        await service.selectWallet(walletData: data);
+                        await service.selectWallet(walletInfo: data);
                         widgetStack.instance.add(const ConnectWalletPage());
                       },
                       itemList: items,

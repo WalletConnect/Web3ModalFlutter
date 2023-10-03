@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
-import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
 
+import 'package:web3modal_flutter/models/grid_item_modal.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/network_service.dart/i_network_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/util.dart';
@@ -11,11 +11,11 @@ class NetworkService implements INetworkService {
   @override
   ValueNotifier<bool> initialized = ValueNotifier<bool>(false);
 
-  List<GridListItemModel<W3MChainInfo>> itemListComplete = [];
+  List<GridItem<W3MChainInfo>> itemListComplete = [];
 
   @override
-  ValueNotifier<List<GridListItemModel<W3MChainInfo>>> itemList =
-      ValueNotifier<List<GridListItemModel<W3MChainInfo>>>([]);
+  ValueNotifier<List<GridItem<W3MChainInfo>>> itemList =
+      ValueNotifier<List<GridItem<W3MChainInfo>>>([]);
 
   @override
   Future<void> init() async {
@@ -23,9 +23,9 @@ class NetworkService implements INetworkService {
       return;
     }
 
-    for (var value in ChainData.chainPresets.values) {
+    for (var value in W3MChainPresets.chains.values) {
       itemListComplete.add(
-        GridListItemModel<W3MChainInfo>(
+        GridItem<W3MChainInfo>(
           image: explorerService.instance!.getAssetImageUrl(
             imageId: AssetUtil.getChainIconAssetId(
               value.chainId,

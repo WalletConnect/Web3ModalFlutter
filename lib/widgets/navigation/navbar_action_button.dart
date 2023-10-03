@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 
 class NavbarActionButton extends StatelessWidget {
   const NavbarActionButton({
@@ -13,7 +14,7 @@ class NavbarActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return SizedBox.square(
       dimension: kNavbarHeight,
       child: IconButton(
@@ -22,7 +23,7 @@ class NavbarActionButton extends StatelessWidget {
           asset,
           package: 'web3modal_flutter',
           colorFilter: ColorFilter.mode(
-            themeData.colors.foreground100,
+            themeColors.foreground100,
             BlendMode.srcIn,
           ),
           width: 18.0,

@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'web3modal_colors.dart';
+part of 'w3m_colors.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -16,26 +16,10 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$Web3ModalColors {
-  Color get blue100 => throw _privateConstructorUsedError;
-  Color get blue090 => throw _privateConstructorUsedError;
-  Color get blue080 => throw _privateConstructorUsedError;
-  Color get overblue090 => throw _privateConstructorUsedError;
-  Color get overblue080 => throw _privateConstructorUsedError;
-  Color get overblue020 => throw _privateConstructorUsedError;
-  Color get overblue015 => throw _privateConstructorUsedError;
-  Color get overblue010 => throw _privateConstructorUsedError;
-  Color get overblue005 => throw _privateConstructorUsedError;
-  Color get overblue002 => throw _privateConstructorUsedError; //
-  Color get overgray001 => throw _privateConstructorUsedError;
-  Color get overgray002 => throw _privateConstructorUsedError;
-  Color get overgray005 => throw _privateConstructorUsedError;
-  Color get overgray010 => throw _privateConstructorUsedError;
-  Color get overgray015 => throw _privateConstructorUsedError;
-  Color get overgray020 => throw _privateConstructorUsedError;
-  Color get overgray025 => throw _privateConstructorUsedError;
-  Color get overgray030 => throw _privateConstructorUsedError;
-  Color get overgray060 => throw _privateConstructorUsedError;
-  Color get overgray080 => throw _privateConstructorUsedError; //
+  Color get accent100 => throw _privateConstructorUsedError;
+  Color get accent090 => throw _privateConstructorUsedError;
+  Color get accent080 => throw _privateConstructorUsedError; //
+  Color get grayGlass100 => throw _privateConstructorUsedError; //
   Color get foreground100 => throw _privateConstructorUsedError;
   Color get foreground125 => throw _privateConstructorUsedError;
   Color get foreground150 => throw _privateConstructorUsedError;
@@ -77,26 +61,10 @@ abstract class $Web3ModalColorsCopyWith<$Res> {
       _$Web3ModalColorsCopyWithImpl<$Res, Web3ModalColors>;
   @useResult
   $Res call(
-      {Color blue100,
-      Color blue090,
-      Color blue080,
-      Color overblue090,
-      Color overblue080,
-      Color overblue020,
-      Color overblue015,
-      Color overblue010,
-      Color overblue005,
-      Color overblue002,
-      Color overgray001,
-      Color overgray002,
-      Color overgray005,
-      Color overgray010,
-      Color overgray015,
-      Color overgray020,
-      Color overgray025,
-      Color overgray030,
-      Color overgray060,
-      Color overgray080,
+      {Color accent100,
+      Color accent090,
+      Color accent080,
+      Color grayGlass100,
       Color foreground100,
       Color foreground125,
       Color foreground150,
@@ -140,26 +108,10 @@ class _$Web3ModalColorsCopyWithImpl<$Res, $Val extends Web3ModalColors>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? blue100 = null,
-    Object? blue090 = null,
-    Object? blue080 = null,
-    Object? overblue090 = null,
-    Object? overblue080 = null,
-    Object? overblue020 = null,
-    Object? overblue015 = null,
-    Object? overblue010 = null,
-    Object? overblue005 = null,
-    Object? overblue002 = null,
-    Object? overgray001 = null,
-    Object? overgray002 = null,
-    Object? overgray005 = null,
-    Object? overgray010 = null,
-    Object? overgray015 = null,
-    Object? overgray020 = null,
-    Object? overgray025 = null,
-    Object? overgray030 = null,
-    Object? overgray060 = null,
-    Object? overgray080 = null,
+    Object? accent100 = null,
+    Object? accent090 = null,
+    Object? accent080 = null,
+    Object? grayGlass100 = null,
     Object? foreground100 = null,
     Object? foreground125 = null,
     Object? foreground150 = null,
@@ -190,85 +142,21 @@ class _$Web3ModalColorsCopyWithImpl<$Res, $Val extends Web3ModalColors>
     Object? yellow100 = null,
   }) {
     return _then(_value.copyWith(
-      blue100: null == blue100
-          ? _value.blue100
-          : blue100 // ignore: cast_nullable_to_non_nullable
+      accent100: null == accent100
+          ? _value.accent100
+          : accent100 // ignore: cast_nullable_to_non_nullable
               as Color,
-      blue090: null == blue090
-          ? _value.blue090
-          : blue090 // ignore: cast_nullable_to_non_nullable
+      accent090: null == accent090
+          ? _value.accent090
+          : accent090 // ignore: cast_nullable_to_non_nullable
               as Color,
-      blue080: null == blue080
-          ? _value.blue080
-          : blue080 // ignore: cast_nullable_to_non_nullable
+      accent080: null == accent080
+          ? _value.accent080
+          : accent080 // ignore: cast_nullable_to_non_nullable
               as Color,
-      overblue090: null == overblue090
-          ? _value.overblue090
-          : overblue090 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue080: null == overblue080
-          ? _value.overblue080
-          : overblue080 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue020: null == overblue020
-          ? _value.overblue020
-          : overblue020 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue015: null == overblue015
-          ? _value.overblue015
-          : overblue015 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue010: null == overblue010
-          ? _value.overblue010
-          : overblue010 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue005: null == overblue005
-          ? _value.overblue005
-          : overblue005 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue002: null == overblue002
-          ? _value.overblue002
-          : overblue002 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray001: null == overgray001
-          ? _value.overgray001
-          : overgray001 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray002: null == overgray002
-          ? _value.overgray002
-          : overgray002 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray005: null == overgray005
-          ? _value.overgray005
-          : overgray005 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray010: null == overgray010
-          ? _value.overgray010
-          : overgray010 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray015: null == overgray015
-          ? _value.overgray015
-          : overgray015 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray020: null == overgray020
-          ? _value.overgray020
-          : overgray020 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray025: null == overgray025
-          ? _value.overgray025
-          : overgray025 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray030: null == overgray030
-          ? _value.overgray030
-          : overgray030 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray060: null == overgray060
-          ? _value.overgray060
-          : overgray060 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray080: null == overgray080
-          ? _value.overgray080
-          : overgray080 // ignore: cast_nullable_to_non_nullable
+      grayGlass100: null == grayGlass100
+          ? _value.grayGlass100
+          : grayGlass100 // ignore: cast_nullable_to_non_nullable
               as Color,
       foreground100: null == foreground100
           ? _value.foreground100
@@ -395,26 +283,10 @@ abstract class _$$_Web3ModalColorsCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Color blue100,
-      Color blue090,
-      Color blue080,
-      Color overblue090,
-      Color overblue080,
-      Color overblue020,
-      Color overblue015,
-      Color overblue010,
-      Color overblue005,
-      Color overblue002,
-      Color overgray001,
-      Color overgray002,
-      Color overgray005,
-      Color overgray010,
-      Color overgray015,
-      Color overgray020,
-      Color overgray025,
-      Color overgray030,
-      Color overgray060,
-      Color overgray080,
+      {Color accent100,
+      Color accent090,
+      Color accent080,
+      Color grayGlass100,
       Color foreground100,
       Color foreground125,
       Color foreground150,
@@ -456,26 +328,10 @@ class __$$_Web3ModalColorsCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? blue100 = null,
-    Object? blue090 = null,
-    Object? blue080 = null,
-    Object? overblue090 = null,
-    Object? overblue080 = null,
-    Object? overblue020 = null,
-    Object? overblue015 = null,
-    Object? overblue010 = null,
-    Object? overblue005 = null,
-    Object? overblue002 = null,
-    Object? overgray001 = null,
-    Object? overgray002 = null,
-    Object? overgray005 = null,
-    Object? overgray010 = null,
-    Object? overgray015 = null,
-    Object? overgray020 = null,
-    Object? overgray025 = null,
-    Object? overgray030 = null,
-    Object? overgray060 = null,
-    Object? overgray080 = null,
+    Object? accent100 = null,
+    Object? accent090 = null,
+    Object? accent080 = null,
+    Object? grayGlass100 = null,
     Object? foreground100 = null,
     Object? foreground125 = null,
     Object? foreground150 = null,
@@ -506,85 +362,21 @@ class __$$_Web3ModalColorsCopyWithImpl<$Res>
     Object? yellow100 = null,
   }) {
     return _then(_$_Web3ModalColors(
-      blue100: null == blue100
-          ? _value.blue100
-          : blue100 // ignore: cast_nullable_to_non_nullable
+      accent100: null == accent100
+          ? _value.accent100
+          : accent100 // ignore: cast_nullable_to_non_nullable
               as Color,
-      blue090: null == blue090
-          ? _value.blue090
-          : blue090 // ignore: cast_nullable_to_non_nullable
+      accent090: null == accent090
+          ? _value.accent090
+          : accent090 // ignore: cast_nullable_to_non_nullable
               as Color,
-      blue080: null == blue080
-          ? _value.blue080
-          : blue080 // ignore: cast_nullable_to_non_nullable
+      accent080: null == accent080
+          ? _value.accent080
+          : accent080 // ignore: cast_nullable_to_non_nullable
               as Color,
-      overblue090: null == overblue090
-          ? _value.overblue090
-          : overblue090 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue080: null == overblue080
-          ? _value.overblue080
-          : overblue080 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue020: null == overblue020
-          ? _value.overblue020
-          : overblue020 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue015: null == overblue015
-          ? _value.overblue015
-          : overblue015 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue010: null == overblue010
-          ? _value.overblue010
-          : overblue010 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue005: null == overblue005
-          ? _value.overblue005
-          : overblue005 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overblue002: null == overblue002
-          ? _value.overblue002
-          : overblue002 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray001: null == overgray001
-          ? _value.overgray001
-          : overgray001 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray002: null == overgray002
-          ? _value.overgray002
-          : overgray002 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray005: null == overgray005
-          ? _value.overgray005
-          : overgray005 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray010: null == overgray010
-          ? _value.overgray010
-          : overgray010 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray015: null == overgray015
-          ? _value.overgray015
-          : overgray015 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray020: null == overgray020
-          ? _value.overgray020
-          : overgray020 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray025: null == overgray025
-          ? _value.overgray025
-          : overgray025 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray030: null == overgray030
-          ? _value.overgray030
-          : overgray030 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray060: null == overgray060
-          ? _value.overgray060
-          : overgray060 // ignore: cast_nullable_to_non_nullable
-              as Color,
-      overgray080: null == overgray080
-          ? _value.overgray080
-          : overgray080 // ignore: cast_nullable_to_non_nullable
+      grayGlass100: null == grayGlass100
+          ? _value.grayGlass100
+          : grayGlass100 // ignore: cast_nullable_to_non_nullable
               as Color,
       foreground100: null == foreground100
           ? _value.foreground100
@@ -706,26 +498,10 @@ class __$$_Web3ModalColorsCopyWithImpl<$Res>
 
 class _$_Web3ModalColors implements _Web3ModalColors {
   const _$_Web3ModalColors(
-      {required this.blue100,
-      required this.blue090,
-      required this.blue080,
-      required this.overblue090,
-      required this.overblue080,
-      required this.overblue020,
-      required this.overblue015,
-      required this.overblue010,
-      required this.overblue005,
-      required this.overblue002,
-      required this.overgray001,
-      required this.overgray002,
-      required this.overgray005,
-      required this.overgray010,
-      required this.overgray015,
-      required this.overgray020,
-      required this.overgray025,
-      required this.overgray030,
-      required this.overgray060,
-      required this.overgray080,
+      {required this.accent100,
+      required this.accent090,
+      required this.accent080,
+      required this.grayGlass100,
       required this.foreground100,
       required this.foreground125,
       required this.foreground150,
@@ -756,46 +532,14 @@ class _$_Web3ModalColors implements _Web3ModalColors {
       required this.yellow100});
 
   @override
-  final Color blue100;
+  final Color accent100;
   @override
-  final Color blue090;
+  final Color accent090;
   @override
-  final Color blue080;
-  @override
-  final Color overblue090;
-  @override
-  final Color overblue080;
-  @override
-  final Color overblue020;
-  @override
-  final Color overblue015;
-  @override
-  final Color overblue010;
-  @override
-  final Color overblue005;
-  @override
-  final Color overblue002;
+  final Color accent080;
 //
   @override
-  final Color overgray001;
-  @override
-  final Color overgray002;
-  @override
-  final Color overgray005;
-  @override
-  final Color overgray010;
-  @override
-  final Color overgray015;
-  @override
-  final Color overgray020;
-  @override
-  final Color overgray025;
-  @override
-  final Color overgray030;
-  @override
-  final Color overgray060;
-  @override
-  final Color overgray080;
+  final Color grayGlass100;
 //
   @override
   final Color foreground100;
@@ -858,7 +602,7 @@ class _$_Web3ModalColors implements _Web3ModalColors {
 
   @override
   String toString() {
-    return 'Web3ModalColors(blue100: $blue100, blue090: $blue090, blue080: $blue080, overblue090: $overblue090, overblue080: $overblue080, overblue020: $overblue020, overblue015: $overblue015, overblue010: $overblue010, overblue005: $overblue005, overblue002: $overblue002, overgray001: $overgray001, overgray002: $overgray002, overgray005: $overgray005, overgray010: $overgray010, overgray015: $overgray015, overgray020: $overgray020, overgray025: $overgray025, overgray030: $overgray030, overgray060: $overgray060, overgray080: $overgray080, foreground100: $foreground100, foreground125: $foreground125, foreground150: $foreground150, foreground175: $foreground175, foreground200: $foreground200, foreground225: $foreground225, foreground250: $foreground250, foreground275: $foreground275, foreground300: $foreground300, background100: $background100, background125: $background125, background150: $background150, background175: $background175, background200: $background200, background225: $background225, background250: $background250, background275: $background275, background300: $background300, inverse100: $inverse100, inverse000: $inverse000, success100: $success100, error100: $error100, teal100: $teal100, magenta100: $magenta100, indigo100: $indigo100, orange100: $orange100, purple100: $purple100, yellow100: $yellow100)';
+    return 'Web3ModalColors(accent100: $accent100, accent090: $accent090, accent080: $accent080, grayGlass100: $grayGlass100, foreground100: $foreground100, foreground125: $foreground125, foreground150: $foreground150, foreground175: $foreground175, foreground200: $foreground200, foreground225: $foreground225, foreground250: $foreground250, foreground275: $foreground275, foreground300: $foreground300, background100: $background100, background125: $background125, background150: $background150, background175: $background175, background200: $background200, background225: $background225, background250: $background250, background275: $background275, background300: $background300, inverse100: $inverse100, inverse000: $inverse000, success100: $success100, error100: $error100, teal100: $teal100, magenta100: $magenta100, indigo100: $indigo100, orange100: $orange100, purple100: $purple100, yellow100: $yellow100)';
   }
 
   @override
@@ -866,43 +610,14 @@ class _$_Web3ModalColors implements _Web3ModalColors {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Web3ModalColors &&
-            (identical(other.blue100, blue100) || other.blue100 == blue100) &&
-            (identical(other.blue090, blue090) || other.blue090 == blue090) &&
-            (identical(other.blue080, blue080) || other.blue080 == blue080) &&
-            (identical(other.overblue090, overblue090) ||
-                other.overblue090 == overblue090) &&
-            (identical(other.overblue080, overblue080) ||
-                other.overblue080 == overblue080) &&
-            (identical(other.overblue020, overblue020) ||
-                other.overblue020 == overblue020) &&
-            (identical(other.overblue015, overblue015) ||
-                other.overblue015 == overblue015) &&
-            (identical(other.overblue010, overblue010) ||
-                other.overblue010 == overblue010) &&
-            (identical(other.overblue005, overblue005) ||
-                other.overblue005 == overblue005) &&
-            (identical(other.overblue002, overblue002) ||
-                other.overblue002 == overblue002) &&
-            (identical(other.overgray001, overgray001) ||
-                other.overgray001 == overgray001) &&
-            (identical(other.overgray002, overgray002) ||
-                other.overgray002 == overgray002) &&
-            (identical(other.overgray005, overgray005) ||
-                other.overgray005 == overgray005) &&
-            (identical(other.overgray010, overgray010) ||
-                other.overgray010 == overgray010) &&
-            (identical(other.overgray015, overgray015) ||
-                other.overgray015 == overgray015) &&
-            (identical(other.overgray020, overgray020) ||
-                other.overgray020 == overgray020) &&
-            (identical(other.overgray025, overgray025) ||
-                other.overgray025 == overgray025) &&
-            (identical(other.overgray030, overgray030) ||
-                other.overgray030 == overgray030) &&
-            (identical(other.overgray060, overgray060) ||
-                other.overgray060 == overgray060) &&
-            (identical(other.overgray080, overgray080) ||
-                other.overgray080 == overgray080) &&
+            (identical(other.accent100, accent100) ||
+                other.accent100 == accent100) &&
+            (identical(other.accent090, accent090) ||
+                other.accent090 == accent090) &&
+            (identical(other.accent080, accent080) ||
+                other.accent080 == accent080) &&
+            (identical(other.grayGlass100, grayGlass100) ||
+                other.grayGlass100 == grayGlass100) &&
             (identical(other.foreground100, foreground100) ||
                 other.foreground100 == foreground100) &&
             (identical(other.foreground125, foreground125) ||
@@ -956,32 +671,17 @@ class _$_Web3ModalColors implements _Web3ModalColors {
                 other.orange100 == orange100) &&
             (identical(other.purple100, purple100) ||
                 other.purple100 == purple100) &&
-            (identical(other.yellow100, yellow100) || other.yellow100 == yellow100));
+            (identical(other.yellow100, yellow100) ||
+                other.yellow100 == yellow100));
   }
 
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
-        blue100,
-        blue090,
-        blue080,
-        overblue090,
-        overblue080,
-        overblue020,
-        overblue015,
-        overblue010,
-        overblue005,
-        overblue002,
-        overgray001,
-        overgray002,
-        overgray005,
-        overgray010,
-        overgray015,
-        overgray020,
-        overgray025,
-        overgray030,
-        overgray060,
-        overgray080,
+        accent100,
+        accent090,
+        accent080,
+        grayGlass100,
         foreground100,
         foreground125,
         foreground150,
@@ -1021,26 +721,10 @@ class _$_Web3ModalColors implements _Web3ModalColors {
 
 abstract class _Web3ModalColors implements Web3ModalColors {
   const factory _Web3ModalColors(
-      {required final Color blue100,
-      required final Color blue090,
-      required final Color blue080,
-      required final Color overblue090,
-      required final Color overblue080,
-      required final Color overblue020,
-      required final Color overblue015,
-      required final Color overblue010,
-      required final Color overblue005,
-      required final Color overblue002,
-      required final Color overgray001,
-      required final Color overgray002,
-      required final Color overgray005,
-      required final Color overgray010,
-      required final Color overgray015,
-      required final Color overgray020,
-      required final Color overgray025,
-      required final Color overgray030,
-      required final Color overgray060,
-      required final Color overgray080,
+      {required final Color accent100,
+      required final Color accent090,
+      required final Color accent080,
+      required final Color grayGlass100,
       required final Color foreground100,
       required final Color foreground125,
       required final Color foreground150,
@@ -1071,45 +755,13 @@ abstract class _Web3ModalColors implements Web3ModalColors {
       required final Color yellow100}) = _$_Web3ModalColors;
 
   @override
-  Color get blue100;
+  Color get accent100;
   @override
-  Color get blue090;
+  Color get accent090;
   @override
-  Color get blue080;
-  @override
-  Color get overblue090;
-  @override
-  Color get overblue080;
-  @override
-  Color get overblue020;
-  @override
-  Color get overblue015;
-  @override
-  Color get overblue010;
-  @override
-  Color get overblue005;
-  @override
-  Color get overblue002;
+  Color get accent080;
   @override //
-  Color get overgray001;
-  @override
-  Color get overgray002;
-  @override
-  Color get overgray005;
-  @override
-  Color get overgray010;
-  @override
-  Color get overgray015;
-  @override
-  Color get overgray020;
-  @override
-  Color get overgray025;
-  @override
-  Color get overgray030;
-  @override
-  Color get overgray060;
-  @override
-  Color get overgray080;
+  Color get grayGlass100;
   @override //
   Color get foreground100;
   @override

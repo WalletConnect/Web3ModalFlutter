@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'web3modal_text_styles.dart';
+part of 'w3m_text_styles.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -17,17 +17,19 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$Web3ModalTextStyles {
   String get fontFamily => throw _privateConstructorUsedError;
+  TextStyle get title400 => throw _privateConstructorUsedError;
   TextStyle get title500 => throw _privateConstructorUsedError;
   TextStyle get title600 => throw _privateConstructorUsedError;
-  TextStyle get title700 => throw _privateConstructorUsedError;
+  TextStyle get large400 => throw _privateConstructorUsedError;
   TextStyle get large500 => throw _privateConstructorUsedError;
   TextStyle get large600 => throw _privateConstructorUsedError;
-  TextStyle get large700 => throw _privateConstructorUsedError;
+  TextStyle get paragraph400 => throw _privateConstructorUsedError;
   TextStyle get paragraph500 => throw _privateConstructorUsedError;
   TextStyle get paragraph600 => throw _privateConstructorUsedError;
-  TextStyle get paragraph700 => throw _privateConstructorUsedError;
+  TextStyle get small400 => throw _privateConstructorUsedError;
   TextStyle get small500 => throw _privateConstructorUsedError;
   TextStyle get small600 => throw _privateConstructorUsedError;
+  TextStyle get tiny400 => throw _privateConstructorUsedError;
   TextStyle get tiny500 => throw _privateConstructorUsedError;
   TextStyle get tiny600 => throw _privateConstructorUsedError;
   TextStyle get micro600 => throw _privateConstructorUsedError;
@@ -46,17 +48,19 @@ abstract class $Web3ModalTextStylesCopyWith<$Res> {
   @useResult
   $Res call(
       {String fontFamily,
+      TextStyle title400,
       TextStyle title500,
       TextStyle title600,
-      TextStyle title700,
+      TextStyle large400,
       TextStyle large500,
       TextStyle large600,
-      TextStyle large700,
+      TextStyle paragraph400,
       TextStyle paragraph500,
       TextStyle paragraph600,
-      TextStyle paragraph700,
+      TextStyle small400,
       TextStyle small500,
       TextStyle small600,
+      TextStyle tiny400,
       TextStyle tiny500,
       TextStyle tiny600,
       TextStyle micro600,
@@ -77,17 +81,19 @@ class _$Web3ModalTextStylesCopyWithImpl<$Res, $Val extends Web3ModalTextStyles>
   @override
   $Res call({
     Object? fontFamily = null,
+    Object? title400 = null,
     Object? title500 = null,
     Object? title600 = null,
-    Object? title700 = null,
+    Object? large400 = null,
     Object? large500 = null,
     Object? large600 = null,
-    Object? large700 = null,
+    Object? paragraph400 = null,
     Object? paragraph500 = null,
     Object? paragraph600 = null,
-    Object? paragraph700 = null,
+    Object? small400 = null,
     Object? small500 = null,
     Object? small600 = null,
+    Object? tiny400 = null,
     Object? tiny500 = null,
     Object? tiny600 = null,
     Object? micro600 = null,
@@ -98,6 +104,10 @@ class _$Web3ModalTextStylesCopyWithImpl<$Res, $Val extends Web3ModalTextStyles>
           ? _value.fontFamily
           : fontFamily // ignore: cast_nullable_to_non_nullable
               as String,
+      title400: null == title400
+          ? _value.title400
+          : title400 // ignore: cast_nullable_to_non_nullable
+              as TextStyle,
       title500: null == title500
           ? _value.title500
           : title500 // ignore: cast_nullable_to_non_nullable
@@ -106,9 +116,9 @@ class _$Web3ModalTextStylesCopyWithImpl<$Res, $Val extends Web3ModalTextStyles>
           ? _value.title600
           : title600 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
-      title700: null == title700
-          ? _value.title700
-          : title700 // ignore: cast_nullable_to_non_nullable
+      large400: null == large400
+          ? _value.large400
+          : large400 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
       large500: null == large500
           ? _value.large500
@@ -118,9 +128,9 @@ class _$Web3ModalTextStylesCopyWithImpl<$Res, $Val extends Web3ModalTextStyles>
           ? _value.large600
           : large600 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
-      large700: null == large700
-          ? _value.large700
-          : large700 // ignore: cast_nullable_to_non_nullable
+      paragraph400: null == paragraph400
+          ? _value.paragraph400
+          : paragraph400 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
       paragraph500: null == paragraph500
           ? _value.paragraph500
@@ -130,9 +140,9 @@ class _$Web3ModalTextStylesCopyWithImpl<$Res, $Val extends Web3ModalTextStyles>
           ? _value.paragraph600
           : paragraph600 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
-      paragraph700: null == paragraph700
-          ? _value.paragraph700
-          : paragraph700 // ignore: cast_nullable_to_non_nullable
+      small400: null == small400
+          ? _value.small400
+          : small400 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
       small500: null == small500
           ? _value.small500
@@ -141,6 +151,10 @@ class _$Web3ModalTextStylesCopyWithImpl<$Res, $Val extends Web3ModalTextStyles>
       small600: null == small600
           ? _value.small600
           : small600 // ignore: cast_nullable_to_non_nullable
+              as TextStyle,
+      tiny400: null == tiny400
+          ? _value.tiny400
+          : tiny400 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
       tiny500: null == tiny500
           ? _value.tiny500
@@ -172,17 +186,19 @@ abstract class _$$_Web3ModalTextStylesCopyWith<$Res>
   @useResult
   $Res call(
       {String fontFamily,
+      TextStyle title400,
       TextStyle title500,
       TextStyle title600,
-      TextStyle title700,
+      TextStyle large400,
       TextStyle large500,
       TextStyle large600,
-      TextStyle large700,
+      TextStyle paragraph400,
       TextStyle paragraph500,
       TextStyle paragraph600,
-      TextStyle paragraph700,
+      TextStyle small400,
       TextStyle small500,
       TextStyle small600,
+      TextStyle tiny400,
       TextStyle tiny500,
       TextStyle tiny600,
       TextStyle micro600,
@@ -201,17 +217,19 @@ class __$$_Web3ModalTextStylesCopyWithImpl<$Res>
   @override
   $Res call({
     Object? fontFamily = null,
+    Object? title400 = null,
     Object? title500 = null,
     Object? title600 = null,
-    Object? title700 = null,
+    Object? large400 = null,
     Object? large500 = null,
     Object? large600 = null,
-    Object? large700 = null,
+    Object? paragraph400 = null,
     Object? paragraph500 = null,
     Object? paragraph600 = null,
-    Object? paragraph700 = null,
+    Object? small400 = null,
     Object? small500 = null,
     Object? small600 = null,
+    Object? tiny400 = null,
     Object? tiny500 = null,
     Object? tiny600 = null,
     Object? micro600 = null,
@@ -222,6 +240,10 @@ class __$$_Web3ModalTextStylesCopyWithImpl<$Res>
           ? _value.fontFamily
           : fontFamily // ignore: cast_nullable_to_non_nullable
               as String,
+      title400: null == title400
+          ? _value.title400
+          : title400 // ignore: cast_nullable_to_non_nullable
+              as TextStyle,
       title500: null == title500
           ? _value.title500
           : title500 // ignore: cast_nullable_to_non_nullable
@@ -230,9 +252,9 @@ class __$$_Web3ModalTextStylesCopyWithImpl<$Res>
           ? _value.title600
           : title600 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
-      title700: null == title700
-          ? _value.title700
-          : title700 // ignore: cast_nullable_to_non_nullable
+      large400: null == large400
+          ? _value.large400
+          : large400 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
       large500: null == large500
           ? _value.large500
@@ -242,9 +264,9 @@ class __$$_Web3ModalTextStylesCopyWithImpl<$Res>
           ? _value.large600
           : large600 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
-      large700: null == large700
-          ? _value.large700
-          : large700 // ignore: cast_nullable_to_non_nullable
+      paragraph400: null == paragraph400
+          ? _value.paragraph400
+          : paragraph400 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
       paragraph500: null == paragraph500
           ? _value.paragraph500
@@ -254,9 +276,9 @@ class __$$_Web3ModalTextStylesCopyWithImpl<$Res>
           ? _value.paragraph600
           : paragraph600 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
-      paragraph700: null == paragraph700
-          ? _value.paragraph700
-          : paragraph700 // ignore: cast_nullable_to_non_nullable
+      small400: null == small400
+          ? _value.small400
+          : small400 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
       small500: null == small500
           ? _value.small500
@@ -265,6 +287,10 @@ class __$$_Web3ModalTextStylesCopyWithImpl<$Res>
       small600: null == small600
           ? _value.small600
           : small600 // ignore: cast_nullable_to_non_nullable
+              as TextStyle,
+      tiny400: null == tiny400
+          ? _value.tiny400
+          : tiny400 // ignore: cast_nullable_to_non_nullable
               as TextStyle,
       tiny500: null == tiny500
           ? _value.tiny500
@@ -291,17 +317,19 @@ class __$$_Web3ModalTextStylesCopyWithImpl<$Res>
 class _$_Web3ModalTextStyles implements _Web3ModalTextStyles {
   const _$_Web3ModalTextStyles(
       {required this.fontFamily,
+      required this.title400,
       required this.title500,
       required this.title600,
-      required this.title700,
+      required this.large400,
       required this.large500,
       required this.large600,
-      required this.large700,
+      required this.paragraph400,
       required this.paragraph500,
       required this.paragraph600,
-      required this.paragraph700,
+      required this.small400,
       required this.small500,
       required this.small600,
+      required this.tiny400,
       required this.tiny500,
       required this.tiny600,
       required this.micro600,
@@ -310,27 +338,31 @@ class _$_Web3ModalTextStyles implements _Web3ModalTextStyles {
   @override
   final String fontFamily;
   @override
+  final TextStyle title400;
+  @override
   final TextStyle title500;
   @override
   final TextStyle title600;
   @override
-  final TextStyle title700;
+  final TextStyle large400;
   @override
   final TextStyle large500;
   @override
   final TextStyle large600;
   @override
-  final TextStyle large700;
+  final TextStyle paragraph400;
   @override
   final TextStyle paragraph500;
   @override
   final TextStyle paragraph600;
   @override
-  final TextStyle paragraph700;
+  final TextStyle small400;
   @override
   final TextStyle small500;
   @override
   final TextStyle small600;
+  @override
+  final TextStyle tiny400;
   @override
   final TextStyle tiny500;
   @override
@@ -342,7 +374,7 @@ class _$_Web3ModalTextStyles implements _Web3ModalTextStyles {
 
   @override
   String toString() {
-    return 'Web3ModalTextStyles(fontFamily: $fontFamily, title500: $title500, title600: $title600, title700: $title700, large500: $large500, large600: $large600, large700: $large700, paragraph500: $paragraph500, paragraph600: $paragraph600, paragraph700: $paragraph700, small500: $small500, small600: $small600, tiny500: $tiny500, tiny600: $tiny600, micro600: $micro600, micro700: $micro700)';
+    return 'Web3ModalTextStyles(fontFamily: $fontFamily, title400: $title400, title500: $title500, title600: $title600, large400: $large400, large500: $large500, large600: $large600, paragraph400: $paragraph400, paragraph500: $paragraph500, paragraph600: $paragraph600, small400: $small400, small500: $small500, small600: $small600, tiny400: $tiny400, tiny500: $tiny500, tiny600: $tiny600, micro600: $micro600, micro700: $micro700)';
   }
 
   @override
@@ -352,28 +384,31 @@ class _$_Web3ModalTextStyles implements _Web3ModalTextStyles {
             other is _$_Web3ModalTextStyles &&
             (identical(other.fontFamily, fontFamily) ||
                 other.fontFamily == fontFamily) &&
+            (identical(other.title400, title400) ||
+                other.title400 == title400) &&
             (identical(other.title500, title500) ||
                 other.title500 == title500) &&
             (identical(other.title600, title600) ||
                 other.title600 == title600) &&
-            (identical(other.title700, title700) ||
-                other.title700 == title700) &&
+            (identical(other.large400, large400) ||
+                other.large400 == large400) &&
             (identical(other.large500, large500) ||
                 other.large500 == large500) &&
             (identical(other.large600, large600) ||
                 other.large600 == large600) &&
-            (identical(other.large700, large700) ||
-                other.large700 == large700) &&
+            (identical(other.paragraph400, paragraph400) ||
+                other.paragraph400 == paragraph400) &&
             (identical(other.paragraph500, paragraph500) ||
                 other.paragraph500 == paragraph500) &&
             (identical(other.paragraph600, paragraph600) ||
                 other.paragraph600 == paragraph600) &&
-            (identical(other.paragraph700, paragraph700) ||
-                other.paragraph700 == paragraph700) &&
+            (identical(other.small400, small400) ||
+                other.small400 == small400) &&
             (identical(other.small500, small500) ||
                 other.small500 == small500) &&
             (identical(other.small600, small600) ||
                 other.small600 == small600) &&
+            (identical(other.tiny400, tiny400) || other.tiny400 == tiny400) &&
             (identical(other.tiny500, tiny500) || other.tiny500 == tiny500) &&
             (identical(other.tiny600, tiny600) || other.tiny600 == tiny600) &&
             (identical(other.micro600, micro600) ||
@@ -386,17 +421,19 @@ class _$_Web3ModalTextStyles implements _Web3ModalTextStyles {
   int get hashCode => Object.hash(
       runtimeType,
       fontFamily,
+      title400,
       title500,
       title600,
-      title700,
+      large400,
       large500,
       large600,
-      large700,
+      paragraph400,
       paragraph500,
       paragraph600,
-      paragraph700,
+      small400,
       small500,
       small600,
+      tiny400,
       tiny500,
       tiny600,
       micro600,
@@ -413,17 +450,19 @@ class _$_Web3ModalTextStyles implements _Web3ModalTextStyles {
 abstract class _Web3ModalTextStyles implements Web3ModalTextStyles {
   const factory _Web3ModalTextStyles(
       {required final String fontFamily,
+      required final TextStyle title400,
       required final TextStyle title500,
       required final TextStyle title600,
-      required final TextStyle title700,
+      required final TextStyle large400,
       required final TextStyle large500,
       required final TextStyle large600,
-      required final TextStyle large700,
+      required final TextStyle paragraph400,
       required final TextStyle paragraph500,
       required final TextStyle paragraph600,
-      required final TextStyle paragraph700,
+      required final TextStyle small400,
       required final TextStyle small500,
       required final TextStyle small600,
+      required final TextStyle tiny400,
       required final TextStyle tiny500,
       required final TextStyle tiny600,
       required final TextStyle micro600,
@@ -432,27 +471,31 @@ abstract class _Web3ModalTextStyles implements Web3ModalTextStyles {
   @override
   String get fontFamily;
   @override
+  TextStyle get title400;
+  @override
   TextStyle get title500;
   @override
   TextStyle get title600;
   @override
-  TextStyle get title700;
+  TextStyle get large400;
   @override
   TextStyle get large500;
   @override
   TextStyle get large600;
   @override
-  TextStyle get large700;
+  TextStyle get paragraph400;
   @override
   TextStyle get paragraph500;
   @override
   TextStyle get paragraph600;
   @override
-  TextStyle get paragraph700;
+  TextStyle get small400;
   @override
   TextStyle get small500;
   @override
   TextStyle get small600;
+  @override
+  TextStyle get tiny400;
   @override
   TextStyle get tiny500;
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
@@ -63,7 +63,11 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
+    final borderRadius = radiuses.isSquare() ? 0.0 : widget.size.height / 2;
+    final innerBorderRadius =
+        radiuses.isSquare() ? 0.0 : BaseButtonSize.small.height / 2;
     // TODO this button should be able to be disable by passing a null onTap action
     // I should decouple an AccountButton from W3MAccountButton like on ConnectButton and NetworkButton
     return BaseButton(
@@ -76,26 +80,26 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray005;
+              return themeColors.grayGlass005;
             }
-            return themeData.colors.overgray010;
+            return themeColors.grayGlass010;
           },
         ),
         foregroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray015;
+              return themeColors.grayGlass015;
             }
-            return themeData.colors.foreground175;
+            return themeColors.foreground175;
           },
         ),
         shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
           (states) {
             return RoundedRectangleBorder(
               side: states.contains(MaterialState.disabled)
-                  ? BorderSide(color: themeData.colors.overgray005, width: 1.0)
-                  : BorderSide(color: themeData.colors.overgray010, width: 1.0),
-              borderRadius: BorderRadius.circular(widget.size.height / 2),
+                  ? BorderSide(color: themeColors.grayGlass005, width: 1.0)
+                  : BorderSide(color: themeColors.grayGlass010, width: 1.0),
+              borderRadius: BorderRadius.circular(borderRadius),
             );
           },
         ),
@@ -111,9 +115,9 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
           foregroundColor: MaterialStateProperty.resolveWith<Color>(
             (states) {
               if (states.contains(MaterialState.disabled)) {
-                return themeData.colors.overgray015;
+                return themeColors.grayGlass015;
               }
-              return themeData.colors.foreground100;
+              return themeColors.foreground100;
             },
           ),
         ),
@@ -133,17 +137,17 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
           backgroundColor: MaterialStateProperty.resolveWith<Color>(
             (states) {
               if (states.contains(MaterialState.disabled)) {
-                return themeData.colors.overgray005;
+                return themeColors.grayGlass005;
               }
-              return themeData.colors.overgray010;
+              return themeColors.grayGlass010;
             },
           ),
           foregroundColor: MaterialStateProperty.resolveWith<Color>(
             (states) {
               if (states.contains(MaterialState.disabled)) {
-                return themeData.colors.overgray015;
+                return themeColors.grayGlass015;
               }
-              return themeData.colors.foreground175;
+              return themeColors.foreground175;
             },
           ),
           shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
@@ -151,15 +155,14 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
               return RoundedRectangleBorder(
                 side: states.contains(MaterialState.disabled)
                     ? BorderSide(
-                        color: themeData.colors.overgray005,
+                        color: themeColors.grayGlass005,
                         width: 1.0,
                       )
                     : BorderSide(
-                        color: themeData.colors.overgray010,
+                        color: themeColors.grayGlass010,
                         width: 1.0,
                       ),
-                borderRadius:
-                    BorderRadius.circular(BaseButtonSize.small.height / 2),
+                borderRadius: BorderRadius.circular(innerBorderRadius),
               );
             },
           ),

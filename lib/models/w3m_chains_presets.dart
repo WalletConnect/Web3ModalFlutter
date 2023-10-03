@@ -2,9 +2,9 @@ import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 
-class ChainData {
+class W3MChainPresets {
   /// All RPC urls were found here: https://rpc.info/
-  static Map<String, W3MChainInfo> chainPresets = {
+  static Map<String, W3MChainInfo> chains = {
     '1': W3MChainInfo(
       chainName: 'Ethereum',
       namespace: 'eip155:1',
@@ -26,7 +26,7 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://eth.drpc.org',
-      blockExplorer: BlockExplorer(
+      blockExplorer: W3MBlockExplorer(
         name: 'Etherscan',
         url: 'https://etherscan.io',
       ),
@@ -52,7 +52,7 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://arbitrum.blockpi.network/v1/rpc/public',
-      blockExplorer: BlockExplorer(
+      blockExplorer: W3MBlockExplorer(
         name: 'Arbiscan',
         url: 'https://arbiscan.io/',
       ),
@@ -78,7 +78,7 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://polygon.drpc.org',
-      blockExplorer: BlockExplorer(
+      blockExplorer: W3MBlockExplorer(
         name: 'Explorer',
         url: 'https://explorer.matic.network/',
       ),
@@ -104,7 +104,7 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
-      blockExplorer: BlockExplorer(
+      blockExplorer: W3MBlockExplorer(
         name: 'Snowtrace',
         url: 'https://snowtrace.io',
       ),
@@ -130,7 +130,7 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://bsc-dataseed.binance.org/',
-      blockExplorer: BlockExplorer(
+      blockExplorer: W3MBlockExplorer(
         name: 'BSC Scan',
         url: 'https://bscscan.com',
       ),
@@ -178,7 +178,7 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://rpc.ftm.tools/',
-      blockExplorer: BlockExplorer(
+      blockExplorer: W3MBlockExplorer(
         name: 'FTM Scan',
         url: 'https://ftmscan.com',
       ),
@@ -226,7 +226,7 @@ class ChainData {
         ),
       },
       rpcUrl: 'https://rpc.ankr.com/iotex',
-      blockExplorer: BlockExplorer(
+      blockExplorer: W3MBlockExplorer(
         name: 'IOTEX Scan',
         url: 'https://iotexscan.io/',
       ),

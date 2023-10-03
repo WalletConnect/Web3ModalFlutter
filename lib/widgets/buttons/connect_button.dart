@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 
 enum ConnectButtonState {
@@ -28,12 +28,15 @@ class ConnectButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final textStyle = size == BaseButtonSize.small
         ? themeData.textStyles.small600
         : themeData.textStyles.paragraph600;
     final connecting = state == ConnectButtonState.connecting;
     final disabled = state == ConnectButtonState.disabled;
     final connected = state == ConnectButtonState.connected;
+    final radiuses = Web3ModalTheme.radiusesOf(context);
+    final borderRadius = radiuses.isSquare() ? 0.0 : size.height / 2;
     return BaseButton(
       onTap: disabled || connecting ? null : onTap,
       size: size,
@@ -41,32 +44,32 @@ class ConnectButton extends StatelessWidget {
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (connecting) {
-              return themeData.colors.overgray010;
+              return themeColors.grayGlass010;
             }
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray005;
+              return themeColors.grayGlass005;
             }
-            return themeData.colors.blue100;
+            return themeColors.accent100;
           },
         ),
         foregroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
             if (connecting) {
-              return themeData.colors.blue100;
+              return themeColors.accent100;
             }
             if (states.contains(MaterialState.disabled)) {
-              return themeData.colors.overgray015;
+              return themeColors.grayGlass015;
             }
-            return themeData.colors.inverse100;
+            return themeColors.inverse100;
           },
         ),
         shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
           (states) {
             return RoundedRectangleBorder(
               side: (states.contains(MaterialState.disabled) || connecting)
-                  ? BorderSide(color: themeData.colors.overgray010, width: 1.0)
+                  ? BorderSide(color: themeColors.grayGlass010, width: 1.0)
                   : BorderSide.none,
-              borderRadius: BorderRadius.circular(size.height / 2),
+              borderRadius: BorderRadius.circular(borderRadius),
             );
           },
         ),
@@ -79,7 +82,7 @@ class ConnectButton extends StatelessWidget {
                   height: (textStyle.fontSize ?? 20.0) * 0.8,
                   width: (textStyle.fontSize ?? 20.0) * 0.8,
                   child: CircularProgressIndicator(
-                    color: themeData.colors.blue100,
+                    color: themeColors.accent100,
                     strokeWidth: 2.0,
                   ),
                 ),

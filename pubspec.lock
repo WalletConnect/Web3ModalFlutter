@@ -242,7 +242,7 @@ packages:
     source: hosted
     version: "1.0.2"
   event:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: event
       sha256: eb4814de94cbf6a10da9c4f652bc654087d7066e33566b5036822e6c0b24befb

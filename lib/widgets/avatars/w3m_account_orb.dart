@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/theme/web3modal_theme.dart';
+import 'package:web3modal_flutter/theme/w3m_colors.dart';
+import 'package:web3modal_flutter/theme/w3m_theme_widget.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_account_avatar.dart';
 
@@ -9,7 +10,7 @@ class W3MAccountOrb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final service = Web3ModalProvider.of(context).service;
     return Container(
       width: size,
@@ -17,7 +18,7 @@ class W3MAccountOrb extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(size / 2),
         border: Border.all(
-          color: themeData.colors.overgray005,
+          color: themeColors.grayGlass005,
           width: 8.0,
         ),
       ),

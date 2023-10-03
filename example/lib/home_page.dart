@@ -76,21 +76,21 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!_initialized) {
       return Center(
         child: CircularProgressIndicator(
-          color: Web3ModalTheme.getDataOf(context).colors.blue100,
+          color: Web3ModalTheme.colorsOf(context).accent100,
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: Web3ModalTheme.getDataOf(context).colors.background300,
+      backgroundColor: Web3ModalTheme.colorsOf(context).background300,
       appBar: AppBar(
         elevation: 0.0,
         title: const Text(StringConstants.w3mPageTitleV3),
-        backgroundColor: Web3ModalTheme.getDataOf(context).colors.background100,
-        foregroundColor: Web3ModalTheme.getDataOf(context).colors.foreground100,
+        backgroundColor: Web3ModalTheme.colorsOf(context).background100,
+        foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
         actions: [
           IconButton(
-            icon: Web3ModalTheme.of(context).isDarkMode
+            icon: Web3ModalTheme.maybeOf(context)?.isDarkMode ?? false
                 ? const Icon(Icons.light_mode)
                 : const Icon(Icons.dark_mode),
             onPressed: widget.swapTheme,

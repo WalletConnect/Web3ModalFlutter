@@ -7,52 +7,52 @@ class ChainDataWrapper {
     ChainMetadata(
       type: ChainType.eip155,
       color: Colors.blue.shade300,
-      w3mChainInfo: ChainData.chainPresets['1']!,
+      w3mChainInfo: W3MChainPresets.chains['1']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
       color: Colors.purple.shade300,
-      w3mChainInfo: ChainData.chainPresets['137']!,
+      w3mChainInfo: W3MChainPresets.chains['137']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
       color: Colors.purple.shade900,
-      w3mChainInfo: ChainData.chainPresets['42161']!,
+      w3mChainInfo: W3MChainPresets.chains['42161']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
       color: Colors.red.shade400,
-      w3mChainInfo: ChainData.chainPresets['43114']!,
+      w3mChainInfo: W3MChainPresets.chains['43114']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
       color: Colors.yellow.shade600,
-      w3mChainInfo: ChainData.chainPresets['56']!,
+      w3mChainInfo: W3MChainPresets.chains['56']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
       color: const Color(0xFF123962),
-      w3mChainInfo: ChainData.chainPresets['250']!,
+      w3mChainInfo: W3MChainPresets.chains['250']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
       color: Colors.red.shade700,
-      w3mChainInfo: ChainData.chainPresets['10']!,
+      w3mChainInfo: W3MChainPresets.chains['10']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
       color: Colors.blue.shade800,
-      w3mChainInfo: ChainData.chainPresets['9001']!,
+      w3mChainInfo: W3MChainPresets.chains['9001']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
       color: Colors.purple.shade800,
-      w3mChainInfo: ChainData.chainPresets['4689']!,
+      w3mChainInfo: W3MChainPresets.chains['4689']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
       color: Colors.purple.shade700,
-      w3mChainInfo: ChainData.chainPresets['1088']!,
+      w3mChainInfo: W3MChainPresets.chains['1088']!,
     ),
     // const ChainMetadata(
     //   type: ChainType.solana,

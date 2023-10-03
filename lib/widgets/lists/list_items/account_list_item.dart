@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/base_list_item.dart';
 
@@ -29,6 +29,7 @@ class AccountListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return BaseListItem(
       onTap: onTap,
       child: Row(
@@ -48,7 +49,7 @@ class AccountListItem extends StatelessWidget {
                 title,
                 style: titleStyle ??
                     themeData.textStyles.paragraph600.copyWith(
-                      color: themeData.colors.foreground100,
+                      color: themeColors.foreground100,
                     ),
               ),
             ),
@@ -60,7 +61,7 @@ class AccountListItem extends StatelessWidget {
                   'assets/icons/chevron_right.svg',
                   package: 'web3modal_flutter',
                   colorFilter: ColorFilter.mode(
-                    themeData.colors.foreground200,
+                    themeColors.foreground200,
                     BlendMode.srcIn,
                   ),
                   width: 18.0,

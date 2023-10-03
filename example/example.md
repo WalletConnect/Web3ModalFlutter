@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Web3ModalTheme(
-      data: Web3ModalThemeData.darkMode,
+      isDarkMode: true,
       child: MaterialApp(
         title: 'Flutter Demo',
         home: Builder(
@@ -90,20 +90,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             if (!_initialized) {
               return Center(
                 child: CircularProgressIndicator(
-                  color: Web3ModalTheme.getDataOf(context).colors.blue100,
+                  color: Web3ModalTheme.colorsOf(context).accent100,
                 ),
               );
             }
             return Scaffold(
               appBar: AppBar(
                 title: const Text('Web3Modal Demo'),
-                backgroundColor:
-                    Web3ModalTheme.getDataOf(context).colors.background100,
-                foregroundColor:
-                    Web3ModalTheme.getDataOf(context).colors.foreground100,
+                backgroundColor: Web3ModalTheme.colorsOf(context).background100,
+                foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
               ),
-              backgroundColor:
-                  Web3ModalTheme.getDataOf(context).colors.background300,
+              backgroundColor: Web3ModalTheme.colorsOf(context).background300,
               body: Container(
                 constraints: const BoxConstraints.expand(),
                 padding: const EdgeInsets.all(12.0),
@@ -125,4 +122,5 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 }
+
 ```

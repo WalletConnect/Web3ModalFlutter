@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 
 class W3MIconButton extends StatelessWidget {
   const W3MIconButton({
@@ -16,14 +16,14 @@ class W3MIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
-
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return MaterialButton(
       onPressed: onPressed,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
-      focusColor: themeData.colors.overgray025,
-      hoverColor: themeData.colors.overgray020,
+      focusColor: themeColors.grayGlass025,
+      hoverColor: themeColors.grayGlass020,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Center(
@@ -35,7 +35,7 @@ class W3MIconButton extends StatelessWidget {
               Text(
                 text,
                 style: themeData.textStyles.tiny500.copyWith(
-                  color: themeData.colors.blue100,
+                  color: themeColors.accent100,
                 ),
                 maxLines: 2,
                 textAlign: TextAlign.center,

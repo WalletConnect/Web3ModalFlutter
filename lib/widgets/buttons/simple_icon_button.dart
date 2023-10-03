@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 
 class SimpleIconButton extends StatelessWidget {
@@ -26,16 +26,19 @@ class SimpleIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
+    final borderRadius =
+        radiuses.isSquare() ? 0.0 : (BaseButtonSize.regular.height / 2);
     return BaseButton(
       onTap: onTap,
       size: size,
       buttonStyle: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(
-          backgroundColor ?? themeData.colors.blue100,
+          backgroundColor ?? themeColors.accent100,
         ),
         foregroundColor: MaterialStateProperty.all<Color>(
-          foregroundColor ?? themeData.colors.inverse100,
+          foregroundColor ?? themeColors.inverse100,
         ),
         overlayColor: overlayColor,
         shape: withBorder
@@ -43,12 +46,10 @@ class SimpleIconButton extends StatelessWidget {
                 (states) {
                   return RoundedRectangleBorder(
                     side: BorderSide(
-                      color: themeData.colors.overgray010,
+                      color: themeColors.grayGlass010,
                       width: 2.0,
                     ),
-                    borderRadius: BorderRadius.circular(
-                      BaseButtonSize.regular.height / 2,
-                    ),
+                    borderRadius: BorderRadius.circular(borderRadius),
                   );
                 },
               )
@@ -65,7 +66,7 @@ class SimpleIconButton extends StatelessWidget {
                   leftIcon!,
                   package: 'web3modal_flutter',
                   colorFilter: ColorFilter.mode(
-                    foregroundColor ?? themeData.colors.inverse100,
+                    foregroundColor ?? themeColors.inverse100,
                     BlendMode.srcIn,
                   ),
                 ),
@@ -81,7 +82,7 @@ class SimpleIconButton extends StatelessWidget {
                   rightIcon!,
                   package: 'web3modal_flutter',
                   colorFilter: ColorFilter.mode(
-                    foregroundColor ?? themeData.colors.inverse100,
+                    foregroundColor ?? themeColors.inverse100,
                     BlendMode.srcIn,
                   ),
                 ),

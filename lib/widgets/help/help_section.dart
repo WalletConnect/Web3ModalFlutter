@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 
 class HelpSection extends StatelessWidget {
   const HelpSection({
@@ -15,6 +16,7 @@ class HelpSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Container(
       padding: const EdgeInsets.all(kPadding12),
       child: Column(
@@ -39,7 +41,7 @@ class HelpSection extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: themeData.textStyles.paragraph500.copyWith(
-              color: themeData.colors.foreground100,
+              color: themeColors.foreground100,
             ),
           ),
           const SizedBox.square(dimension: 8.0),
@@ -47,7 +49,7 @@ class HelpSection extends StatelessWidget {
             description,
             textAlign: TextAlign.center,
             style: themeData.textStyles.small500.copyWith(
-              color: themeData.colors.foreground200,
+              color: themeColors.foreground200,
             ),
           ),
         ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/theme/theme.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 
 class W3MAccountAvatar extends StatefulWidget {
@@ -38,7 +38,7 @@ class _W3MAccountAvatarState extends State<W3MAccountAvatar> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return SizedBox(
       width: widget.size,
       height: widget.size,
@@ -46,9 +46,7 @@ class _W3MAccountAvatarState extends State<W3MAccountAvatar> {
         borderRadius: BorderRadius.circular(widget.size / 2),
         child: ColorFiltered(
           colorFilter: ColorFilter.mode(
-            widget.disabled
-                ? themeData.colors.foreground300
-                : Colors.transparent,
+            widget.disabled ? themeColors.foreground300 : Colors.transparent,
             BlendMode.saturation,
           ),
           child: _avatarUrl != null
@@ -62,7 +60,7 @@ class _W3MAccountAvatarState extends State<W3MAccountAvatar> {
   Widget _buildGradientAvatar(BuildContext context) {
     if ((_address ?? '').isEmpty) return const SizedBox.shrink();
     List<Color> colors = Util.generateAvatarColors(_address!);
-    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     return Stack(
       children: [
         Container(
@@ -73,7 +71,7 @@ class _W3MAccountAvatarState extends State<W3MAccountAvatar> {
             borderRadius: BorderRadius.circular(widget.size / 2.0),
             boxShadow: [
               BoxShadow(
-                color: themeData.colors.overgray025,
+                color: themeColors.grayGlass025,
                 spreadRadius: 1.0,
                 blurRadius: 0.0,
               ),
