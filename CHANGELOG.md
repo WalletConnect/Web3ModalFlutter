@@ -1,3 +1,8 @@
+## 3.0.0-alpha04
+
+- Decreased even more the dependency from WalletConnectModalFlutter
+- Enhanced `Web3ModalTheme` class and subclasses to increase and make easier customization. See (https://docs.walletconnect.com/web3modal/flutter/theming)[https://docs.walletconnect.com/web3modal/flutter/theming]
+
 ## 3.0.0-alpha03
 
 - Removed /sign subfolder under example/ and changed documentation to improve pub points.
