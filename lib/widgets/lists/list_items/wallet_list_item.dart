@@ -39,7 +39,9 @@ class WalletListItem extends StatelessWidget {
               child: Text(
                 title,
                 style: themeData.textStyles.paragraph500.copyWith(
-                  color: themeColors.foreground100,
+                  color: onTap == null
+                      ? themeColors.foreground200
+                      : themeColors.foreground100,
                 ),
               ),
             ),

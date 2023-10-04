@@ -56,10 +56,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     });
   }
 
-  void _onTap() => widget.service.open(
-        context: context,
-        startWidget: const AccountPage(),
-      );
+  void _onTap() => widget.service.openModal(context, const AccountPage());
 
   @override
   Widget build(BuildContext context) {

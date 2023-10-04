@@ -13,7 +13,6 @@ import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/download_wallet_item.dart';
-import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item_simple.dart';
 import 'package:web3modal_flutter/widgets/avatars/loading_border.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
@@ -41,7 +40,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
       _service = Web3ModalProvider.of(context).service;
       _selectedWallet = _service?.selectedWallet;
       if (_selectedWallet?.installed == true) {
-        _service?.connectWallet(walletInfo: _selectedWallet!);
+        _service?.connectWallet(_selectedWallet!);
       }
       setState(() {});
     });
@@ -52,7 +51,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     if (state == AppLifecycleState.resumed) {
       final isOpen = _service?.isOpen ?? false;
       if (isOpen && _service?.session != null) {
-        _service?.close();
+        _service?.closeModal();
       }
     }
   }
@@ -122,12 +121,10 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                       color: themeColors.foreground200,
                     ),
                   ),
-                  const SizedBox.square(dimension: 16.0),
+                  const SizedBox.square(dimension: kPadding16),
                   SimpleIconButton(
                     onTap: () {
-                      service.connectWallet(
-                        walletInfo: service.selectedWallet!,
-                      );
+                      service.connectWallet(service.selectedWallet!);
                     },
                     leftIcon: 'assets/icons/refresh.svg',
                     title: 'Try again',
@@ -143,25 +140,26 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (isPortrait) const SizedBox.square(dimension: 32.0),
-                  WalletListItemSimple(
-                    title: 'Copy link',
-                    icon: 'assets/icons/copy.svg',
+                  if (isPortrait) const SizedBox.square(dimension: kPadding12),
+                  SimpleIconButton(
                     onTap: () => _copyToClipboard(context),
+                    leftIcon: 'assets/icons/copy.svg',
+                    title: 'Copy link',
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: themeColors.foreground200,
+                    overlayColor: MaterialStateProperty.all<Color>(
+                      themeColors.background200,
+                    ),
+                    withBorder: false,
                   ),
                   if (!walletInstalled)
                     Column(
                       children: [
-                        const SizedBox.square(dimension: 16.0),
                         if (isPortrait)
-                          Divider(
-                            color: themeColors.grayGlass005,
-                            height: 0.0,
-                          ),
-                        if (isPortrait) const SizedBox.square(dimension: 16.0),
+                          const SizedBox.square(dimension: kPadding16),
                         if (_selectedWallet != null)
                           DownloadWalletItem(walletInfo: _selectedWallet!),
-                        const SizedBox.square(dimension: 16.0),
+                        const SizedBox.square(dimension: kPadding16),
                       ],
                     ),
                 ],

@@ -58,7 +58,7 @@ class _W3MDisconnectButtonState extends State<W3MDisconnectButton> {
     setState(() {
       _disconnecting = true;
     });
-    widget.service.close();
+    widget.service.closeModal();
     await widget.service.disconnect();
   }
 }

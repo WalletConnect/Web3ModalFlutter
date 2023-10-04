@@ -225,7 +225,7 @@ void main() {
     group('setSelectedChain', () {
       test('throws if _checkInitialized fails', () async {
         expect(
-          () => service.setSelectedChain(W3MChainPresets.chains['1']!),
+          () => service.selectChain(W3MChainPresets.chains['1']!),
           throwsA(isA<StateError>()),
         );
       });
@@ -259,7 +259,7 @@ void main() {
         );
 
         // Chain swap to polygon
-        await service.setSelectedChain(W3MChainPresets.chains['137']!);
+        await service.selectChain(W3MChainPresets.chains['137']!);
 
         //
         expect(counter, 6);
@@ -276,10 +276,8 @@ void main() {
         );
 
         // Setting selected chain to null will disconnect
-        await service.setSelectedChain(null);
-        onSessionDelete.broadcast(SessionDelete(
-          'topic',
-        ));
+        await service.selectChain(null);
+        onSessionDelete.broadcast(SessionDelete('topic'));
 
         verify(mockStorageService.setString(
           W3MService.selectedChainId,
@@ -310,8 +308,8 @@ void main() {
 
         await service.init();
 
-        await service.setSelectedChain(W3MChainPresets.chains['1']!);
-        await service.setSelectedChain(W3MChainPresets.chains['137']!);
+        await service.selectChain(W3MChainPresets.chains['1']!);
+        await service.selectChain(W3MChainPresets.chains['137']!);
 
         // Check that we switched wallets
         verify(

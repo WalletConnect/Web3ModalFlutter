@@ -18,6 +18,7 @@ class W3MListAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
+    final radius = borderRadius ?? radiuses.radiusM;
     return Container(
       margin: const EdgeInsets.all(2.0),
       decoration: isNetwork
@@ -33,8 +34,7 @@ class W3MListAvatar extends StatelessWidget {
               ),
             )
           : BoxDecoration(
-              borderRadius:
-                  BorderRadius.circular(borderRadius ?? radiuses.radiusM),
+              borderRadius: BorderRadius.circular(radius),
               border: Border.all(
                 color: color ?? themeColors.grayGlass010,
                 width: 1.0,

@@ -47,11 +47,11 @@ class _W3MNetworkSelectButtonState extends State<W3MNetworkSelectButton> {
   }
 
   void _onConnectPressed(BuildContext context) {
-    widget.service.open(
-      context: context,
-      startWidget: SelectNetworkPage(
+    widget.service.openModal(
+      context,
+      SelectNetworkPage(
         onTapNetwork: (info) {
-          widget.service.setSelectedChain(info);
+          widget.service.selectChain(info);
           widgetStack.instance.addDefault();
         },
       ),
@@ -59,10 +59,6 @@ class _W3MNetworkSelectButtonState extends State<W3MNetworkSelectButton> {
   }
 
   void _onServiceUpdate() {
-    debugPrint(
-      'W3MNetworkSelectButton._onServiceUpdate(). isConnected: $_selectedChain.',
-    );
-
     setState(() {
       _selectedChain = widget.service.selectedChain;
     });

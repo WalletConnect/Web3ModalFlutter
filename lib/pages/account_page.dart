@@ -38,8 +38,9 @@ class AccountPage extends StatelessWidget {
                     const SizedBox.square(dimension: 12.0),
                     const W3MAddressWithCopyButton(),
                     const W3MBalanceText(),
-                    if (service.hasBlockExplorer)
-                      Column(
+                    Visibility(
+                      visible: service.selectedChain?.blockExplorer != null,
+                      child: Column(
                         children: [
                           const SizedBox.square(dimension: 12.0),
                           SimpleIconButton(
@@ -55,6 +56,7 @@ class AccountPage extends StatelessWidget {
                           ),
                         ],
                       ),
+                    ),
                   ],
                 ),
                 const SizedBox.square(dimension: 20.0),
@@ -70,10 +72,7 @@ class AccountPage extends StatelessWidget {
                       widgetStack.instance.add(SelectNetworkPage(
                         onTapNetwork: (W3MChainInfo chainInfo) {
                           // TODO check what happens when switch can not be done
-                          service.setSelectedChain(
-                            chainInfo,
-                            switchChain: true,
-                          );
+                          service.selectChain(chainInfo, switchChain: true);
                           widgetStack.instance.pop();
                         },
                       ));
@@ -91,7 +90,7 @@ class AccountPage extends StatelessWidget {
                       color: themeColors.foreground200,
                     ),
                     onTap: () async {
-                      service.close();
+                      service.closeModal();
                       await service.disconnect();
                     },
                   ),
@@ -104,7 +103,7 @@ class AccountPage extends StatelessWidget {
             right: 0,
             child: NavbarActionButton(
               asset: 'assets/icons/close.svg',
-              action: () => service.close(),
+              action: () => service.closeModal(),
             ),
           ),
         ],
