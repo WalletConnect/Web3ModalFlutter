@@ -1,3 +1,6 @@
+## 3.0.0-alpha05
+
+- Core services refactor
 ## 3.0.0-alpha04
 
 - Decreased even more the dependency from WalletConnectModalFlutter
