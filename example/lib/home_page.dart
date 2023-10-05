@@ -126,7 +126,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class _W3MPage extends StatefulWidget {
   const _W3MPage({required this.web3App});
-
   final IWeb3App web3App;
 
   @override
@@ -192,13 +191,17 @@ class _W3MPageState extends State<_W3MPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const SizedBox.square(dimension: 8.0),
-          if (!_isConnected) W3MNetworkSelectButton(service: _w3mService),
-          W3MConnectWalletButton(
-            service: _w3mService,
+          Visibility(
+            visible: !_isConnected,
+            child: W3MNetworkSelectButton(service: _w3mService),
           ),
+          W3MConnectWalletButton(service: _w3mService),
           const SizedBox.square(dimension: 8.0),
           const Divider(height: 0.0),
-          if (_isConnected) _ConnectedView(w3mService: _w3mService)
+          Visibility(
+            visible: _isConnected,
+            child: _ConnectedView(w3mService: _w3mService),
+          )
         ],
       ),
     );
@@ -220,7 +223,7 @@ class _ConnectedView extends StatelessWidget {
           session: w3mService.web3App!.sessions.getAll().first,
           web3App: w3mService.web3App!,
           launchRedirect: () {
-            w3mService.launchCurrentWallet();
+            w3mService.launchConnectedWallet();
           },
         ),
         const SizedBox.square(dimension: 12.0),

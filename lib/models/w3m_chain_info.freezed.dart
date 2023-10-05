@@ -27,7 +27,6 @@ mixin _$W3MChainInfo {
       throw _privateConstructorUsedError;
   String get rpcUrl => throw _privateConstructorUsedError;
   W3MBlockExplorer? get blockExplorer => throw _privateConstructorUsedError;
-  ILedgerService get ledgerService => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $W3MChainInfoCopyWith<W3MChainInfo> get copyWith =>
@@ -49,8 +48,7 @@ abstract class $W3MChainInfoCopyWith<$Res> {
       Map<String, RequiredNamespace> requiredNamespaces,
       Map<String, RequiredNamespace> optionalNamespaces,
       String rpcUrl,
-      W3MBlockExplorer? blockExplorer,
-      ILedgerService ledgerService});
+      W3MBlockExplorer? blockExplorer});
 
   $W3MBlockExplorerCopyWith<$Res>? get blockExplorer;
 }
@@ -77,7 +75,6 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
     Object? optionalNamespaces = null,
     Object? rpcUrl = null,
     Object? blockExplorer = freezed,
-    Object? ledgerService = null,
   }) {
     return _then(_value.copyWith(
       chainName: null == chainName
@@ -116,10 +113,6 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
           ? _value.blockExplorer
           : blockExplorer // ignore: cast_nullable_to_non_nullable
               as W3MBlockExplorer?,
-      ledgerService: null == ledgerService
-          ? _value.ledgerService
-          : ledgerService // ignore: cast_nullable_to_non_nullable
-              as ILedgerService,
     ) as $Val);
   }
 
@@ -153,8 +146,7 @@ abstract class _$$_W3MChainInfoCopyWith<$Res>
       Map<String, RequiredNamespace> requiredNamespaces,
       Map<String, RequiredNamespace> optionalNamespaces,
       String rpcUrl,
-      W3MBlockExplorer? blockExplorer,
-      ILedgerService ledgerService});
+      W3MBlockExplorer? blockExplorer});
 
   @override
   $W3MBlockExplorerCopyWith<$Res>? get blockExplorer;
@@ -180,7 +172,6 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
     Object? optionalNamespaces = null,
     Object? rpcUrl = null,
     Object? blockExplorer = freezed,
-    Object? ledgerService = null,
   }) {
     return _then(_$_W3MChainInfo(
       chainName: null == chainName
@@ -219,10 +210,6 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
           ? _value.blockExplorer
           : blockExplorer // ignore: cast_nullable_to_non_nullable
               as W3MBlockExplorer?,
-      ledgerService: null == ledgerService
-          ? _value.ledgerService
-          : ledgerService // ignore: cast_nullable_to_non_nullable
-              as ILedgerService,
     ));
   }
 }
@@ -239,8 +226,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
       required final Map<String, RequiredNamespace> requiredNamespaces,
       required final Map<String, RequiredNamespace> optionalNamespaces,
       required this.rpcUrl,
-      this.blockExplorer,
-      this.ledgerService = const LedgerService()})
+      this.blockExplorer})
       : _requiredNamespaces = requiredNamespaces,
         _optionalNamespaces = optionalNamespaces;
 
@@ -276,13 +262,10 @@ class _$_W3MChainInfo implements _W3MChainInfo {
   final String rpcUrl;
   @override
   final W3MBlockExplorer? blockExplorer;
-  @override
-  @JsonKey()
-  final ILedgerService ledgerService;
 
   @override
   String toString() {
-    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, namespace: $namespace, chainIcon: $chainIcon, tokenName: $tokenName, requiredNamespaces: $requiredNamespaces, optionalNamespaces: $optionalNamespaces, rpcUrl: $rpcUrl, blockExplorer: $blockExplorer, ledgerService: $ledgerService)';
+    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, namespace: $namespace, chainIcon: $chainIcon, tokenName: $tokenName, requiredNamespaces: $requiredNamespaces, optionalNamespaces: $optionalNamespaces, rpcUrl: $rpcUrl, blockExplorer: $blockExplorer)';
   }
 
   @override
@@ -305,9 +288,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
                 .equals(other._optionalNamespaces, _optionalNamespaces) &&
             (identical(other.rpcUrl, rpcUrl) || other.rpcUrl == rpcUrl) &&
             (identical(other.blockExplorer, blockExplorer) ||
-                other.blockExplorer == blockExplorer) &&
-            (identical(other.ledgerService, ledgerService) ||
-                other.ledgerService == ledgerService));
+                other.blockExplorer == blockExplorer));
   }
 
   @override
@@ -321,8 +302,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
       const DeepCollectionEquality().hash(_requiredNamespaces),
       const DeepCollectionEquality().hash(_optionalNamespaces),
       rpcUrl,
-      blockExplorer,
-      ledgerService);
+      blockExplorer);
 
   @JsonKey(ignore: true)
   @override
@@ -341,8 +321,7 @@ abstract class _W3MChainInfo implements W3MChainInfo {
       required final Map<String, RequiredNamespace> requiredNamespaces,
       required final Map<String, RequiredNamespace> optionalNamespaces,
       required final String rpcUrl,
-      final W3MBlockExplorer? blockExplorer,
-      final ILedgerService ledgerService}) = _$_W3MChainInfo;
+      final W3MBlockExplorer? blockExplorer}) = _$_W3MChainInfo;
 
   @override
   String get chainName;
@@ -362,8 +341,6 @@ abstract class _W3MChainInfo implements W3MChainInfo {
   String get rpcUrl;
   @override
   W3MBlockExplorer? get blockExplorer;
-  @override
-  ILedgerService get ledgerService;
   @override
   @JsonKey(ignore: true)
   _$$_W3MChainInfoCopyWith<_$_W3MChainInfo> get copyWith =>

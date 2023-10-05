@@ -1,0 +1,72 @@
+dartdoc:
+  # categories:
+  #   "First Category":
+  #     markdown: doc/First.md
+  #     name: Awesome
+  #   "Second Category":
+  #     markdown: doc/Second.md
+  #     name: Great
+  # categoryOrder: ["First Category", "Second Category"]
+  # examplePathPrefix: "subdir/with/examples"
+  # includeExternal: ["bin/unusually_located_library.dart"]
+  nodoc:
+    [
+      "lib/constants/key_constants.dart",
+      "lib/constants/string_constants.dart",
+      "lib/constants/url_constants.dart",
+      "lib/models/grid_item_modal.dart",
+      "lib/models/w3m_wallet_info.dart",
+      "lib/pages/*.dart",
+      "lib/services/blockchain_api_service/*.dart",
+      "lib/services/explorer_service/*.dart",
+      "lib/services/ledger_service/*.dart",
+      "lib/services/network_service/*.dart",
+      "lib/services/storage_service/*.dart",
+      "lib/theme/constants.dart",
+      "lib/utils/asset_util.dart",
+      "lib/utils/eth_util.dart",
+      "lib/utils/util.dart",
+      "lib/widgets/_unused/*.dart",
+      "lib/widgets/avatars/*.dart",
+      "lib/widgets/buttons/*.dart",
+      "lib/widgets/help/*.dart",
+      "lib/widgets/icons/*.dart",
+      "lib/widgets/lists/*.dart",
+      "lib/widgets/miscellaneous/*.dart",
+      "lib/widgets/navigation/*.dart",
+      "lib/widgets/text/*.dart",
+      "lib/widgets/value_listenable_builders/*.dart",
+      "lib/widgets/widget_stack/*.dart",
+    ]
+  exclude: [
+    "collection",
+    "cupertino_icons",
+    "event",
+    "flex_color_picker",
+    "flutter_svg",
+    "freezed_annotation",
+    "hexagon",
+    "http",
+    "json_annotation",
+    "logger",
+    "mockito",
+    "qr_flutter_wc",
+    "shared_preferences",
+    "smooth_page_indicator",
+    "universal_io",
+    "url_launcher",
+    "w_common",
+    "walletconnect_flutter_v2",
+    "walletconnect_modal_flutter",
+    "web3dart",
+  ]
+  include: ["web3modal_flutter"]
+  linkTo:
+    url: "https://docs.walletconnect.com/web3modal/flutter/installation"
+  showUndocumentedCategories: false
+  ignore:
+    - ambiguous-doc-reference
+  errors:
+    - unresolved-doc-reference
+  warnings:
+    - tool-error

@@ -57,9 +57,9 @@ import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api
     as _i37;
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart'
     as _i13;
-import 'package:web3modal_flutter/services/ledger_service.dart/ledger_service.dart'
+import 'package:web3modal_flutter/services/ledger_service/ledger_service.dart'
     as _i38;
-import 'package:web3modal_flutter/services/network_service.dart/network_service.dart'
+import 'package:web3modal_flutter/services/network_service/network_service.dart'
     as _i35;
 import 'package:web3modal_flutter/services/storage_service/storage_service.dart'
     as _i39;
@@ -1100,16 +1100,6 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
   }
 
   @override
-  bool get isOpen => (super.noSuchMethod(
-        Invocation.getter(#isOpen),
-        returnValue: false,
-      ) as bool);
-  @override
-  bool get hasBlockExplorer => (super.noSuchMethod(
-        Invocation.getter(#hasBlockExplorer),
-        returnValue: false,
-      ) as bool);
-  @override
   set connectResponse(_i6.ConnectResponse? _connectResponse) =>
       super.noSuchMethod(
         Invocation.setter(
@@ -1119,26 +1109,8 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  set context(_i2.BuildContext? _context) => super.noSuchMethod(
-        Invocation.setter(
-          #context,
-          _context,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
   bool get isInitialized => (super.noSuchMethod(
         Invocation.getter(#isInitialized),
-        returnValue: false,
-      ) as bool);
-  @override
-  String get projectId => (super.noSuchMethod(
-        Invocation.getter(#projectId),
-        returnValue: '',
-      ) as String);
-  @override
-  bool get isConnected => (super.noSuchMethod(
-        Invocation.getter(#isConnected),
         returnValue: false,
       ) as bool);
   @override
@@ -1154,38 +1126,18 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValue: <String, _i6.RequiredNamespace>{},
       ) as Map<String, _i6.RequiredNamespace>);
   @override
+  bool get isOpen => (super.noSuchMethod(
+        Invocation.getter(#isOpen),
+        returnValue: false,
+      ) as bool);
+  @override
+  bool get isConnected => (super.noSuchMethod(
+        Invocation.getter(#isConnected),
+        returnValue: false,
+      ) as bool);
+  @override
   bool get hasListeners => (super.noSuchMethod(
         Invocation.getter(#hasListeners),
-        returnValue: false,
-      ) as bool);
-  @override
-  _i4.Future<Null> get didDispose => (super.noSuchMethod(
-        Invocation.getter(#didDispose),
-        returnValue: _i4.Future<Null>.value(),
-      ) as _i4.Future<Null>);
-  @override
-  String get disposableTypeName => (super.noSuchMethod(
-        Invocation.getter(#disposableTypeName),
-        returnValue: '',
-      ) as String);
-  @override
-  int get disposalTreeSize => (super.noSuchMethod(
-        Invocation.getter(#disposalTreeSize),
-        returnValue: 0,
-      ) as int);
-  @override
-  bool get isDisposed => (super.noSuchMethod(
-        Invocation.getter(#isDisposed),
-        returnValue: false,
-      ) as bool);
-  @override
-  bool get isLeakFlagSet => (super.noSuchMethod(
-        Invocation.getter(#isLeakFlagSet),
-        returnValue: false,
-      ) as bool);
-  @override
-  bool get isOrWillBeDisposed => (super.noSuchMethod(
-        Invocation.getter(#isOrWillBeDisposed),
         returnValue: false,
       ) as bool);
   @override
@@ -1198,64 +1150,95 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  _i4.Future<void> setSelectedChain(
-    _i23.W3MChainInfo? chain, {
+  _i4.Future<void> selectChain(
+    _i23.W3MChainInfo? chainInfo, {
     bool? switchChain = false,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #setSelectedChain,
-          [chain],
+          #selectChain,
+          [chainInfo],
           {#switchChain: switchChain},
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  void registerListeners() => super.noSuchMethod(
-        Invocation.method(
-          #registerListeners,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  void unregisterListeners() => super.noSuchMethod(
-        Invocation.method(
-          #unregisterListeners,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  void onSessionConnect(_i6.SessionConnect? args) => super.noSuchMethod(
-        Invocation.method(
-          #onSessionConnect,
-          [args],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  _i4.Future<void> open({
-    required _i2.BuildContext? context,
+  _i4.Future<void> openModal(
+    _i2.BuildContext? context, [
     _i2.Widget? startWidget,
-  }) =>
+  ]) =>
       (super.noSuchMethod(
         Invocation.method(
-          #open,
-          [],
-          {
-            #context: context,
-            #startWidget: startWidget,
-          },
+          #openModal,
+          [
+            context,
+            startWidget,
+          ],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  void close() => super.noSuchMethod(
+  _i4.Future<void> rebuildConnectionUri() => (super.noSuchMethod(
         Invocation.method(
-          #close,
+          #rebuildConnectionUri,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
+  _i4.Future<void> connectWallet([_i24.W3MWalletInfo? walletInfo]) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #connectWallet,
+          [walletInfo],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
+  _i4.Future<void> launchConnectedWallet() => (super.noSuchMethod(
+        Invocation.method(
+          #launchConnectedWallet,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
+  String getReferer() => (super.noSuchMethod(
+        Invocation.method(
+          #getReferer,
+          [],
+        ),
+        returnValue: '',
+      ) as String);
+  @override
+  _i4.Future<void> reconnectRelay() => (super.noSuchMethod(
+        Invocation.method(
+          #reconnectRelay,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
+  _i4.Future<void> disconnect({bool? disconnectAllSessions = true}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #disconnect,
+          [],
+          {#disconnectAllSessions: disconnectAllSessions},
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
+  void closeModal() => super.noSuchMethod(
+        Invocation.method(
+          #closeModal,
           [],
         ),
         returnValueForMissingStub: null,
@@ -1280,139 +1263,9 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  _i4.Future<Null> onDispose() => (super.noSuchMethod(
+  void dispose() => super.noSuchMethod(
         Invocation.method(
-          #onDispose,
-          [],
-        ),
-        returnValue: _i4.Future<Null>.value(),
-      ) as _i4.Future<Null>);
-  @override
-  _i4.Future<void> reconnectRelay() => (super.noSuchMethod(
-        Invocation.method(
-          #reconnectRelay,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-  @override
-  _i4.Future<void> disconnect({bool? disconnectAllSessions = true}) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #disconnect,
-          [],
-          {#disconnectAllSessions: disconnectAllSessions},
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-  @override
-  _i4.Future<void> launchCurrentWallet() => (super.noSuchMethod(
-        Invocation.method(
-          #launchCurrentWallet,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-  @override
-  _i4.Future<void> rebuildConnectionUri() => (super.noSuchMethod(
-        Invocation.method(
-          #rebuildConnectionUri,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-  @override
-  _i4.Future<void> connectWallet({required _i24.W3MWalletInfo? walletInfo}) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #connectWallet,
-          [],
-          {#walletInfo: walletInfo},
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-  @override
-  void setRequiredNamespaces(
-          {required Map<String, _i6.RequiredNamespace>? requiredNamespaces}) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #setRequiredNamespaces,
-          [],
-          {#requiredNamespaces: requiredNamespaces},
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  void setOptionalNamespaces(
-          {required Map<String, _i6.RequiredNamespace>? optionalNamespaces}) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #setOptionalNamespaces,
-          [],
-          {#optionalNamespaces: optionalNamespaces},
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  String getReferer() => (super.noSuchMethod(
-        Invocation.method(
-          #getReferer,
-          [],
-        ),
-        returnValue: '',
-      ) as String);
-  @override
-  _i4.Future<void> disconnectSession(_i6.SessionData? toDisconnect) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #disconnectSession,
-          [toDisconnect],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-  @override
-  void onSessionDelete(_i6.SessionDelete? args) => super.noSuchMethod(
-        Invocation.method(
-          #onSessionDelete,
-          [args],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  void onRelayClientConnect(_i7.EventArgs? args) => super.noSuchMethod(
-        Invocation.method(
-          #onRelayClientConnect,
-          [args],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  void onRelayClientError(_i6.ErrorEvent? args) => super.noSuchMethod(
-        Invocation.method(
-          #onRelayClientError,
-          [args],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  _i4.Future<void> awaitConnectResponse() => (super.noSuchMethod(
-        Invocation.method(
-          #awaitConnectResponse,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-  @override
-  void checkInitialized() => super.noSuchMethod(
-        Invocation.method(
-          #checkInitialized,
+          #dispose,
           [],
         ),
         returnValueForMissingStub: null,
@@ -1434,14 +1287,6 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  _i4.Future<Null> dispose() => (super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [],
-        ),
-        returnValue: _i4.Future<Null>.value(),
-      ) as _i4.Future<Null>);
-  @override
   void notifyListeners() => super.noSuchMethod(
         Invocation.method(
           #notifyListeners,
@@ -1449,231 +1294,6 @@ class MockW3MService extends _i1.Mock implements _i22.W3MService {
         ),
         returnValueForMissingStub: null,
       );
-  @override
-  _i4.Future<T> awaitBeforeDispose<T>(_i4.Future<T>? future) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #awaitBeforeDispose,
-          [future],
-        ),
-        returnValue: _i21.ifNotNull(
-              _i21.dummyValueOrNull<T>(
-                this,
-                Invocation.method(
-                  #awaitBeforeDispose,
-                  [future],
-                ),
-              ),
-              (T v) => _i4.Future<T>.value(v),
-            ) ??
-            _FakeFuture_2<T>(
-              this,
-              Invocation.method(
-                #awaitBeforeDispose,
-                [future],
-              ),
-            ),
-      ) as _i4.Future<T>);
-  @override
-  void flagLeak([String? description]) => super.noSuchMethod(
-        Invocation.method(
-          #flagLeak,
-          [description],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  _i4.Future<T> getManagedDelayedFuture<T>(
-    Duration? duration,
-    T Function()? callback,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getManagedDelayedFuture,
-          [
-            duration,
-            callback,
-          ],
-        ),
-        returnValue: _i21.ifNotNull(
-              _i21.dummyValueOrNull<T>(
-                this,
-                Invocation.method(
-                  #getManagedDelayedFuture,
-                  [
-                    duration,
-                    callback,
-                  ],
-                ),
-              ),
-              (T v) => _i4.Future<T>.value(v),
-            ) ??
-            _FakeFuture_2<T>(
-              this,
-              Invocation.method(
-                #getManagedDelayedFuture,
-                [
-                  duration,
-                  callback,
-                ],
-              ),
-            ),
-      ) as _i4.Future<T>);
-  @override
-  _i5.ManagedDisposer getManagedDisposer(_i5.Disposer? disposer) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getManagedDisposer,
-          [disposer],
-        ),
-        returnValue: _FakeManagedDisposer_3(
-          this,
-          Invocation.method(
-            #getManagedDisposer,
-            [disposer],
-          ),
-        ),
-      ) as _i5.ManagedDisposer);
-  @override
-  _i4.Timer getManagedTimer(
-    Duration? duration,
-    void Function()? callback,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getManagedTimer,
-          [
-            duration,
-            callback,
-          ],
-        ),
-        returnValue: _FakeTimer_4(
-          this,
-          Invocation.method(
-            #getManagedTimer,
-            [
-              duration,
-              callback,
-            ],
-          ),
-        ),
-      ) as _i4.Timer);
-  @override
-  _i4.Timer getManagedPeriodicTimer(
-    Duration? duration,
-    void Function(_i4.Timer)? callback,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getManagedPeriodicTimer,
-          [
-            duration,
-            callback,
-          ],
-        ),
-        returnValue: _FakeTimer_4(
-          this,
-          Invocation.method(
-            #getManagedPeriodicTimer,
-            [
-              duration,
-              callback,
-            ],
-          ),
-        ),
-      ) as _i4.Timer);
-  @override
-  _i4.StreamSubscription<T> listenToStream<T>(
-    _i4.Stream<T>? stream,
-    void Function(T)? onData, {
-    Function? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #listenToStream,
-          [
-            stream,
-            onData,
-          ],
-          {
-            #onError: onError,
-            #onDone: onDone,
-            #cancelOnError: cancelOnError,
-          },
-        ),
-        returnValue: _FakeStreamSubscription_5<T>(
-          this,
-          Invocation.method(
-            #listenToStream,
-            [
-              stream,
-              onData,
-            ],
-            {
-              #onError: onError,
-              #onDone: onDone,
-              #cancelOnError: cancelOnError,
-            },
-          ),
-        ),
-      ) as _i4.StreamSubscription<T>);
-  @override
-  T manageAndReturnTypedDisposable<T extends _i5.Disposable>(T? disposable) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #manageAndReturnTypedDisposable,
-          [disposable],
-        ),
-        returnValue: _i21.dummyValue<T>(
-          this,
-          Invocation.method(
-            #manageAndReturnTypedDisposable,
-            [disposable],
-          ),
-        ),
-      ) as T);
-  @override
-  _i4.Completer<T> manageCompleter<T>(_i4.Completer<T>? completer) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #manageCompleter,
-          [completer],
-        ),
-        returnValue: _FakeCompleter_6<T>(
-          this,
-          Invocation.method(
-            #manageCompleter,
-            [completer],
-          ),
-        ),
-      ) as _i4.Completer<T>);
-  @override
-  void manageDisposable(_i5.Disposable? disposable) => super.noSuchMethod(
-        Invocation.method(
-          #manageDisposable,
-          [disposable],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  void manageStreamController(_i4.StreamController<dynamic>? controller) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #manageStreamController,
-          [controller],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  _i4.Future<Null> onWillDispose() => (super.noSuchMethod(
-        Invocation.method(
-          #onWillDispose,
-          [],
-        ),
-        returnValue: _i4.Future<Null>.value(),
-      ) as _i4.Future<Null>);
 }
 
 /// A class which mocks [UrlUtils].

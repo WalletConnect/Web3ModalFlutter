@@ -56,7 +56,7 @@ class Web3ModalNavbar extends StatelessWidget {
               NavbarActionButton(
                 asset: 'assets/icons/close.svg',
                 action: () {
-                  Web3ModalProvider.of(context).service.close();
+                  Web3ModalProvider.of(context).service.closeModal();
                 },
               ),
             ],

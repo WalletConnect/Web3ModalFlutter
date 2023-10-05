@@ -40,11 +40,11 @@ _$_Listing _$$_ListingFromJson(Map<String, dynamic> json) => _$_Listing(
       homepage: json['homepage'] as String,
       imageId: json['image_id'] as String,
       app: App.fromJson(json['app'] as Map<String, dynamic>),
+      mobile: Redirect.fromJson(json['mobile'] as Map<String, dynamic>),
+      desktop: Redirect.fromJson(json['desktop'] as Map<String, dynamic>),
       injected: (json['injected'] as List<dynamic>?)
           ?.map((e) => Injected.fromJson(e as Map<String, dynamic>))
           .toList(),
-      mobile: Redirect.fromJson(json['mobile'] as Map<String, dynamic>),
-      desktop: Redirect.fromJson(json['desktop'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_ListingToJson(_$_Listing instance) {
@@ -54,6 +54,8 @@ Map<String, dynamic> _$$_ListingToJson(_$_Listing instance) {
     'homepage': instance.homepage,
     'image_id': instance.imageId,
     'app': instance.app.toJson(),
+    'mobile': instance.mobile.toJson(),
+    'desktop': instance.desktop.toJson(),
   };
 
   void writeNotNull(String key, dynamic value) {
@@ -63,8 +65,6 @@ Map<String, dynamic> _$$_ListingToJson(_$_Listing instance) {
   }
 
   writeNotNull('injected', instance.injected?.map((e) => e.toJson()).toList());
-  val['mobile'] = instance.mobile.toJson();
-  val['desktop'] = instance.desktop.toJson();
   return val;
 }
 

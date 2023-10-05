@@ -47,7 +47,7 @@ class SimpleIconButton extends StatelessWidget {
                   return RoundedRectangleBorder(
                     side: BorderSide(
                       color: themeColors.grayGlass010,
-                      width: 2.0,
+                      width: 1.0,
                     ),
                     borderRadius: BorderRadius.circular(borderRadius),
                   );

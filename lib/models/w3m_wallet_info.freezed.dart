@@ -376,9 +376,9 @@ mixin _$Listing {
   String get homepage => throw _privateConstructorUsedError;
   String get imageId => throw _privateConstructorUsedError;
   App get app => throw _privateConstructorUsedError;
-  List<Injected>? get injected => throw _privateConstructorUsedError;
   Redirect get mobile => throw _privateConstructorUsedError;
   Redirect get desktop => throw _privateConstructorUsedError;
+  List<Injected>? get injected => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -396,9 +396,9 @@ abstract class $ListingCopyWith<$Res> {
       String homepage,
       String imageId,
       App app,
-      List<Injected>? injected,
       Redirect mobile,
-      Redirect desktop});
+      Redirect desktop,
+      List<Injected>? injected});
 
   $AppCopyWith<$Res> get app;
   $RedirectCopyWith<$Res> get mobile;
@@ -423,9 +423,9 @@ class _$ListingCopyWithImpl<$Res, $Val extends Listing>
     Object? homepage = null,
     Object? imageId = null,
     Object? app = null,
-    Object? injected = freezed,
     Object? mobile = null,
     Object? desktop = null,
+    Object? injected = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -448,10 +448,6 @@ class _$ListingCopyWithImpl<$Res, $Val extends Listing>
           ? _value.app
           : app // ignore: cast_nullable_to_non_nullable
               as App,
-      injected: freezed == injected
-          ? _value.injected
-          : injected // ignore: cast_nullable_to_non_nullable
-              as List<Injected>?,
       mobile: null == mobile
           ? _value.mobile
           : mobile // ignore: cast_nullable_to_non_nullable
@@ -460,6 +456,10 @@ class _$ListingCopyWithImpl<$Res, $Val extends Listing>
           ? _value.desktop
           : desktop // ignore: cast_nullable_to_non_nullable
               as Redirect,
+      injected: freezed == injected
+          ? _value.injected
+          : injected // ignore: cast_nullable_to_non_nullable
+              as List<Injected>?,
     ) as $Val);
   }
 
@@ -501,9 +501,9 @@ abstract class _$$_ListingCopyWith<$Res> implements $ListingCopyWith<$Res> {
       String homepage,
       String imageId,
       App app,
-      List<Injected>? injected,
       Redirect mobile,
-      Redirect desktop});
+      Redirect desktop,
+      List<Injected>? injected});
 
   @override
   $AppCopyWith<$Res> get app;
@@ -528,9 +528,9 @@ class __$$_ListingCopyWithImpl<$Res>
     Object? homepage = null,
     Object? imageId = null,
     Object? app = null,
-    Object? injected = freezed,
     Object? mobile = null,
     Object? desktop = null,
+    Object? injected = freezed,
   }) {
     return _then(_$_Listing(
       id: null == id
@@ -553,10 +553,6 @@ class __$$_ListingCopyWithImpl<$Res>
           ? _value.app
           : app // ignore: cast_nullable_to_non_nullable
               as App,
-      injected: freezed == injected
-          ? _value._injected
-          : injected // ignore: cast_nullable_to_non_nullable
-              as List<Injected>?,
       mobile: null == mobile
           ? _value.mobile
           : mobile // ignore: cast_nullable_to_non_nullable
@@ -565,6 +561,10 @@ class __$$_ListingCopyWithImpl<$Res>
           ? _value.desktop
           : desktop // ignore: cast_nullable_to_non_nullable
               as Redirect,
+      injected: freezed == injected
+          ? _value._injected
+          : injected // ignore: cast_nullable_to_non_nullable
+              as List<Injected>?,
     ));
   }
 }
@@ -579,9 +579,9 @@ class _$_Listing implements _Listing {
       required this.homepage,
       required this.imageId,
       required this.app,
-      final List<Injected>? injected,
       required this.mobile,
-      required this.desktop})
+      required this.desktop,
+      final List<Injected>? injected})
       : _injected = injected;
 
   factory _$_Listing.fromJson(Map<String, dynamic> json) =>
@@ -597,6 +597,10 @@ class _$_Listing implements _Listing {
   final String imageId;
   @override
   final App app;
+  @override
+  final Redirect mobile;
+  @override
+  final Redirect desktop;
   final List<Injected>? _injected;
   @override
   List<Injected>? get injected {
@@ -608,13 +612,8 @@ class _$_Listing implements _Listing {
   }
 
   @override
-  final Redirect mobile;
-  @override
-  final Redirect desktop;
-
-  @override
   String toString() {
-    return 'Listing(id: $id, name: $name, homepage: $homepage, imageId: $imageId, app: $app, injected: $injected, mobile: $mobile, desktop: $desktop)';
+    return 'Listing(id: $id, name: $name, homepage: $homepage, imageId: $imageId, app: $app, mobile: $mobile, desktop: $desktop, injected: $injected)';
   }
 
   @override
@@ -628,15 +627,15 @@ class _$_Listing implements _Listing {
                 other.homepage == homepage) &&
             (identical(other.imageId, imageId) || other.imageId == imageId) &&
             (identical(other.app, app) || other.app == app) &&
-            const DeepCollectionEquality().equals(other._injected, _injected) &&
             (identical(other.mobile, mobile) || other.mobile == mobile) &&
-            (identical(other.desktop, desktop) || other.desktop == desktop));
+            (identical(other.desktop, desktop) || other.desktop == desktop) &&
+            const DeepCollectionEquality().equals(other._injected, _injected));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, homepage, imageId, app,
-      const DeepCollectionEquality().hash(_injected), mobile, desktop);
+      mobile, desktop, const DeepCollectionEquality().hash(_injected));
 
   @JsonKey(ignore: true)
   @override
@@ -659,9 +658,9 @@ abstract class _Listing implements Listing {
       required final String homepage,
       required final String imageId,
       required final App app,
-      final List<Injected>? injected,
       required final Redirect mobile,
-      required final Redirect desktop}) = _$_Listing;
+      required final Redirect desktop,
+      final List<Injected>? injected}) = _$_Listing;
 
   factory _Listing.fromJson(Map<String, dynamic> json) = _$_Listing.fromJson;
 
@@ -676,11 +675,11 @@ abstract class _Listing implements Listing {
   @override
   App get app;
   @override
-  List<Injected>? get injected;
-  @override
   Redirect get mobile;
   @override
   Redirect get desktop;
+  @override
+  List<Injected>? get injected;
   @override
   @JsonKey(ignore: true)
   _$$_ListingCopyWith<_$_Listing> get copyWith =>

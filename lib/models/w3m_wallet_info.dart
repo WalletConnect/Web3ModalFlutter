@@ -38,9 +38,9 @@ class Listing with _$Listing {
     required String homepage,
     required String imageId,
     required App app,
-    List<Injected>? injected,
     required Redirect mobile,
     required Redirect desktop,
+    List<Injected>? injected,
   }) = _Listing;
 
   factory Listing.fromJson(Map<String, dynamic> json) =>
