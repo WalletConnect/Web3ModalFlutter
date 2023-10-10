@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/models/grid_item_modal.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_item_chip.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
@@ -21,13 +22,24 @@ class WalletsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final walletsListItems = itemList.map(
       (e) => WalletListItem(
         onTap: () => onTapWallet?.call(e.data),
         imageUrl: e.image,
         title: e.title,
-        trailing:
-            e.data.recent ? const WalletItemChip(value: ' RECENT ') : null,
+        trailing: e.data.recent
+            ? const WalletItemChip(value: ' RECENT ')
+            : e.data.installed
+                ? WalletItemChip(
+                    value: ' INSTALLED ',
+                    color: themeColors.success100.withOpacity(0.15),
+                    textStyle: themeData.textStyles.micro700.copyWith(
+                      color: themeColors.success100,
+                    ),
+                  )
+                : null,
       ),
     );
     final List<Widget> items = List<Widget>.from(walletsListItems);

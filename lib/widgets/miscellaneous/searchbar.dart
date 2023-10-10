@@ -7,16 +7,33 @@ class Web3ModalSearchBar extends StatefulWidget {
   const Web3ModalSearchBar({
     super.key,
     required this.onTextChanged,
+    this.onDismissKeyboard,
     this.hint = '',
   });
   final Function(String) onTextChanged;
   final String hint;
+  final Function(bool)? onDismissKeyboard;
 
   @override
   State<Web3ModalSearchBar> createState() => _Web3ModalSearchBarState();
 }
 
 class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
+  final _controller = TextEditingController();
+  @override
+  void initState() {
+    _controller.addListener(_updateState);
+    super.initState();
+  }
+
+  void _updateState() => setState(() {});
+
+  @override
+  void dispose() {
+    _controller.removeListener(_updateState);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
@@ -32,13 +49,19 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
     return SizedBox(
       height: kSearchFieldHeight,
       child: TextFormField(
+        controller: _controller,
         onChanged: widget.onTextChanged,
+        onTapOutside: (_) {
+          widget.onDismissKeyboard?.call(false);
+        },
         textAlignVertical: TextAlignVertical.center,
         style: TextStyle(
           color: themeColors.foreground100,
           height: 1.5,
         ),
         cursorColor: themeColors.accent100,
+        enableSuggestions: false,
+        autocorrect: false,
         cursorHeight: 20.0,
         decoration: InputDecoration(
           isDense: true,
@@ -66,6 +89,17 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
             color: themeColors.foreground275,
             height: 1.5,
           ),
+          suffixIcon: _controller.value.text.isNotEmpty
+              ? IconButton(
+                  padding: const EdgeInsets.all(0.0),
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    _controller.clear();
+                    widget.onDismissKeyboard?.call(true);
+                  },
+                )
+              : null,
           border: unfocusedBorder,
           errorBorder: unfocusedBorder,
           enabledBorder: unfocusedBorder,

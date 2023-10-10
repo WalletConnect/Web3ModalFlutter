@@ -1,4 +1,7 @@
 class StringConstants {
+  static const X_SDK_TYPE = 'w3m';
+  static const X_SDK_VERSION = '3.0.0-alpha06';
+
   static const String selectNetwork = 'Select Network';
   static const String selectNetworkShort = 'Network';
 

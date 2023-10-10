@@ -18,14 +18,19 @@ class WalletsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: kPadding12),
+    return Container(
+      width: ResponsiveData.maxWidthOf(context),
+      padding: const EdgeInsets.only(
+        left: kPadding12,
+        bottom: kPadding12,
+        right: kPadding12,
+      ),
       child: Wrap(
         spacing: kGridAxisSpacing,
         runSpacing: kGridAxisSpacing,
         alignment: WrapAlignment.start,
-        runAlignment: WrapAlignment.center,
-        crossAxisAlignment: WrapCrossAlignment.center,
+        runAlignment: WrapAlignment.start,
+        crossAxisAlignment: WrapCrossAlignment.start,
         children: itemList
             .map(
               (info) => SizedBox(

@@ -70,8 +70,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     final themeColors = Web3ModalTheme.colorsOf(context);
     final walletName = service.selectedWallet?.listing.name ?? 'Wallet';
     final imageId = service.selectedWallet?.listing.imageId ?? '';
-    final imageUrl =
-        explorerService.instance!.getWalletImageUrl(imageId: imageId);
+    final imageUrl = explorerService.instance!.getWalletImageUrl(imageId);
     final walletInstalled = _selectedWallet?.installed ?? false;
     final isPortrait = ResponsiveData.isPortrait(context);
     final maxWidth = isPortrait
@@ -99,7 +98,9 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                   if (isPortrait) const SizedBox.square(dimension: 30.0),
                   LoadingBorder(
                     animate: walletInstalled,
-                    child: W3MListAvatar(imageUrl: imageUrl),
+                    child: W3MListAvatar(
+                      imageUrl: imageUrl,
+                    ),
                   ),
                   const SizedBox.square(dimension: 20.0),
                   Text(

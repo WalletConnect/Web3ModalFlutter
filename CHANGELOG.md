@@ -1,3 +1,7 @@
+## 3.0.0-alpha06
+
+- Migration to web3modal API and refactor of explorer service
+
 ## 3.0.0-alpha05
 
 - Core services refactor

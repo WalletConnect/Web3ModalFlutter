@@ -22,6 +22,7 @@ class WalletsListLongPage extends StatelessWidget {
     return Web3ModalNavbar(
       title: 'All Wallets',
       onBack: () {
+        FocusManager.instance.primaryFocus?.unfocus();
         explorerService.instance!.filterList(query: null);
         widgetStack.instance.pop();
       },
@@ -40,7 +41,7 @@ class WalletsListLongPage extends StatelessWidget {
                 ),
                 child: ExplorerServiceItemsListener(
                   builder: (context, initialised, items) {
-                    if (!initialised || items.isEmpty) {
+                    if (!initialised) {
                       return const Center(child: ContentLoading());
                     }
                     return WalletsGrid(

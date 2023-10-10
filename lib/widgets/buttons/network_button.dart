@@ -22,9 +22,7 @@ class NetworkButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
     final imageUrl = chainInfo != null
-        ? explorerService.instance!.getAssetImageUrl(
-            imageId: chainInfo!.chainIcon,
-          )
+        ? explorerService.instance!.getAssetImageUrl(chainInfo!.chainIcon)
         : null;
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final borderRadius = radiuses.isSquare() ? 0.0 : size.height / 2;

@@ -39,10 +39,10 @@ class WalletsListShortPage extends StatelessWidget {
         constraints: BoxConstraints(maxHeight: maxHeight),
         child: ExplorerServiceItemsListener(
           builder: (context, initialised, items) {
-            if (!initialised) {
+            if (!initialised || items.isEmpty) {
               return const ContentLoading();
             }
-
+            debugPrint(items.length.toString());
             final itemsToShow = items.getRange(0, kShortWalletListCount - 1);
             return WalletsList(
               onTapWallet: (data) {

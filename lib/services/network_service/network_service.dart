@@ -27,14 +27,10 @@ class NetworkService implements INetworkService {
       itemListComplete.add(
         GridItem<W3MChainInfo>(
           image: explorerService.instance!.getAssetImageUrl(
-            imageId: AssetUtil.getChainIconAssetId(
-              value.chainId,
-            ),
+            AssetUtil.getChainIconAssetId(value.chainId),
           ),
           id: value.chainId,
-          title: Util.shorten(
-            value.chainName,
-          ),
+          title: Util.shorten(value.chainName),
           data: value,
         ),
       );

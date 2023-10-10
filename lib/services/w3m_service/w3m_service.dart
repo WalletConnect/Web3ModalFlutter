@@ -11,8 +11,8 @@ import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
-import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.dart';
 import 'package:web3modal_flutter/services/ledger_service/ledger_service_singleton.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
@@ -27,10 +27,9 @@ import 'package:web3modal_flutter/models/w3m_chains_presets.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 import 'package:web3modal_flutter/widgets/web3modal.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
-import 'package:web3modal_flutter/services/w3m_service/walletconnect_modal_services.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_services_instances.dart';
 
 import 'package:walletconnect_modal_flutter/models/launch_url_exception.dart';
-import 'package:walletconnect_modal_flutter/services/utils/core/core_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
 import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
@@ -119,7 +118,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     Map<String, RequiredNamespace>? requiredNamespaces,
     Map<String, RequiredNamespace>? optionalNamespaces,
     Set<String>? recommendedWalletIds,
-    ExcludedWalletState excludedWalletState = ExcludedWalletState.list,
+    Set<String>? includedWalletIds,
     Set<String>? excludedWalletIds,
   }) {
     if (web3App == null && projectId == null && metadata == null) {
@@ -146,7 +145,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       projectId: _projectId,
       referer: _web3App!.metadata.name.replaceAll(' ', ''),
       recommendedWalletIds: recommendedWalletIds,
-      excludedWalletState: excludedWalletState,
+      includedWalletIds: includedWalletIds,
       excludedWalletIds: excludedWalletIds,
     );
 
@@ -154,13 +153,13 @@ class W3MService with ChangeNotifier implements IW3MService {
       projectId: _projectId,
     );
 
-    WalletConnectModalServices.registerInitFunction(
+    Web3ModalServiceInstances.registerInitFunction(
       'network_service',
       () async {
         await networkService.instance.init();
       },
     );
-    WalletConnectModalServices.registerInitFunction(
+    Web3ModalServiceInstances.registerInitFunction(
       'storage_service',
       () async {
         await storageService.instance.init();
@@ -195,7 +194,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
 
     try {
-      await WalletConnectModalServices.init();
+      await Web3ModalServiceInstances.init();
     } catch (e, s) {
       throw W3MServiceException(e, s);
     }
@@ -267,7 +266,7 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     // Get the token/chain icon.
     _tokenImageUrl = explorerService.instance!.getAssetImageUrl(
-      imageId: AssetUtil.getChainIconAssetId(chainInfo.chainId),
+      AssetUtil.getChainIconAssetId(chainInfo.chainId),
     );
 
     // If we are connected, and the selected chain is not null, and the chains are different, switch chains.
@@ -338,6 +337,9 @@ class W3MService with ChangeNotifier implements IW3MService {
       child: childWidget,
     );
 
+    final data = MediaQueryData.fromView(View.of(context));
+    final isTabletSize = data.size.shortestSide < 600 ? false : true;
+
     if (isBottomSheet) {
       await showModalBottomSheet(
         backgroundColor: Colors.transparent,
@@ -345,6 +347,12 @@ class W3MService with ChangeNotifier implements IW3MService {
         isScrollControlled: true,
         enableDrag: true,
         elevation: 0.0,
+        constraints: isTabletSize
+            ? const BoxConstraints(
+                maxWidth: 360.0,
+                maxHeight: 600.0,
+              )
+            : null,
         context: _context!,
         builder: (context) => rootWidget,
       );
@@ -410,13 +418,13 @@ class W3MService with ChangeNotifier implements IW3MService {
       walletToConnect.listing.id,
     );
     // Update explorer service with new recent
-    explorerService.instance!.updateSort();
+    explorerService.instance!.updateRecentPosition(walletToConnect.listing.id);
 
     try {
       await rebuildConnectionUri();
       await urlUtils.instance.navigateDeepLink(
-        nativeLink: walletToConnect.listing.mobile.native,
-        universalLink: walletToConnect.listing.mobile.universal,
+        nativeLink: walletToConnect.listing.mobileLink,
+        universalLink: walletToConnect.listing.webappLink,
         wcURI: wcUri!,
       );
     } on LaunchUrlException catch (e) {

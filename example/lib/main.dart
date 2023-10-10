@@ -15,17 +15,18 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _isDarkMode = false;
-  final _themeData = Web3ModalThemeData(
-    lightColors: Web3ModalColors.lightMode.copyWith(
-      accent100: Colors.red,
-      background125: Colors.yellow.shade300,
-    ),
-    darkColors: Web3ModalColors.darkMode.copyWith(
-      accent100: Colors.green,
-      background125: Colors.brown,
-    ),
-    radiuses: Web3ModalRadiuses.square,
-  );
+  // Uncomment to see how modal theme is changed
+  // final _themeData = Web3ModalThemeData(
+  //   lightColors: Web3ModalColors.lightMode.copyWith(
+  //     accent100: Colors.red,
+  //     background125: Colors.yellow.shade300,
+  //   ),
+  //   darkColors: Web3ModalColors.darkMode.copyWith(
+  //     accent100: Colors.green,
+  //     background125: Colors.brown,
+  //   ),
+  //   radiuses: Web3ModalRadiuses.square,
+  // );
 
   @override
   void initState() {
@@ -57,7 +58,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Web3ModalTheme(
       isDarkMode: _isDarkMode,
-      themeData: _themeData,
+      // themeData: _themeData, // Uncomment to see how modal theme is changed
       child: MaterialApp(
         title: 'Flutter Demo',
         home: MyHomePage(swapTheme: () => _swapTheme()),
