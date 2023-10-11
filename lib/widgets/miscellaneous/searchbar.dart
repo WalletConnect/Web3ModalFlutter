@@ -20,9 +20,12 @@ class Web3ModalSearchBar extends StatefulWidget {
 
 class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
   final _controller = TextEditingController();
+  final _focusNode = FocusNode();
+
   @override
   void initState() {
     _controller.addListener(_updateState);
+    _focusNode.addListener(_updateState);
     super.initState();
   }
 
@@ -31,6 +34,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
   @override
   void dispose() {
     _controller.removeListener(_updateState);
+    _focusNode.removeListener(_updateState);
     super.dispose();
   }
 
@@ -49,6 +53,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
     return SizedBox(
       height: kSearchFieldHeight,
       child: TextFormField(
+        focusNode: _focusNode,
         controller: _controller,
         onChanged: widget.onTextChanged,
         onTapOutside: (_) {
@@ -89,7 +94,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
             color: themeColors.foreground275,
             height: 1.5,
           ),
-          suffixIcon: _controller.value.text.isNotEmpty
+          suffixIcon: _controller.value.text.isNotEmpty || _focusNode.hasFocus
               ? IconButton(
                   padding: const EdgeInsets.all(0.0),
                   visualDensity: VisualDensity.compact,

@@ -85,10 +85,10 @@ class ExplorerService implements IExplorerService {
     _listings = _listings.sortByRecommended(recommendedWalletIds);
 
     // Get the recent wallet
-    final recentId = storageService.instance.getString(
-      StringConstants.recentWallet,
-    );
-    _recentWalletId = recentId ?? '';
+    _recentWalletId = storageService.instance.getString(
+          StringConstants.recentWallet,
+        ) ??
+        '';
 
     _gridItems = await _gridItemsWithList(_listings);
 
