@@ -5,10 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:universal_io/io.dart';
 
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-
 import 'package:web3modal_flutter/constants/string_constants.dart';
-import 'package:web3modal_flutter/models/grid_item_modal.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
@@ -18,37 +15,33 @@ import 'package:web3modal_flutter/utils/w3m_logger.dart';
 
 import 'package:walletconnect_modal_flutter/services/utils/platform/i_platform_utils.dart';
 import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 
 class ExplorerService implements IExplorerService {
   static const _apiUrl = 'https://api.web3modal.com';
 
   final http.Client _client;
   final String _referer;
-  String _recentWalletId = '';
-  List<Listing> _listings = [];
 
-  var _requestParams = const RequestParams(page: 1, entries: 100);
-
-  List<GridItem<W3MWalletInfo>> _gridItems = [];
-  List<GridItem<W3MWalletInfo>> _bkpGridItems = [];
+  late RequestParams _requestParams;
 
   @override
   final String projectId;
+
+  @override
+  ValueNotifier<int> totalListings = ValueNotifier(0);
+
+  @override
+  ValueNotifier<List<W3MWalletInfo>> listings = ValueNotifier([]);
+  List<W3MWalletInfo> _listings = [];
 
   @override
   Set<String>? recommendedWalletIds;
 
   @override
   Set<String>? includedWalletIds;
-  // String? _includedWalletsParam;
 
   @override
   Set<String>? excludedWalletIds;
-  // String? _excludedWalletsParam;
-
-  @override
-  ValueNotifier<List<GridItem<W3MWalletInfo>>> itemList = ValueNotifier([]);
 
   @override
   ValueNotifier<bool> initialized = ValueNotifier(false);
@@ -75,26 +68,42 @@ class ExplorerService implements IExplorerService {
         ? excludedWalletIds!.toList().join(',')
         : null;
 
-    _requestParams = _requestParams.copyWith(
+    _requestParams = RequestParams(
+      page: 1,
+      entries: 48,
       include: includedWalletsParam,
       exclude: excludedWalletsParam,
       platform: _getPlatformType(),
     );
 
-    _listings = await _fetchListings(params: _requestParams);
-    _listings = _listings.sortByRecommended(recommendedWalletIds);
+    final fetchResults = await _fetchListings(params: _requestParams);
+    _listings =
+        fetchResults.sortByRecommended(recommendedWalletIds).toW3MWalletInfo();
+    listings.value = _listings;
 
     // Get the recent wallet
-    _recentWalletId = storageService.instance.getString(
+    final recentWalletId = storageService.instance.getString(
           StringConstants.recentWallet,
         ) ??
         '';
 
-    _gridItems = await _gridItemsWithList(_listings);
-
-    updateRecentPosition(_recentWalletId);
+    updateRecentPosition(recentWalletId);
     initialized.value = true;
-    W3MLoggerUtil.logger.i('ExplorerService initialized');
+    W3MLoggerUtil.logger.v('$runtimeType init() done');
+  }
+
+  @override
+  Future<void> paginate() async {
+    final newParams = _requestParams.nextPage();
+    final totalCount = totalListings.value;
+    if (newParams.page * newParams.entries > totalCount) return;
+
+    _requestParams = newParams;
+    final newPageResults = await _fetchListings(params: _requestParams);
+    final newListings = newPageResults.toW3MWalletInfo();
+    _listings = [..._listings, ...newListings];
+    listings.value = _listings;
+    W3MLoggerUtil.logger.v('$runtimeType paginate() ${newParams.toJson()}');
   }
 
   @override
@@ -106,33 +115,33 @@ class ExplorerService implements IExplorerService {
       '$_apiUrl/public/getAssetImage/$imageId';
 
   @override
-  Redirect? getRedirect({required String name}) {
-    //   try {
-    //     W3MLoggerUtil.logger.i('Getting redirect for $name');
-    //     final Listing listing = _listings.firstWhere(
-    //       (listing) => listing.name.contains(name) || name.contains(listing.name),
-    //     );
-
-    //     return listing.mobile;
-    //   } catch (e) {
-    //     return null;
-    //   }
-    throw UnimplementedError();
+  String? getRedirect({required String name}) {
+    try {
+      final wallet = _listings.firstWhere(
+        (l) => l.listing.name.contains(name) || name.contains(l.listing.name),
+      );
+      W3MLoggerUtil.logger
+          .v('Getting redirect for $name: ${wallet.listing.mobileLink}');
+      return wallet.listing.mobileLink;
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<List<Listing>> _fetchListings({RequestParams? params}) async {
     try {
       final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
-      debugPrint(headers.toString());
       final uri = Uri.parse('$_apiUrl/getWallets');
-      W3MLoggerUtil.logger.i('Fetching wallet listings. Headers: $headers');
-      W3MLoggerUtil.logger.i('Fetching wallet listings. Params: $params');
-      W3MLoggerUtil.logger.i('Fetching wallet listings. Uri: $uri');
       final response = await _client.get(
         uri.replace(queryParameters: params?.toJson() ?? {}),
         headers: headers,
       );
       final apiResponse = ApiResponse.fromJson(jsonDecode(response.body));
+      if ((params?.search ?? '').isEmpty) {
+        totalListings.value = apiResponse.count;
+      }
+      W3MLoggerUtil.logger
+          .v('$runtimeType _fetchListings() $uri ${params?.toJson()}');
       return apiResponse.data.toList();
     } catch (e, s) {
       W3MLoggerUtil.logger.e('Error retching wallet listings', e, s);
@@ -142,108 +151,78 @@ class ExplorerService implements IExplorerService {
 
   @override
   void updateRecentPosition(String recentId) {
-    final currentList = itemList.value.isNotEmpty ? itemList.value : _gridItems;
-    final wallets = List<GridItem<W3MWalletInfo>>.from(
-      currentList
-          .map((e) => e.copyWith(data: e.data.copyWith(recent: false)))
-          .toList(),
+    final currentListings = List<W3MWalletInfo>.from(
+      _listings.map((e) => e.copyWith(recent: false)).toList(),
     );
-    final recentWallet = wallets.firstWhereOrNull((e) => e.id == recentId);
+    final recentWallet = currentListings.firstWhereOrNull(
+      (e) => e.listing.id == recentId,
+    );
     if (recentWallet != null) {
-      final rw = recentWallet.copyWith(
-        data: recentWallet.data.copyWith(recent: true),
-      );
-      wallets.removeWhere((e) => e.id == rw.id);
-      wallets.insert(0, rw);
+      final rw = recentWallet.copyWith(recent: true);
+      currentListings.removeWhere((e) => e.listing.id == rw.listing.id);
+      currentListings.insert(0, rw);
     }
-    _gridItems = List<GridItem<W3MWalletInfo>>.from(wallets);
-    _bkpGridItems = List<GridItem<W3MWalletInfo>>.from(wallets);
-    itemList.value = _gridItems;
+    _listings = currentListings;
+    listings.value = _listings;
+    W3MLoggerUtil.logger.v('$runtimeType updateRecentPosition($recentId)');
   }
 
   @override
   void filterList({String? query}) async {
     if (query == null || query.isEmpty) {
-      itemList.value = _bkpGridItems;
+      listings.value = _listings;
       return;
     }
 
-    debugPrint('filterList $query');
-    final filtered = _bkpGridItems
-        .where((wallet) =>
-            wallet.title.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-    itemList.value = filtered;
+    final q = query.toLowerCase();
+    final filtered = _listings.where((w) {
+      final name = w.listing.name.toLowerCase();
+      return name.contains(q);
+    }).toList();
+    listings.value = filtered;
 
-    await _searchListings(query: query);
+    W3MLoggerUtil.logger.v('$runtimeType filterList($q)');
+    await _searchListings(query: q);
   }
 
   Future<void> _searchListings({String? query}) async {
-    final exclude = itemList.value.map((e) => e.id).toList().join(',');
-    final results = await _fetchListings(
+    final exclude = listings.value.map((e) => e.listing.id).toList().join(',');
+    final fetchResults = await _fetchListings(
       params: _requestParams.copyWith(
         page: 1,
         search: query,
         exclude: exclude,
       ),
     );
-
-    // final sortedByRecommended = _sortByRecommended(results);
-    final newGridItems = await _gridItemsWithList(results);
-    itemList.value = [...itemList.value, ...newGridItems];
+    final newListins =
+        fetchResults.sortByRecommended(recommendedWalletIds).toW3MWalletInfo();
+    listings.value = [...listings.value, ...newListins];
+    W3MLoggerUtil.logger.v('$runtimeType _searchListings($query)');
   }
 
-  Future<List<GridItem<W3MWalletInfo>>> _gridItemsWithList(
-      List<Listing> list) async {
-    List<GridItem<W3MWalletInfo>> gridItems = [];
-    for (Listing item in list) {
-      final appScheme = item.mobileLink;
-      // // If we are on android, and we have an android link, get the package id and use that
-      // if (Platform.isAndroid && item.app.android != null) {
-      //   uri = getAndroidPackageId(item.app.android);
-      // }
-      bool installed = await urlUtils.instance.isInstalled(appScheme);
-      bool recent = _recentWalletId == item.id;
+  final Map<String, String> _storedAndroidPackageIds = {};
 
-      // TODO this logic doesn't belong here, this is UI logic, not business logic
-      gridItems.add(
-        GridItem<W3MWalletInfo>(
-          title: item.name,
-          id: item.id,
-          image: getWalletImageUrl(item.imageId),
-          data: W3MWalletInfo(
-            listing: item,
-            installed: installed,
-            recent: recent,
-          ),
-        ),
-      );
+  @override
+  String? getAndroidPackageId(String? playstoreLink) {
+    if (playstoreLink == null) {
+      return null;
     }
-    return gridItems;
+
+    // If we have stored the package id, return it
+    if (_storedAndroidPackageIds.containsKey(playstoreLink)) {
+      return _storedAndroidPackageIds[playstoreLink];
+    }
+
+    final Uri playstore = Uri.parse(playstoreLink);
+    W3MLoggerUtil.logger.v(
+      'getAndroidPackageId: $playstoreLink, id: ${playstore.queryParameters['id']}',
+    );
+
+    _storedAndroidPackageIds[playstoreLink] =
+        playstore.queryParameters['id'] ?? '';
+
+    return playstore.queryParameters['id'];
   }
-
-  // final Map<String, String> _storedAndroidPackageIds = {};
-
-  // String? getAndroidPackageId(String? playstoreLink) {
-  //   if (playstoreLink == null) {
-  //     return null;
-  //   }
-
-  //   // If we have stored the package id, return it
-  //   if (_storedAndroidPackageIds.containsKey(playstoreLink)) {
-  //     return _storedAndroidPackageIds[playstoreLink];
-  //   }
-
-  //   final Uri playstore = Uri.parse(playstoreLink);
-  //   W3MLoggerUtil.logger.i(
-  //     'getAndroidPackageId: $playstoreLink, id: ${playstore.queryParameters['id']}',
-  //   );
-
-  //   _storedAndroidPackageIds[playstoreLink] =
-  //       playstore.queryParameters['id'] ?? '';
-
-  //   return playstore.queryParameters['id'];
-  // }
 
   String _getPlatformType() {
     final type = platformUtils.instance.getPlatformType();
@@ -261,6 +240,20 @@ class ExplorerService implements IExplorerService {
         return platform;
     }
   }
+
+  // @override
+  // Future<Uint8List> getAssetImage(String imageId) async {
+  //   try {
+  //     final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
+  //     final imageUrl = getAssetImageUrl(imageId);
+  //     final uri = Uri.parse(imageUrl);
+  //     final response = await _client.get(uri, headers: headers);
+  //     return response.bodyBytes;
+  //   } catch (e, s) {
+  //     W3MLoggerUtil.logger.e('Error retching wallet listings', e, s);
+  //     throw Exception(e);
+  //   }
+  // }
 }
 
 extension on List<Listing> {
@@ -283,5 +276,15 @@ extension on List<Listing> {
       return sortedByRecommended;
     }
     return listToSort;
+  }
+
+  List<W3MWalletInfo> toW3MWalletInfo() {
+    return map(
+      (item) => W3MWalletInfo(
+        listing: item,
+        installed: false,
+        recent: false,
+      ),
+    ).toList();
   }
 }

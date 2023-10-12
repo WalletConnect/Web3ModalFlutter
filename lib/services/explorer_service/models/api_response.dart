@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+// TODO this should be placed somewhere else
 class ApiResponse {
   final int count;
   final List<Listing> data;

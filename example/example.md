@@ -30,8 +30,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _web3App = Web3App(
       core: Core(projectId: '{YOUR_PROJECT_ID}'),
       metadata: const PairingMetadata(
-        name: 'Flutter Dapp Example',
-        description: 'Flutter Dapp Example',
+        name: 'Web3Modal Flutter Example',
+        description: 'Web3Modal Flutter Example',
         url: 'https://www.walletconnect.com/',
         icons: ['https://walletconnect.com/walletconnect-logo.png'],
         redirect: Redirect(
@@ -84,7 +84,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return Web3ModalTheme(
       isDarkMode: true,
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Web3Modal Demo',
         home: Builder(
           builder: (context) {
             if (!_initialized) {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
-import 'package:web3modal_flutter/models/grid_item_modal.dart';
+import 'package:web3modal_flutter/models/grid_item.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/lists/grid_items/wallet_grid_item.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 
@@ -12,12 +14,51 @@ class WalletsGrid extends StatelessWidget {
     super.key,
     required this.itemList,
     this.onTapWallet,
+    this.isPaginating = false,
   });
   final List<GridItem<W3MWalletInfo>> itemList;
   final Function(W3MWalletInfo walletInfo)? onTapWallet;
+  final bool isPaginating;
 
   @override
   Widget build(BuildContext context) {
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    final List<Widget> children = itemList
+        .map(
+          (info) => SizedBox(
+            width: ResponsiveData.gridItemSzieOf(context).width,
+            height: ResponsiveData.gridItemSzieOf(context).height,
+            child: WalletGridItem(
+              onTap: () => onTapWallet?.call(info.data),
+              imageUrl: info.image,
+              title: info.title,
+            ),
+          ),
+        )
+        .toList();
+
+    if (isPaginating) {
+      final loadingList = [
+        const WalletGridItem(title: ''),
+        const WalletGridItem(title: ''),
+        const WalletGridItem(title: ''),
+        const WalletGridItem(title: ''),
+      ]
+          .map(
+            (e) => SizedBox(
+              width: ResponsiveData.gridItemSzieOf(context).width,
+              height: ResponsiveData.gridItemSzieOf(context).height,
+              child: Shimmer.fromColors(
+                baseColor: themeColors.grayGlass100,
+                highlightColor: themeColors.grayGlass025,
+                child: const WalletGridItem(title: ''),
+              ),
+            ),
+          )
+          .toList();
+      children.addAll(loadingList);
+    }
+
     return Container(
       width: ResponsiveData.maxWidthOf(context),
       padding: const EdgeInsets.only(
@@ -31,19 +72,7 @@ class WalletsGrid extends StatelessWidget {
         alignment: WrapAlignment.start,
         runAlignment: WrapAlignment.start,
         crossAxisAlignment: WrapCrossAlignment.start,
-        children: itemList
-            .map(
-              (info) => SizedBox(
-                width: ResponsiveData.gridItemSzieOf(context).width,
-                height: ResponsiveData.gridItemSzieOf(context).height,
-                child: WalletGridItem(
-                  onTap: () => onTapWallet?.call(info.data),
-                  imageUrl: info.image,
-                  title: info.title,
-                ),
-              ),
-            )
-            .toList(),
+        children: children,
       ),
     );
   }

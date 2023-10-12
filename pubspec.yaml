@@ -22,6 +22,7 @@ dependencies:
   mockito: ^5.4.2
   qr_flutter_wc: ^0.0.1
   shared_preferences: ^2.2.0
+  shimmer: ^3.0.0
   smooth_page_indicator: ^1.1.0
   universal_io: ^2.2.0
   url_launcher: ^6.1.11

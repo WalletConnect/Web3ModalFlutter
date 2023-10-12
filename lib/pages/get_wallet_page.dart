@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/constants/urls_constants.dart';
-import 'package:web3modal_flutter/models/grid_item_modal.dart';
+import 'package:web3modal_flutter/models/grid_item.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/explore_all_wallets_item.dart';
 import 'package:web3modal_flutter/widgets/lists/wallets_list.dart';

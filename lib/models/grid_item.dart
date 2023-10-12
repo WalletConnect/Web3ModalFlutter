@@ -1,3 +1,4 @@
+// TODO this class shouldn't be needed
 class GridItem<T> {
   final String image;
   final String id;

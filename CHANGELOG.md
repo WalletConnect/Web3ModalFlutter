@@ -1,6 +1,6 @@
 ## 3.0.0-alpha06
 
-- Migration to web3modal API and refactor of explorer service
+- [BREAKING] Migration to web3modal API and refactor of explorer service. (later to be called apiService)
 
 ## 3.0.0-alpha05
 

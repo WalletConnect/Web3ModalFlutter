@@ -33,8 +33,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _web3App = Web3App(
       core: Core(projectId: DartDefines.projectId),
       metadata: const PairingMetadata(
-        name: 'Flutter Dapp Example',
-        description: 'Flutter Dapp Example',
+        name: 'Web3Modal Flutter Example',
+        description: 'Web3Modal Flutter Example',
         url: 'https://www.walletconnect.com/',
         icons: ['https://walletconnect.com/walletconnect-logo.png'],
         redirect: Redirect(

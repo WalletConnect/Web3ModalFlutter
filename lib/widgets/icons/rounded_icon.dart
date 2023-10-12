@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 
 class RoundedIcon extends StatelessWidget {
   const RoundedIcon({
@@ -20,6 +22,7 @@ class RoundedIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final projectId = explorerService.instance?.projectId ?? '';
     return Container(
       width: size,
       height: size,
@@ -43,6 +46,10 @@ class RoundedIcon extends StatelessWidget {
                 width: size,
                 height: size,
                 fit: BoxFit.fill,
+                headers: coreUtils.instance.getAPIHeaders(projectId),
+                errorBuilder: (context, error, stackTrace) => ColoredBox(
+                  color: themeColors.grayGlass005,
+                ),
               ),
             )
           : Padding(

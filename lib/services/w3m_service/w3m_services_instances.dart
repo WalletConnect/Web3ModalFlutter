@@ -1,5 +1,3 @@
-import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
-import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.dart';
 import 'package:web3modal_flutter/services/storage_service/i_storage_service.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
@@ -15,10 +13,8 @@ import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_sin
 import 'package:walletconnect_modal_flutter/services/utils/url/i_url_utils.dart';
 import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 
+// TODO this is not really needed
 class Web3ModalServiceInstances {
-  static IExplorerService get explorer => explorerService.instance!;
-  // TODO Should I add NetworkService here?
-  // static INetworkService get network => networkService.instance;
   static IStorageService get storage => storageService.instance;
   static ICoreUtils get core => coreUtils.instance;
   static IToastUtils get toast => toastUtils.instance;
@@ -38,8 +34,6 @@ class Web3ModalServiceInstances {
 
   static Future<void> init() async {
     await storage.init();
-    // await network.init();
-    await explorer.init();
     for (final entry in _initFunctions.entries) {
       W3MLoggerUtil.logger
           .v('Web3ModalServiceInstances init service: ${entry.key}');

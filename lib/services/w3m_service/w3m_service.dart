@@ -50,9 +50,9 @@ class W3MService with ChangeNotifier implements IW3MService {
   @override
   bool get isInitialized => _isInitialized;
 
-  W3MChainInfo? _selectedChain;
+  W3MChainInfo? _currentSelectedChain;
   @override
-  W3MChainInfo? get selectedChain => _selectedChain;
+  W3MChainInfo? get selectedChain => _currentSelectedChain;
 
   W3MWalletInfo? _selectedWallet;
   @override
@@ -103,9 +103,9 @@ class W3MService with ChangeNotifier implements IW3MService {
   @override
   bool get isConnected => _isConnected;
 
-  SessionData? _session;
+  SessionData? _currentSession;
   @override
-  SessionData? get session => _session;
+  SessionData? get session => _currentSession;
 
   String? _address;
   @override
@@ -187,9 +187,9 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     if (_web3App!.sessions.getAll().isNotEmpty) {
       _isConnected = true;
-      _session = _web3App!.sessions.getAll().first;
+      _currentSession = _web3App!.sessions.getAll().first;
       _address = NamespaceUtils.getAccount(
-        _session!.namespaces.values.first.accounts.first,
+        _currentSession!.namespaces.values.first.accounts.first,
       );
     }
 
@@ -214,7 +214,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _setOptionalNamespaces(optionalNamespaces);
 
     // Get the chainId of the chain we are connected to.
-    if (session != null) {
+    if (_currentSession != null) {
       final chainId = storageService.instance.getString(selectedChainId) ?? '';
       // If we had a chainId stored, use it!
       if (chainId.isNotEmpty && W3MChainPresets.chains.containsKey(chainId)) {
@@ -222,7 +222,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       } else {
         // Otherwise, just get the first chainId from the namespaces of the session and use that
         final chainIds = NamespaceUtils.getChainIdsFromNamespaces(
-          namespaces: session!.namespaces,
+          namespaces: _currentSession!.namespaces,
         );
         if (chainIds.isNotEmpty) {
           final String chainId = chainIds.first.split(':')[1];
@@ -245,7 +245,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   }) async {
     _checkInitialized();
 
-    if (chainInfo?.chainId == selectedChain?.chainId) {
+    if (chainInfo?.chainId == _currentSelectedChain?.chainId) {
       return;
     }
 
@@ -254,7 +254,7 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     // If the chain is null, disconnect and stop.
     if (chainInfo == null) {
-      _selectedChain = null;
+      _currentSelectedChain = null;
       await storageService.instance.setString(selectedChainId, '');
       _setRequiredNamespaces({});
       await disconnect();
@@ -269,35 +269,32 @@ class W3MService with ChangeNotifier implements IW3MService {
       AssetUtil.getChainIconAssetId(chainInfo.chainId),
     );
 
-    // If we are connected, and the selected chain is not null, and the chains are different, switch chains.
-    if (switchChain && // We want to swap the chain
-        isConnected && // We are connected (Should mean the session isn't null)
-        session != null && // Session isn't null (We double check)
-        _selectedChain != null && // The selected chain isn't null
-        NamespaceUtils.getNamespacesMethodsForChainId(
-          chainId: selectedChain!.namespace,
-          namespaces: session!.namespaces,
-        ).contains(
-          EthUtil.walletSwitchEthChain,
-        ) && // The session has the switch chain method
-        !NamespaceUtils.getChainIdsFromNamespaces(
-          namespaces: session!.namespaces,
-        ).contains(chainInfo
-            .namespace) && // The session doesn't already have the chain
-        _selectedChain!.chainId !=
-            chainInfo.chainId) // The selected chain is different
-    {
-      // Then we swap/add the chain and launch the wallet
-      _switchEthChain(selectedChain!, chainInfo);
-      await launchConnectedWallet();
+    // TODO all this logic about switching chain seems odd. A full test has to be done.
+    final hasValidSession = isConnected && _currentSession != null;
+    if (switchChain && hasValidSession && _currentSelectedChain != null) {
+      final hasSwitchMethod = NamespaceUtils.getNamespacesMethodsForChainId(
+        chainId: _currentSelectedChain!.namespace,
+        namespaces: _currentSession!.namespaces,
+      ).contains(EthUtil.walletSwitchEthChain);
+      final hasChainAlready = !NamespaceUtils.getChainIdsFromNamespaces(
+        namespaces: _currentSession!.namespaces,
+      ).contains(chainInfo.namespace);
+      final chainIsDifferent =
+          _currentSelectedChain!.chainId != chainInfo.chainId;
+      if (hasSwitchMethod && !hasChainAlready && chainIsDifferent) {
+        // Then we swap/add the chain and launch the wallet
+        _switchEthChain(_currentSelectedChain!, chainInfo);
+        await launchConnectedWallet();
+      }
     }
 
-    _selectedChain = chainInfo;
+    _currentSelectedChain = chainInfo;
 
     // Set the requiredNamespace to be the selected chain
     // This will also notify listeners
-    _setRequiredNamespaces(chainInfo.requiredNamespaces);
+    _setRequiredNamespaces(_currentSelectedChain!.requiredNamespaces);
 
+    debugPrint('[W3MService] setSelectedChain success');
     W3MLoggerUtil.logger.i('[W3MService] setSelectedChain success');
     _loadAccountData();
   }
@@ -443,36 +440,33 @@ class W3MService with ChangeNotifier implements IW3MService {
   Future<void> launchConnectedWallet() async {
     _checkInitialized();
 
-    if (_session == null) {
+    if (_currentSession == null) {
       return;
     }
 
     final redirect = _constructRedirect();
 
     W3MLoggerUtil.logger.i(
-      'Launching wallet: $redirect, ${_session?.peer.metadata}',
+      'Launching wallet: $redirect, ${_currentSession?.peer.metadata}',
     );
 
     if (redirect == null) {
       await urlUtils.instance.launchUrl(
-        Uri.parse(
-          _session!.peer.metadata.url,
-        ),
+        Uri.parse(_currentSession!.peer.metadata.url),
       );
     } else {
       // Get the native and universal URLs and add the 'wc' to the end
       // in the redirect.
-      final String nativeUrl =
-          coreUtils.instance.createSafeUrl(redirect.native ?? '');
-      final String universalUrl =
+      final nativeUrl = coreUtils.instance.createSafeUrl(redirect.native ?? '');
+      final universalUrl =
           coreUtils.instance.createPlainUrl(redirect.universal ?? '');
 
       await urlUtils.instance.launchRedirect(
         nativeUri: Uri.parse(
-          '${nativeUrl}wc?sessionTopic=${_session!.topic}',
+          '${nativeUrl}wc?sessionTopic=${_currentSession!.topic}',
         ),
         universalUri: Uri.parse(
-          '${universalUrl}wc?sessionTopic=${_session!.topic}',
+          '${universalUrl}wc?sessionTopic=${_currentSession!.topic}',
         ),
       );
     }
@@ -497,7 +491,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _checkInitialized();
 
     // If we don't have a session, disconnect automatically and notify listeners
-    if (_session == null) {
+    if (_currentSession == null) {
       return _cleanSession();
     }
 
@@ -508,7 +502,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       }
     } else {
       // Disconnect the session
-      await _disconnectSession(_session!);
+      await _disconnectSession(_currentSession!);
     }
   }
 
@@ -537,8 +531,8 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   @override
   void launchBlockExplorer() async {
-    if (_selectedChain?.blockExplorer != null) {
-      final blockExplorer = _selectedChain!.blockExplorer!.url;
+    if (_currentSelectedChain?.blockExplorer != null) {
+      final blockExplorer = _currentSelectedChain!.blockExplorer!.url;
       final explorerUrl = '$blockExplorer/address/$address';
       await urlUtils.instance.launchUrl(
         Uri.parse(explorerUrl),
@@ -598,13 +592,14 @@ class W3MService with ChangeNotifier implements IW3MService {
   /// Returns true if it was able to actually load data (i.e. there is a selected chain and session)
   void _loadAccountData() async {
     // If there is no selected chain or session, stop. No account to load in.
-    if (selectedChain == null || session == null) {
+    if (_currentSelectedChain == null || _currentSession == null) {
       return;
     }
+
     W3MLoggerUtil.logger.i('[W3MService] _loadAccountData');
     // Get the chain balance.
     _chainBalance = await ledgerService.instance.getBalance(
-      selectedChain!.rpcUrl,
+      _currentSelectedChain!.rpcUrl,
       address!,
     );
 
@@ -612,7 +607,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     try {
       final blockchainId = await blockchainApiUtils.instance!.getIdentity(
         address!,
-        int.parse(selectedChain!.chainId),
+        int.parse(_currentSelectedChain!.chainId),
       );
       _avatarUrl = blockchainId.avatar;
     } catch (_) {
@@ -624,12 +619,13 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   Future<void> _switchEthChain(W3MChainInfo from, W3MChainInfo to) async {
+    debugPrint('_switchEthChain from ${from.tokenName} to ${to.tokenName}');
     final int chainIdInt = int.parse(to.chainId);
     final String chainHex = chainIdInt.toRadixString(16);
     final String chainId = 'eip155:${from.chainId}';
     _web3App!
         .request(
-      topic: session!.topic,
+      topic: _currentSession!.topic,
       chainId: chainId,
       request: SessionRequestParams(
         method: 'wallet_switchEthereumChain',
@@ -642,8 +638,9 @@ class W3MService with ChangeNotifier implements IW3MService {
     )
         .catchError(
       (e) {
+        debugPrint('_switchEthChain error $e');
         _web3App!.request(
-          topic: session!.topic,
+          topic: _currentSession!.topic,
           chainId: chainId,
           request: SessionRequestParams(
             method: 'wallet_addEthereumChain',
@@ -678,7 +675,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     );
 
     // As a failsafe (If the session is expired for example), set the session to null and notify listeners
-    if (_session != null && session!.topic == toDisconnect.topic) {
+    if (_currentSession != null &&
+        _currentSession!.topic == toDisconnect.topic) {
       return _cleanSession();
     }
   }
@@ -686,17 +684,18 @@ class W3MService with ChangeNotifier implements IW3MService {
   void _cleanSession() {
     _isConnected = false;
     _address = '';
+    _currentSession = null;
     _notify();
   }
 
   Redirect? _constructRedirect() {
-    if (session == null) {
+    if (_currentSession == null) {
       return null;
     }
 
-    final Redirect? sessionRedirect = session?.peer.metadata.redirect;
-    final Redirect? explorerRedirect = explorerService.instance?.getRedirect(
-      name: session!.peer.metadata.name,
+    final sessionRedirect = _currentSession?.peer.metadata.redirect;
+    final explorerRedirect = explorerService.instance?.getRedirect(
+      name: _currentSession!.peer.metadata.name,
     );
 
     if (sessionRedirect == null && explorerRedirect == null) {
@@ -706,8 +705,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     // Combine the redirect data from the session and the explorer API.
     // The explorer API is the source of truth.
     return Redirect(
-      native: explorerRedirect?.native ?? sessionRedirect?.native,
-      universal: explorerRedirect?.universal ?? sessionRedirect?.universal,
+      native: explorerRedirect ?? sessionRedirect?.native,
+      universal: explorerRedirect ?? sessionRedirect?.universal,
     );
   }
 
@@ -754,9 +753,9 @@ extension _W3MServiceListeners on W3MService {
   void onSessionConnect(SessionConnect? args) async {
     W3MLoggerUtil.logger.i('[W3MService] onSessionConnect: $args');
     _isConnected = true;
-    _session = args!.session;
+    _currentSession = args!.session;
     _address = NamespaceUtils.getAccount(
-      _session!.namespaces.values.first.accounts.first,
+      _currentSession!.namespaces.values.first.accounts.first,
     );
 
     if (_isOpen) {
@@ -771,7 +770,7 @@ extension _W3MServiceListeners on W3MService {
     W3MLoggerUtil.logger.i('[W3MService] onSessionDelete: $args');
     _isConnected = false;
     _address = '';
-    _session = null;
+    _currentSession = null;
     _notify();
   }
 
