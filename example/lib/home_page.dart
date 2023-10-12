@@ -10,7 +10,6 @@ import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_dapp/widgets/event_widget.dart';
 
-// TODO a refactor of the whole example app must be performed
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.swapTheme});
   final void Function() swapTheme;
@@ -150,7 +149,7 @@ class _W3MPageState extends State<_W3MPage> {
   void _initializeService() async {
     _w3mService = W3MService(
       web3App: _web3App,
-      recommendedWalletIds: {
+      featuredWalletIds: {
         '19177a98252e07ddfc9af2083ba8e07ef627cb6103467ffebb3f8f4205fd7927',
         'e9ff15be73584489ca4a66f64d32c4537711797e30b6660dbcb71ea72a42b1f4',
         '0b415a746fb9ee99cce155c2ceca0c6f6061b1dbca2d722b3ba16381d0562150',

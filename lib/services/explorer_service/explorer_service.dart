@@ -4,9 +4,11 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:universal_io/io.dart';
+import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
@@ -24,6 +26,10 @@ class ExplorerService implements IExplorerService {
 
   late RequestParams _requestParams;
 
+  String _recentWalletId = '';
+  @override
+  String get recentWalletId => _recentWalletId;
+
   @override
   final String projectId;
 
@@ -35,7 +41,7 @@ class ExplorerService implements IExplorerService {
   List<W3MWalletInfo> _listings = [];
 
   @override
-  Set<String>? recommendedWalletIds;
+  Set<String>? featuredWalletIds;
 
   @override
   Set<String>? includedWalletIds;
@@ -49,7 +55,7 @@ class ExplorerService implements IExplorerService {
   ExplorerService({
     required this.projectId,
     required String referer,
-    this.recommendedWalletIds,
+    this.featuredWalletIds,
     this.includedWalletIds,
     this.excludedWalletIds,
   })  : _referer = referer,
@@ -77,16 +83,13 @@ class ExplorerService implements IExplorerService {
     );
 
     final fetchResults = await _fetchListings(params: _requestParams);
-    _listings =
-        fetchResults.sortByRecommended(recommendedWalletIds).toW3MWalletInfo();
+    _listings = await fetchResults.parseInstalledItems();
     listings.value = _listings;
 
     // Get the recent wallet
     final recentWalletId = storageService.instance.getString(
-          StringConstants.recentWallet,
-        ) ??
-        '';
-
+      StringConstants.recentWallet,
+    );
     updateRecentPosition(recentWalletId);
     initialized.value = true;
     W3MLoggerUtil.logger.v('$runtimeType init() done');
@@ -100,7 +103,7 @@ class ExplorerService implements IExplorerService {
 
     _requestParams = newParams;
     final newPageResults = await _fetchListings(params: _requestParams);
-    final newListings = newPageResults.toW3MWalletInfo();
+    final newListings = await newPageResults.parseInstalledItems();
     _listings = [..._listings, ...newListings];
     listings.value = _listings;
     W3MLoggerUtil.logger.v('$runtimeType paginate() ${newParams.toJson()}');
@@ -128,7 +131,7 @@ class ExplorerService implements IExplorerService {
     }
   }
 
-  Future<List<Listing>> _fetchListings({RequestParams? params}) async {
+  Future<List<W3MWalletInfo>> _fetchListings({RequestParams? params}) async {
     try {
       final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
       final uri = Uri.parse('$_apiUrl/getWallets');
@@ -142,7 +145,10 @@ class ExplorerService implements IExplorerService {
       }
       W3MLoggerUtil.logger
           .v('$runtimeType _fetchListings() $uri ${params?.toJson()}');
-      return apiResponse.data.toList();
+      return apiResponse.data
+          .toList()
+          .sortByRecommended(featuredWalletIds)
+          .toW3MWalletInfo();
     } catch (e, s) {
       W3MLoggerUtil.logger.e('Error retching wallet listings', e, s);
       throw Exception(e);
@@ -150,12 +156,18 @@ class ExplorerService implements IExplorerService {
   }
 
   @override
-  void updateRecentPosition(String recentId) {
+  void updateRecentPosition(String? recentId) async {
+    _recentWalletId = recentId ?? '';
+    // Set the recent
+    await storageService.instance.setString(
+      StringConstants.recentWallet,
+      _recentWalletId,
+    );
     final currentListings = List<W3MWalletInfo>.from(
       _listings.map((e) => e.copyWith(recent: false)).toList(),
     );
     final recentWallet = currentListings.firstWhereOrNull(
-      (e) => e.listing.id == recentId,
+      (e) => e.listing.id == _recentWalletId,
     );
     if (recentWallet != null) {
       final rw = recentWallet.copyWith(recent: true);
@@ -194,8 +206,7 @@ class ExplorerService implements IExplorerService {
         exclude: exclude,
       ),
     );
-    final newListins =
-        fetchResults.sortByRecommended(recommendedWalletIds).toW3MWalletInfo();
+    final newListins = await fetchResults.parseInstalledItems();
     listings.value = [...listings.value, ...newListins];
     W3MLoggerUtil.logger.v('$runtimeType _searchListings($query)');
   }
@@ -257,13 +268,13 @@ class ExplorerService implements IExplorerService {
 }
 
 extension on List<Listing> {
-  List<Listing> sortByRecommended(Set<String>? recommendedWalletIds) {
+  List<Listing> sortByRecommended(Set<String>? featuredWalletIds) {
     List<Listing> sortedByRecommended = [];
-    Set<String> recommendedIds = recommendedWalletIds ?? <String>{};
+    Set<String> recommendedIds = featuredWalletIds ?? <String>{};
     List<Listing> listToSort = this;
 
     if (recommendedIds.isNotEmpty) {
-      for (var recommendedId in recommendedWalletIds!) {
+      for (var recommendedId in featuredWalletIds!) {
         final rw = listToSort.firstWhereOrNull(
           (element) => element.id == recommendedId,
         );
@@ -286,5 +297,30 @@ extension on List<Listing> {
         recent: false,
       ),
     ).toList();
+  }
+}
+
+extension on List<W3MWalletInfo> {
+  Future<List<W3MWalletInfo>> parseInstalledItems() async {
+    final recentWallet = explorerService.instance!.recentWalletId;
+    List<W3MWalletInfo> parsedItems = [];
+    for (W3MWalletInfo item in this) {
+      String? appScheme = item.listing.mobileLink;
+      // If we are on android, and we have an android link, get the package id and use that
+      if (Platform.isAndroid && item.listing.playStore != null) {
+        appScheme = explorerService.instance!.getAndroidPackageId(
+          item.listing.playStore,
+        );
+      }
+      bool installed = await urlUtils.instance.isInstalled(appScheme);
+      bool recent = recentWallet == item.listing.id;
+      parsedItems.add(
+        item.copyWith(
+          installed: installed,
+          recent: recent,
+        ),
+      );
+    }
+    return parsedItems;
   }
 }

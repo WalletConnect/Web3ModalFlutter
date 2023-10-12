@@ -11,14 +11,16 @@ abstract class IExplorerService {
 
   ValueNotifier<List<W3MWalletInfo>> listings = ValueNotifier([]);
 
-  /// If recommendedWalletIds is set wallets from this list are going to be prioritized in the results
-  Set<String>? recommendedWalletIds;
+  /// If featuredWalletIds is set wallets from this list are going to be prioritized in the results
+  Set<String>? featuredWalletIds;
 
   /// If includedWalletIds is set only wallets from this list are going to be shown
   Set<String>? includedWalletIds;
 
   /// If excludedWalletIds is set wallets from this list are going to be excluded
   Set<String>? excludedWalletIds;
+
+  String get recentWalletId;
 
   Future<void> init();
 

@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void _initializeW3MService() async {
     _w3mService = W3MService(
       web3App: _web3App,
-      recommendedWalletIds: {
+      featuredWalletIds: {
         'afbd95522f4041c71dd4f1a065f971fd32372865b416f95a0b1db759ae33f2a7',
         '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662',
         'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',

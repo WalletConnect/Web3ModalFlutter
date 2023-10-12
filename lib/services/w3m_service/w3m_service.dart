@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
 import 'package:web3modal_flutter/constants/namespaces.dart';
-import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
@@ -117,7 +116,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     PairingMetadata? metadata,
     Map<String, RequiredNamespace>? requiredNamespaces,
     Map<String, RequiredNamespace>? optionalNamespaces,
-    Set<String>? recommendedWalletIds,
+    Set<String>? featuredWalletIds,
     Set<String>? includedWalletIds,
     Set<String>? excludedWalletIds,
   }) {
@@ -144,7 +143,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     explorerService.instance = ExplorerService(
       projectId: _projectId,
       referer: _web3App!.metadata.name.replaceAll(' ', ''),
-      recommendedWalletIds: recommendedWalletIds,
+      featuredWalletIds: featuredWalletIds,
       includedWalletIds: includedWalletIds,
       excludedWalletIds: excludedWalletIds,
     );
@@ -409,11 +408,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
     _connectingWallet = true;
 
-    // Set the recent
-    await storageService.instance.setString(
-      StringConstants.recentWallet,
-      walletToConnect.listing.id,
-    );
     // Update explorer service with new recent
     explorerService.instance!.updateRecentPosition(walletToConnect.listing.id);
 
