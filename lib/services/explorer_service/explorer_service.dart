@@ -83,10 +83,7 @@ class ExplorerService implements IExplorerService {
     // if we are in mobile platform we fetch wallets data to check installed ones
     List<W3MWalletInfo> installedListing = [];
     if (platformUtils.instance.getPlatformType() == PlatformType.mobile) {
-      // installedListing = await Isolate.run(_fetchInstalledListings);
       installedListing = await _fetchInstalledListings();
-      // installedListing = await compute(_fetchInstalledListings, '');
-      debugPrint('listings lits installed ${installedListing.length}');
     }
 
     _requestParams = RequestParams(
@@ -97,7 +94,6 @@ class ExplorerService implements IExplorerService {
       platform: _getPlatformType(),
     );
     final otherListings = await _fetchListings(params: _requestParams);
-    debugPrint('listings lits others ${otherListings.length}');
 
     _listings = [...installedListing, ...otherListings];
     listings.value = _listings;
@@ -122,7 +118,7 @@ class ExplorerService implements IExplorerService {
       params: _requestParams,
       updateCount: false,
     );
-    // final newListings = await newPageResults.parseInstalledItems();
+
     _listings = [..._listings, ...newListings];
     listings.value = _listings;
     W3MLoggerUtil.logger.v('[$runtimeType] paginate() ${newParams.toJson()}');
