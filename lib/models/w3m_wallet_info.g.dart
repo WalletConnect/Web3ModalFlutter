@@ -8,7 +8,7 @@ part of 'w3m_wallet_info.dart';
 
 _$_W3MWalletInfo _$$_W3MWalletInfoFromJson(Map<String, dynamic> json) =>
     _$_W3MWalletInfo(
-      listing: Listing.fromJson(json['listing'] as Map<String, dynamic>),
+      listing: Listing.fromJson(json['listing']),
       installed: json['installed'] as bool,
       recent: json['recent'] as bool,
     );

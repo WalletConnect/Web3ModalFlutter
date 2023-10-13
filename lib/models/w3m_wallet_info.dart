@@ -6,7 +6,7 @@ part 'w3m_wallet_info.g.dart';
 
 @freezed
 class W3MWalletInfo with _$W3MWalletInfo {
-  @JsonSerializable(includeIfNull: false)
+  // @JsonSerializable(includeIfNull: false)
   const factory W3MWalletInfo({
     required Listing listing,
     required bool installed,

@@ -73,7 +73,7 @@ class WidgetStack extends IWidgetStack {
 
   @override
   void addDefault() {
-    final PlatformType pType = platformUtils.instance.getPlatformType();
+    final pType = platformUtils.instance.getPlatformType();
 
     // Choose the state based on platform
     if (pType == PlatformType.mobile) {

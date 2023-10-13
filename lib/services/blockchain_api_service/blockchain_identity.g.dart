@@ -14,16 +14,8 @@ _$_BlockchainIdentity _$$_BlockchainIdentityFromJson(
     );
 
 Map<String, dynamic> _$$_BlockchainIdentityToJson(
-    _$_BlockchainIdentity instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('name', instance.name);
-  writeNotNull('avatar', instance.avatar);
-  return val;
-}
+        _$_BlockchainIdentity instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'avatar': instance.avatar,
+    };

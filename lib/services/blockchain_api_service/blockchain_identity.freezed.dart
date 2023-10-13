@@ -106,8 +106,7 @@ class __$$_BlockchainIdentityCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
-@JsonSerializable(includeIfNull: false)
+@JsonSerializable()
 class _$_BlockchainIdentity implements _BlockchainIdentity {
   const _$_BlockchainIdentity({this.name, this.avatar});
 

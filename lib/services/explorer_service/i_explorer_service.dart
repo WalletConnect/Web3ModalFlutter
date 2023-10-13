@@ -26,7 +26,7 @@ abstract class IExplorerService {
 
   Future<void> paginate();
 
-  void filterList({String? query});
+  void search({String? query});
 
   void updateRecentPosition(String recentId);
 
@@ -35,6 +35,4 @@ abstract class IExplorerService {
   String getAssetImageUrl(String imageId);
 
   String? getRedirect({required String name});
-
-  String? getAndroidPackageId(String? playstoreLink);
 }

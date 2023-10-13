@@ -23,12 +23,12 @@ class AllWalletsHeader extends StatelessWidget {
             child: Web3ModalSearchBar(
               hint: 'Search Wallet',
               onTextChanged: (value) {
-                explorerService.instance!.filterList(query: value);
+                explorerService.instance!.search(query: value);
               },
               onDismissKeyboard: (clear) {
                 FocusManager.instance.primaryFocus?.unfocus();
                 if (clear) {
-                  explorerService.instance!.filterList(query: null);
+                  explorerService.instance!.search(query: null);
                 }
               },
             ),

@@ -150,9 +150,9 @@ class _W3MPageState extends State<_W3MPage> {
     _w3mService = W3MService(
       web3App: _web3App,
       featuredWalletIds: {
-        '19177a98252e07ddfc9af2083ba8e07ef627cb6103467ffebb3f8f4205fd7927',
-        'e9ff15be73584489ca4a66f64d32c4537711797e30b6660dbcb71ea72a42b1f4',
-        '0b415a746fb9ee99cce155c2ceca0c6f6061b1dbca2d722b3ba16381d0562150',
+        'f2436c67184f158d1beda5df53298ee84abfc367581e4505134b5bcf5f46697d',
+        '8a0ee50d1f22f6651afcae7eb4253e52a3310b90af5daef78a8c4929a9bb99d4',
+        'f5b4eeb6015d66be3f5940a895cbaa49ef3439e518cd771270e6b553b48f31d2',
       },
       // includedWalletIds: {
       //   'ecc4036f814562b41a5268adc86270fba1365471402006302e70169465b7ac18',

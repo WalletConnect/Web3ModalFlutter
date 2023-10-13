@@ -1,30 +1,40 @@
 import 'dart:convert';
 
 // TODO this should be placed somewhere else
-class ApiResponse {
+class ApiResponse<T> {
   final int count;
-  final List<Listing> data;
+  final List<T> data;
 
   ApiResponse({required this.count, required this.data});
 
-  ApiResponse copyWith({int? count, List<Listing>? data}) => ApiResponse(
+  ApiResponse<T> copyWith({int? count, List<T>? data}) => ApiResponse<T>(
         count: count ?? this.count,
         data: data ?? this.data,
       );
 
-  factory ApiResponse.fromRawJson(String str) =>
-      ApiResponse.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory ApiResponse.fromJson(Map<String, dynamic> json) => ApiResponse(
-        count: json['count'],
-        data: List<Listing>.from(json['data'].map((x) => Listing.fromJson(x))),
-      );
+  factory ApiResponse.fromJson(
+    final Map<String, dynamic> json,
+    T Function(Object? json) fromJsonT,
+  ) {
+    return ApiResponse<T>(
+      count: json['count'],
+      data: (json['data'] as List<dynamic>).map(fromJsonT).toList(),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'count': count,
-        'data': List<dynamic>.from(data.map((x) => x.toJson())),
+        'data': List<T>.from(data.map(
+          (x) {
+            if (T is Listing) {
+              return (x as Listing).toJson();
+            } else if (T is NativeAppData) {
+              return (x as NativeAppData).toJson();
+            } else {
+              throw Exception('Invalid Type');
+            }
+          },
+        )),
       };
 }
 
@@ -90,24 +100,27 @@ class Listing {
 
   String toRawJson() => json.encode(toJson());
 
-  factory Listing.fromJson(Map<String, dynamic> json) => Listing(
-        id: json['id'],
-        name: json['name'],
-        homepage: json['homepage'],
-        imageId: json['image_id'],
-        order: json['order'],
-        mobileLink: json['mobile_link'],
-        desktopLink: json['desktop_link'],
-        webappLink: json['webapp_link'],
-        appStore: json['app_store'],
-        playStore: json['play_store'],
-        rdns: json['rdns'],
-        injected: json['injected'] == null
-            ? []
-            : List<Injected>.from(
-                json['injected']!.map((x) => Injected.fromJson(x)),
-              ),
-      );
+  factory Listing.fromJson(Object? json) {
+    final j = json as Map<String, dynamic>? ?? {};
+    return Listing(
+      id: j['id'],
+      name: j['name'],
+      homepage: j['homepage'],
+      imageId: j['image_id'],
+      order: j['order'],
+      mobileLink: j['mobile_link'],
+      desktopLink: j['desktop_link'],
+      webappLink: j['webapp_link'],
+      appStore: j['app_store'],
+      playStore: j['play_store'],
+      rdns: j['rdns'],
+      injected: j['injected'] == null
+          ? []
+          : List<Injected>.from(
+              j['injected']!.map((x) => Injected.fromJson(x)),
+            ),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -151,6 +164,36 @@ class Injected {
   Map<String, dynamic> toJson() => {
         'namespace': namespace,
         'injected_id': injectedId,
+      };
+}
+
+class NativeAppData {
+  final String id;
+  final String? schema;
+
+  NativeAppData({required this.id, this.schema});
+
+  NativeAppData copyWith({String? id, String? schema}) => NativeAppData(
+        id: id ?? this.id,
+        schema: schema ?? this.schema,
+      );
+
+  factory NativeAppData.fromRawJson(String str) =>
+      NativeAppData.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory NativeAppData.fromJson(Object? json) {
+    final j = json as Map<String, dynamic>? ?? {};
+    return NativeAppData(
+      id: j['id'],
+      schema: (j['ios_schema'] ?? j['android_app_id']) ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'schema': schema,
       };
 }
 

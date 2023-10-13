@@ -233,7 +233,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       }
     }
 
-    W3MLoggerUtil.logger.i('[W3MService] initialized');
+    W3MLoggerUtil.logger.v('[$runtimeType] initialized');
     _notify();
   }
 
@@ -293,8 +293,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     // This will also notify listeners
     _setRequiredNamespaces(_currentSelectedChain!.requiredNamespaces);
 
-    debugPrint('[W3MService] setSelectedChain success');
-    W3MLoggerUtil.logger.i('[W3MService] setSelectedChain success');
+    W3MLoggerUtil.logger.v('[$runtimeType] setSelectedChain success');
     _loadAccountData();
   }
 
@@ -311,7 +310,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     rebuildConnectionUri();
 
     // Reset the explorer
-    explorerService.instance!.filterList(query: '');
+    explorerService.instance!.search(query: '');
     widgetStack.instance.clear();
 
     _context = context;
@@ -368,8 +367,10 @@ class W3MService with ChangeNotifier implements IW3MService {
   Future<void> rebuildConnectionUri() async {
     // If we aren't connected, connect!
     if (!_isConnected) {
-      W3MLoggerUtil.logger.i(
-        'Connecting to WalletConnect, required namespaces: $requiredNamespaces, optional namespaces: $optionalNamespaces',
+      W3MLoggerUtil.logger.v(
+        '[$runtimeType] Connecting to WalletConnect, '
+        'required namespaces: $requiredNamespaces, '
+        'optional namespaces: $optionalNamespaces',
       );
 
       if (connectResponse != null) {
@@ -408,9 +409,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
     _connectingWallet = true;
 
-    // Update explorer service with new recent
-    explorerService.instance!.updateRecentPosition(walletToConnect.listing.id);
-
     try {
       await rebuildConnectionUri();
       await urlUtils.instance.navigateDeepLink(
@@ -418,7 +416,12 @@ class W3MService with ChangeNotifier implements IW3MService {
         universalLink: walletToConnect.listing.webappLink,
         wcURI: wcUri!,
       );
-    } on LaunchUrlException catch (e) {
+      // Update explorer service with new recent
+      explorerService.instance!.updateRecentPosition(
+        walletToConnect.listing.id,
+      );
+    } on LaunchUrlException catch (e, s) {
+      W3MLoggerUtil.logger.e('[$runtimeType] error launching wallet $e, $s');
       toastUtils.instance.show(
         ToastMessage(
           type: ToastType.error,
@@ -440,8 +443,8 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     final redirect = _constructRedirect();
 
-    W3MLoggerUtil.logger.i(
-      'Launching wallet: $redirect, ${_currentSession?.peer.metadata}',
+    W3MLoggerUtil.logger.v(
+      '[$runtimeType] Launching wallet: $redirect, ${_currentSession?.peer.metadata}',
     );
 
     if (redirect == null) {
@@ -554,6 +557,7 @@ class W3MService with ChangeNotifier implements IW3MService {
         .subscribe(onRelayClientConnect);
     _web3App!.core.relayClient.onRelayClientError.subscribe(onRelayClientError);
     _web3App!.onSessionEvent.subscribe(onSessionEvent);
+    _web3App!.onSessionUpdate.subscribe(onSessionUpdate);
   }
 
   void _unregisterListeners() {
@@ -564,12 +568,13 @@ class W3MService with ChangeNotifier implements IW3MService {
     _web3App!.core.relayClient.onRelayClientError
         .unsubscribe(onRelayClientError);
     _web3App!.onSessionEvent.unsubscribe(onSessionEvent);
+    _web3App!.onSessionUpdate.unsubscribe(onSessionUpdate);
   }
 
   void _setRequiredNamespaces(Map<String, RequiredNamespace> requiredNSpaces) {
     _checkInitialized();
     W3MLoggerUtil.logger
-        .i('[W3MService] _setRequiredNamespaces $requiredNSpaces');
+        .i('[$runtimeType] _setRequiredNamespaces $requiredNSpaces');
     _requiredNamespaces = requiredNSpaces;
     _notify();
   }
@@ -577,7 +582,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   void _setOptionalNamespaces(Map<String, RequiredNamespace> optionalNSpaces) {
     _checkInitialized();
     W3MLoggerUtil.logger
-        .i('[W3MService] _setOptionalNamespaces: $optionalNSpaces');
+        .i('[$runtimeType] _setOptionalNamespaces: $optionalNSpaces');
     _optionalNamespaces = optionalNSpaces;
     _notify();
   }
@@ -590,7 +595,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       return;
     }
 
-    W3MLoggerUtil.logger.i('[W3MService] _loadAccountData');
+    W3MLoggerUtil.logger.v('[$runtimeType] _loadAccountData');
     // Get the chain balance.
     _chainBalance = await ledgerService.instance.getBalance(
       _currentSelectedChain!.rpcUrl,
@@ -606,14 +611,13 @@ class W3MService with ChangeNotifier implements IW3MService {
       _avatarUrl = blockchainId.avatar;
     } catch (_) {
       W3MLoggerUtil.logger
-          .e('[W3MService] Couldn\'t load avatar, will use default icon');
+          .e('[$runtimeType] Couldn\'t load avatar, will use default icon');
     }
-    W3MLoggerUtil.logger.i('[W3MService] account data laoded');
+    W3MLoggerUtil.logger.v('[$runtimeType] account data laoded');
     _notify();
   }
 
   Future<void> _switchEthChain(W3MChainInfo from, W3MChainInfo to) async {
-    debugPrint('_switchEthChain from ${from.tokenName} to ${to.tokenName}');
     final int chainIdInt = int.parse(to.chainId);
     final String chainHex = chainIdInt.toRadixString(16);
     final String chainId = 'eip155:${from.chainId}';
@@ -632,7 +636,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     )
         .catchError(
       (e) {
-        debugPrint('_switchEthChain error $e');
         _web3App!.request(
           topic: _currentSession!.topic,
           chainId: chainId,
@@ -727,10 +730,11 @@ class W3MService with ChangeNotifier implements IW3MService {
     try {
       await connectResponse!.session.future;
     } on TimeoutException {
-      W3MLoggerUtil.logger.i('Rebuilding session, ending future');
+      W3MLoggerUtil.logger
+          .i('[$runtimeType] Rebuilding session, ending future');
       return;
     } catch (e) {
-      W3MLoggerUtil.logger.e('Error connecting to wallet: $e');
+      W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
       await toastUtils.instance.show(
         ToastMessage(
           type: ToastType.error,
@@ -745,7 +749,7 @@ class W3MService with ChangeNotifier implements IW3MService {
 extension _W3MServiceListeners on W3MService {
   @protected
   void onSessionConnect(SessionConnect? args) async {
-    W3MLoggerUtil.logger.i('[W3MService] onSessionConnect: $args');
+    W3MLoggerUtil.logger.v('[$runtimeType] onSessionConnect: $args');
     _isConnected = true;
     _currentSession = args!.session;
     _address = NamespaceUtils.getAccount(
@@ -761,7 +765,7 @@ extension _W3MServiceListeners on W3MService {
 
   @protected
   void onSessionDelete(SessionDelete? args) {
-    W3MLoggerUtil.logger.i('[W3MService] onSessionDelete: $args');
+    W3MLoggerUtil.logger.v('[$runtimeType] onSessionDelete: $args');
     _isConnected = false;
     _address = '';
     _currentSession = null;
@@ -770,26 +774,26 @@ extension _W3MServiceListeners on W3MService {
 
   @protected
   void onRelayClientConnect(EventArgs? args) {
-    W3MLoggerUtil.logger.i('[W3MService] onRelayClientConnect: $args');
+    W3MLoggerUtil.logger.v('[$runtimeType] onRelayClientConnect: $args');
     _initError = null;
     _notify();
   }
 
   @protected
   void onRelayClientError(ErrorEvent? args) {
-    W3MLoggerUtil.logger.e('[W3MService] onRelayClientError: $args');
+    W3MLoggerUtil.logger.e('[$runtimeType] onRelayClientError: $args');
     _initError = args?.error;
     _notify();
   }
 
-  // void _onSessionUpdate(SessionUpdate? args) {
-  //   W3MLoggerUtil.logger.i(args?.namespaces);
-  //   // _loadAccountData();
-  // }
+  @protected
+  void onSessionUpdate(SessionUpdate? args) {
+    W3MLoggerUtil.logger.v('[$runtimeType] onSessionUpdate $args');
+  }
 
   @protected
   void onSessionEvent(SessionEvent? args) {
-    W3MLoggerUtil.logger.i('[W3MService] onSessionEvent: $args');
+    W3MLoggerUtil.logger.v('[$runtimeType] onSessionEvent $args');
     if (args?.name == EthUtil.chainChanged) {
       if (W3MChainPresets.chains.containsKey('${args?.data}')) {
         final chain = W3MChainPresets.chains['${args?.data}'];
