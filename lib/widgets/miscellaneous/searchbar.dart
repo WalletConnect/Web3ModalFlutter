@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
@@ -21,6 +23,7 @@ class Web3ModalSearchBar extends StatefulWidget {
 class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
+  final _debouncer = _Debouncer(milliseconds: 200);
 
   @override
   void initState() {
@@ -50,12 +53,15 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
     final focusedBorder = unfocusedBorder.copyWith(
       borderSide: BorderSide(color: themeColors.accent100, width: 1.0),
     );
+
     return SizedBox(
       height: kSearchFieldHeight,
       child: TextFormField(
         focusNode: _focusNode,
         controller: _controller,
-        onChanged: widget.onTextChanged,
+        onChanged: (value) {
+          _debouncer.run(() => widget.onTextChanged(value));
+        },
         onTapOutside: (_) {
           widget.onDismissKeyboard?.call(false);
         },
@@ -116,5 +122,19 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
         ),
       ),
     );
+  }
+}
+
+class _Debouncer {
+  final int milliseconds;
+  Timer? _timer;
+
+  _Debouncer({required this.milliseconds});
+
+  void run(VoidCallback action) {
+    if (_timer?.isActive ?? false) {
+      _timer?.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
   }
 }

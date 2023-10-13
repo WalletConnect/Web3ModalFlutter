@@ -50,7 +50,7 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
       title: 'All Wallets',
       onBack: () {
         FocusManager.instance.primaryFocus?.unfocus();
-        explorerService.instance!.filterList(query: null);
+        explorerService.instance!.search(query: null);
         widgetStack.instance.pop();
       },
       safeAreaBottom: false,

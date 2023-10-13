@@ -31,7 +31,7 @@ class DownloadWalletItem extends StatelessWidget {
     final themeColors = Web3ModalTheme.colorsOf(context);
     return WalletListItem(
       imageWidget: const SizedBox.shrink(),
-      title: 'Don\'t have ${walletInfo.listing.name}',
+      title: 'Don\'t have ${walletInfo.listing.name}?',
       trailing: SimpleIconButton(
         onTap: () => _downloadApp(context),
         title: 'Get',

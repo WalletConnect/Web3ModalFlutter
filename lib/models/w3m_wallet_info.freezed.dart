@@ -117,8 +117,7 @@ class __$$_W3MWalletInfoCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
-@JsonSerializable(includeIfNull: false)
+@JsonSerializable()
 class _$_W3MWalletInfo implements _W3MWalletInfo {
   const _$_W3MWalletInfo(
       {required this.listing, required this.installed, required this.recent});

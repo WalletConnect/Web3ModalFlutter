@@ -1,3 +1,7 @@
+## 3.0.0-beta01
+
+- Prioritizing user's installed wallet apps
+
 ## 3.0.0-alpha06
 
 - [BREAKING] Migration to web3modal API and refactor of explorer service. (later to be called apiService)

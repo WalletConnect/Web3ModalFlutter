@@ -2,7 +2,6 @@ import 'package:web3modal_flutter/services/storage_service/i_storage_service.dar
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/core/i_core_utils.dart';
-import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/i_widget_stack.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 
@@ -35,8 +34,6 @@ class Web3ModalServiceInstances {
   static Future<void> init() async {
     await storage.init();
     for (final entry in _initFunctions.entries) {
-      W3MLoggerUtil.logger
-          .v('Web3ModalServiceInstances init service: ${entry.key}');
       await entry.value();
     }
   }
