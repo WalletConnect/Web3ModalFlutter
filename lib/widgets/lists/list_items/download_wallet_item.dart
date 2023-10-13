@@ -18,10 +18,10 @@ class DownloadWalletItem extends StatelessWidget {
 
   String get _storeUrl {
     if (Platform.isIOS) {
-      return walletInfo.listing.app.ios ?? '';
+      return walletInfo.listing.appStore ?? '';
     }
     if (Platform.isAndroid) {
-      return walletInfo.listing.app.android ?? '';
+      return walletInfo.listing.playStore ?? '';
     }
     return '';
   }

@@ -50,7 +50,7 @@ import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart'
     as _i19;
 import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart'
     as _i17;
-import 'package:web3modal_flutter/models/grid_item_modal.dart' as _i36;
+import 'package:web3modal_flutter/models/grid_item.dart' as _i36;
 import 'package:web3modal_flutter/models/w3m_chain_info.dart' as _i23;
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart' as _i24;
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart'

@@ -1,64 +1,65 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:universal_io/io.dart';
-
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-
-import 'package:web3modal_flutter/constants/string_constants.dart';
-import 'package:web3modal_flutter/models/grid_item_modal.dart';
-import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
-import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.dart';
-import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
-import 'package:web3modal_flutter/utils/w3m_logger.dart';
-
-import 'package:walletconnect_modal_flutter/services/utils/core/core_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/utils/platform/i_platform_utils.dart';
-import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
 import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
 
+import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.dart';
+import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
+import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/w3m_logger.dart';
+
+import 'package:walletconnect_modal_flutter/services/utils/platform/i_platform_utils.dart';
+import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
+
 class ExplorerService implements IExplorerService {
+  static const _apiUrl = 'https://api.web3modal.com';
+
+  final http.Client _client;
+  final String _referer;
+
+  late RequestParams _requestParams;
+
+  String _recentWalletId = '';
   @override
-  final String explorerUriRoot;
+  String get recentWalletId => _recentWalletId;
 
   @override
   final String projectId;
 
   @override
-  Set<String>? recommendedWalletIds;
+  ValueNotifier<int> totalListings = ValueNotifier(0);
 
   @override
-  ExcludedWalletState excludedWalletState;
+  ValueNotifier<List<W3MWalletInfo>> listings = ValueNotifier([]);
+  List<W3MWalletInfo> _listings = [];
+
+  @override
+  Set<String>? featuredWalletIds;
+
+  @override
+  Set<String>? includedWalletIds;
 
   @override
   Set<String>? excludedWalletIds;
 
-  List<Listing> _listings = [];
-  List<GridItem<W3MWalletInfo>> _walletListUnsorted = [];
-  List<GridItem<W3MWalletInfo>> _walletListSorted = [];
-
-  @override
-  ValueNotifier<List<GridItem<W3MWalletInfo>>> itemList = ValueNotifier([]);
-
   @override
   ValueNotifier<bool> initialized = ValueNotifier(false);
 
-  final http.Client client;
-
-  final String referer;
-
-  String? previousRecentWallet;
-
   ExplorerService({
     required this.projectId,
-    required this.referer,
-    this.explorerUriRoot = 'https://explorer-api.walletconnect.com',
-    this.recommendedWalletIds,
-    this.excludedWalletState = ExcludedWalletState.list,
+    required String referer,
+    this.featuredWalletIds,
+    this.includedWalletIds,
     this.excludedWalletIds,
-    http.Client? client,
-  }) : client = client ?? http.Client();
+  })  : _referer = referer,
+        _client = http.Client();
 
   @override
   Future<void> init() async {
@@ -66,231 +67,153 @@ class ExplorerService implements IExplorerService {
       return;
     }
 
-    String? platform;
-    switch (platformUtils.instance.getPlatformType()) {
-      case PlatformType.desktop:
-        platform = 'Desktop';
-        break;
-      case PlatformType.mobile:
-        if (Platform.isIOS) {
-          platform = 'iOS';
-        } else if (Platform.isAndroid) {
-          platform = 'Android';
-        } else {
-          platform = 'Mobile';
-        }
-        break;
-      case PlatformType.web:
-        platform = 'Injected';
-        break;
-      default:
-        platform = null;
-    }
+    final includedWalletsParam = (includedWalletIds ?? <String>{}).isNotEmpty
+        ? includedWalletIds!.toList().join(',')
+        : null;
+    final excludedWalletsParam = (excludedWalletIds ?? <String>{}).isNotEmpty
+        ? excludedWalletIds!.toList().join(',')
+        : null;
 
-    W3MLoggerUtil.logger.i('Fetching wallet listings. Platform: $platform');
-    _listings = await fetchListings(
-      endpoint: '/w3m/v1/get${platform}Listings',
-      referer: referer,
-      // params: params,
+    _requestParams = RequestParams(
+      page: 1,
+      entries: 48,
+      include: includedWalletsParam,
+      exclude: excludedWalletsParam,
+      platform: _getPlatformType(),
     );
 
-    if (excludedWalletState == ExcludedWalletState.list) {
-      // If we are excluding all wallets, take out the excluded listings, if they exist
-      if (excludedWalletIds != null) {
-        _listings = filterExcludedListings(
-          listings: _listings,
-        );
-      }
-    } else if (excludedWalletState == ExcludedWalletState.all &&
-        recommendedWalletIds != null) {
-      // Filter down to only the included
-      _listings = _listings
-          .where(
-            (listing) => recommendedWalletIds!.contains(
-              listing.id,
-            ),
-          )
-          .toList();
-    } else {
-      // If we are excluding all wallets and have no recommended wallets,
-      // return an empty list
-      _walletListUnsorted = [];
-      itemList.value = [];
-      return;
-    }
+    final fetchResults = await _fetchListings(params: _requestParams);
+    _listings = await fetchResults.parseInstalledItems();
+    listings.value = _listings;
 
     // Get the recent wallet
-    final String? recentWallet =
-        storageService.instance.getString(StringConstants.recentWallet);
-    previousRecentWallet = recentWallet;
-
-    for (Listing item in _listings) {
-      String? uri = item.mobile.native;
-      // If we are on android, and we have an android link, get the package id and use that
-      if (Platform.isAndroid && item.app.android != null) {
-        uri = getAndroidPackageId(item.app.android);
-      }
-      bool installed = await urlUtils.instance.isInstalled(uri);
-      bool recent = recentWallet == item.id;
-      if (installed) {
-        W3MLoggerUtil.logger.v('Wallet ${item.name} installed: $installed');
-      }
-
-      _walletListUnsorted.add(
-        GridItem<W3MWalletInfo>(
-          title: item.name,
-          id: item.id,
-          description: recent
-              ? 'Recent'
-              : installed
-                  ? 'Installed'
-                  : null,
-          image: getWalletImageUrl(
-            imageId: item.imageId,
-          ),
-          data: W3MWalletInfo(
-            listing: item,
-            installed: installed,
-            recent: recent,
-          ),
-        ),
-      );
-    }
-
-    updateSort();
-
+    final recentWalletId = storageService.instance.getString(
+      StringConstants.recentWallet,
+    );
+    updateRecentPosition(recentWalletId);
     initialized.value = true;
-    W3MLoggerUtil.logger.i('ExplorerService initialized');
+    W3MLoggerUtil.logger.v('$runtimeType init() done');
   }
 
   @override
-  void filterList({
-    String? query,
-  }) {
-    if (query == null || query.isEmpty) {
-      itemList.value = _walletListSorted;
-      return;
-    }
+  Future<void> paginate() async {
+    final newParams = _requestParams.nextPage();
+    final totalCount = totalListings.value;
+    if (newParams.page * newParams.entries > totalCount) return;
 
-    final List<GridItem<W3MWalletInfo>> filtered = _walletListSorted
-        .where(
-          (wallet) => wallet.title.toLowerCase().contains(
-                query.toLowerCase(),
-              ),
-        )
-        .toList();
-    itemList.value = filtered;
+    _requestParams = newParams;
+    final newPageResults = await _fetchListings(params: _requestParams);
+    final newListings = await newPageResults.parseInstalledItems();
+    _listings = [..._listings, ...newListings];
+    listings.value = _listings;
+    W3MLoggerUtil.logger.v('$runtimeType paginate() ${newParams.toJson()}');
   }
 
   @override
-  void updateSort() async {
-    final List<GridItem<W3MWalletInfo>> newList = [];
-
-    final String? recentWallet =
-        storageService.instance.getString(StringConstants.recentWallet);
-
-    // Sort the installed wallets to the top
-    int insertAt = 0;
-    for (int i = 0; i < _walletListUnsorted.length; i++) {
-      // If the recent wallet doesn't match the id, then set it to not recent
-      if (_walletListUnsorted[i].data.recent == true &&
-          recentWallet != previousRecentWallet) {
-        _walletListUnsorted[i] = _walletListUnsorted[i].copyWith(
-          description:
-              _walletListUnsorted[i].data.installed ? 'Installed' : null,
-          data: _walletListUnsorted[i].data.copyWith(
-                recent: false,
-              ),
-        );
-      }
-      // If the recent wallet matches the id, then set it to recent
-      else if (_walletListUnsorted[i].id == recentWallet) {
-        _walletListUnsorted[i] = _walletListUnsorted[i].copyWith(
-          description: 'Recent',
-          data: _walletListUnsorted[i].data.copyWith(
-                recent: true,
-              ),
-        );
-      }
-
-      // Handle sorting
-      if (_walletListUnsorted[i].data.recent == true) {
-        newList.insert(0, _walletListUnsorted[i]);
-        insertAt++;
-      } else if (_walletListUnsorted[i].data.installed) {
-        newList.insert(insertAt, _walletListUnsorted[i]);
-        insertAt++;
-      } else if (recommendedWalletIds != null &&
-          recommendedWalletIds!.contains(_walletListUnsorted[i].id)) {
-        newList.insert(insertAt, _walletListUnsorted[i]);
-      } else {
-        newList.add(_walletListUnsorted[i]);
-      }
-    }
-
-    previousRecentWallet = recentWallet;
-    _walletListSorted = newList;
-    itemList.value = newList;
-  }
+  String getWalletImageUrl(String imageId) =>
+      '$_apiUrl/getWalletImage/$imageId';
 
   @override
-  String getWalletImageUrl({
-    required String imageId,
-  }) {
-    return '$explorerUriRoot/w3m/v1/getWalletImage/$imageId?projectId=$projectId';
-  }
+  String getAssetImageUrl(String imageId) =>
+      '$_apiUrl/public/getAssetImage/$imageId';
 
   @override
-  String getAssetImageUrl({
-    required String imageId,
-  }) {
-    return '$explorerUriRoot/w3m/v1/getAssetImage/$imageId?projectId=$projectId';
-  }
-
-  @override
-  Redirect? getRedirect({required String name}) {
+  String? getRedirect({required String name}) {
     try {
-      W3MLoggerUtil.logger.i('Getting redirect for $name');
-      final Listing listing = _listings.firstWhere(
-        (listing) => listing.name.contains(name) || name.contains(listing.name),
+      final wallet = _listings.firstWhere(
+        (l) => l.listing.name.contains(name) || name.contains(l.listing.name),
       );
-
-      return listing.mobile;
+      W3MLoggerUtil.logger
+          .v('Getting redirect for $name: ${wallet.listing.mobileLink}');
+      return wallet.listing.mobileLink;
     } catch (e) {
       return null;
     }
   }
 
+  Future<List<W3MWalletInfo>> _fetchListings({RequestParams? params}) async {
+    try {
+      final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
+      final uri = Uri.parse('$_apiUrl/getWallets');
+      final response = await _client.get(
+        uri.replace(queryParameters: params?.toJson() ?? {}),
+        headers: headers,
+      );
+      final apiResponse = ApiResponse.fromJson(jsonDecode(response.body));
+      if ((params?.search ?? '').isEmpty) {
+        totalListings.value = apiResponse.count;
+      }
+      W3MLoggerUtil.logger
+          .v('$runtimeType _fetchListings() $uri ${params?.toJson()}');
+      return apiResponse.data
+          .toList()
+          .sortByRecommended(featuredWalletIds)
+          .toW3MWalletInfo();
+    } catch (e, s) {
+      W3MLoggerUtil.logger.e('Error retching wallet listings', e, s);
+      throw Exception(e);
+    }
+  }
+
   @override
-  Future<List<Listing>> fetchListings({
-    required String endpoint,
-    required String referer,
-    ListingParams? params,
-  }) async {
-    W3MLoggerUtil.logger.i('Fetching wallet listings. Endpoint: $endpoint');
-    final Map<String, String> headers = {
-      'user-agent': coreUtils.instance.getUserAgent(),
-      'referer': referer,
-    };
-    W3MLoggerUtil.logger.i('Fetching wallet listings. Headers: $headers');
-    final Uri uri = Uri.parse(explorerUriRoot + endpoint);
-    final Map<String, dynamic> queryParameters = {
-      'projectId': projectId,
-      ...params == null ? {} : params.toJson(),
-    };
-    final http.Response response = await client.get(
-      uri.replace(
-        queryParameters: queryParameters,
-      ),
-      headers: headers,
+  void updateRecentPosition(String? recentId) async {
+    _recentWalletId = recentId ?? '';
+    // Set the recent
+    await storageService.instance.setString(
+      StringConstants.recentWallet,
+      _recentWalletId,
     );
-    // print(json.decode(response.body)['listings'].entries.first);
-    ListingResponse res = ListingResponse.fromJson(json.decode(response.body));
-    return res.listings.values.toList();
+    final currentListings = List<W3MWalletInfo>.from(
+      _listings.map((e) => e.copyWith(recent: false)).toList(),
+    );
+    final recentWallet = currentListings.firstWhereOrNull(
+      (e) => e.listing.id == _recentWalletId,
+    );
+    if (recentWallet != null) {
+      final rw = recentWallet.copyWith(recent: true);
+      currentListings.removeWhere((e) => e.listing.id == rw.listing.id);
+      currentListings.insert(0, rw);
+    }
+    _listings = currentListings;
+    listings.value = _listings;
+    W3MLoggerUtil.logger.v('$runtimeType updateRecentPosition($recentId)');
+  }
+
+  @override
+  void filterList({String? query}) async {
+    if (query == null || query.isEmpty) {
+      listings.value = _listings;
+      return;
+    }
+
+    final q = query.toLowerCase();
+    final filtered = _listings.where((w) {
+      final name = w.listing.name.toLowerCase();
+      return name.contains(q);
+    }).toList();
+    listings.value = filtered;
+
+    W3MLoggerUtil.logger.v('$runtimeType filterList($q)');
+    await _searchListings(query: q);
+  }
+
+  Future<void> _searchListings({String? query}) async {
+    final exclude = listings.value.map((e) => e.listing.id).toList().join(',');
+    final fetchResults = await _fetchListings(
+      params: _requestParams.copyWith(
+        page: 1,
+        search: query,
+        exclude: exclude,
+      ),
+    );
+    final newListins = await fetchResults.parseInstalledItems();
+    listings.value = [...listings.value, ...newListins];
+    W3MLoggerUtil.logger.v('$runtimeType _searchListings($query)');
   }
 
   final Map<String, String> _storedAndroidPackageIds = {};
 
+  @override
   String? getAndroidPackageId(String? playstoreLink) {
     if (playstoreLink == null) {
       return null;
@@ -302,7 +225,7 @@ class ExplorerService implements IExplorerService {
     }
 
     final Uri playstore = Uri.parse(playstoreLink);
-    W3MLoggerUtil.logger.i(
+    W3MLoggerUtil.logger.v(
       'getAndroidPackageId: $playstoreLink, id: ${playstore.queryParameters['id']}',
     );
 
@@ -312,18 +235,92 @@ class ExplorerService implements IExplorerService {
     return playstore.queryParameters['id'];
   }
 
-  List<Listing> filterExcludedListings({
-    required List<Listing> listings,
-  }) {
-    return listings.where((listing) {
-      if (excludedWalletIds!.contains(
-        listing.id,
-      )) {
-        W3MLoggerUtil.logger.i('Excluding wallet from list: $listing');
-        return false;
-      }
+  String _getPlatformType() {
+    final type = platformUtils.instance.getPlatformType();
+    final platform = type.toString().toLowerCase();
+    switch (type) {
+      case PlatformType.mobile:
+        if (Platform.isIOS) {
+          return 'ios';
+        } else if (Platform.isAndroid) {
+          return 'android';
+        } else {
+          return 'mobile';
+        }
+      default:
+        return platform;
+    }
+  }
 
-      return true;
-    }).toList();
+  // @override
+  // Future<Uint8List> getAssetImage(String imageId) async {
+  //   try {
+  //     final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
+  //     final imageUrl = getAssetImageUrl(imageId);
+  //     final uri = Uri.parse(imageUrl);
+  //     final response = await _client.get(uri, headers: headers);
+  //     return response.bodyBytes;
+  //   } catch (e, s) {
+  //     W3MLoggerUtil.logger.e('Error retching wallet listings', e, s);
+  //     throw Exception(e);
+  //   }
+  // }
+}
+
+extension on List<Listing> {
+  List<Listing> sortByRecommended(Set<String>? featuredWalletIds) {
+    List<Listing> sortedByRecommended = [];
+    Set<String> recommendedIds = featuredWalletIds ?? <String>{};
+    List<Listing> listToSort = this;
+
+    if (recommendedIds.isNotEmpty) {
+      for (var recommendedId in featuredWalletIds!) {
+        final rw = listToSort.firstWhereOrNull(
+          (element) => element.id == recommendedId,
+        );
+        if (rw != null) {
+          sortedByRecommended.add(rw);
+          listToSort.removeWhere((element) => element.id == recommendedId);
+        }
+      }
+      sortedByRecommended.addAll(listToSort);
+      return sortedByRecommended;
+    }
+    return listToSort;
+  }
+
+  List<W3MWalletInfo> toW3MWalletInfo() {
+    return map(
+      (item) => W3MWalletInfo(
+        listing: item,
+        installed: false,
+        recent: false,
+      ),
+    ).toList();
+  }
+}
+
+extension on List<W3MWalletInfo> {
+  Future<List<W3MWalletInfo>> parseInstalledItems() async {
+    final recentWallet = explorerService.instance!.recentWalletId;
+    List<W3MWalletInfo> parsedItems = [];
+    for (W3MWalletInfo item in this) {
+      String? appScheme = item.listing.mobileLink;
+      // If we are on android, and we have an android link, get the package id and use that
+      if (Platform.isAndroid && item.listing.playStore != null) {
+        appScheme = explorerService.instance!.getAndroidPackageId(
+          item.listing.playStore,
+        );
+      }
+      bool installed = await urlUtils.instance.isInstalled(appScheme);
+      bool recent = recentWallet == item.listing.id;
+      parsedItems.add(
+        item.copyWith(
+          installed: installed,
+          recent: recent,
+        ),
+      );
+    }
+    return parsedItems;
   }
 }

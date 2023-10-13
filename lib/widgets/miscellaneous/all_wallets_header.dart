@@ -25,6 +25,12 @@ class AllWalletsHeader extends StatelessWidget {
               onTextChanged: (value) {
                 explorerService.instance!.filterList(query: value);
               },
+              onDismissKeyboard: (clear) {
+                FocusManager.instance.primaryFocus?.unfocus();
+                if (clear) {
+                  explorerService.instance!.filterList(query: null);
+                }
+              },
             ),
           ),
           const SizedBox.square(dimension: 12.0),

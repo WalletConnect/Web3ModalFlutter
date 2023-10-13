@@ -97,18 +97,8 @@ class ResponsiveData extends InheritedWidget {
     return isPortraitMode ? kGridAxisCountP : kGridAxisCountL;
   }
 
-  static bool _isTabletSize(BuildContext context) {
-    final data = MediaQueryData.fromView(View.of(context));
-    return data.size.shortestSide < 600 ? false : true;
-  }
-
   static Size gridItemSzieOf(BuildContext context) {
-    final isPortraitMode = isPortrait(context);
-    if (isPortraitMode && !_isTabletSize(context)) {
-      final width = (maxWidthOf(context) / 4) - (kGridAxisSpacing) - 4.0;
-      return Size(width, width * 1.30);
-    }
-    final width = (maxWidthOf(context) / 6) - kGridAxisSpacing;
+    final width = (maxWidthOf(context) / 4) - (kGridAxisSpacing) - 4.0;
     return Size(width, width * 1.30);
   }
 

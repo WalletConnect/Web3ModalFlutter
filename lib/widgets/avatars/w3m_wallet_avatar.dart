@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 
 class W3MListAvatar extends StatelessWidget {
   const W3MListAvatar({
@@ -19,30 +21,40 @@ class W3MListAvatar extends StatelessWidget {
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final radius = borderRadius ?? radiuses.radiusM;
-    return Container(
-      margin: const EdgeInsets.all(2.0),
-      decoration: isNetwork
-          ? ShapeDecoration(
-              shape: StarBorder.polygon(
-                side: BorderSide(
+    final projectId = explorerService.instance?.projectId ?? '';
+    return AspectRatio(
+      aspectRatio: 1.0,
+      child: Container(
+        margin: const EdgeInsets.all(2.0),
+        decoration: isNetwork
+            ? ShapeDecoration(
+                shape: StarBorder.polygon(
+                  side: BorderSide(
+                    color: color ?? themeColors.grayGlass010,
+                    width: 1.0,
+                    strokeAlign: BorderSide.strokeAlignOutside,
+                  ),
+                  pointRounding: 0.3,
+                  sides: 6,
+                ),
+              )
+            : BoxDecoration(
+                borderRadius: BorderRadius.circular(radius),
+                border: Border.all(
                   color: color ?? themeColors.grayGlass010,
                   width: 1.0,
                   strokeAlign: BorderSide.strokeAlignOutside,
                 ),
-                pointRounding: 0.3,
-                sides: 6,
               ),
-            )
-          : BoxDecoration(
-              borderRadius: BorderRadius.circular(radius),
-              border: Border.all(
-                color: color ?? themeColors.grayGlass010,
-                width: 1.0,
-                strokeAlign: BorderSide.strokeAlignOutside,
-              ),
-            ),
-      clipBehavior: Clip.antiAlias,
-      child: Image.network(imageUrl),
+        clipBehavior: Clip.antiAlias,
+        child: Image.network(
+          imageUrl,
+          headers: coreUtils.instance.getAPIHeaders(projectId),
+          errorBuilder: (context, error, stackTrace) => ColoredBox(
+            color: themeColors.grayGlass005,
+          ),
+        ),
+      ),
     );
   }
 }

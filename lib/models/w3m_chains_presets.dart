@@ -203,7 +203,7 @@ class W3MChainPresets {
           events: [],
         ),
       },
-      rpcUrl: 'https://eth.bd.evmos.org:8545',
+      rpcUrl: 'https://evmos-evm.publicnode.com',
     ),
     '4689': W3MChainInfo(
       chainName: 'Iotx',

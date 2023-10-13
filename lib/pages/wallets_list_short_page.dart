@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/pages/about_wallets.dart';
 import 'package:web3modal_flutter/pages/connect_wallet_page.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/pages/wallets_list_long_page.dart';
@@ -13,12 +14,22 @@ import 'package:web3modal_flutter/widgets/lists/list_items/wallet_item_chip.dart
 import 'package:web3modal_flutter/widgets/lists/wallets_list.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar_action_button.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
-import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
-class WalletsListShortPage extends StatelessWidget {
+class WalletsListShortPage extends StatefulWidget {
   const WalletsListShortPage()
       : super(key: Web3ModalKeyConstants.walletListShortPageKey);
+
+  @override
+  State<WalletsListShortPage> createState() => _WalletsListShortPageState();
+}
+
+class _WalletsListShortPageState extends State<WalletsListShortPage> {
+  @override
+  void initState() {
+    super.initState();
+    explorerService.instance!.init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +50,10 @@ class WalletsListShortPage extends StatelessWidget {
         constraints: BoxConstraints(maxHeight: maxHeight),
         child: ExplorerServiceItemsListener(
           builder: (context, initialised, items) {
-            if (!initialised) {
-              return const ContentLoading();
+            if (!initialised || items.isEmpty) {
+              return const WalletsList(isLoading: true, itemList: []);
             }
-
-            final itemsToShow = items.getRange(0, kShortWalletListCount - 1);
+            final itemsToShow = items.getRange(0, kShortWalletListCount);
             return WalletsList(
               onTapWallet: (data) {
                 service.selectWallet(walletInfo: data);
@@ -51,7 +61,12 @@ class WalletsListShortPage extends StatelessWidget {
               },
               itemList: itemsToShow.toList(),
               lastItem: AllWalletsItem(
-                trailing: WalletItemChip(value: items.length.lazyCount),
+                trailing: ValueListenableBuilder<int>(
+                  valueListenable: explorerService.instance!.totalListings,
+                  builder: (context, value, _) {
+                    return WalletItemChip(value: value.lazyCount);
+                  },
+                ),
                 onTap: () {
                   widgetStack.instance.add(const WalletsListLongPage());
                 },

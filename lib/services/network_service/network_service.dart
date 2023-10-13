@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:web3modal_flutter/models/grid_item_modal.dart';
+import 'package:web3modal_flutter/models/grid_item.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/network_service/i_network_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
@@ -27,14 +27,10 @@ class NetworkService implements INetworkService {
       itemListComplete.add(
         GridItem<W3MChainInfo>(
           image: explorerService.instance!.getAssetImageUrl(
-            imageId: AssetUtil.getChainIconAssetId(
-              value.chainId,
-            ),
+            AssetUtil.getChainIconAssetId(value.chainId),
           ),
           id: value.chainId,
-          title: Util.shorten(
-            value.chainName,
-          ),
+          title: Util.shorten(value.chainName),
           data: value,
         ),
       );

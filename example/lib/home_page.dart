@@ -10,7 +10,6 @@ import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_dapp/widgets/event_widget.dart';
 
-// TODO a refactor of the whole example app must be performed
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.swapTheme});
   final void Function() swapTheme;
@@ -33,8 +32,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _web3App = Web3App(
       core: Core(projectId: DartDefines.projectId),
       metadata: const PairingMetadata(
-        name: 'Flutter Dapp Example',
-        description: 'Flutter Dapp Example',
+        name: 'Web3Modal Flutter Example',
+        description: 'Web3Modal Flutter Example',
         url: 'https://www.walletconnect.com/',
         icons: ['https://walletconnect.com/walletconnect-logo.png'],
         redirect: Redirect(
@@ -150,11 +149,23 @@ class _W3MPageState extends State<_W3MPage> {
   void _initializeService() async {
     _w3mService = W3MService(
       web3App: _web3App,
-      recommendedWalletIds: {
-        'afbd95522f4041c71dd4f1a065f971fd32372865b416f95a0b1db759ae33f2a7',
-        '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662',
-        'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+      featuredWalletIds: {
+        '19177a98252e07ddfc9af2083ba8e07ef627cb6103467ffebb3f8f4205fd7927',
+        'e9ff15be73584489ca4a66f64d32c4537711797e30b6660dbcb71ea72a42b1f4',
+        '0b415a746fb9ee99cce155c2ceca0c6f6061b1dbca2d722b3ba16381d0562150',
       },
+      // includedWalletIds: {
+      //   'ecc4036f814562b41a5268adc86270fba1365471402006302e70169465b7ac18',
+      //   '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369',
+      //   '19177a98252e07ddfc9af2083ba8e07ef627cb6103467ffebb3f8f4205fd7927',
+      //   'e9ff15be73584489ca4a66f64d32c4537711797e30b6660dbcb71ea72a42b1f4',
+      //   '225affb176778569276e484e1b92637ad061b01e13a048b35a9d280c3b58970f',
+      //   '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0',
+      //   'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a',
+      //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+      //   '971e689d0a5be527bac79629b4ee9b925e82208e5168b733496a09c0faed0709',
+      //   '0b415a746fb9ee99cce155c2ceca0c6f6061b1dbca2d722b3ba16381d0562150',
+      // },
     );
 
     await _w3mService.init();
