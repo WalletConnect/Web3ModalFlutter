@@ -70,6 +70,7 @@ class CoreUtils extends ICoreUtils {
     String userAgent = '${StringConstants.X_SDK_TYPE}'
         '-flutter-'
         '${StringConstants.X_SDK_VERSION}/'
+        '${StringConstants.X_CORE_SDK_VERSION}/'
         '${WalletConnectUtils.getOS()}';
     return userAgent;
   }
