@@ -1,14 +1,10 @@
 # web3modal_flutter
 
-WalletConnect Web3Modal implementation for Flutter.
+Example Dapp for WalletConnect Web3Modal package
 
 ## Documentation
 
 For a full reference please check the [Official Documentation](https://docs.walletconnect.com/2.0/web3modal/flutter/installation)
-
-## Example
-
-Please check the [example](example/) folder for the example.
 
 ## Run the example app
 
@@ -16,7 +12,7 @@ Please check the [example](example/) folder for the example.
 
 ## Useful Commands
 
-If you are cloning this repo do the following inside the root folder
+If you are cloning the whole package repo do the following inside the root folder
 
 `$ flutter pub get` to get dependencies
 

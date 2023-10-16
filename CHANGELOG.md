@@ -1,3 +1,7 @@
+## 3.0.0-beta03
+
+- Fix responsiveness and minor bug fixes
+
 ## 3.0.0-beta01
 
 - Prioritizing user's installed wallet apps
