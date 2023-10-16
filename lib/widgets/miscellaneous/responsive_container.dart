@@ -22,10 +22,16 @@ class ResponsiveContainer extends StatelessWidget {
             final realMaxHeight =
                 isPortrait ? screenHeight - (kNavbarHeight * 2) : screenHeight;
             final realMinHeight = isPortrait ? 0.0 : realMaxHeight;
+
+            final data = MediaQueryData.fromView(View.of(context));
+            final isTabletSize = data.size.shortestSide < 600 ? false : true;
+            final maxWidth = isTabletSize ? 360.0 : data.size.shortestSide;
+            final maxHeight = isTabletSize ? 600.0 : realMaxHeight;
+
             return ResponsiveData(
-              maxHeight: realMaxHeight,
+              maxHeight: maxHeight,
               minHeight: realMinHeight,
-              maxWidth: screenWidth,
+              maxWidth: maxWidth,
               minWidth: screenWidth,
               orientation: orientation,
               child: child,

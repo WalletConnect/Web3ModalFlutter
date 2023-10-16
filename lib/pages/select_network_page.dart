@@ -25,6 +25,8 @@ class SelectNetworkPage extends StatelessWidget {
     final isSwitch = service.selectedChain != null;
     return Web3ModalNavbar(
       title: isSwitch ? 'Change Network' : 'Select Network',
+      safeAreaLeft: true,
+      safeAreaRight: true,
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

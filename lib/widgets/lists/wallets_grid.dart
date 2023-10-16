@@ -38,6 +38,7 @@ class WalletsGrid extends StatelessWidget {
         .toList();
 
     if (isPaginating) {
+      final isLandscape = !ResponsiveData.isPortrait(context);
       final loadingList = [
         const WalletGridItem(title: ''),
         const WalletGridItem(title: ''),
@@ -57,15 +58,13 @@ class WalletsGrid extends StatelessWidget {
           )
           .toList();
       children.addAll(loadingList);
+      if (isLandscape) {
+        children.addAll(loadingList);
+      }
     }
 
     return Container(
-      width: ResponsiveData.maxWidthOf(context),
-      padding: const EdgeInsets.only(
-        left: kPadding12,
-        bottom: kPadding12,
-        right: kPadding12,
-      ),
+      padding: const EdgeInsets.only(bottom: kPadding12),
       child: Wrap(
         spacing: kGridAxisSpacing,
         runSpacing: kGridAxisSpacing,

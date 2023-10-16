@@ -31,35 +31,41 @@ class Web3ModalNavbar extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          height: kNavbarHeight,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              widgetStack.instance.canPop()
-                  ? NavbarActionButton(
-                      asset: 'assets/icons/chevron_left.svg',
-                      action: onBack ?? widgetStack.instance.pop,
-                    )
-                  : (leftAction ??
-                      const SizedBox.square(dimension: kNavbarHeight)),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    title,
-                    style: themeData.textStyles.paragraph600.copyWith(
-                      color: themeColors.foreground100,
+        SafeArea(
+          left: true,
+          right: true,
+          top: false,
+          bottom: false,
+          child: SizedBox(
+            height: kNavbarHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                widgetStack.instance.canPop()
+                    ? NavbarActionButton(
+                        asset: 'assets/icons/chevron_left.svg',
+                        action: onBack ?? widgetStack.instance.pop,
+                      )
+                    : (leftAction ??
+                        const SizedBox.square(dimension: kNavbarHeight)),
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      title,
+                      style: themeData.textStyles.paragraph600.copyWith(
+                        color: themeColors.foreground100,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              NavbarActionButton(
-                asset: 'assets/icons/close.svg',
-                action: () {
-                  Web3ModalProvider.of(context).service.closeModal();
-                },
-              ),
-            ],
+                NavbarActionButton(
+                  asset: 'assets/icons/close.svg',
+                  action: () {
+                    Web3ModalProvider.of(context).service.closeModal();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
         Divider(

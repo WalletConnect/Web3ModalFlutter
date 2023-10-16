@@ -332,7 +332,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       child: childWidget,
     );
 
-    final data = MediaQueryData.fromView(View.of(context));
+    final data = MediaQueryData.fromView(View.of(_context!));
     final isTabletSize = data.size.shortestSide < 600 ? false : true;
 
     if (isBottomSheet) {
@@ -342,6 +342,7 @@ class W3MService with ChangeNotifier implements IW3MService {
         isScrollControlled: true,
         enableDrag: true,
         elevation: 0.0,
+        useRootNavigator: true,
         constraints: isTabletSize
             ? const BoxConstraints(
                 maxWidth: 360.0,
@@ -349,12 +350,13 @@ class W3MService with ChangeNotifier implements IW3MService {
               )
             : null,
         context: _context!,
-        builder: (context) => rootWidget,
+        builder: (_) => rootWidget,
       );
     } else {
       await showDialog(
+        useRootNavigator: true,
         context: _context!,
-        builder: (context) => rootWidget,
+        builder: (_) => rootWidget,
       );
     }
 

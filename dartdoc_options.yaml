@@ -50,17 +50,17 @@ dartdoc:
     "json_annotation",
     "logger",
     "mockito",
-    "qr_flutter_wc",
+    # "qr_flutter_wc",
     "shared_preferences",
     "smooth_page_indicator",
     "universal_io",
     "url_launcher",
     "w_common",
-    "walletconnect_flutter_v2",
+    # "walletconnect_flutter_v2",
     "walletconnect_modal_flutter",
-    "web3dart",
+    # "web3dart",
   ]
-  include: ["web3modal_flutter"]
+  # include: ["web3modal_flutter"]
   linkTo:
     url: "https://docs.walletconnect.com/web3modal/flutter/installation"
   showUndocumentedCategories: false

@@ -54,6 +54,8 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
         widgetStack.instance.pop();
       },
       safeAreaBottom: false,
+      safeAreaLeft: true,
+      safeAreaRight: true,
       body: ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: ResponsiveData.maxHeightOf(context),

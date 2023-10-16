@@ -5,7 +5,6 @@ part 'blockchain_identity.freezed.dart';
 
 @freezed
 class BlockchainIdentity with _$BlockchainIdentity {
-  // @JsonSerializable(includeIfNull: false)
   const factory BlockchainIdentity({
     String? name,
     String? avatar,

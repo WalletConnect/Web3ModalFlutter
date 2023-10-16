@@ -46,6 +46,8 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
           widgetStack.instance.add(const AboutWallets());
         },
       ),
+      safeAreaLeft: true,
+      safeAreaRight: true,
       body: ConstrainedBox(
         constraints: BoxConstraints(maxHeight: maxHeight),
         child: ExplorerServiceItemsListener(
