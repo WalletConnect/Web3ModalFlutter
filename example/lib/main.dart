@@ -60,6 +60,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       isDarkMode: _isDarkMode,
       // themeData: _themeData, // Uncomment to see how modal theme is changed
       child: MaterialApp(
+        // showPerformanceOverlay: true,
+        // checkerboardRasterCacheImages: true,
+        // checkerboardOffscreenLayers: true,
+        // debugShowMaterialGrid: true,
+        // showSemanticsDebugger: true,
+        // debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         home: MyHomePage(swapTheme: () => _swapTheme()),
       ),

@@ -37,48 +37,56 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-		<string>metamask</string>
-		<string>trust</string>
-		<string>safe</string>
-		<string>rainbow</string>
-		<string>uniswap</string>
-		<string>zerion</string>
-		<string>imtokenv2</string>
-		<string>spot</string>
+		<string>wirexwallet</string>
+		<string>stasis</string>
 		<string>omni</string>
-		<string>dfw</string>
-		<string>tpoutside</string>
-		<string>robinhood-wallet</string>
-		<string>frontier</string>
-		<string>blockchain-wallet</string>
-		<string>safepalwallet</string>
-		<string>bitkeep</string>
-		<string>oneinch</string>
-		<string>exodus</string>
-		<string>bnc</string>
-		<string>ledgerlive</string>
-		<string>mewwallet</string>
-		<string>awallet</string>
-		<string>keyring</string>
-		<string>lobstr</string>
-		<string>ontoprovider</string>
-		<string>mathwallet</string>
-		<string>unstoppabledomains</string>
-		<string>obvious</string>
-		<string>fireblocks-wc</string>
-		<string>ambire</string>
-		<string>internetmoney</string>
-		<string>walletnow</string>
+		<string>strikex</string>
 		<string>bitcoincom</string>
-		<string>coin98</string>
-		<string>arculuswc</string>
-		<string>cryptobrowser</string>
-		<string>chainapp</string>
-		<string>huddln</string>
-		<string>verso</string>
-		<string>haha</string>
-		<string>modularwallet</string>
-		<string>coinomi</string>
+		<string>bnc</string>
+		<string>kryptogo</string>
+		<string>roninwallet</string>
+		<string>moonstake</string>
+		<string>ripio</string>
+		<string>frontier</string>
+		<string>qubic</string>
+		<string>dropp</string>
+		<string>safepalwallet</string>
+		<string>bee</string>
+		<string>shido</string>
+		<string>foxwallet</string>
+		<string>exodus</string>
+		<string>coolwallet</string>
+		<string>shinobi-wallet</string>
+		<string>halowallet</string>
+		<string>spotonchain</string>
+		<string>rainbow</string>
+		<string>obvious</string>
+		<string>robinhood-wallet</string>
+		<string>kriptomatapp</string>
+		<string>okto</string>
+		<string>bitkeep</string>
+		<string>hyperPay</string>
+		<string>bitizen</string>
+		<string>ape</string>
+		<string>uniswap</string>
+		<string>vimwallet</string>
+		<string>oasys-wallet</string>
+		<string>coinstats</string>
+		<string>ledgerlive</string>
+		<string>zerion</string>
+		<string>safe</string>
+		<string>okex</string>
+		<string>trust</string>
+		<string>thorwallet</string>
+		<string>leapcosmos</string>
+		<string>everspace</string>
+		<string>cosmostation</string>
+		<string>coinwallet</string>
+		<string>mewwallet</string>
+		<string>metamask</string>
+		<string>avacus</string>
+		<string>argent</string>
+		<string>bybitapp</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
