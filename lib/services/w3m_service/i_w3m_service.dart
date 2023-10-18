@@ -20,8 +20,7 @@ abstract class IW3MService with ChangeNotifier {
   /// The optional namespaces that will be used when connecting to the wallet
   Map<String, RequiredNamespace> get optionalNamespaces;
 
-  /// The object that manages sessions, authentication, events, and requests
-  /// for WalletConnect.
+  /// The object that manages sessions, authentication, events, and requests for WalletConnect.
   IWeb3App? get web3App;
 
   /// Variable that can be used to check if the modal is visible on screen.
@@ -31,7 +30,7 @@ abstract class IW3MService with ChangeNotifier {
   bool get isConnected;
 
   /// The URI that can be used to connect to this dApp.
-  /// This is only available after the [open] function is called.
+  /// This is only available after the [openModal] function is called.
   String? get wcUri;
 
   /// The current session's data.
@@ -59,7 +58,7 @@ abstract class IW3MService with ChangeNotifier {
 
   /// Sets the [selectedChain] and gets the [chainBalance].
   /// If the wallet is already connected, it will request the chain to be changed and will update the session with the new chain.
-  /// If [chain] is null this will disconnect the wallet.
+  /// If [chainInfo] is null this will disconnect the wallet.
   Future<void> selectChain(W3MChainInfo? chainInfo, {bool switchChain = false});
 
   void launchBlockExplorer();
@@ -67,7 +66,7 @@ abstract class IW3MService with ChangeNotifier {
   /// Sets up the explorer and the web3App if they already been initialized.
   Future<void> init();
 
-  /// Opens the modal with the provided [startState].
+  /// Opens the modal with the provided [startWidget] (if any).
   /// If none is provided, the default state will be used based on platform.
   Future<void> openModal(BuildContext context, [Widget? startWidget]);
 
@@ -78,11 +77,13 @@ abstract class IW3MService with ChangeNotifier {
   /// Sets the [selectedWallet] to be connected
   Future<void> selectWallet({required W3MWalletInfo? walletInfo});
 
+  /// Used to expire and delete any inactive pairing
   Future<void> expirePreviousInactivePairings();
 
   /// This will do nothing if [isConnected] is true.
   Future<void> buildConnectionUri();
 
+  /// Subscribe to listen to pairing expirations
   final Event<EventArgs> onPairingExpire = Event();
 
   // TODO remove the walletInfo argument as not really needed

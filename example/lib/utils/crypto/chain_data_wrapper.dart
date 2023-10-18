@@ -61,7 +61,6 @@ class ChainDataWrapper {
     //   logo: 'TODO',
     //   color: Colors.black,
     //   rpc: [
-    //     "https://api.mainnet-beta.solana.com",
     //     "https://solana-api.projectserum.com",
     //   ],
     // ),

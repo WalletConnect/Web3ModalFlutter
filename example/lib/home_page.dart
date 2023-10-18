@@ -147,45 +147,6 @@ class _W3MPageState extends State<_W3MPage> {
   }
 
   void _initializeService() async {
-    // W3MChainPresets.chains.removeWhere((key, value) => key == '1');
-    W3MChainPresets.chains.putIfAbsent(
-      '42220',
-      () => W3MChainInfo(
-        chainName: 'Celo',
-        namespace: 'eip155:42220',
-        chainId: '42220',
-        tokenName: 'CELO',
-        requiredNamespaces: {
-          'eip155': const RequiredNamespace(
-            methods: [
-              'personal_sign',
-              'eth_signTypedData',
-              'eth_sendTransaction',
-            ],
-            chains: ['eip155:42220'],
-            events: [
-              'chainChanged',
-              'accountsChanged',
-            ],
-          ),
-        },
-        optionalNamespaces: {
-          'eip155': const RequiredNamespace(
-            methods: [
-              'wallet_switchEthereumChain',
-              'wallet_addEthereumChain',
-            ],
-            chains: ['eip155:42220'],
-            events: [],
-          ),
-        },
-        rpcUrl: 'https://1rpc.io/celo',
-        blockExplorer: W3MBlockExplorer(
-          name: 'Celo Scan',
-          url: 'https://celoscan.io',
-        ),
-      ),
-    );
     _w3mService = W3MService(
       web3App: _web3App,
       featuredWalletIds: {
@@ -193,21 +154,12 @@ class _W3MPageState extends State<_W3MPage> {
         '8a0ee50d1f22f6651afcae7eb4253e52a3310b90af5daef78a8c4929a9bb99d4',
         'f5b4eeb6015d66be3f5940a895cbaa49ef3439e518cd771270e6b553b48f31d2',
       },
-      // includedWalletIds: {
-      //   'ecc4036f814562b41a5268adc86270fba1365471402006302e70169465b7ac18',
-      //   '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369',
-      //   '19177a98252e07ddfc9af2083ba8e07ef627cb6103467ffebb3f8f4205fd7927',
-      //   'e9ff15be73584489ca4a66f64d32c4537711797e30b6660dbcb71ea72a42b1f4',
-      //   '225affb176778569276e484e1b92637ad061b01e13a048b35a9d280c3b58970f',
-      //   '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0',
-      //   'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a',
-      //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
-      //   '971e689d0a5be527bac79629b4ee9b925e82208e5168b733496a09c0faed0709',
-      //   '0b415a746fb9ee99cce155c2ceca0c6f6061b1dbca2d722b3ba16381d0562150',
-      // },
     );
 
+    // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
+    // W3MChainPresets.chains.putIfAbsent('42220', () => myCustomChain);
     await _w3mService.init();
+    // _w3mService.selectChain(myCustomChain);
 
     setState(() {
       _isConnected = _web3App.sessions.getAll().isNotEmpty;
@@ -245,7 +197,10 @@ class _W3MPageState extends State<_W3MPage> {
             visible: !_isConnected,
             child: W3MNetworkSelectButton(service: _w3mService),
           ),
-          W3MConnectWalletButton(service: _w3mService),
+          W3MConnectWalletButton(
+            service: _w3mService,
+            state: ConnectButtonState.none,
+          ),
           const SizedBox.square(dimension: 8.0),
           const Divider(height: 0.0),
           Visibility(
@@ -256,6 +211,42 @@ class _W3MPageState extends State<_W3MPage> {
       ),
     );
   }
+
+  W3MChainInfo get myCustomChain => W3MChainInfo(
+        chainName: 'Celo',
+        namespace: 'eip155:42220',
+        chainId: '42220',
+        tokenName: 'CELO',
+        requiredNamespaces: {
+          'eip155': const RequiredNamespace(
+            methods: [
+              'personal_sign',
+              'eth_signTypedData',
+              'eth_sendTransaction',
+            ],
+            chains: ['eip155:42220'],
+            events: [
+              'chainChanged',
+              'accountsChanged',
+            ],
+          ),
+        },
+        optionalNamespaces: {
+          'eip155': const RequiredNamespace(
+            methods: [
+              'wallet_switchEthereumChain',
+              'wallet_addEthereumChain',
+            ],
+            chains: ['eip155:42220'],
+            events: [],
+          ),
+        },
+        rpcUrl: 'https://1rpc.io/celo',
+        blockExplorer: W3MBlockExplorer(
+          name: 'Celo Scan',
+          url: 'https://celoscan.io',
+        ),
+      );
 }
 
 class _ConnectedView extends StatelessWidget {

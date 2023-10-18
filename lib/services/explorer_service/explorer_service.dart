@@ -84,14 +84,7 @@ class ExplorerService implements IExplorerService {
       installedListing = await _fetchInstalledListings();
     }
 
-    _requestParams = RequestParams(
-      page: 1,
-      entries: 48,
-      include: _includedWalletsParam,
-      exclude: _excludedWalletsParam,
-      platform: _getPlatformType(),
-    );
-    final otherListings = await _fetchListings(params: _requestParams);
+    final otherListings = await _fetchOtherListings();
 
     _listings = [...installedListing, ...otherListings];
     listings.value = _listings;
@@ -146,6 +139,31 @@ class ExplorerService implements IExplorerService {
     }
   }
 
+  Future<List<NativeAppData>> _fetchNativeAppData() async {
+    try {
+      final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
+      final uri = Platform.isIOS
+          ? Uri.parse('$_apiUrl/getIosData')
+          : Uri.parse('$_apiUrl/getAndroidData');
+      final response = await _client.get(
+        uri,
+        headers: headers,
+      );
+      final apiResponse = ApiResponse<NativeAppData>.fromJson(
+        jsonDecode(response.body),
+        (json) => NativeAppData.fromJson(json),
+      );
+      return apiResponse.data.toList();
+    } catch (e, s) {
+      W3MLoggerUtil.logger.e(
+        '[$runtimeType] Error fetching native apps data',
+        error: e,
+        stackTrace: s,
+      );
+      throw Exception(e);
+    }
+  }
+
   Future<List<W3MWalletInfo>> _fetchInstalledListings() async {
     final installed = await (await _fetchNativeAppData()).getInstalledApps();
     _installedWalletIds = Set<String>.from(installed.map((e) => e.id));
@@ -165,6 +183,17 @@ class ExplorerService implements IExplorerService {
     }
 
     return [];
+  }
+
+  Future<List<W3MWalletInfo>> _fetchOtherListings() async {
+    _requestParams = RequestParams(
+      page: 1,
+      entries: 48,
+      include: _includedWalletsParam,
+      exclude: _excludedWalletsParam,
+      platform: _getPlatformType(),
+    );
+    return await _fetchListings(params: _requestParams);
   }
 
   Future<List<W3MWalletInfo>> _fetchListings({
@@ -194,31 +223,6 @@ class ExplorerService implements IExplorerService {
     } catch (e, s) {
       W3MLoggerUtil.logger.e(
         '[$runtimeType] Error fetching wallet listings',
-        error: e,
-        stackTrace: s,
-      );
-      throw Exception(e);
-    }
-  }
-
-  Future<List<NativeAppData>> _fetchNativeAppData() async {
-    try {
-      final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
-      final uri = Platform.isIOS
-          ? Uri.parse('$_apiUrl/getIosData')
-          : Uri.parse('$_apiUrl/getAndroidData');
-      final response = await _client.get(
-        uri,
-        headers: headers,
-      );
-      final apiResponse = ApiResponse<NativeAppData>.fromJson(
-        jsonDecode(response.body),
-        (json) => NativeAppData.fromJson(json),
-      );
-      return apiResponse.data.toList();
-    } catch (e, s) {
-      W3MLoggerUtil.logger.e(
-        '[$runtimeType] Error fetching native apps data',
         error: e,
         stackTrace: s,
       );
