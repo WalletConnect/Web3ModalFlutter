@@ -1,7 +1,7 @@
 class StringConstants {
   static const X_SDK_TYPE = 'w3m';
-  static const X_SDK_VERSION = '3.0.0-beta03';
-  static const X_CORE_SDK_VERSION = 'flutter_v2.1.4';
+  static const X_SDK_VERSION = '3.0.0-beta04';
+  static const X_CORE_SDK_VERSION = 'flutter_v2.1.5';
 
   static const String selectNetwork = 'Select Network';
   static const String selectNetworkShort = 'Network';

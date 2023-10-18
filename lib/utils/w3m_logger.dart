@@ -12,7 +12,7 @@ enum W3MLogLevel {
   Level toLevel() {
     switch (this) {
       case W3MLogLevel.verbose:
-        return Level.verbose;
+        return Level.trace;
       case W3MLogLevel.debug:
         return Level.debug;
       case W3MLogLevel.info:
@@ -22,16 +22,16 @@ enum W3MLogLevel {
       case W3MLogLevel.error:
         return Level.error;
       case W3MLogLevel.wtf:
-        return Level.wtf;
+        return Level.fatal;
       default:
-        return Level.nothing;
+        return Level.off;
     }
   }
 }
 
 class W3MLoggerUtil {
   static Logger logger = Logger(
-    level: Level.nothing,
+    level: Level.off,
     printer: PrettyPrinter(),
   );
 

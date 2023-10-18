@@ -17,21 +17,28 @@ class NetworkService implements INetworkService {
   ValueNotifier<List<GridItem<W3MChainInfo>>> itemList =
       ValueNotifier<List<GridItem<W3MChainInfo>>>([]);
 
+  String _getImageUrl(W3MChainInfo chainInfo) {
+    if (chainInfo.chainIcon != null && chainInfo.chainIcon!.contains('http')) {
+      return chainInfo.chainIcon!;
+    }
+    final chainImageId = AssetUtil.getChainIconId(chainInfo.chainId);
+    return explorerService.instance!.getAssetImageUrl(chainImageId);
+  }
+
   @override
   Future<void> init() async {
     if (initialized.value) {
       return;
     }
 
-    for (var value in W3MChainPresets.chains.values) {
+    for (var chain in W3MChainPresets.chains.values) {
+      final imageUrl = _getImageUrl(chain);
       itemListComplete.add(
         GridItem<W3MChainInfo>(
-          image: explorerService.instance!.getAssetImageUrl(
-            AssetUtil.getChainIconAssetId(value.chainId),
-          ),
-          id: value.chainId,
-          title: Util.shorten(value.chainName),
-          data: value,
+          image: imageUrl,
+          id: chain.chainId,
+          title: Util.shorten(chain.chainName),
+          data: chain,
         ),
       );
     }

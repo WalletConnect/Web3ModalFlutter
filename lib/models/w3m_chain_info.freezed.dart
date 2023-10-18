@@ -19,7 +19,7 @@ mixin _$W3MChainInfo {
   String get chainName => throw _privateConstructorUsedError;
   String get chainId => throw _privateConstructorUsedError;
   String get namespace => throw _privateConstructorUsedError;
-  String get chainIcon => throw _privateConstructorUsedError;
+  String? get chainIcon => throw _privateConstructorUsedError;
   String get tokenName => throw _privateConstructorUsedError;
   Map<String, RequiredNamespace> get requiredNamespaces =>
       throw _privateConstructorUsedError;
@@ -43,7 +43,7 @@ abstract class $W3MChainInfoCopyWith<$Res> {
       {String chainName,
       String chainId,
       String namespace,
-      String chainIcon,
+      String? chainIcon,
       String tokenName,
       Map<String, RequiredNamespace> requiredNamespaces,
       Map<String, RequiredNamespace> optionalNamespaces,
@@ -69,7 +69,7 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
     Object? chainName = null,
     Object? chainId = null,
     Object? namespace = null,
-    Object? chainIcon = null,
+    Object? chainIcon = freezed,
     Object? tokenName = null,
     Object? requiredNamespaces = null,
     Object? optionalNamespaces = null,
@@ -89,10 +89,10 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
           ? _value.namespace
           : namespace // ignore: cast_nullable_to_non_nullable
               as String,
-      chainIcon: null == chainIcon
+      chainIcon: freezed == chainIcon
           ? _value.chainIcon
           : chainIcon // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       tokenName: null == tokenName
           ? _value.tokenName
           : tokenName // ignore: cast_nullable_to_non_nullable
@@ -141,7 +141,7 @@ abstract class _$$_W3MChainInfoCopyWith<$Res>
       {String chainName,
       String chainId,
       String namespace,
-      String chainIcon,
+      String? chainIcon,
       String tokenName,
       Map<String, RequiredNamespace> requiredNamespaces,
       Map<String, RequiredNamespace> optionalNamespaces,
@@ -166,7 +166,7 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
     Object? chainName = null,
     Object? chainId = null,
     Object? namespace = null,
-    Object? chainIcon = null,
+    Object? chainIcon = freezed,
     Object? tokenName = null,
     Object? requiredNamespaces = null,
     Object? optionalNamespaces = null,
@@ -186,10 +186,10 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
           ? _value.namespace
           : namespace // ignore: cast_nullable_to_non_nullable
               as String,
-      chainIcon: null == chainIcon
+      chainIcon: freezed == chainIcon
           ? _value.chainIcon
           : chainIcon // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       tokenName: null == tokenName
           ? _value.tokenName
           : tokenName // ignore: cast_nullable_to_non_nullable
@@ -221,7 +221,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
       {required this.chainName,
       required this.chainId,
       required this.namespace,
-      required this.chainIcon,
+      this.chainIcon,
       required this.tokenName,
       required final Map<String, RequiredNamespace> requiredNamespaces,
       required final Map<String, RequiredNamespace> optionalNamespaces,
@@ -237,7 +237,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
   @override
   final String namespace;
   @override
-  final String chainIcon;
+  final String? chainIcon;
   @override
   final String tokenName;
   final Map<String, RequiredNamespace> _requiredNamespaces;
@@ -316,7 +316,7 @@ abstract class _W3MChainInfo implements W3MChainInfo {
       {required final String chainName,
       required final String chainId,
       required final String namespace,
-      required final String chainIcon,
+      final String? chainIcon,
       required final String tokenName,
       required final Map<String, RequiredNamespace> requiredNamespaces,
       required final Map<String, RequiredNamespace> optionalNamespaces,
@@ -330,7 +330,7 @@ abstract class _W3MChainInfo implements W3MChainInfo {
   @override
   String get namespace;
   @override
-  String get chainIcon;
+  String? get chainIcon;
   @override
   String get tokenName;
   @override

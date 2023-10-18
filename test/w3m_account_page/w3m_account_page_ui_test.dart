@@ -7,15 +7,16 @@ import 'package:network_image_mock/network_image_mock.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/utils/platform/i_platform_utils.dart';
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/utils/widget_stack/widget_stack_singleton.dart';
+
+import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
+import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
+import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 
 import '../mock_classes.dart';
 import '../mock_classes.mocks.dart';
@@ -63,7 +64,7 @@ void main() {
       );
       es = MockExplorerService();
       when(es.initialized).thenReturn(ValueNotifier(true));
-      when(es.itemList).thenReturn(ValueNotifier(itemList));
+      when(es.listings).thenReturn(ValueNotifier(itemList));
       explorerService.instance = es;
 
       service = W3MServiceSpy();

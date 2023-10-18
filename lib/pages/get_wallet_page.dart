@@ -14,8 +14,7 @@ import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_ser
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
-
-import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 
 class GetWalletPage extends StatelessWidget {
   const GetWalletPage() : super(key: Web3ModalKeyConstants.getAWalletPageKey);
