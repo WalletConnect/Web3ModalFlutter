@@ -1,3 +1,7 @@
+## 3.0.0-beta06
+
+- Bug fixes
+  
 ## 3.0.0-beta05
 
 - Minor changes in documenation

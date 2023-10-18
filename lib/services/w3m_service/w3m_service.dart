@@ -11,6 +11,7 @@ import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/ledger_service/ledger_service_singleton.dart';
+import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/url/launch_url_exception.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
@@ -295,12 +296,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
 
     _currentSelectedChain = chainInfo;
-
-    // Get the token/chain icon. TODO: Not needed, will be removed soon
-    _tokenImageUrl =
-        chainInfo.chainIcon != null && chainInfo.chainIcon!.contains('http')
-            ? chainInfo.chainIcon!
-            : explorerService.instance!.getAssetImageUrl(chainInfo.chainId);
+    // Get the token/chain icon
+    _tokenImageUrl = _getTokenImage(chainInfo);
 
     // Set the requiredNamespace to be the selected chain
     // This will also notify listeners
@@ -308,6 +305,14 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     W3MLoggerUtil.logger.t('[$runtimeType] setSelectedChain success');
     _loadAccountData();
+  }
+
+  String _getTokenImage(W3MChainInfo chainInfo) {
+    if (chainInfo.chainIcon != null && chainInfo.chainIcon!.contains('http')) {
+      return chainInfo.chainIcon!;
+    }
+    final chainImageId = AssetUtil.getChainIconId(chainInfo.chainId);
+    return explorerService.instance!.getAssetImageUrl(chainImageId);
   }
 
   @override
