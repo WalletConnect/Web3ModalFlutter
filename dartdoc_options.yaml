@@ -1,32 +1,52 @@
 dartdoc:
   nodoc:
     [
+      # constants
       "lib/constants/key_constants.dart",
       "lib/constants/string_constants.dart",
-      "lib/constants/url_constants.dart",
-      "lib/models/grid_item_modal.dart",
+      "lib/constants/urls_constants.dart",
+      # models
+      "lib/models/grid_item.dart",
       "lib/models/w3m_wallet_info.dart",
+      # pages
       "lib/pages/*.dart",
+      # services
       "lib/services/blockchain_api_service/*.dart",
       "lib/services/explorer_service/*.dart",
+      "lib/services/explorer_service/models/*.dart",
       "lib/services/ledger_service/*.dart",
       "lib/services/network_service/*.dart",
       "lib/services/storage_service/*.dart",
+      "lib/services/w3m_service/w3m_services_instances.dart",
+      # theme
       "lib/theme/constants.dart",
+      # utils
+      "lib/utils/core/*.dart",
+      "lib/utils/platform/*.dart",
+      "lib/utils/toast/*.dart",
+      "lib/utils/url/*.dart",
       "lib/utils/asset_util.dart",
       "lib/utils/eth_util.dart",
       "lib/utils/util.dart",
+      # widgets
       "lib/widgets/_unused/*.dart",
+      "lib/widgets/_unused/disconnect/*.dart",
       "lib/widgets/avatars/*.dart",
       "lib/widgets/buttons/*.dart",
       "lib/widgets/help/*.dart",
       "lib/widgets/icons/*.dart",
       "lib/widgets/lists/*.dart",
+      "lib/widgets/lists/grid_items/*.dart",
+      "lib/widgets/lists/list_items/*.dart",
       "lib/widgets/miscellaneous/*.dart",
       "lib/widgets/navigation/*.dart",
       "lib/widgets/text/*.dart",
+      "lib/widgets/toast/*.dart",
       "lib/widgets/value_listenable_builders/*.dart",
       "lib/widgets/widget_stack/*.dart",
+      "lib/widgets/w3m_qr_code.dart",
+      "lib/widgets/web3modal_provider.dart",
+      "lib/widgets/web3modal.dart",
     ]
   exclude: [
     "appcheck",
