@@ -4,6 +4,7 @@ import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
+import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 
@@ -18,12 +19,18 @@ class NetworkButton extends StatelessWidget {
   final BaseButtonSize size;
   final VoidCallback? onTap;
 
+  String _getImageUrl(W3MChainInfo chainInfo) {
+    if (chainInfo.chainIcon != null && chainInfo.chainIcon!.contains('http')) {
+      return chainInfo.chainIcon!;
+    }
+    final chainImageId = AssetUtil.getChainIconId(chainInfo.chainId);
+    return explorerService.instance!.getAssetImageUrl(chainImageId);
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
-    final imageUrl = chainInfo != null
-        ? explorerService.instance!.getAssetImageUrl(chainInfo!.chainIcon)
-        : null;
+    final imageUrl = chainInfo != null ? _getImageUrl(chainInfo!) : null;
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final borderRadius = radiuses.isSquare() ? 0.0 : size.height / 2;
     return BaseButton(

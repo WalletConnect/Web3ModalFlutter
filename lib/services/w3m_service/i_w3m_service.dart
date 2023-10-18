@@ -1,3 +1,4 @@
+import 'package:event/event.dart';
 import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_v2/apis/sign_api/models/proposal_models.dart';
 import 'package:walletconnect_flutter_v2/apis/sign_api/models/session_models.dart';
@@ -77,8 +78,12 @@ abstract class IW3MService with ChangeNotifier {
   /// Sets the [selectedWallet] to be connected
   Future<void> selectWallet({required W3MWalletInfo? walletInfo});
 
+  Future<void> expirePreviousInactivePairings();
+
   /// This will do nothing if [isConnected] is true.
-  Future<void> rebuildConnectionUri();
+  Future<void> buildConnectionUri();
+
+  final Event<EventArgs> onPairingExpire = Event();
 
   // TODO remove the walletInfo argument as not really needed
   /// Connects the [selectedWallet] previously selected

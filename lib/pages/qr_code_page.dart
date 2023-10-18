@@ -9,9 +9,8 @@ import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dar
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item_simple.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
-
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/toast/toast_message.dart';
+import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
 
 class QRCodePage extends StatelessWidget {
   const QRCodePage() : super(key: Web3ModalKeyConstants.qrCodePageKey);

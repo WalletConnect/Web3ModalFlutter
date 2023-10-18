@@ -13,11 +13,10 @@ dependencies:
     sdk: flutter
   web3modal_flutter:
     path: ../
-  walletconnect_modal_flutter: ^2.1.0
-  walletconnect_flutter_v2: ^2.1.1
+  walletconnect_flutter_v2: ^2.1.5
   cupertino_icons: ^1.0.2
   get_it: ^7.6.0
-  logger: ^1.4.0
+  logger: ^2.0.2+1
   fl_toast: ^3.1.0
   smooth_page_indicator: ^1.1.0
   web3dart: ^2.6.1

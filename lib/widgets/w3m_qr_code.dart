@@ -1,3 +1,4 @@
+import 'package:event/event.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter_wc/qr_flutter_wc.dart';
 
@@ -30,9 +31,23 @@ class _QRCodeWidgetState extends State<QRCodeWidget> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _service = Web3ModalProvider.of(context).service;
-      await _service?.rebuildConnectionUri();
-      setState(() {});
+      _service!.addListener(_rebuildListener);
+      _service!.onPairingExpire.subscribe(_onPairingExpire);
+      await _service!.buildConnectionUri();
     });
+  }
+
+  void _rebuildListener() => setState(() {});
+  void _onPairingExpire(EventArgs? args) async {
+    await _service!.buildConnectionUri();
+  }
+
+  @override
+  void dispose() async {
+    _service!.onPairingExpire.unsubscribe(_onPairingExpire);
+    _service!.removeListener(_rebuildListener);
+    _service!.expirePreviousInactivePairings();
+    super.dispose();
   }
 
   @override

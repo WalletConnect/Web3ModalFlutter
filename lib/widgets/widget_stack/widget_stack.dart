@@ -1,12 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-// import 'package:web3modal_flutter/pages/qr_code_and_wallet_list_page.dart';
 import 'package:web3modal_flutter/pages/wallets_list_short_page.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/i_widget_stack.dart';
 //
-import 'package:walletconnect_modal_flutter/services/utils/platform/i_platform_utils.dart';
-import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
+import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
 
 class WidgetStack extends IWidgetStack {
   final List<Widget> _stack = [];

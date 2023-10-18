@@ -42,7 +42,7 @@ class CoreUtils extends ICoreUtils {
 
     String safeAppUrl = createSafeUrl(appUrl);
     String encodedWcUrl = Uri.encodeComponent(wcUri);
-    W3MLoggerUtil.logger.v('[$runtimeType] Encoded WC URL: $encodedWcUrl');
+    W3MLoggerUtil.logger.t('[$runtimeType] Encoded WC URL: $encodedWcUrl');
 
     return Uri.parse('${safeAppUrl}wc?uri=$encodedWcUrl');
   }
@@ -60,7 +60,7 @@ class CoreUtils extends ICoreUtils {
     }
 
     String encodedWcUrl = Uri.encodeComponent(wcUri);
-    W3MLoggerUtil.logger.v('[$runtimeType] Encoded WC URL: $encodedWcUrl');
+    W3MLoggerUtil.logger.t('[$runtimeType] Encoded WC URL: $encodedWcUrl');
 
     return Uri.parse('${plainAppUrl}wc?uri=$encodedWcUrl');
   }

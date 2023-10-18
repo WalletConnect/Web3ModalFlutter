@@ -4,8 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:universal_io/io.dart';
-import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
-
+import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.dart';
@@ -13,9 +12,8 @@ import 'package:web3modal_flutter/services/explorer_service/models/api_response.
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
-
-import 'package:walletconnect_modal_flutter/services/utils/platform/i_platform_utils.dart';
-import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
+import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
 
 class ExplorerService implements IExplorerService {
   static const _apiUrl = 'https://api.web3modal.com';
@@ -104,7 +102,7 @@ class ExplorerService implements IExplorerService {
     );
     updateRecentPosition(recentWalletId);
     initialized.value = true;
-    W3MLoggerUtil.logger.v('[$runtimeType] init() done');
+    W3MLoggerUtil.logger.t('[$runtimeType] init() done');
   }
 
   @override
@@ -121,7 +119,7 @@ class ExplorerService implements IExplorerService {
 
     _listings = [..._listings, ...newListings];
     listings.value = _listings;
-    W3MLoggerUtil.logger.v('[$runtimeType] paginate() ${newParams.toJson()}');
+    W3MLoggerUtil.logger.t('[$runtimeType] paginate() ${newParams.toJson()}');
   }
 
   @override
@@ -129,8 +127,12 @@ class ExplorerService implements IExplorerService {
       '$_apiUrl/getWalletImage/$imageId';
 
   @override
-  String getAssetImageUrl(String imageId) =>
-      '$_apiUrl/public/getAssetImage/$imageId';
+  String getAssetImageUrl(String imageId) {
+    if (imageId.contains('http')) {
+      return imageId;
+    }
+    return '$_apiUrl/public/getAssetImage/$imageId';
+  }
 
   @override
   String? getRedirect({required String name}) {
@@ -184,14 +186,17 @@ class ExplorerService implements IExplorerService {
         totalListings.value += apiResponse.count;
       }
       W3MLoggerUtil.logger
-          .v('[$runtimeType] _fetchListings() $uri ${params?.toJson()}');
+          .t('[$runtimeType] _fetchListings() $uri ${params?.toJson()}');
       return apiResponse.data
           .toList()
           .sortByRecommended(featuredWalletIds)
           .toW3MWalletInfo();
     } catch (e, s) {
-      W3MLoggerUtil.logger
-          .e('[$runtimeType] Error fetching wallet listings', e, s);
+      W3MLoggerUtil.logger.e(
+        '[$runtimeType] Error fetching wallet listings',
+        error: e,
+        stackTrace: s,
+      );
       throw Exception(e);
     }
   }
@@ -212,8 +217,11 @@ class ExplorerService implements IExplorerService {
       );
       return apiResponse.data.toList();
     } catch (e, s) {
-      W3MLoggerUtil.logger
-          .e('[$runtimeType] Error fetching native apps data', e, s);
+      W3MLoggerUtil.logger.e(
+        '[$runtimeType] Error fetching native apps data',
+        error: e,
+        stackTrace: s,
+      );
       throw Exception(e);
     }
   }
@@ -239,7 +247,7 @@ class ExplorerService implements IExplorerService {
     }
     _listings = currentListings;
     listings.value = _listings;
-    W3MLoggerUtil.logger.v('[$runtimeType] updateRecentPosition($recentId)');
+    W3MLoggerUtil.logger.t('[$runtimeType] updateRecentPosition($recentId)');
   }
 
   @override
@@ -256,7 +264,7 @@ class ExplorerService implements IExplorerService {
     }).toList();
     listings.value = filtered;
 
-    W3MLoggerUtil.logger.v('[$runtimeType] search $q');
+    W3MLoggerUtil.logger.t('[$runtimeType] search $q');
     await _searchListings(query: q);
   }
 
@@ -272,7 +280,7 @@ class ExplorerService implements IExplorerService {
     );
 
     listings.value = [...listings.value, ...newListins];
-    W3MLoggerUtil.logger.v('[$runtimeType] _searchListings $query');
+    W3MLoggerUtil.logger.t('[$runtimeType] _searchListings $query');
   }
 
   String _getPlatformType() {

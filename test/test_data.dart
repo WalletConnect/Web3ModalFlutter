@@ -1,117 +1,116 @@
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:walletconnect_modal_flutter/models/listings.dart';
-import 'package:walletconnect_modal_flutter/widgets/grid_list/grid_list_item_model.dart';
+import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
+import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 
 final List<Listing> testListings1 = [
-  const Listing(
+  Listing(
     id: '1',
     name: 'Test1',
     homepage: 'https://test1.com',
     imageId: 'test',
-    app: App(),
-    mobile: Redirect(
-      universal: 'https://test1.com',
-      native: 'https://test1.com',
-    ),
-    desktop: Redirect(),
+    // app: App(),
+    // mobile: Redirect(
+    //   universal: 'https://test1.com',
+    //   native: 'https://test1.com',
+    // ),
+    // desktop: Redirect(),
+    order: 1,
   ),
-  const Listing(
+  Listing(
     id: '2',
     name: 'Test2',
     homepage: 'https://test2.com',
     imageId: 'test',
-    app: App(),
-    mobile: Redirect(
-      universal: 'https://test2.com',
-      native: 'https://test2.com',
-    ),
-    desktop: Redirect(),
+    // app: App(),
+    // mobile: Redirect(
+    //   universal: 'https://test2.com',
+    //   native: 'https://test2.com',
+    // ),
+    // desktop: Redirect(),
+    order: 2,
   ),
 ];
 
 final List<Listing> testListings2 = [
-  const Listing(
+  Listing(
     id: '1',
     name: 'Test1',
     homepage: 'https://test1.com',
     imageId: 'test',
-    app: App(),
-    mobile: Redirect(
-      universal: 'https://test1.com',
-      native: 'https://test1.com',
-    ),
-    desktop: Redirect(),
+    // app: App(),
+    // mobile: Redirect(
+    //   universal: 'https://test1.com',
+    //   native: 'https://test1.com',
+    // ),
+    // desktop: Redirect(),
+    order: 3,
   ),
-  const Listing(
+  Listing(
     id: '2',
     name: 'Test2',
     homepage: 'https://test2.com',
     imageId: 'test',
-    app: App(),
-    mobile: Redirect(
-      universal: 'https://test2.com',
-      native: 'https://test2.com',
-    ),
-    desktop: Redirect(),
+    // app: App(),
+    // mobile: Redirect(
+    //   universal: 'https://test2.com',
+    //   native: 'https://test2.com',
+    // ),
+    // desktop: Redirect(),
+    order: 4,
   ),
-  const Listing(
+  Listing(
     id: '3',
     name: 'Test3',
     homepage: 'https://test3.com',
     imageId: 'test',
-    app: App(),
-    mobile: Redirect(
-      universal: 'https://test3.com',
-      native: 'https://test3.com',
-    ),
-    desktop: Redirect(),
+    // app: App(),
+    // mobile: Redirect(
+    //   universal: 'https://test3.com',
+    //   native: 'https://test3.com',
+    // ),
+    // desktop: Redirect(),
+    order: 5,
   ),
-  const Listing(
+  Listing(
     id: '4',
     name: 'Test4',
     homepage: 'https://test4.com',
     imageId: 'test',
-    app: App(),
-    mobile: Redirect(
-      universal: 'https://test4.com',
-      native: 'https://test4.com',
-    ),
-    desktop: Redirect(),
+    // app: App(),
+    // mobile: Redirect(
+    //   universal: 'https://test4.com',
+    //   native: 'https://test4.com',
+    // ),
+    // desktop: Redirect(),
+    order: 6,
   ),
-  const Listing(
+  Listing(
     id: '5',
     name: 'Test5',
     homepage: 'https://test5.com',
     imageId: 'test',
-    app: App(),
-    mobile: Redirect(
-      universal: 'https://test5.com',
-      native: 'https://test5.com',
-    ),
-    desktop: Redirect(),
+    // app: App(),
+    // mobile: Redirect(
+    //   universal: 'https://test5.com',
+    //   native: 'https://test5.com',
+    // ),
+    // desktop: Redirect(),
+    order: 7,
   ),
 ];
 
-final List<GridListItemModel<WalletData>> itemList = testListings2.map((e) {
-  return GridListItemModel<WalletData>(
-    image: e.imageId,
-    id: e.id,
-    title: e.name,
-    data: WalletData(
-      listing: e,
-      installed: false,
-      recent: false,
-    ),
+final itemList = testListings2.map((e) {
+  return W3MWalletInfo(
+    listing: e,
+    installed: false,
+    recent: false,
   );
 }).toList();
 
-final ListingResponse testResponse1 = ListingResponse(
-  listings: Map.fromIterable(
-    testListings1,
-    key: (e) => e.id,
-  ),
-  total: testListings1.length,
+final testResponse1 = ApiResponse<Listing>(
+  data: testListings1,
+  count: testListings1.length,
 );
 
 const metadata = PairingMetadata(

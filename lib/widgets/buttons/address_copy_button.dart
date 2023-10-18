@@ -6,8 +6,8 @@ import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/text/w3m_address.dart';
 
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/toast/toast_message.dart';
+import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
 
 class W3MAddressWithCopyButton extends StatelessWidget {
   const W3MAddressWithCopyButton({super.key});

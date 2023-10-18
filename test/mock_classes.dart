@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_v2/apis/core/relay_client/relay_client.dart';
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service.dart';
-import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils.dart';
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils.dart';
-import 'package:walletconnect_modal_flutter/services/utils/url/url_utils.dart';
-import 'package:walletconnect_modal_flutter/services/utils/widget_stack/widget_stack.dart';
-import 'package:walletconnect_modal_flutter/walletconnect_modal_flutter.dart';
 import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/ledger_service/ledger_service.dart';
 import 'package:web3modal_flutter/services/network_service/network_service.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service.dart';
+import 'package:web3modal_flutter/utils/platform/platform_utils.dart';
+import 'package:web3modal_flutter/utils/toast/toast_utils.dart';
+import 'package:web3modal_flutter/utils/url/url_utils.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:web3modal_flutter/widgets/widget_stack/widget_stack.dart';
 
 import 'mock_classes.mocks.dart';
 
 @GenerateMocks([
   ExplorerService,
-  WalletConnectModalService,
   W3MService,
   UrlUtils,
   PlatformUtils,

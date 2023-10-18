@@ -3,9 +3,9 @@
 import 'package:event/event.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 
-import 'package:walletconnect_modal_flutter/services/explorer/explorer_service_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils_singleton.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart';
 import 'package:web3modal_flutter/services/network_service/network_service_singleton.dart';
@@ -102,11 +102,7 @@ void main() {
           .thenReturn('1');
       when(mockStorageService.setString(W3MService.selectedChainId, any))
           .thenAnswer((_) => Future.value(true));
-      when(
-        es.getAssetImageUrl(
-          imageId: anyNamed('imageId'),
-        ),
-      ).thenReturn('abc');
+      when(es.getAssetImageUrl('imageId')).thenReturn('abc');
       when(es.getRedirect(name: anyNamed('name'))).thenReturn(null);
       when(mockEVMService.getBalance(any, any)).thenAnswer(
         (_) => Future.value(1.0),
@@ -212,7 +208,7 @@ void main() {
         verify(
           mockStorageService.setString(W3MService.selectedChainId, '1'),
         ).called(1);
-        verify(es.getAssetImageUrl(imageId: anyNamed('imageId'))).called(1);
+        verify(es.getAssetImageUrl('imageId')).called(1);
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
         expect(service.selectedChain, W3MChainPresets.chains['1']);
@@ -249,7 +245,7 @@ void main() {
         verify(
           mockStorageService.setString(W3MService.selectedChainId, '1'),
         ).called(1);
-        verify(es.getAssetImageUrl(imageId: anyNamed('imageId'))).called(1);
+        verify(es.getAssetImageUrl('imageId')).called(1);
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
         expect(service.selectedChain, W3MChainPresets.chains['1']);
@@ -266,7 +262,7 @@ void main() {
         verify(
           mockStorageService.setString(W3MService.selectedChainId, '137'),
         ).called(1);
-        verify(es.getAssetImageUrl(imageId: anyNamed('imageId'))).called(1);
+        verify(es.getAssetImageUrl('imageId')).called(1);
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
         expect(service.selectedChain, W3MChainPresets.chains['137']);

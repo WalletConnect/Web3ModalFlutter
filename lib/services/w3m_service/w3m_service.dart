@@ -12,6 +12,7 @@ import 'package:web3modal_flutter/services/explorer_service/explorer_service.dar
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/ledger_service/ledger_service_singleton.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/url/launch_url_exception.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
@@ -21,18 +22,15 @@ import 'package:web3modal_flutter/services/network_service/network_service_singl
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
-import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/models/w3m_chains_presets.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 import 'package:web3modal_flutter/widgets/web3modal.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/services/w3m_service/w3m_services_instances.dart';
-
-import 'package:walletconnect_modal_flutter/models/launch_url_exception.dart';
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_message.dart';
-import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/toast/toast_message.dart';
+import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 
 class W3MServiceException implements Exception {
   final dynamic message;
@@ -110,6 +108,11 @@ class W3MService with ChangeNotifier implements IW3MService {
   @override
   String? get address => _address;
 
+  @override
+  final Event<EventArgs> onPairingExpire = Event();
+
+  bool _connectingWallet = false;
+
   W3MService({
     IWeb3App? web3App,
     String? projectId,
@@ -176,6 +179,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     _isInitialized = true;
     _initError = null;
 
+    await expirePreviousInactivePairings();
+
     _registerListeners();
 
     try {
@@ -184,12 +189,19 @@ class W3MService with ChangeNotifier implements IW3MService {
       throw W3MServiceException(e, s);
     }
 
-    if (_web3App!.sessions.getAll().isNotEmpty) {
+    final currentPairings = _web3App!.pairings.getAll();
+    final currentSessions = _web3App!.sessions.getAll();
+
+    if (currentSessions.isNotEmpty) {
       _isConnected = true;
-      _currentSession = _web3App!.sessions.getAll().first;
+      _currentSession = currentSessions.first;
       _address = NamespaceUtils.getAccount(
         _currentSession!.namespaces.values.first.accounts.first,
       );
+      // session should not outlive the pairing
+      if (currentPairings.isEmpty) {
+        await disconnect();
+      }
     }
 
     try {
@@ -233,7 +245,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       }
     }
 
-    W3MLoggerUtil.logger.v('[$runtimeType] initialized');
+    W3MLoggerUtil.logger.t('[$runtimeType] initialized');
     _notify();
   }
 
@@ -263,11 +275,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     // Store the chain for when we reload the app.
     await storageService.instance.setString(selectedChainId, chainInfo.chainId);
 
-    // Get the token/chain icon.
-    _tokenImageUrl = explorerService.instance!.getAssetImageUrl(
-      AssetUtil.getChainIconAssetId(chainInfo.chainId),
-    );
-
     // TODO all this logic about switching chain seems odd. A full test has to be done.
     final hasValidSession = isConnected && _currentSession != null;
     if (switchChain && hasValidSession && _currentSelectedChain != null) {
@@ -289,11 +296,17 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     _currentSelectedChain = chainInfo;
 
+    // Get the token/chain icon. TODO: Not needed, will be removed soon
+    _tokenImageUrl =
+        chainInfo.chainIcon != null && chainInfo.chainIcon!.contains('http')
+            ? chainInfo.chainIcon!
+            : explorerService.instance!.getAssetImageUrl(chainInfo.chainId);
+
     // Set the requiredNamespace to be the selected chain
     // This will also notify listeners
     _setRequiredNamespaces(_currentSelectedChain!.requiredNamespaces);
 
-    W3MLoggerUtil.logger.v('[$runtimeType] setSelectedChain success');
+    W3MLoggerUtil.logger.t('[$runtimeType] setSelectedChain success');
     _loadAccountData();
   }
 
@@ -307,8 +320,6 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     _isOpen = true;
 
-    rebuildConnectionUri();
-
     // Reset the explorer
     explorerService.instance!.search(query: '');
     widgetStack.instance.clear();
@@ -316,8 +327,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     _context = context;
 
     final isBottomSheet = platformUtils.instance.isBottomSheet();
-
-    _notify(); // TODO is it needed?
 
     final theme = Web3ModalTheme.maybeOf(_context!);
     final childWidget = theme == null
@@ -366,10 +375,19 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   @override
-  Future<void> rebuildConnectionUri() async {
+  Future<void> expirePreviousInactivePairings() async {
+    for (var pairing in _web3App!.pairings.getAll()) {
+      if (!pairing.active) {
+        await _web3App!.core.expirer.expire(pairing.topic);
+      }
+    }
+  }
+
+  @override
+  Future<void> buildConnectionUri() async {
     // If we aren't connected, connect!
     if (!_isConnected) {
-      W3MLoggerUtil.logger.v(
+      W3MLoggerUtil.logger.t(
         '[$runtimeType] Connecting to WalletConnect, '
         'required namespaces: $requiredNamespaces, '
         'optional namespaces: $optionalNamespaces',
@@ -394,8 +412,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
   }
 
-  bool _connectingWallet = false;
-
   @override
   Future<void> connectWallet([W3MWalletInfo? walletInfo]) async {
     _checkInitialized();
@@ -412,7 +428,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _connectingWallet = true;
 
     try {
-      await rebuildConnectionUri();
+      await buildConnectionUri();
       await urlUtils.instance.navigateDeepLink(
         nativeLink: walletToConnect.listing.mobileLink,
         universalLink: walletToConnect.listing.webappLink,
@@ -445,7 +461,7 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     final redirect = _constructRedirect();
 
-    W3MLoggerUtil.logger.v(
+    W3MLoggerUtil.logger.t(
       '[$runtimeType] Launching wallet: $redirect, ${_currentSession?.peer.metadata}',
     );
 
@@ -560,6 +576,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _web3App!.core.relayClient.onRelayClientError.subscribe(onRelayClientError);
     _web3App!.onSessionEvent.subscribe(onSessionEvent);
     _web3App!.onSessionUpdate.subscribe(onSessionUpdate);
+    _web3App!.core.pairing.onPairingExpire.subscribe(onPairingExpireEvent);
   }
 
   void _unregisterListeners() {
@@ -571,6 +588,7 @@ class W3MService with ChangeNotifier implements IW3MService {
         .unsubscribe(onRelayClientError);
     _web3App!.onSessionEvent.unsubscribe(onSessionEvent);
     _web3App!.onSessionUpdate.unsubscribe(onSessionUpdate);
+    _web3App!.core.pairing.onPairingExpire.unsubscribe(onPairingExpireEvent);
   }
 
   void _setRequiredNamespaces(Map<String, RequiredNamespace> requiredNSpaces) {
@@ -597,7 +615,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       return;
     }
 
-    W3MLoggerUtil.logger.v('[$runtimeType] _loadAccountData');
+    W3MLoggerUtil.logger.t('[$runtimeType] _loadAccountData');
     // Get the chain balance.
     _chainBalance = await ledgerService.instance.getBalance(
       _currentSelectedChain!.rpcUrl,
@@ -615,7 +633,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       W3MLoggerUtil.logger
           .e('[$runtimeType] Couldn\'t load avatar, will use default icon');
     }
-    W3MLoggerUtil.logger.v('[$runtimeType] account data laoded');
+    W3MLoggerUtil.logger.t('[$runtimeType] account data laoded');
     _notify();
   }
 
@@ -751,7 +769,7 @@ class W3MService with ChangeNotifier implements IW3MService {
 extension _W3MServiceListeners on W3MService {
   @protected
   void onSessionConnect(SessionConnect? args) async {
-    W3MLoggerUtil.logger.v('[$runtimeType] onSessionConnect: $args');
+    W3MLoggerUtil.logger.t('[$runtimeType] onSessionConnect: $args');
     _isConnected = true;
     _currentSession = args!.session;
     _address = NamespaceUtils.getAccount(
@@ -767,7 +785,7 @@ extension _W3MServiceListeners on W3MService {
 
   @protected
   void onSessionDelete(SessionDelete? args) {
-    W3MLoggerUtil.logger.v('[$runtimeType] onSessionDelete: $args');
+    W3MLoggerUtil.logger.t('[$runtimeType] onSessionDelete: $args');
     _isConnected = false;
     _address = '';
     _currentSession = null;
@@ -776,7 +794,7 @@ extension _W3MServiceListeners on W3MService {
 
   @protected
   void onRelayClientConnect(EventArgs? args) {
-    W3MLoggerUtil.logger.v('[$runtimeType] onRelayClientConnect: $args');
+    W3MLoggerUtil.logger.t('[$runtimeType] onRelayClientConnect: $args');
     _initError = null;
     _notify();
   }
@@ -790,17 +808,23 @@ extension _W3MServiceListeners on W3MService {
 
   @protected
   void onSessionUpdate(SessionUpdate? args) {
-    W3MLoggerUtil.logger.v('[$runtimeType] onSessionUpdate $args');
+    W3MLoggerUtil.logger.t('[$runtimeType] onSessionUpdate $args');
   }
 
   @protected
   void onSessionEvent(SessionEvent? args) {
-    W3MLoggerUtil.logger.v('[$runtimeType] onSessionEvent $args');
+    W3MLoggerUtil.logger.t('[$runtimeType] onSessionEvent $args');
     if (args?.name == EthUtil.chainChanged) {
       if (W3MChainPresets.chains.containsKey('${args?.data}')) {
         final chain = W3MChainPresets.chains['${args?.data}'];
         selectChain(chain);
       }
     }
+  }
+
+  @protected
+  void onPairingExpireEvent(PairingEvent? args) {
+    W3MLoggerUtil.logger.t('[$runtimeType] onPairingExpireEvent $args');
+    onPairingExpire.broadcast();
   }
 }

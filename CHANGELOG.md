@@ -1,3 +1,8 @@
+## 3.0.0-beta04
+
+- Remove completely the dependency from walletconnet_modal_flutter
+- Bug fixes
+  
 ## 3.0.0-beta03
 
 - Fix responsiveness and minor bug fixes

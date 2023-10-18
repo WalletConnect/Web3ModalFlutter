@@ -5,12 +5,12 @@ import 'package:web3modal_flutter/utils/core/i_core_utils.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/i_widget_stack.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 
-import 'package:walletconnect_modal_flutter/services/utils/platform/i_platform_utils.dart';
-import 'package:walletconnect_modal_flutter/services/utils/platform/platform_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/utils/toast/i_toast_utils.dart';
-import 'package:walletconnect_modal_flutter/services/utils/toast/toast_utils_singleton.dart';
-import 'package:walletconnect_modal_flutter/services/utils/url/i_url_utils.dart';
-import 'package:walletconnect_modal_flutter/services/utils/url/url_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
+import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/toast/i_toast_utils.dart';
+import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/url/i_url_utils.dart';
+import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 
 // TODO this is not really needed
 class Web3ModalServiceInstances {

@@ -147,6 +147,45 @@ class _W3MPageState extends State<_W3MPage> {
   }
 
   void _initializeService() async {
+    // W3MChainPresets.chains.removeWhere((key, value) => key == '1');
+    W3MChainPresets.chains.putIfAbsent(
+      '42220',
+      () => W3MChainInfo(
+        chainName: 'Celo',
+        namespace: 'eip155:42220',
+        chainId: '42220',
+        tokenName: 'CELO',
+        requiredNamespaces: {
+          'eip155': const RequiredNamespace(
+            methods: [
+              'personal_sign',
+              'eth_signTypedData',
+              'eth_sendTransaction',
+            ],
+            chains: ['eip155:42220'],
+            events: [
+              'chainChanged',
+              'accountsChanged',
+            ],
+          ),
+        },
+        optionalNamespaces: {
+          'eip155': const RequiredNamespace(
+            methods: [
+              'wallet_switchEthereumChain',
+              'wallet_addEthereumChain',
+            ],
+            chains: ['eip155:42220'],
+            events: [],
+          ),
+        },
+        rpcUrl: 'https://1rpc.io/celo',
+        blockExplorer: W3MBlockExplorer(
+          name: 'Celo Scan',
+          url: 'https://celoscan.io',
+        ),
+      ),
+    );
     _w3mService = W3MService(
       web3App: _web3App,
       featuredWalletIds: {
