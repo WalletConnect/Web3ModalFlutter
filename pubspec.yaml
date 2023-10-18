@@ -17,7 +17,7 @@ dependencies:
   flutter_svg: ^2.0.6
   freezed_annotation: ^2.2.0
   hexagon: ^0.2.0
-  http: ^0.13.6
+  http: ^1.1.0
   json_annotation: ^4.8.1
   logger: ^2.0.2+1
   mockito: ^5.4.2
