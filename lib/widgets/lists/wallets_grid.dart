@@ -63,7 +63,7 @@ class WalletsGrid extends StatelessWidget {
       }
     }
 
-    return Container(
+    return Padding(
       padding: const EdgeInsets.only(bottom: kPadding12),
       child: Wrap(
         spacing: kGridAxisSpacing,

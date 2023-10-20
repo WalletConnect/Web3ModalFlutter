@@ -104,7 +104,7 @@ class ResponsiveData extends InheritedWidget {
   }
 
   static Size gridItemSzieOf(BuildContext context) {
-    final width = (maxWidthOf(context) / 4) - (kGridAxisSpacing) - 4.0;
+    final width = (maxWidthOf(context) / 4) - (kGridAxisSpacing) - 3.0;
     return Size(width, width * 1.30);
   }
 

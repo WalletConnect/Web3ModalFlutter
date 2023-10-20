@@ -27,7 +27,7 @@ class _Web3ModalState extends State<Web3Modal> {
     widgetStack.instance.addListener(_widgetStackUpdated);
 
     if (widget.startWidget != null) {
-      widgetStack.instance.add(widget.startWidget!);
+      widgetStack.instance.push(widget.startWidget!, renderScreen: true);
     } else {
       widgetStack.instance.addDefault();
     }

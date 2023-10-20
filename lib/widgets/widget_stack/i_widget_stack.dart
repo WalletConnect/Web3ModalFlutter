@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 
 abstract class IWidgetStack with ChangeNotifier {
   abstract final ValueListenable<Widget> current;
+  abstract final ValueNotifier<bool> onRenderScreen;
 
   /// Returns the current widget.
   Widget getCurrent();
 
   /// Pushes a widget to the stack.
-  void add(Widget widget);
+  void push(Widget widget, {bool renderScreen = false});
 
   /// Removes a widget from the stack.
   void pop();

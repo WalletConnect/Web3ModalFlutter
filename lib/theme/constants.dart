@@ -7,6 +7,7 @@ const kSearchFieldHeight = 40.0;
 
 const kPadding16 = 16.0;
 const kPadding12 = 12.0;
+const kPadding8 = 8.0;
 const kPadding6 = 6.0;
 
 const kGridAxisSpacing = 12.0;

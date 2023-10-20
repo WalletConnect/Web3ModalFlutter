@@ -43,7 +43,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
       leftAction: NavbarActionButton(
         asset: 'assets/icons/help.svg',
         action: () {
-          widgetStack.instance.add(const AboutWallets());
+          widgetStack.instance.push(const AboutWallets());
         },
       ),
       safeAreaLeft: true,
@@ -59,7 +59,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
             return WalletsList(
               onTapWallet: (data) {
                 service.selectWallet(walletInfo: data);
-                widgetStack.instance.add(const ConnectWalletPage());
+                widgetStack.instance.push(const ConnectWalletPage());
               },
               itemList: itemsToShow.toList(),
               lastItem: AllWalletsItem(
@@ -70,7 +70,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
                   },
                 ),
                 onTap: () {
-                  widgetStack.instance.add(const WalletsListLongPage());
+                  widgetStack.instance.push(const WalletsListLongPage());
                 },
               ),
             );

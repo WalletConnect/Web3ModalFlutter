@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 
 // TODO change transition type to reflect Web implementation
 class TransitionContainer extends StatefulWidget {
@@ -20,13 +21,12 @@ class _TransitionContainerState extends State<TransitionContainer>
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
-  late Widget _oldChild;
+  late Widget _currentScreen;
 
   @override
   void initState() {
     super.initState();
-
-    _oldChild = widget.child;
+    _currentScreen = widget.child;
 
     _fadeController = AnimationController(
       vsync: this,
@@ -56,16 +56,15 @@ class _TransitionContainerState extends State<TransitionContainer>
   }
 
   @override
-  void didUpdateWidget(covariant TransitionContainer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.child.key != widget.child.key) {
+  void didUpdateWidget(covariant TransitionContainer previousScreen) {
+    super.didUpdateWidget(previousScreen);
+    if (previousScreen.child.key != widget.child.key) {
       _fadeController.forward().then((_) {
-        setState(() {
-          _oldChild = widget.child;
-        });
-        Future.delayed(
-          resizeDuration - const Duration(milliseconds: 50),
-        ).then((value) {
+        setState(() => _currentScreen = widget.child);
+        if (!widgetStack.instance.onRenderScreen.value) {
+          widgetStack.instance.onRenderScreen.value = true;
+        }
+        Future.delayed(fadeDuration).then((value) {
           if (mounted) {
             _fadeController.reverse();
           }
@@ -85,7 +84,7 @@ class _TransitionContainerState extends State<TransitionContainer>
             opacity: _fadeAnimation.value,
             child: AnimatedSize(
               duration: resizeDuration,
-              child: _oldChild,
+              child: _currentScreen,
             ),
           ),
         );

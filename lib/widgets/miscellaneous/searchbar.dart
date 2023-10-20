@@ -20,23 +20,97 @@ class Web3ModalSearchBar extends StatefulWidget {
   State<Web3ModalSearchBar> createState() => _Web3ModalSearchBarState();
 }
 
-class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
+class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
+    with TickerProviderStateMixin {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
   final _debouncer = _Debouncer(milliseconds: 200);
 
+  late DecorationTween _decorationTween = DecorationTween(
+    begin: BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Colors.transparent,
+          offset: Offset.zero,
+          blurRadius: 0.0,
+          spreadRadius: 1.0,
+          blurStyle: BlurStyle.normal,
+        ),
+      ],
+    ),
+    end: BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Colors.transparent,
+          offset: Offset.zero,
+          blurRadius: 0.0,
+          spreadRadius: 1.0,
+          blurStyle: BlurStyle.normal,
+        ),
+      ],
+    ),
+  );
+
+  late final AnimationController _animationController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 150),
+  );
+
   @override
   void initState() {
-    _controller.addListener(_updateState);
-    _focusNode.addListener(_updateState);
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final themeColors = Web3ModalTheme.colorsOf(context);
+      final radiuses = Web3ModalTheme.radiusesOf(context);
+      _decorationTween = DecorationTween(
+        begin: BoxDecoration(
+          borderRadius: BorderRadius.circular(radiuses.radiusXS),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.transparent,
+              offset: Offset.zero,
+              blurRadius: 0.0,
+              spreadRadius: 1.0,
+              blurStyle: BlurStyle.normal,
+            ),
+          ],
+        ),
+        end: BoxDecoration(
+          borderRadius: BorderRadius.circular(radiuses.radiusXS),
+          boxShadow: [
+            BoxShadow(
+              color: themeColors.accenGlass015,
+              offset: Offset.zero,
+              blurRadius: 0.0,
+              spreadRadius: 1.0,
+              blurStyle: BlurStyle.normal,
+            ),
+          ],
+        ),
+      );
+      _controller.addListener(_updateState);
+      _focusNode.addListener(_updateState);
+    });
   }
 
-  void _updateState() => setState(() {});
+  bool _hasFocus = false;
+  void _updateState() {
+    if (_focusNode.hasFocus && !_hasFocus) {
+      _hasFocus = _focusNode.hasFocus;
+      _animationController.forward();
+    }
+    if (!_focusNode.hasFocus && _hasFocus) {
+      _hasFocus = _focusNode.hasFocus;
+      _animationController.reverse();
+    }
+    setState(() {});
+  }
 
   @override
   void dispose() {
+    _animationController.dispose();
     _controller.removeListener(_updateState);
+    _controller.dispose();
     _focusNode.removeListener(_updateState);
     super.dispose();
   }
@@ -47,78 +121,95 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar> {
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final unfocusedBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: themeColors.grayGlass015, width: 1.0),
+      borderSide: BorderSide(color: themeColors.grayGlass005, width: 1.0),
       borderRadius: BorderRadius.circular(radiuses.radius2XS),
     );
     final focusedBorder = unfocusedBorder.copyWith(
       borderSide: BorderSide(color: themeColors.accent100, width: 1.0),
     );
 
-    return SizedBox(
-      height: kSearchFieldHeight,
-      child: TextFormField(
-        focusNode: _focusNode,
-        controller: _controller,
-        onChanged: (value) {
-          _debouncer.run(() => widget.onTextChanged(value));
-        },
-        onTapOutside: (_) {
-          widget.onDismissKeyboard?.call(false);
-        },
-        textAlignVertical: TextAlignVertical.center,
-        style: TextStyle(
-          color: themeColors.foreground100,
-          height: 1.5,
-        ),
-        cursorColor: themeColors.accent100,
-        enableSuggestions: false,
-        autocorrect: false,
-        cursorHeight: 20.0,
-        decoration: InputDecoration(
-          isDense: true,
-          prefixIcon: Center(
-            child: SvgPicture.asset(
-              'assets/icons/search.svg',
-              package: 'web3modal_flutter',
-              colorFilter: ColorFilter.mode(
-                themeColors.foreground275,
-                BlendMode.srcIn,
+    return DecoratedBoxTransition(
+      decoration: _decorationTween.animate(_animationController),
+      child: Container(
+        height: kSearchFieldHeight + 8.0,
+        padding: const EdgeInsets.all(4.0),
+        child: Stack(
+          children: [
+            Container(
+              height: kSearchFieldHeight + 8.0,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: themeColors.background125,
+                borderRadius: BorderRadius.circular(radiuses.radius2XS),
               ),
             ),
-          ),
-          prefixIconConstraints: const BoxConstraints(
-            maxHeight: kSearchFieldHeight,
-            minHeight: kSearchFieldHeight,
-            maxWidth: kSearchFieldHeight,
-            minWidth: kSearchFieldHeight,
-          ),
-          labelStyle: themeData.textStyles.paragraph500.copyWith(
-            color: themeColors.inverse100,
-          ),
-          hintText: widget.hint,
-          hintStyle: themeData.textStyles.paragraph500.copyWith(
-            color: themeColors.foreground275,
-            height: 1.5,
-          ),
-          suffixIcon: _controller.value.text.isNotEmpty || _focusNode.hasFocus
-              ? IconButton(
-                  padding: const EdgeInsets.all(0.0),
-                  visualDensity: VisualDensity.compact,
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    _controller.clear();
-                    widget.onDismissKeyboard?.call(true);
-                  },
-                )
-              : null,
-          border: unfocusedBorder,
-          errorBorder: unfocusedBorder,
-          enabledBorder: unfocusedBorder,
-          disabledBorder: unfocusedBorder,
-          focusedBorder: focusedBorder,
-          filled: true,
-          fillColor: themeColors.grayGlass005,
-          contentPadding: const EdgeInsets.all(0.0),
+            TextFormField(
+              focusNode: _focusNode,
+              controller: _controller,
+              onChanged: (value) {
+                _debouncer.run(() => widget.onTextChanged(value));
+              },
+              onTapOutside: (_) {
+                widget.onDismissKeyboard?.call(false);
+              },
+              textAlignVertical: TextAlignVertical.center,
+              style: TextStyle(
+                color: themeColors.foreground100,
+                height: 1.5,
+              ),
+              cursorColor: themeColors.accent100,
+              enableSuggestions: false,
+              autocorrect: false,
+              cursorHeight: 20.0,
+              decoration: InputDecoration(
+                isDense: true,
+                prefixIcon: Center(
+                  child: SvgPicture.asset(
+                    'assets/icons/search.svg',
+                    package: 'web3modal_flutter',
+                    colorFilter: ColorFilter.mode(
+                      themeColors.foreground275,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                prefixIconConstraints: const BoxConstraints(
+                  maxHeight: kSearchFieldHeight,
+                  minHeight: kSearchFieldHeight,
+                  maxWidth: kSearchFieldHeight,
+                  minWidth: kSearchFieldHeight,
+                ),
+                labelStyle: themeData.textStyles.paragraph500.copyWith(
+                  color: themeColors.inverse100,
+                ),
+                hintText: widget.hint,
+                hintStyle: themeData.textStyles.paragraph500.copyWith(
+                  color: themeColors.foreground275,
+                  height: 1.5,
+                ),
+                suffixIcon:
+                    _controller.value.text.isNotEmpty || _focusNode.hasFocus
+                        ? IconButton(
+                            padding: const EdgeInsets.all(0.0),
+                            visualDensity: VisualDensity.compact,
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              _controller.clear();
+                              widget.onDismissKeyboard?.call(true);
+                            },
+                          )
+                        : null,
+                border: unfocusedBorder,
+                errorBorder: unfocusedBorder,
+                enabledBorder: unfocusedBorder,
+                disabledBorder: unfocusedBorder,
+                focusedBorder: focusedBorder,
+                filled: true,
+                fillColor: themeColors.grayGlass005,
+                contentPadding: const EdgeInsets.all(0.0),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -136,5 +227,96 @@ class _Debouncer {
       _timer?.cancel();
     }
     _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
+}
+
+// ignore: unused_element
+class _DecoratedInputBorder extends InputBorder {
+  _DecoratedInputBorder({required this.child, required this.shadow})
+      : super(borderSide: child.borderSide);
+
+  final InputBorder child;
+
+  final BoxShadow shadow;
+
+  @override
+  bool get isOutline => child.isOutline;
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) =>
+      child.getInnerPath(rect, textDirection: textDirection);
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) =>
+      child.getOuterPath(rect, textDirection: textDirection);
+
+  @override
+  EdgeInsetsGeometry get dimensions => child.dimensions;
+
+  @override
+  InputBorder copyWith({
+    BorderSide? borderSide,
+    InputBorder? child,
+    BoxShadow? shadow,
+    bool? isOutline,
+  }) {
+    return _DecoratedInputBorder(
+      child: (child ?? this.child).copyWith(borderSide: borderSide),
+      shadow: shadow ?? this.shadow,
+    );
+  }
+
+  @override
+  ShapeBorder scale(double t) {
+    final scalledChild = child.scale(t);
+
+    return _DecoratedInputBorder(
+      child: scalledChild is InputBorder ? scalledChild : child,
+      shadow: BoxShadow.lerp(null, shadow, t)!,
+    );
+  }
+
+  @override
+  void paint(
+    Canvas canvas,
+    Rect rect, {
+    double? gapStart,
+    double gapExtent = 0.0,
+    double gapPercentage = 0.0,
+    TextDirection? textDirection,
+  }) {
+    final clipPath = Path()
+      ..addRect(const Rect.fromLTWH(-5000, -5000, 10000, 10000))
+      ..addPath(getInnerPath(rect), Offset.zero)
+      ..fillType = PathFillType.evenOdd;
+    canvas.clipPath(clipPath);
+
+    final Paint paint = shadow.toPaint();
+    final Rect bounds = rect.shift(shadow.offset).inflate(shadow.spreadRadius);
+
+    canvas.drawPath(getOuterPath(bounds), paint);
+
+    child.paint(canvas, rect,
+        gapStart: gapStart,
+        gapExtent: gapExtent,
+        gapPercentage: gapPercentage,
+        textDirection: textDirection);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != runtimeType) return false;
+    return other is _DecoratedInputBorder &&
+        other.borderSide == borderSide &&
+        other.child == child &&
+        other.shadow == shadow;
+  }
+
+  @override
+  int get hashCode => Object.hash(borderSide, child, shadow);
+
+  @override
+  String toString() {
+    return '$runtimeType($borderSide, $shadow, $child)';
   }
 }

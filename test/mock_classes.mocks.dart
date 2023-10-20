@@ -2469,6 +2469,14 @@ class MockWidgetStack extends _i1.Mock implements _i36.WidgetStack {
         ),
       ) as _i2.ValueListenable<_i14.Widget>);
   @override
+  _i2.ValueNotifier<bool> get onRenderScreen => (super.noSuchMethod(
+        Invocation.getter(#onRenderScreen),
+        returnValue: _FakeValueNotifier_0<bool>(
+          this,
+          Invocation.getter(#onRenderScreen),
+        ),
+      ) as _i2.ValueNotifier<bool>);
+  @override
   bool get hasListeners => (super.noSuchMethod(
         Invocation.getter(#hasListeners),
         returnValue: false,
@@ -2488,10 +2496,15 @@ class MockWidgetStack extends _i1.Mock implements _i36.WidgetStack {
         ),
       ) as _i14.Widget);
   @override
-  void add(_i14.Widget? widget) => super.noSuchMethod(
+  void push(
+    _i14.Widget? widget, {
+    bool? renderScreen = false,
+  }) =>
+      super.noSuchMethod(
         Invocation.method(
-          #add,
+          #push,
           [widget],
+          {#renderScreen: renderScreen},
         ),
         returnValueForMissingStub: null,
       );
