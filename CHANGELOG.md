@@ -1,4 +1,4 @@
-## 3.0.0-beta07
+## 3.0.0-beta08
 
 - UI improvements
 
