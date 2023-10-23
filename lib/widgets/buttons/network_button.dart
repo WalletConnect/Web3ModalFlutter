@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
@@ -12,11 +13,13 @@ class NetworkButton extends StatelessWidget {
   const NetworkButton({
     super.key,
     this.size = BaseButtonSize.regular,
+    this.serviceStatus = W3MServiceStatus.idle,
     this.chainInfo,
     this.onTap,
   });
   final W3MChainInfo? chainInfo;
   final BaseButtonSize size;
+  final W3MServiceStatus serviceStatus;
   final VoidCallback? onTap;
 
   String _getImageUrl(W3MChainInfo chainInfo) {
@@ -35,7 +38,7 @@ class NetworkButton extends StatelessWidget {
     final borderRadius = radiuses.isSquare() ? 0.0 : size.height / 2;
     return BaseButton(
       size: size,
-      onTap: onTap,
+      onTap: serviceStatus.isInitialized ? onTap : null,
       buttonStyle: ButtonStyle(
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
@@ -64,13 +67,19 @@ class NetworkButton extends StatelessWidget {
           },
         ),
       ),
-      icon: RoundedIcon(
-        assetPath: 'assets/icons/network.svg',
-        imageUrl: imageUrl,
-        size: size.height - 12.0,
-        assetColor: themeColors.inverse100,
-        padding: 6.0,
-      ),
+      icon: serviceStatus.isLoading
+          ? SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : RoundedIcon(
+              assetPath: 'assets/icons/network.svg',
+              imageUrl: imageUrl,
+              size: size.height - 12.0,
+              assetColor: themeColors.inverse100,
+              padding: 6.0,
+            ),
       child: Text(
         chainInfo?.chainName ??
             (size == BaseButtonSize.small

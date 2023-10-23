@@ -80,7 +80,7 @@ class W3MChainPresets {
       rpcUrl: 'https://polygon.drpc.org',
       blockExplorer: W3MBlockExplorer(
         name: 'Explorer',
-        url: 'https://explorer.matic.network/',
+        url: 'https://polygonscan.com',
       ),
     ),
     '43114': W3MChainInfo(
@@ -228,7 +228,7 @@ class W3MChainPresets {
       rpcUrl: 'https://rpc.ankr.com/iotex',
       blockExplorer: W3MBlockExplorer(
         name: 'IOTEX Scan',
-        url: 'https://iotexscan.io/',
+        url: 'https://iotexscan.io',
       ),
     ),
     '1088': W3MChainInfo(

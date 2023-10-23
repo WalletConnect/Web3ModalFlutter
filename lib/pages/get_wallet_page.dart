@@ -1,13 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/constants/urls_constants.dart';
 import 'package:web3modal_flutter/models/grid_item.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
-import 'package:web3modal_flutter/widgets/lists/list_items/explore_all_wallets_item.dart';
+import 'package:web3modal_flutter/theme/w3m_theme.dart';
+import 'package:web3modal_flutter/widgets/lists/list_items/all_wallets_item.dart';
 import 'package:web3modal_flutter/widgets/lists/wallets_list.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
@@ -21,6 +23,7 @@ class GetWalletPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeColors = Web3ModalTheme.colorsOf(context);
     final isPortrait = ResponsiveData.isPortrait(context);
     final maxHeight = isPortrait
         ? (kListItemHeight * 7)
@@ -36,27 +39,35 @@ class GetWalletPage extends StatelessWidget {
             }
 
             final notInstalledItems = items
-                .where((GridItem<W3MWalletInfo> w) => !w.data.installed)
+                .where((GridItem<W3MWalletInfo> w) =>
+                    !w.data.installed && !w.data.recent)
                 .toList();
             final itemsToShow = notInstalledItems
                 .getRange(0, min(5, notInstalledItems.length))
                 .toList();
-            final itemsExploreMore = notInstalledItems
-                .getRange(min(5, notInstalledItems.length),
-                    min(9, notInstalledItems.length))
-                .toList();
 
             return WalletsList(
               itemList: itemsToShow,
-              lastItem: itemsExploreMore.isNotEmpty
-                  ? ExploreAllWalletsItem(
-                      images: itemsExploreMore.map((e) => e.image).toList(),
-                      onTap: () => urlUtils.instance.launchUrl(
-                        Uri.parse(UrlsConstants.exploreAllWallets),
-                        mode: LaunchMode.externalApplication,
-                      ),
-                    )
-                  : null,
+              lastItem: AllWalletsItem(
+                title: 'Explore All',
+                onTap: () => urlUtils.instance.launchUrl(
+                  Uri.parse(UrlsConstants.exploreAllWallets),
+                  mode: LaunchMode.externalApplication,
+                ),
+                trailing: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: SvgPicture.asset(
+                    'assets/icons/arrow_top_right.svg',
+                    package: 'web3modal_flutter',
+                    colorFilter: ColorFilter.mode(
+                      themeColors.foreground200,
+                      BlendMode.srcIn,
+                    ),
+                    width: 18.0,
+                    height: 18.0,
+                  ),
+                ),
+              ),
             );
           },
         ),

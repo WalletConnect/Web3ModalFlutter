@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 
@@ -17,11 +18,13 @@ class ConnectButton extends StatelessWidget {
     super.key,
     this.size = BaseButtonSize.regular,
     this.state = ConnectButtonState.idle,
+    this.serviceStatus = W3MServiceStatus.idle,
     this.titleOverride,
     this.onTap,
   });
   final BaseButtonSize size;
   final ConnectButtonState state;
+  final W3MServiceStatus serviceStatus;
   final String? titleOverride;
   final VoidCallback? onTap;
 
@@ -38,7 +41,11 @@ class ConnectButton extends StatelessWidget {
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final borderRadius = radiuses.isSquare() ? 0.0 : size.height / 2;
     return BaseButton(
-      onTap: disabled || connecting ? null : onTap,
+      onTap: disabled || connecting
+          ? null
+          : serviceStatus.isInitialized
+              ? onTap
+              : null,
       size: size,
       buttonStyle: ButtonStyle(
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
@@ -74,7 +81,7 @@ class ConnectButton extends StatelessWidget {
           },
         ),
       ),
-      child: connecting
+      child: connecting || serviceStatus.isLoading
           ? Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -87,7 +94,11 @@ class ConnectButton extends StatelessWidget {
                   ),
                 ),
                 const SizedBox.square(dimension: 8.0),
-                Text(titleOverride ?? StringConstants.connectButtonConnecting),
+                if (connecting)
+                  Text(
+                      titleOverride ?? StringConstants.connectButtonConnecting),
+                if (serviceStatus.isLoading)
+                  Text(titleOverride ?? StringConstants.connectButtonIdle),
               ],
             )
           : connected
