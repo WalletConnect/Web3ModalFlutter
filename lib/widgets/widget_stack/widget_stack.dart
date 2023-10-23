@@ -16,20 +16,22 @@ class WidgetStack extends IWidgetStack {
   );
 
   @override
-  Widget getCurrent() {
-    return _stack.last;
-  }
+  final ValueNotifier<bool> onRenderScreen = ValueNotifier<bool>(true);
 
   @override
-  void add(Widget widget) {
-    _stack.add(widget);
+  Widget getCurrent() => _stack.last;
 
+  @override
+  void push(Widget widget, {bool renderScreen = false}) {
+    onRenderScreen.value = renderScreen;
+    _stack.add(widget);
     notifyListeners();
   }
 
   @override
   void pop() {
     if (_stack.isNotEmpty) {
+      onRenderScreen.value = false;
       _stack.removeLast();
       notifyListeners();
     } else {
@@ -38,15 +40,14 @@ class WidgetStack extends IWidgetStack {
   }
 
   @override
-  bool canPop() {
-    return _stack.length > 1;
-  }
+  bool canPop() => _stack.length > 1;
 
   @override
   void popUntil(Key key) {
     if (_stack.isEmpty) {
       throw Exception('The stack is empty. No widget to pop.');
     } else {
+      onRenderScreen.value = false;
       while (_stack.isNotEmpty && _stack.last.key != key) {
         _stack.removeLast();
       }
@@ -66,6 +67,7 @@ class WidgetStack extends IWidgetStack {
 
   @override
   void clear() {
+    onRenderScreen.value = false;
     _stack.clear();
     notifyListeners();
   }
@@ -76,7 +78,7 @@ class WidgetStack extends IWidgetStack {
 
     // Choose the state based on platform
     if (pType == PlatformType.mobile) {
-      add(const WalletsListShortPage());
+      push(const WalletsListShortPage(), renderScreen: true);
     } else if (pType == PlatformType.desktop || pType == PlatformType.web) {
       // add(const QRCodeAndWalletListPage());
       // TODO fix non mobile page

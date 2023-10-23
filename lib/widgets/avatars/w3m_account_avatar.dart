@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
@@ -49,8 +50,13 @@ class _W3MAccountAvatarState extends State<W3MAccountAvatar> {
             widget.disabled ? themeColors.foreground300 : Colors.transparent,
             BlendMode.saturation,
           ),
-          child: _avatarUrl != null
-              ? Image.network(_avatarUrl!)
+          child: (_avatarUrl ?? '').isNotEmpty
+              ? CachedNetworkImage(
+                  imageUrl: _avatarUrl!,
+                  fadeOutDuration: Duration.zero,
+                  fadeInDuration: Duration.zero,
+                  placeholderFadeInDuration: Duration.zero,
+                )
               : _buildGradientAvatar(context),
         ),
       ),

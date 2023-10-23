@@ -56,7 +56,7 @@ class AboutWallets extends StatelessWidget {
             const SizedBox(height: 8),
             SimpleIconButton(
               onTap: () {
-                widgetStack.instance.add(const GetWalletPage());
+                widgetStack.instance.push(const GetWalletPage());
               },
               leftIcon: 'assets/icons/wallet.svg',
               title: 'Get a wallet',

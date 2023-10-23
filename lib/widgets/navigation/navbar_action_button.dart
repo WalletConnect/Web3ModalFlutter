@@ -8,9 +8,11 @@ class NavbarActionButton extends StatelessWidget {
     super.key,
     required this.asset,
     required this.action,
+    this.color,
   });
   final String asset;
   final VoidCallback action;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class NavbarActionButton extends StatelessWidget {
           asset,
           package: 'web3modal_flutter',
           colorFilter: ColorFilter.mode(
-            themeColors.foreground100,
+            color ?? themeColors.foreground100,
             BlendMode.srcIn,
           ),
           width: 18.0,

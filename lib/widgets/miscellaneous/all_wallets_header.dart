@@ -16,7 +16,12 @@ class AllWalletsHeader extends StatelessWidget {
     final themeColors = Web3ModalTheme.colorsOf(context);
     return Container(
       decoration: BoxDecoration(color: themeColors.background125),
-      padding: const EdgeInsets.all(kPadding12),
+      padding: const EdgeInsets.only(
+        left: kPadding8,
+        top: kPadding8,
+        bottom: kPadding8,
+        right: kPadding12,
+      ),
       child: Row(
         children: [
           Expanded(
@@ -33,12 +38,12 @@ class AllWalletsHeader extends StatelessWidget {
               },
             ),
           ),
-          const SizedBox.square(dimension: 12.0),
+          const SizedBox.square(dimension: kPadding8),
           IconButton(
             padding: const EdgeInsets.all(1.0),
             visualDensity: VisualDensity.compact,
             onPressed: () {
-              widgetStack.instance.add(const QRCodePage());
+              widgetStack.instance.push(const QRCodePage());
             },
             icon: const ThemedIcon(
               size: kSearchFieldHeight,

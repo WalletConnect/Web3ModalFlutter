@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
@@ -6,12 +7,12 @@ import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 class W3MListAvatar extends StatelessWidget {
   const W3MListAvatar({
     super.key,
-    required this.imageUrl,
+    this.imageUrl,
     this.borderRadius,
     this.isNetwork = false,
     this.color,
   });
-  final String imageUrl;
+  final String? imageUrl;
   final double? borderRadius;
   final bool isNetwork;
   final Color? color;
@@ -47,13 +48,20 @@ class W3MListAvatar extends StatelessWidget {
                 ),
               ),
         clipBehavior: Clip.antiAlias,
-        child: Image.network(
-          imageUrl,
-          headers: coreUtils.instance.getAPIHeaders(projectId),
-          errorBuilder: (context, error, stackTrace) => ColoredBox(
-            color: themeColors.grayGlass005,
-          ),
-        ),
+        child: (imageUrl ?? '').isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: imageUrl!,
+                httpHeaders: coreUtils.instance.getAPIHeaders(projectId),
+                fadeOutDuration: Duration.zero,
+                fadeInDuration: Duration.zero,
+                placeholderFadeInDuration: Duration.zero,
+                errorWidget: (context, url, error) => ColoredBox(
+                  color: themeColors.grayGlass005,
+                ),
+              )
+            : ColoredBox(
+                color: themeColors.grayGlass005,
+              ),
       ),
     );
   }

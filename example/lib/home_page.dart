@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
+import 'package:web3modal_flutter/utils/eth_util.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -29,8 +30,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _initialize() async {
-    _web3App = Web3App(
-      core: Core(projectId: DartDefines.projectId),
+    _web3App = await Web3App.createInstance(
+      projectId: DartDefines.projectId,
       metadata: const PairingMetadata(
         name: 'Web3Modal Flutter Example',
         description: 'Web3Modal Flutter Example',
@@ -157,7 +158,8 @@ class _W3MPageState extends State<_W3MPage> {
     );
 
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
-    // W3MChainPresets.chains.putIfAbsent('42220', () => myCustomChain);
+    W3MChainPresets.chains.putIfAbsent('42220', () => myCustomChain);
+    W3MChainPresets.chains.putIfAbsent('11155111', () => sepoliaTestnet);
     await _w3mService.init();
     // _w3mService.selectChain(myCustomChain);
 
@@ -247,6 +249,32 @@ class _W3MPageState extends State<_W3MPage> {
           url: 'https://celoscan.io',
         ),
       );
+
+  W3MChainInfo sepoliaTestnet = W3MChainInfo(
+    chainName: 'Sepolia Test Network',
+    namespace: 'eip155:11155111',
+    chainId: '11155111',
+    tokenName: 'SETH',
+    requiredNamespaces: {
+      'eip155': const RequiredNamespace(
+        methods: EthUtil.ethRequiredMethods,
+        chains: ['eip155:11155111'],
+        events: EthUtil.ethEvents,
+      ),
+    },
+    optionalNamespaces: {
+      'eip155': const RequiredNamespace(
+        methods: EthUtil.ethOptionalMethods,
+        chains: ['eip155:11155111'],
+        events: [],
+      ),
+    },
+    rpcUrl: 'https://rpc.sepolia.org',
+    blockExplorer: W3MBlockExplorer(
+      name: 'Sepolia Etherscan',
+      url: 'https://sepolia.etherscan.io',
+    ),
+  );
 }
 
 class _ConnectedView extends StatelessWidget {

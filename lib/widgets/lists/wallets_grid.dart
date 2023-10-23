@@ -15,10 +15,12 @@ class WalletsGrid extends StatelessWidget {
     required this.itemList,
     this.onTapWallet,
     this.isPaginating = false,
+    this.scrollController,
   });
   final List<GridItem<W3MWalletInfo>> itemList;
   final Function(W3MWalletInfo walletInfo)? onTapWallet;
   final bool isPaginating;
+  final ScrollController? scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -63,16 +65,24 @@ class WalletsGrid extends StatelessWidget {
       }
     }
 
-    return Container(
-      padding: const EdgeInsets.only(bottom: kPadding12),
-      child: Wrap(
-        spacing: kGridAxisSpacing,
-        runSpacing: kGridAxisSpacing,
-        alignment: WrapAlignment.start,
-        runAlignment: WrapAlignment.start,
-        crossAxisAlignment: WrapCrossAlignment.start,
-        children: children,
+    final itemSize = ResponsiveData.gridItemSzieOf(context);
+    return GridView.builder(
+      controller: scrollController,
+      padding: EdgeInsets.only(
+        bottom: kPadding12 + ResponsiveData.paddingBottomOf(context),
+        left: kPadding12,
+        right: kPadding12,
       ),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: ResponsiveData.gridAxisCountOf(context),
+        mainAxisSpacing: kGridAxisSpacing,
+        crossAxisSpacing: kGridAxisSpacing,
+        childAspectRatio: itemSize.width / itemSize.height,
+      ),
+      itemBuilder: (_, index) {
+        return children[index];
+      },
+      itemCount: children.length,
     );
   }
 }

@@ -19,31 +19,39 @@ class NetworksGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final service = Web3ModalProvider.of(context).service;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: kPadding12),
-      child: Wrap(
-        spacing: kGridAxisSpacing,
-        runSpacing: kGridAxisSpacing,
-        alignment: WrapAlignment.start,
-        runAlignment: WrapAlignment.center,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: itemList
-            .map(
-              (info) => SizedBox(
-                width: ResponsiveData.gridItemSzieOf(context).width,
-                height: ResponsiveData.gridItemSzieOf(context).height,
-                child: WalletGridItem(
-                  onTap: () => onTapNetwork?.call(info.data),
-                  isSelected: service.selectedChain?.chainId == info.id,
-                  imageUrl: info.image,
-                  title: info.title,
-                  isNetwork: true,
-                ),
-              ),
-            )
-            .toList(),
+    final itemSize = ResponsiveData.gridItemSzieOf(context);
+    final children = itemList
+        .map(
+          (info) => SizedBox(
+            width: ResponsiveData.gridItemSzieOf(context).width,
+            height: ResponsiveData.gridItemSzieOf(context).height,
+            child: WalletGridItem(
+              onTap: () => onTapNetwork?.call(info.data),
+              isSelected: service.selectedChain?.chainId == info.id,
+              imageUrl: info.image,
+              title: info.title,
+              isNetwork: true,
+            ),
+          ),
+        )
+        .toList();
+    return GridView.builder(
+      padding: EdgeInsets.only(
+        bottom: kPadding12 + ResponsiveData.paddingBottomOf(context),
+        left: kPadding12,
+        right: kPadding12,
+        top: kPadding12,
       ),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: ResponsiveData.gridAxisCountOf(context),
+        mainAxisSpacing: kGridAxisSpacing,
+        crossAxisSpacing: kGridAxisSpacing,
+        childAspectRatio: itemSize.width / itemSize.height,
+      ),
+      itemBuilder: (_, index) {
+        return children[index];
+      },
+      itemCount: children.length,
     );
   }
 }

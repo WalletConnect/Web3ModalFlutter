@@ -146,7 +146,7 @@ void main() {
 
         await tester.pump();
 
-        verify(mockWidgetStack.add(any)).called(1);
+        verify(mockWidgetStack.push(any)).called(1);
 
         // Copy address button works
         expect(

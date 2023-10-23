@@ -69,7 +69,7 @@ class AccountPage extends StatelessWidget {
                     ),
                     title: service.selectedChain?.chainName ?? '',
                     onTap: () {
-                      widgetStack.instance.add(SelectNetworkPage(
+                      widgetStack.instance.push(SelectNetworkPage(
                         onTapNetwork: (W3MChainInfo chainInfo) {
                           // TODO check what happens when switch can not be done
                           service.selectChain(chainInfo, switchChain: true);

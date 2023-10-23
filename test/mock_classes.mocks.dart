@@ -434,6 +434,15 @@ class MockExplorerService extends _i1.Mock implements _i15.ExplorerService {
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
+  _i4.Future<void> fetchInitialWallets() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchInitialWallets,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
   _i4.Future<void> paginate() => (super.noSuchMethod(
         Invocation.method(
           #paginate,
@@ -466,13 +475,15 @@ class MockExplorerService extends _i1.Mock implements _i15.ExplorerService {
         {#name: name},
       )) as String?);
   @override
-  void updateRecentPosition(String? recentId) => super.noSuchMethod(
+  _i4.Future<void> updateRecentPosition(String? recentId) =>
+      (super.noSuchMethod(
         Invocation.method(
           #updateRecentPosition,
           [recentId],
         ),
-        returnValueForMissingStub: null,
-      );
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
   @override
   void search({String? query}) => super.noSuchMethod(
         Invocation.method(
@@ -2469,6 +2480,14 @@ class MockWidgetStack extends _i1.Mock implements _i36.WidgetStack {
         ),
       ) as _i2.ValueListenable<_i14.Widget>);
   @override
+  _i2.ValueNotifier<bool> get onRenderScreen => (super.noSuchMethod(
+        Invocation.getter(#onRenderScreen),
+        returnValue: _FakeValueNotifier_0<bool>(
+          this,
+          Invocation.getter(#onRenderScreen),
+        ),
+      ) as _i2.ValueNotifier<bool>);
+  @override
   bool get hasListeners => (super.noSuchMethod(
         Invocation.getter(#hasListeners),
         returnValue: false,
@@ -2488,10 +2507,15 @@ class MockWidgetStack extends _i1.Mock implements _i36.WidgetStack {
         ),
       ) as _i14.Widget);
   @override
-  void add(_i14.Widget? widget) => super.noSuchMethod(
+  void push(
+    _i14.Widget? widget, {
+    bool? renderScreen = false,
+  }) =>
+      super.noSuchMethod(
         Invocation.method(
-          #add,
+          #push,
           [widget],
+          {#renderScreen: renderScreen},
         ),
         returnValueForMissingStub: null,
       );

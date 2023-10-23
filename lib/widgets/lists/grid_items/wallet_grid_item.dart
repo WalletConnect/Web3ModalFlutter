@@ -39,7 +39,7 @@ class WalletGridItem extends StatelessWidget {
               child: imageWidget ??
                   W3MListAvatar(
                     borderRadius: radiuses.radiusXS,
-                    imageUrl: imageUrl ?? '',
+                    imageUrl: imageUrl,
                     isNetwork: isNetwork,
                     color: isSelected ? themeColors.accent100 : null,
                   ),
