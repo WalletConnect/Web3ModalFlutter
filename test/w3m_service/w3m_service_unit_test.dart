@@ -4,6 +4,7 @@ import 'package:event/event.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils_singleton.dart';
@@ -157,7 +158,7 @@ void main() {
         verify(mockNetworkService.init()).called(1);
         verify(mockStorageService.init()).called(1);
 
-        expect(service.isInitialized, isTrue);
+        expect(service.status, W3MServiceStatus.initialized);
         final List<String> chainIds = [];
         for (final String id in W3MChainPresets.chains.keys) {
           chainIds.add('eip155:$id');
@@ -180,7 +181,7 @@ void main() {
         verifyNever(mockNetworkService.init());
         verifyNever(mockStorageService.init());
 
-        expect(service.isInitialized, isTrue);
+        expect(service.status, W3MServiceStatus.initialized);
         expect(counter, 2);
 
         service.removeListener(f);

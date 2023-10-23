@@ -27,7 +27,12 @@ class AccountPage extends StatelessWidget {
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: kNavbarHeight / 2),
+            padding: const EdgeInsets.only(
+              top: kNavbarHeight / 2,
+              left: kPadding12,
+              right: kPadding12,
+              bottom: kPadding12,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -35,7 +40,7 @@ class AccountPage extends StatelessWidget {
                 Column(
                   children: [
                     const W3MAccountOrb(size: 72.0),
-                    const SizedBox.square(dimension: 12.0),
+                    const SizedBox.square(dimension: kPadding12),
                     const W3MAddressWithCopyButton(),
                     const W3MBalanceText(),
                     Visibility(
@@ -60,40 +65,34 @@ class AccountPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox.square(dimension: 20.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: AccountListItem(
-                    iconWidget: RoundedIcon(
-                      imageUrl: service.tokenImageUrl,
-                      assetColor: themeColors.background100,
-                    ),
-                    title: service.selectedChain?.chainName ?? '',
-                    onTap: () {
-                      widgetStack.instance.push(SelectNetworkPage(
-                        onTapNetwork: (W3MChainInfo chainInfo) {
-                          // TODO check what happens when switch can not be done
-                          service.selectChain(chainInfo, switchChain: true);
-                          widgetStack.instance.pop();
-                        },
-                      ));
-                    },
+                AccountListItem(
+                  iconWidget: RoundedIcon(
+                    imageUrl: service.tokenImageUrl,
+                    assetColor: themeColors.background100,
                   ),
+                  title: service.selectedChain?.chainName ?? '',
+                  onTap: () {
+                    widgetStack.instance.push(SelectNetworkPage(
+                      onTapNetwork: (W3MChainInfo chainInfo) {
+                        // TODO check what happens when switch can not be done
+                        service.selectChain(chainInfo, switchChain: true);
+                        widgetStack.instance.pop();
+                      },
+                    ));
+                  },
                 ),
-                const SizedBox.square(dimension: 8.0),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: AccountListItem(
-                    iconPath: 'assets/icons/disconnect.svg',
-                    trailing: const SizedBox.shrink(),
-                    title: 'Disconnect',
-                    titleStyle: themeData.textStyles.paragraph600.copyWith(
-                      color: themeColors.foreground200,
-                    ),
-                    onTap: () async {
-                      service.closeModal();
-                      await service.disconnect();
-                    },
+                const SizedBox.square(dimension: kPadding8),
+                AccountListItem(
+                  iconPath: 'assets/icons/disconnect.svg',
+                  trailing: const SizedBox.shrink(),
+                  title: 'Disconnect',
+                  titleStyle: themeData.textStyles.paragraph600.copyWith(
+                    color: themeColors.foreground200,
                   ),
+                  onTap: () async {
+                    service.closeModal();
+                    await service.disconnect();
+                  },
                 ),
               ],
             ),

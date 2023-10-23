@@ -43,9 +43,9 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   var _projectId = '';
 
-  bool _isInitialized = false;
+  W3MServiceStatus _status = W3MServiceStatus.idle;
   @override
-  bool get isInitialized => _isInitialized;
+  W3MServiceStatus get status => _status;
 
   W3MChainInfo? _currentSelectedChain;
   @override
@@ -160,11 +160,13 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   @override
   Future<void> init() async {
-    if (_isInitialized) {
+    if (_status == W3MServiceStatus.initializing ||
+        _status == W3MServiceStatus.initialized) {
       return;
     }
-    _isInitialized = true;
+    _status = W3MServiceStatus.initializing;
     _initError = null;
+    _notify();
 
     await storageService.instance.init();
     await networkService.instance.init();
@@ -230,6 +232,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       }
     }
 
+    _status = W3MServiceStatus.initialized;
     W3MLoggerUtil.logger.t('[$runtimeType] initialized');
     _notify();
   }
@@ -423,8 +426,7 @@ class W3MService with ChangeNotifier implements IW3MService {
         universalLink: walletToConnect.listing.webappLink,
         wcURI: wcUri!,
       );
-      // Update explorer service with new recent
-      explorerService.instance!.updateRecentPosition(
+      await explorerService.instance!.updateRecentPosition(
         walletToConnect.listing.id,
       );
     } on LaunchUrlException catch (e, s) {
@@ -547,7 +549,7 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   @override
   void dispose() {
-    if (_isInitialized) {
+    if (_status == W3MServiceStatus.initialized) {
       _unregisterListeners();
     }
     super.dispose();
@@ -717,7 +719,8 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   void _checkInitialized() {
-    if (!_isInitialized) {
+    if (_status != W3MServiceStatus.initialized &&
+        _status != W3MServiceStatus.initializing) {
       throw W3MServiceException(
         'W3MService must be initialized before calling this method.',
       );
@@ -785,6 +788,7 @@ extension _W3MServiceListeners on W3MService {
   void onRelayClientConnect(EventArgs? args) {
     W3MLoggerUtil.logger.t('[$runtimeType] onRelayClientConnect: $args');
     _initError = null;
+    _status = W3MServiceStatus.initialized;
     _notify();
   }
 
@@ -792,6 +796,7 @@ extension _W3MServiceListeners on W3MService {
   void onRelayClientError(ErrorEvent? args) {
     W3MLoggerUtil.logger.e('[$runtimeType] onRelayClientError: $args');
     _initError = args?.error;
+    _status = W3MServiceStatus.error;
     _notify();
   }
 

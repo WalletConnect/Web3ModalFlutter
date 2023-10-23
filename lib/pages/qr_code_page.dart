@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
+import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
 import 'package:web3modal_flutter/widgets/w3m_qr_code.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
-import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item_simple.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 import 'package:web3modal_flutter/utils/toast/toast_message.dart';
 import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
@@ -52,11 +52,17 @@ class QRCodePage extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: WalletListItemSimple(
-                      title: 'Copy link',
-                      icon: 'assets/icons/copy.svg',
+                    padding: const EdgeInsets.symmetric(vertical: kPadding12),
+                    child: SimpleIconButton(
                       onTap: () => _copyToClipboard(context),
+                      leftIcon: 'assets/icons/copy.svg',
+                      title: 'Copy link',
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: themeColors.foreground200,
+                      overlayColor: MaterialStateProperty.all<Color>(
+                        themeColors.background200,
+                      ),
+                      withBorder: false,
                     ),
                   ),
                 ],

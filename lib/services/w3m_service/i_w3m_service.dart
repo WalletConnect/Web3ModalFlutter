@@ -6,9 +6,19 @@ import 'package:walletconnect_flutter_v2/apis/web3app/i_web3app.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 
+enum W3MServiceStatus {
+  idle,
+  initializing,
+  initialized,
+  error;
+
+  bool get isInitialized => this == initialized;
+  bool get isLoading => this == initializing;
+}
+
 abstract class IW3MService with ChangeNotifier {
   /// Whether or not this object has been initialized.
-  bool get isInitialized;
+  W3MServiceStatus get status;
 
   /// If the [web3App] fails to initialize and throws an exception, this will contain the caught exception.
   /// Otherwise, it will be null.

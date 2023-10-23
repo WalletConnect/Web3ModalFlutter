@@ -8,6 +8,7 @@ import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
@@ -70,7 +71,7 @@ void main() {
       service = W3MServiceSpy();
       when(service.isConnected).thenReturn(true);
       when(service.wcUri).thenReturn('test');
-      when(service.isInitialized).thenReturn(true);
+      when(service.status).thenReturn(W3MServiceStatus.initialized);
       when(service.isOpen).thenReturn(true);
       when(service.address).thenReturn(address);
       when(service.chainBalance).thenReturn(null);

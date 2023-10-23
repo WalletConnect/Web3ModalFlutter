@@ -69,7 +69,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     // I should decouple an AccountButton from W3MAccountButton like on ConnectButton and NetworkButton
     return BaseButton(
       size: widget.size,
-      onTap: _onTap,
+      onTap: widget.service.status.isInitialized ? _onTap : null,
       overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
         const EdgeInsets.only(right: 4.0),
       ),
@@ -118,10 +118,16 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
             },
           ),
         ),
-        icon: RoundedIcon(
-          imageUrl: _tokenImage,
-          size: widget.size.iconSize + 4.0,
-        ),
+        icon: widget.service.status.isLoading
+            ? SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : RoundedIcon(
+                imageUrl: _tokenImage,
+                size: widget.size.iconSize + 4.0,
+              ),
         child: Text('$_balance ${_tokenName ?? ''}'),
       ),
       child: BaseButton(

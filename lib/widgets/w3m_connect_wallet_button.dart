@@ -47,6 +47,7 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
   @override
   Widget build(BuildContext context) {
     return ConnectButton(
+      serviceStatus: widget.service.status,
       state: _state,
       size: widget.size,
       onTap: () => _onConnectPressed(context),

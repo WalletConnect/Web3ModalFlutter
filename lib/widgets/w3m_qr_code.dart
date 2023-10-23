@@ -55,6 +55,7 @@ class _QRCodeWidgetState extends State<QRCodeWidget> {
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final responsiveData = ResponsiveData.of(context);
     final isPortrait = ResponsiveData.isPortrait(context);
+    final isDarkMode = Web3ModalTheme.maybeOf(context)?.isDarkMode ?? false;
     final imageSize = isPortrait ? 90.0 : 60.0;
     return Container(
       constraints: BoxConstraints(
@@ -63,7 +64,7 @@ class _QRCodeWidgetState extends State<QRCodeWidget> {
             : (responsiveData.maxHeight - kNavbarHeight - (kPadding16 * 2)),
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode ? Colors.white : Colors.transparent,
         borderRadius: BorderRadius.circular(radiuses.radiusL),
       ),
       padding: const EdgeInsets.all(16.0),

@@ -39,7 +39,10 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
       _service = Web3ModalProvider.of(context).service;
       _selectedWallet = _service?.selectedWallet;
       if (_selectedWallet?.installed == true) {
-        _service?.connectWallet(_selectedWallet!);
+        Future.delayed(
+          const Duration(milliseconds: 500),
+          () => _service?.connectWallet(_selectedWallet!),
+        );
       }
       setState(() {});
     });

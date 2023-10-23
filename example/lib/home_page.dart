@@ -36,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
         name: 'Web3Modal Flutter Example',
         description: 'Web3Modal Flutter Example',
         url: 'https://www.walletconnect.com/',
-        icons: ['https://walletconnect.com/walletconnect-logo.png'],
+        icons: ['https://web3modal.com/images/rpc-illustration.png'],
         redirect: Redirect(
           native: 'flutterdapp://',
           universal: 'https://www.walletconnect.com',
@@ -208,7 +208,7 @@ class _W3MPageState extends State<_W3MPage> {
           Visibility(
             visible: _isConnected,
             child: _ConnectedView(w3mService: _w3mService),
-          )
+          ),
         ],
       ),
     );

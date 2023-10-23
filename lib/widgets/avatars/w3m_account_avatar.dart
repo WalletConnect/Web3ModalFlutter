@@ -57,58 +57,10 @@ class _W3MAccountAvatarState extends State<W3MAccountAvatar> {
                   fadeInDuration: Duration.zero,
                   placeholderFadeInDuration: Duration.zero,
                 )
-              : _buildGradientAvatar(context),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGradientAvatar(BuildContext context) {
-    if ((_address ?? '').isEmpty) return const SizedBox.shrink();
-    List<Color> colors = Util.generateAvatarColors(_address!);
-    final themeColors = Web3ModalTheme.colorsOf(context);
-    return Stack(
-      children: [
-        Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            color: colors[0],
-            borderRadius: BorderRadius.circular(widget.size / 2.0),
-            boxShadow: [
-              BoxShadow(
-                color: themeColors.grayGlass025,
-                spreadRadius: 1.0,
-                blurRadius: 0.0,
-              ),
-            ],
-          ),
-        ),
-        ..._buildGradients(colors),
-      ],
-    );
-  }
-
-  List<Widget> _buildGradients(List<Color> colors) {
-    return [
-      _gradient(colors[1], colors[0], const Alignment(-0.75, 0.46)),
-      _gradient(colors[2], colors[0], const Alignment(0.3, 0.6)),
-      _gradient(colors[3], colors[0], const Alignment(-0.4, 0.7)),
-      _gradient(colors[4], colors[0], const Alignment(0.7, 0.3)),
-    ];
-  }
-
-  Widget _gradient(Color color, Color baseColor, Alignment alignment) {
-    const double size = 0.75;
-    return Positioned.fill(
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [color, color, color.withOpacity(0.0)],
-            stops: const [0.0, size / 4, size],
-            center: alignment,
-          ),
+              : GradientOrb(
+                  address: _address,
+                  size: widget.size,
+                ),
         ),
       ),
     );
@@ -120,4 +72,65 @@ class _W3MAccountAvatarState extends State<W3MAccountAvatar> {
       _address = widget.service.address;
     });
   }
+}
+
+class GradientOrb extends StatelessWidget {
+  const GradientOrb({
+    super.key,
+    this.address,
+    this.size = 40.0,
+  });
+  final String? address;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Color> colors = Util.generateAvatarColors(address);
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: colors[4],
+            borderRadius: BorderRadius.circular(size / 2.0),
+            boxShadow: [
+              BoxShadow(
+                color: themeColors.grayGlass025,
+                spreadRadius: 1.0,
+                blurRadius: 0.0,
+              ),
+            ],
+          ),
+        ),
+        ..._buildGradients(colors..removeAt(4)),
+      ],
+    );
+  }
+
+  List<Widget> _buildGradients(List<Color> colors) {
+    double size = 1.5;
+    final gradients = colors.reversed.map((c) {
+      size -= 0.1;
+      return _gradient(c, size);
+    }).toList();
+    gradients.add(
+      _gradient(Colors.white.withOpacity(0.8), 0.5),
+    );
+    return gradients;
+  }
+
+  Widget _gradient(Color color, double size) => Positioned.fill(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              colors: [color, color, color.withOpacity(0.0)],
+              stops: [0.0, size / 4, size],
+              center: const Alignment(0.3, -0.3),
+            ),
+          ),
+        ),
+      );
 }

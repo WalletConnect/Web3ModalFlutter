@@ -40,6 +40,7 @@ class _W3MNetworkSelectButtonState extends State<W3MNetworkSelectButton> {
   @override
   Widget build(BuildContext context) {
     return NetworkButton(
+      serviceStatus: widget.service.status,
       chainInfo: _selectedChain,
       size: widget.size,
       onTap: () => _onConnectPressed(context),

@@ -1,5 +1,9 @@
 ## 3.0.0-beta07
 
+- UI improvements
+
+## 3.0.0-beta07
+
 - Performance and responsiveness improvements
 - Bug fixes
 
