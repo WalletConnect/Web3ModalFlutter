@@ -104,8 +104,10 @@ class ResponsiveData extends InheritedWidget {
   }
 
   static Size gridItemSzieOf(BuildContext context) {
-    final width = (maxWidthOf(context) / 4) - (kGridAxisSpacing) - 3.0;
-    return Size(width, width * 1.30);
+    final gridAxisCount = gridAxisCountOf(context);
+    final width = ((maxWidthOf(context) - kGridAxisSpacing) / gridAxisCount);
+    // 1.2631 is the aspect ratio by design
+    return Size(width, width * 1.2631);
   }
 
   @override

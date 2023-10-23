@@ -10,6 +10,7 @@ class Web3ModalNavbar extends StatelessWidget {
   const Web3ModalNavbar({
     Key? key,
     this.onBack,
+    this.onTapTitle,
     required this.body,
     required this.title,
     this.leftAction,
@@ -19,6 +20,7 @@ class Web3ModalNavbar extends StatelessWidget {
   }) : super(key: key);
 
   final VoidCallback? onBack;
+  final VoidCallback? onTapTitle;
   final Widget body;
   final String title;
   final NavbarActionButton? leftAction;
@@ -53,11 +55,14 @@ class Web3ModalNavbar extends StatelessWidget {
                         : (leftAction ??
                             const SizedBox.square(dimension: kNavbarHeight)),
                     Expanded(
-                      child: Center(
-                        child: Text(
-                          title,
-                          style: themeData.textStyles.paragraph600.copyWith(
-                            color: themeColors.foreground100,
+                      child: GestureDetector(
+                        onTap: () => onTapTitle?.call(),
+                        child: Center(
+                          child: Text(
+                            title,
+                            style: themeData.textStyles.paragraph600.copyWith(
+                              color: themeColors.foreground100,
+                            ),
                           ),
                         ),
                       ),

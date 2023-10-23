@@ -434,6 +434,15 @@ class MockExplorerService extends _i1.Mock implements _i15.ExplorerService {
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
+  _i4.Future<void> fetchInitialWallets() => (super.noSuchMethod(
+        Invocation.method(
+          #fetchInitialWallets,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+  @override
   _i4.Future<void> paginate() => (super.noSuchMethod(
         Invocation.method(
           #paginate,
@@ -466,13 +475,15 @@ class MockExplorerService extends _i1.Mock implements _i15.ExplorerService {
         {#name: name},
       )) as String?);
   @override
-  void updateRecentPosition(String? recentId) => super.noSuchMethod(
+  _i4.Future<void> updateRecentPosition(String? recentId) =>
+      (super.noSuchMethod(
         Invocation.method(
           #updateRecentPosition,
           [recentId],
         ),
-        returnValueForMissingStub: null,
-      );
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
   @override
   void search({String? query}) => super.noSuchMethod(
         Invocation.method(

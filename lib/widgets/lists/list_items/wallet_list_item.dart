@@ -31,7 +31,7 @@ class WalletListItem extends StatelessWidget {
           imageWidget ??
               W3MListAvatar(
                 borderRadius: radiuses.radius3XS,
-                imageUrl: imageUrl ?? '',
+                imageUrl: imageUrl,
               ),
           Expanded(
             child: Padding(

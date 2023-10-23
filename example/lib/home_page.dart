@@ -30,8 +30,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _initialize() async {
-    _web3App = Web3App(
-      core: Core(projectId: DartDefines.projectId),
+    _web3App = await Web3App.createInstance(
+      projectId: DartDefines.projectId,
       metadata: const PairingMetadata(
         name: 'Web3Modal Flutter Example',
         description: 'Web3Modal Flutter Example',

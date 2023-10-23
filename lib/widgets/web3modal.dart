@@ -19,7 +19,7 @@ class Web3Modal extends StatefulWidget {
 
 class _Web3ModalState extends State<Web3Modal> {
   bool _initialized = false;
-  Widget? _body;
+  Widget? _currentScreen;
 
   @override
   void initState() {
@@ -44,10 +44,10 @@ class _Web3ModalState extends State<Web3Modal> {
   void _initialize() => setState(() => _initialized = true);
 
   void _widgetStackUpdated() => setState(() {
-        _body = widgetStack.instance.getCurrent();
+        _currentScreen = widgetStack.instance.getCurrent();
       });
 
-  bool get _isLoading => !_initialized || _body == null;
+  bool get _isLoading => !_initialized || _currentScreen == null;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +79,7 @@ class _Web3ModalState extends State<Web3Modal> {
         child: Stack(
           children: [
             TransitionContainer(
-              child: _isLoading ? const ContentLoading() : _body!,
+              child: _isLoading ? const ContentLoading() : _currentScreen!,
             ),
             const WalletConnectModalToastManager(),
           ],

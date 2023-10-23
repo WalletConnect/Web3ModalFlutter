@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -14,6 +15,8 @@ import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
+
+const int _defaultEntriesCount = 48;
 
 class ExplorerService implements IExplorerService {
   static const _apiUrl = 'https://api.web3modal.com';
@@ -78,24 +81,37 @@ class ExplorerService implements IExplorerService {
       return;
     }
 
-    // if we are in mobile platform we fetch wallets data to check installed ones
-    List<W3MWalletInfo> installedListing = [];
-    if (platformUtils.instance.getPlatformType() == PlatformType.mobile) {
-      installedListing = await _fetchInstalledListings();
-    }
+    W3MLoggerUtil.logger.t('[$runtimeType] init()');
 
-    final otherListings = await _fetchOtherListings();
+    await _getInstalledWalletIds();
 
-    _listings = [...installedListing, ...otherListings];
-    listings.value = _listings;
-
-    // Get the recent wallet
-    final recentWalletId = storageService.instance.getString(
-      StringConstants.recentWallet,
-    );
-    updateRecentPosition(recentWalletId);
     initialized.value = true;
     W3MLoggerUtil.logger.t('[$runtimeType] init() done');
+  }
+
+  Future<void> _getInstalledWalletIds() async {
+    final installed = await (await _fetchNativeAppData()).getInstalledApps();
+    _installedWalletIds = Set<String>.from(installed.map((e) => e.id));
+  }
+
+  Future<void> _getRecentWalletAndOrder() async {
+    final recentWalletId =
+        storageService.instance.getString(StringConstants.recentWallet);
+    await updateRecentPosition(recentWalletId);
+  }
+
+  @override
+  Future<void> fetchInitialWallets() async {
+    final allListings = await Future.wait([
+      _fetchInstalledListings(),
+      _fetchOtherListings(firstCall: true),
+    ]);
+
+    _listings = [...allListings.first, ...allListings.last];
+    listings.value = _listings;
+    W3MLoggerUtil.logger
+        .t('[$runtimeType] fetchInitialWallets ${_listings.length}');
+    await _getRecentWalletAndOrder();
   }
 
   @override
@@ -104,7 +120,19 @@ class ExplorerService implements IExplorerService {
     final totalCount = totalListings.value;
     if (newParams.page * newParams.entries > totalCount) return;
 
-    _requestParams = newParams;
+    int entries = _defaultEntriesCount - _listings.length;
+    if (entries <= 0) {
+      _requestParams = newParams.copyWith(entries: _defaultEntriesCount);
+    } else {
+      final exclude = _listings.map((e) => e.listing.id).toList().join(',');
+      _requestParams = newParams.copyWith(
+        entries: entries,
+        page: 1,
+        exclude: exclude,
+      );
+    }
+    W3MLoggerUtil.logger
+        .t('[$runtimeType] paginate ${_requestParams.toJson()}');
     final newListings = await _fetchListings(
       params: _requestParams,
       updateCount: false,
@@ -112,7 +140,6 @@ class ExplorerService implements IExplorerService {
 
     _listings = [..._listings, ...newListings];
     listings.value = _listings;
-    W3MLoggerUtil.logger.t('[$runtimeType] paginate() ${newParams.toJson()}');
   }
 
   @override
@@ -165,30 +192,34 @@ class ExplorerService implements IExplorerService {
   }
 
   Future<List<W3MWalletInfo>> _fetchInstalledListings() async {
-    final installed = await (await _fetchNativeAppData()).getInstalledApps();
-    _installedWalletIds = Set<String>.from(installed.map((e) => e.id));
-
-    final installedWalletsParam =
-        _installedWalletIds.isNotEmpty ? _installedWalletIds.join(',') : null;
-
-    if (_installedWalletIds.isNotEmpty) {
-      // I query with include set as my installed wallets
-      final params = RequestParams(
-        page: 1,
-        entries: _installedWalletIds.length,
-        include: installedWalletsParam,
-      );
-      // this query gives me a count of installedWalletsParam.length
-      return (await _fetchListings(params: params)).setInstalledFlag();
+    final pType = platformUtils.instance.getPlatformType();
+    if (pType != PlatformType.mobile) {
+      return [];
+    }
+    if (_installedWalletIds.isEmpty) {
+      return [];
     }
 
-    return [];
+    // I query with include set as my installed wallets
+    final params = RequestParams(
+      page: 1,
+      entries: _installedWalletIds.length,
+      include: _installedWalletIds.join(','),
+    );
+    // this query gives me a count of installedWalletsParam.length
+    return (await _fetchListings(params: params)).setInstalledFlag();
   }
 
-  Future<List<W3MWalletInfo>> _fetchOtherListings() async {
+  Future<List<W3MWalletInfo>> _fetchOtherListings({
+    bool firstCall = false,
+  }) async {
+    final installedCount = _installedWalletIds.length;
+    final includedCount = _includedWalletsParam?.length ?? 0;
+    final toQuery = 20 - installedCount + includedCount;
+    final entriesCount = firstCall ? max(toQuery, 16) : _defaultEntriesCount;
     _requestParams = RequestParams(
       page: 1,
-      entries: 48,
+      entries: entriesCount,
       include: _includedWalletsParam,
       exclude: _excludedWalletsParam,
       platform: _getPlatformType(),
@@ -231,7 +262,7 @@ class ExplorerService implements IExplorerService {
   }
 
   @override
-  void updateRecentPosition(String? recentId) async {
+  Future<void> updateRecentPosition(String? recentId) async {
     _recentWalletId = recentId ?? '';
     // Set the recent
     await storageService.instance.setString(

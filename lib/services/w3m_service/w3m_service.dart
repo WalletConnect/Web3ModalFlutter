@@ -27,7 +27,6 @@ import 'package:web3modal_flutter/models/w3m_chains_presets.dart';
 import 'package:web3modal_flutter/utils/eth_util.dart';
 import 'package:web3modal_flutter/widgets/web3modal.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
-import 'package:web3modal_flutter/services/w3m_service/w3m_services_instances.dart';
 import 'package:web3modal_flutter/utils/toast/toast_message.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
@@ -155,19 +154,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     blockchainApiUtils.instance = BlockchainApiUtils(
       projectId: _projectId,
     );
-
-    Web3ModalServiceInstances.registerInitFunction(
-      'network_service',
-      () async {
-        await networkService.instance.init();
-      },
-    );
-    Web3ModalServiceInstances.registerInitFunction(
-      'storage_service',
-      () async {
-        await storageService.instance.init();
-      },
-    );
   }
 
   ////////* PUBLIC METHODS */////////
@@ -179,6 +165,10 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
     _isInitialized = true;
     _initError = null;
+
+    await storageService.instance.init();
+    await networkService.instance.init();
+    await explorerService.instance!.init();
 
     await expirePreviousInactivePairings();
 
@@ -203,12 +193,6 @@ class W3MService with ChangeNotifier implements IW3MService {
       if (currentPairings.isEmpty) {
         await disconnect();
       }
-    }
-
-    try {
-      await Web3ModalServiceInstances.init();
-    } catch (e, s) {
-      throw W3MServiceException(e, s);
     }
 
     // Set the optional namespaces to everything in our asset util.

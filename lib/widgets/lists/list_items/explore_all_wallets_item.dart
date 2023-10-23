@@ -38,16 +38,14 @@ class ExploreAllWalletsItem extends StatelessWidget {
             ),
             clipBehavior: Clip.antiAlias,
             child: Wrap(
-              spacing: 2.0,
-              runSpacing: 2.0,
               alignment: WrapAlignment.center,
               runAlignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: images
                   .map(
                     (e) => SizedBox(
-                      width: (constraints.maxHeight / 2) - 4.0,
-                      height: (constraints.maxHeight / 2) - 4.0,
+                      width: (constraints.maxHeight / 2) - 1.0,
+                      height: (constraints.maxHeight / 2) - 1.0,
                       child: W3MListAvatar(
                         borderRadius: radiuses.radius4XS,
                         imageUrl: e,

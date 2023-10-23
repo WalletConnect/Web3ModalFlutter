@@ -69,7 +69,7 @@ class _QRCodeWidgetState extends State<QRCodeWidget> {
       padding: const EdgeInsets.all(16.0),
       child: AspectRatio(
         aspectRatio: 1.0,
-        child: (_service == null)
+        child: (_service?.wcUri == null)
             ? const ContentLoading()
             : QrImageView(
                 data: _service!.wcUri!,

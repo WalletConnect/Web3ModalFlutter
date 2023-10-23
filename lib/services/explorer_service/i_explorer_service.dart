@@ -20,15 +20,23 @@ abstract class IExplorerService {
   /// If excludedWalletIds is set wallets from this list are going to be excluded
   Set<String>? excludedWalletIds;
 
+  /// Id of the recently used wallet app
   String get recentWalletId;
 
+  /// Init service
   Future<void> init();
 
+  /// fetch initial page of wallets including the installed ones
+  Future<void> fetchInitialWallets();
+
+  /// paginate subsequent wallets
   Future<void> paginate();
 
+  /// search for a wallet
   void search({String? query});
 
-  void updateRecentPosition(String recentId);
+  /// update the recently used position to the top list
+  Future<void> updateRecentPosition(String recentId);
 
   String getWalletImageUrl(String imageId);
 

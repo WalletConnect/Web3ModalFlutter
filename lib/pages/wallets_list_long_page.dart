@@ -24,6 +24,14 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
   bool _paginating = false;
   final _controller = ScrollController();
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _paginate().then((_) => setState(() => _paginating = false));
+    });
+  }
+
   bool _processScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
       setState(() => _paginating = false);
@@ -35,12 +43,16 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
       final outOfRange = _controller.position.outOfRange;
       if (_controller.offset >= extent && !outOfRange) {
         if (!_paginating) {
-          explorerService.instance!.paginate();
-          setState(() => _paginating = true);
+          _paginate();
         }
       }
     }
     return true;
+  }
+
+  Future<void> _paginate() {
+    setState(() => _paginating = true);
+    return explorerService.instance!.paginate();
   }
 
   @override
@@ -48,6 +60,11 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
     final service = Web3ModalProvider.of(context).service;
     return Web3ModalNavbar(
       title: 'All Wallets',
+      onTapTitle: () => _controller.animateTo(
+        0,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.linear,
+      ),
       onBack: () {
         FocusManager.instance.primaryFocus?.unfocus();
         explorerService.instance!.search(query: null);
@@ -66,28 +83,23 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 onNotification: _processScrollNotification,
-                child: SingleChildScrollView(
-                  controller: _controller,
-                  padding: EdgeInsets.only(
-                    bottom: ResponsiveData.paddingBottomOf(context),
-                  ),
-                  child: ExplorerServiceItemsListener(
-                    listen: !_paginating,
-                    builder: (context, initialised, items) {
-                      if (!initialised) {
-                        // TODO replace with LoadingItems
-                        return const ContentLoading();
-                      }
-                      return WalletsGrid(
-                        isPaginating: _paginating,
-                        onTapWallet: (data) async {
-                          await service.selectWallet(walletInfo: data);
-                          widgetStack.instance.push(const ConnectWalletPage());
-                        },
-                        itemList: items,
-                      );
-                    },
-                  ),
+                child: ExplorerServiceItemsListener(
+                  listen: !_paginating,
+                  builder: (context, initialised, items) {
+                    if (!initialised) {
+                      // TODO replace with LoadingItems
+                      return const ContentLoading();
+                    }
+                    return WalletsGrid(
+                      isPaginating: _paginating,
+                      scrollController: _controller,
+                      onTapWallet: (data) async {
+                        await service.selectWallet(walletInfo: data);
+                        widgetStack.instance.push(const ConnectWalletPage());
+                      },
+                      itemList: items,
+                    );
+                  },
                 ),
               ),
             ),

@@ -28,7 +28,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
   @override
   void initState() {
     super.initState();
-    explorerService.instance!.init();
+    explorerService.instance!.fetchInitialWallets();
   }
 
   @override
@@ -55,7 +55,10 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
             if (!initialised || items.isEmpty) {
               return const WalletsList(isLoading: true, itemList: []);
             }
-            final itemsToShow = items.getRange(0, kShortWalletListCount);
+            final isPortrait = ResponsiveData.isPortrait(context);
+            final itemsToShow = isPortrait
+                ? items.getRange(0, kShortWalletListCount)
+                : items.getRange(0, kLShortWalletListCount);
             return WalletsList(
               onTapWallet: (data) {
                 service.selectWallet(walletInfo: data);
