@@ -478,11 +478,8 @@ class W3MService with ChangeNotifier implements IW3MService {
       return;
     } catch (e) {
       W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
-      await toastUtils.instance.show(
-        ToastMessage(
-          type: ToastType.error,
-          text: 'Error Connecting to Wallet',
-        ),
+      toastUtils.instance.show(
+        ToastMessage(type: ToastType.error, text: 'Error Connecting to Wallet'),
       );
       return;
     }

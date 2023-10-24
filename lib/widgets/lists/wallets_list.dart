@@ -25,7 +25,6 @@ class WalletsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
     final loadingList = [
       const WalletListItem(title: ''),
@@ -50,15 +49,7 @@ class WalletsList extends StatelessWidget {
               title: e.title,
               trailing: e.data.recent
                   ? const WalletItemChip(value: ' RECENT ')
-                  : e.data.installed
-                      ? WalletItemChip(
-                          value: ' INSTALLED ',
-                          color: themeColors.success100.withOpacity(0.15),
-                          textStyle: themeData.textStyles.micro700.copyWith(
-                            color: themeColors.success100,
-                          ),
-                        )
-                      : null,
+                  : null,
             ),
           );
     final List<Widget> items = List<Widget>.from(walletsListItems);

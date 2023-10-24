@@ -21,10 +21,7 @@ class W3MAddressWithCopyButton extends StatelessWidget {
       onTap: () async {
         await Clipboard.setData(ClipboardData(text: service.address!));
         toastUtils.instance.show(
-          ToastMessage(
-            type: ToastType.info,
-            text: 'Address copied',
-          ),
+          ToastMessage(type: ToastType.success, text: 'Address copied'),
         );
       },
       child: Row(
