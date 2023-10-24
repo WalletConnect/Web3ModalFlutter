@@ -14,21 +14,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  late IWeb3App _web3App;
   late W3MService _w3mService;
-
-  bool _initialized = false;
-  bool _isConnected = false;
 
   @override
   void initState() {
     super.initState();
-    _initializeWeb3App();
+    _initializeW3MService();
   }
 
-  void _initializeWeb3App() async {
-    _web3App = Web3App(
-      core: Core(projectId: '{YOUR_PROJECT_ID}'),
+  void _initializeW3MService() async {
+    _w3mService = W3MService(
+      projectId: 'YOUR_PROJECT_ID',
       metadata: const PairingMetadata(
         name: 'Web3Modal Flutter Example',
         description: 'Web3Modal Flutter Example',
@@ -41,41 +37,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       ),
     );
 
-    _web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
-    _web3App.onSessionDelete.subscribe(_onWeb3AppDisconnect);
-
-    await _web3App.init();
-
-    _initializeW3MService();
-  }
-
-  void _initializeW3MService() async {
-    _w3mService = W3MService(
-      web3App: _web3App,
-      featuredWalletIds: {
-        'afbd95522f4041c71dd4f1a065f971fd32372865b416f95a0b1db759ae33f2a7',
-        '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662',
-        'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
-      },
-    );
-
     await _w3mService.init();
-
-    setState(() => _initialized = true);
   }
-
-  void _onWeb3AppConnect(SessionConnect? args) => setState(() {
-        _isConnected = true;
-      });
-
-  void _onWeb3AppDisconnect(SessionDelete? args) => setState(() {
-        _isConnected = false;
-      });
 
   @override
   void dispose() {
-    _web3App.onSessionConnect.unsubscribe(_onWeb3AppConnect);
-    _web3App.onSessionDelete.unsubscribe(_onWeb3AppDisconnect);
+    _w3mService.removeListener(_onWalletUpdated);
     super.dispose();
   }
 
@@ -87,13 +54,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         title: 'Web3Modal Demo',
         home: Builder(
           builder: (context) {
-            if (!_initialized) {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: Web3ModalTheme.colorsOf(context).accent100,
-                ),
-              );
-            }
             return Scaffold(
               appBar: AppBar(
                 title: const Text('Web3Modal Demo'),
@@ -105,7 +65,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 constraints: const BoxConstraints.expand(),
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
-                  children: !_isConnected
+                  children: !_w3mService.isConnected
                       ? [
                           W3MNetworkSelectButton(service: _w3mService),
                           W3MConnectWalletButton(service: _w3mService),
@@ -122,5 +82,4 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 }
-
 ```
