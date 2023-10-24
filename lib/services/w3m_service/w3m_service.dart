@@ -476,12 +476,13 @@ class W3MService with ChangeNotifier implements IW3MService {
       W3MLoggerUtil.logger
           .i('[$runtimeType] Rebuilding session, ending future');
       return;
-    } catch (e) {
+    } on JsonRpcError catch (e) {
       W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
+      final errorMessage = e.message ?? 'Error Connecting to Wallet';
       toastUtils.instance.show(
-        ToastMessage(type: ToastType.error, text: 'Error Connecting to Wallet'),
+        ToastMessage(type: ToastType.error, text: errorMessage),
       );
-      return;
+      return await expirePreviousInactivePairings();
     }
   }
 
@@ -611,6 +612,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _web3App!.onSessionEvent.subscribe(onSessionEvent);
     _web3App!.onSessionUpdate.subscribe(onSessionUpdate);
     _web3App!.core.pairing.onPairingExpire.subscribe(onPairingExpireEvent);
+    _web3App!.core.heartbeat.onPulse.subscribe(onHeartbeatPulse);
   }
 
   void _unregisterListeners() {
@@ -623,6 +625,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _web3App!.onSessionEvent.unsubscribe(onSessionEvent);
     _web3App!.onSessionUpdate.unsubscribe(onSessionUpdate);
     _web3App!.core.pairing.onPairingExpire.unsubscribe(onPairingExpireEvent);
+    _web3App!.core.heartbeat.onPulse.unsubscribe(onHeartbeatPulse);
   }
 
   void _setRequiredNamespaces(Map<String, RequiredNamespace> requiredNSpaces) {
@@ -830,5 +833,10 @@ extension on W3MService {
   void onPairingExpireEvent(PairingEvent? args) {
     W3MLoggerUtil.logger.t('[$runtimeType] onPairingExpireEvent $args');
     onPairingExpire.broadcast();
+  }
+
+  @protected
+  void onHeartbeatPulse(EventArgs? args) {
+    W3MLoggerUtil.logger.t('[$runtimeType] onHeartbeatPulse');
   }
 }

@@ -1,3 +1,7 @@
+## 3.0.0-beta10
+
+- Fix a bug where QR Code wasn't readable anymore after user rejects connection from within the chosen wallet app
+
 ## 3.0.0-beta09
 
 - More improvements

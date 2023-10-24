@@ -912,14 +912,13 @@ class MockToastUtils extends _i1.Mock implements _i25.ToastUtils {
         returnValue: false,
       ) as bool);
   @override
-  _i4.Future<void> show(_i26.ToastMessage? message) => (super.noSuchMethod(
+  void show(_i26.ToastMessage? message) => super.noSuchMethod(
         Invocation.method(
           #show,
           [message],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValueForMissingStub: null,
+      );
   @override
   void clear() => super.noSuchMethod(
         Invocation.method(
