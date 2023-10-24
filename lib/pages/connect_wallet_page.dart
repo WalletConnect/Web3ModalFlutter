@@ -41,7 +41,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
       if (_selectedWallet?.installed == true) {
         Future.delayed(
           const Duration(milliseconds: 500),
-          () => _service?.connectWallet(_selectedWallet!),
+          () => _service?.connectSelectedWallet(),
         );
       }
       setState(() {});
@@ -126,9 +126,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                   ),
                   const SizedBox.square(dimension: kPadding16),
                   SimpleIconButton(
-                    onTap: () {
-                      service.connectWallet(service.selectedWallet!);
-                    },
+                    onTap: () => service.connectSelectedWallet(),
                     leftIcon: 'assets/icons/refresh.svg',
                     title: 'Try again',
                     backgroundColor: Colors.transparent,

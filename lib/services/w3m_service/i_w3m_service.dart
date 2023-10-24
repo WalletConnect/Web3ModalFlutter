@@ -96,9 +96,8 @@ abstract class IW3MService with ChangeNotifier {
   /// Subscribe to listen to pairing expirations
   final Event<EventArgs> onPairingExpire = Event();
 
-  // TODO remove the walletInfo argument as not really needed
   /// Connects the [selectedWallet] previously selected
-  Future<void> connectWallet([W3MWalletInfo? walletInfo]);
+  Future<void> connectSelectedWallet();
 
   /// Opens the native wallet [selectedWallet] after connected
   Future<void> launchConnectedWallet();

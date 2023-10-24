@@ -1,6 +1,6 @@
 class StringConstants {
   static const X_SDK_TYPE = 'w3m';
-  static const X_SDK_VERSION = '3.0.0-beta08';
+  static const X_SDK_VERSION = '3.0.0-beta09';
   static const X_CORE_SDK_VERSION = 'flutter_v2.1.5';
 
   static const String selectNetwork = 'Select Network';
@@ -26,5 +26,6 @@ class StringConstants {
   static const String noResults = 'No results found';
 
   // Storage
-  static const String recentWallet = 'recentWallet';
+  static const String recentWallet = 'w3m_recentWallet';
+  static const String selectedChainId = 'w3m_selectedChainId';
 }

@@ -1,5 +1,8 @@
 abstract class ICoreUtils {
   /// Returns true if the given [url] is a valid HTTP or HTTPS URL.
+  bool isValidProjectID(String projectId);
+
+  /// Returns true if the given [url] is a valid HTTP or HTTPS URL.
   bool isHttpUrl(String url);
 
   /// Creates a URL that ends with :// if the provided URL didn't have it.

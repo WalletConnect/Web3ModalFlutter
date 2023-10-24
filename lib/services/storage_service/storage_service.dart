@@ -10,8 +10,8 @@ class StorageService implements IStorageService {
   }
 
   @override
-  String? getString(String key) {
-    return _prefs?.getString(key);
+  String? getString(String key, {String? defaultValue}) {
+    return _prefs?.getString(key) ?? defaultValue;
   }
 
   @override

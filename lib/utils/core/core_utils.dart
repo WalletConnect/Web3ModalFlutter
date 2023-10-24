@@ -5,6 +5,11 @@ import 'package:web3modal_flutter/utils/w3m_logger.dart';
 
 class CoreUtils extends ICoreUtils {
   @override
+  bool isValidProjectID(String projectId) {
+    return RegExp(r'^[0-9a-fA-F]{32}$').hasMatch(projectId);
+  }
+
+  @override
   bool isHttpUrl(String url) {
     return url.startsWith('http://') || url.startsWith('https://');
   }

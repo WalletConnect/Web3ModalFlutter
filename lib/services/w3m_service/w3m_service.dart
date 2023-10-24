@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
 import 'package:web3modal_flutter/constants/namespaces.dart';
+import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
@@ -39,8 +40,6 @@ class W3MServiceException implements Exception {
 }
 
 class W3MService with ChangeNotifier implements IW3MService {
-  static const String selectedChainId = 'selectedChainId';
-
   var _projectId = '';
 
   W3MServiceStatus _status = W3MServiceStatus.idle;
@@ -160,6 +159,11 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   @override
   Future<void> init() async {
+    if (!coreUtils.instance.isValidProjectID(_projectId)) {
+      W3MLoggerUtil.logger.e('[$runtimeType] Please provide a valid projectId. '
+          'See https://docs.walletconnect.com/web3modal/flutter/options for details.');
+      return;
+    }
     if (_status == W3MServiceStatus.initializing ||
         _status == W3MServiceStatus.initialized) {
       return;
@@ -186,11 +190,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     final currentSessions = _web3App!.sessions.getAll();
 
     if (currentSessions.isNotEmpty) {
-      _isConnected = true;
-      _currentSession = currentSessions.first;
-      _address = NamespaceUtils.getAccount(
-        _currentSession!.namespaces.values.first.accounts.first,
-      );
+      _setSessionValues(currentSessions.first);
       // session should not outlive the pairing
       if (currentPairings.isEmpty) {
         await disconnect();
@@ -212,8 +212,27 @@ class W3MService with ChangeNotifier implements IW3MService {
     _setOptionalNamespaces(optionalNamespaces);
 
     // Get the chainId of the chain we are connected to.
+    await _selectChainFromStoredId();
+
+    _status = W3MServiceStatus.initialized;
+    W3MLoggerUtil.logger.t('[$runtimeType] initialized');
+    _notify();
+  }
+
+  void _setSessionValues(SessionData sessionData) {
+    _isConnected = true;
+    _currentSession = sessionData;
+    _address = NamespaceUtils.getAccount(
+      _currentSession!.namespaces.values.first.accounts.first,
+    );
+  }
+
+  Future<void> _selectChainFromStoredId() async {
     if (_currentSession != null) {
-      final chainId = storageService.instance.getString(selectedChainId) ?? '';
+      final chainId = storageService.instance.getString(
+        StringConstants.selectedChainId,
+        defaultValue: '',
+      )!;
       // If we had a chainId stored, use it!
       if (chainId.isNotEmpty && W3MChainPresets.chains.containsKey(chainId)) {
         await selectChain(W3MChainPresets.chains[chainId]!);
@@ -231,10 +250,6 @@ class W3MService with ChangeNotifier implements IW3MService {
         }
       }
     }
-
-    _status = W3MServiceStatus.initialized;
-    W3MLoggerUtil.logger.t('[$runtimeType] initialized');
-    _notify();
   }
 
   @override
@@ -251,17 +266,19 @@ class W3MService with ChangeNotifier implements IW3MService {
     _chainBalance = null;
     _tokenImageUrl = null;
 
+    // Store the chain for when we reload the app.
+    await storageService.instance.setString(
+      StringConstants.selectedChainId,
+      chainInfo?.chainId ?? '',
+    );
+
     // If the chain is null, disconnect and stop.
     if (chainInfo == null) {
       _currentSelectedChain = null;
-      await storageService.instance.setString(selectedChainId, '');
       _setRequiredNamespaces({});
       await disconnect();
       return;
     }
-
-    // Store the chain for when we reload the app.
-    await storageService.instance.setString(selectedChainId, chainInfo.chainId);
 
     // TODO all this logic about switching chain seems odd. A full test has to be done.
     final hasValidSession = isConnected && _currentSession != null;
@@ -376,6 +393,38 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   @override
+  Future<void> connectSelectedWallet() async {
+    _checkInitialized();
+    // final walletToConnect = _selectedWallet ?? walletInfo;
+    if (_selectedWallet == null) {
+      throw W3MServiceException(
+        'You didn\'t select a wallet or walletInfo argument is null',
+      );
+    }
+
+    if (_connectingWallet) {
+      return;
+    }
+    _connectingWallet = true;
+
+    try {
+      await buildConnectionUri();
+      await urlUtils.instance.navigateDeepLink(
+        nativeLink: _selectedWallet!.listing.mobileLink,
+        universalLink: _selectedWallet!.listing.webappLink,
+        wcURI: wcUri!,
+      );
+    } on LaunchUrlException catch (e, s) {
+      W3MLoggerUtil.logger.e('[$runtimeType] error launching wallet $e, $s');
+      toastUtils.instance.show(
+        ToastMessage(type: ToastType.error, text: e.message),
+      );
+    }
+
+    _connectingWallet = false;
+  }
+
+  @override
   Future<void> buildConnectionUri() async {
     // If we aren't connected, connect!
     if (!_isConnected) {
@@ -404,42 +453,39 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
   }
 
-  @override
-  Future<void> connectWallet([W3MWalletInfo? walletInfo]) async {
-    _checkInitialized();
-    final walletToConnect = _selectedWallet ?? walletInfo;
-    if (walletToConnect == null) {
-      throw W3MServiceException(
-        'You didn\'t select a wallet or walletInfo argument is null',
-      );
-    }
-
-    if (_connectingWallet) {
+  /// Waits for the session to connect, and then sets the session and address.
+  /// If the session fails to connect, it will show an error toast.
+  /// If the session connects, it will close the modal.
+  /// If the modal is already closed, it will notify listeners.
+  /// If there is no connect response, it will do nothing.
+  /// The completion of this method is triggered when the dApp
+  /// connects to a wallet.
+  Future<void> _awaitConnectResponse() async {
+    if (connectResponse == null) {
       return;
     }
-    _connectingWallet = true;
 
     try {
-      await buildConnectionUri();
-      await urlUtils.instance.navigateDeepLink(
-        nativeLink: walletToConnect.listing.mobileLink,
-        universalLink: walletToConnect.listing.webappLink,
-        wcURI: wcUri!,
-      );
+      _currentSession = await connectResponse!.session.future;
+      _setSessionValues(_currentSession!);
       await explorerService.instance!.updateRecentPosition(
-        walletToConnect.listing.id,
+        _selectedWallet!.listing.id,
       );
-    } on LaunchUrlException catch (e, s) {
-      W3MLoggerUtil.logger.e('[$runtimeType] error launching wallet $e, $s');
-      toastUtils.instance.show(
+      await _selectChainFromStoredId();
+    } on TimeoutException {
+      W3MLoggerUtil.logger
+          .i('[$runtimeType] Rebuilding session, ending future');
+      return;
+    } catch (e) {
+      W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
+      await toastUtils.instance.show(
         ToastMessage(
           type: ToastType.error,
-          text: e.message,
+          text: 'Error Connecting to Wallet',
         ),
       );
+      return;
     }
-
-    _connectingWallet = false;
   }
 
   @override
@@ -726,47 +772,14 @@ class W3MService with ChangeNotifier implements IW3MService {
       );
     }
   }
-
-  /// Waits for the session to connect, and then sets the session and address.
-  /// If the session fails to connect, it will show an error toast.
-  /// If the session connects, it will close the modal.
-  /// If the modal is already closed, it will notify listeners.
-  /// If there is no connect response, it will do nothing.
-  /// The completion of this method is triggered when the dApp
-  /// connects to a wallet.
-  Future<void> _awaitConnectResponse() async {
-    if (connectResponse == null) {
-      return;
-    }
-
-    try {
-      await connectResponse!.session.future;
-    } on TimeoutException {
-      W3MLoggerUtil.logger
-          .i('[$runtimeType] Rebuilding session, ending future');
-      return;
-    } catch (e) {
-      W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
-      await toastUtils.instance.show(
-        ToastMessage(
-          type: ToastType.error,
-          text: 'Error Connecting to Wallet',
-        ),
-      );
-      return;
-    }
-  }
 }
 
-extension _W3MServiceListeners on W3MService {
+extension on W3MService {
   @protected
   void onSessionConnect(SessionConnect? args) async {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionConnect: $args');
-    _isConnected = true;
-    _currentSession = args!.session;
-    _address = NamespaceUtils.getAccount(
-      _currentSession!.namespaces.values.first.accounts.first,
-    );
+    _setSessionValues(args!.session);
+    _selectChainFromStoredId();
 
     if (_isOpen) {
       closeModal();

@@ -603,20 +603,19 @@ class MockW3MService extends _i1.Mock implements _i17.W3MService {
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  _i4.Future<void> buildConnectionUri() => (super.noSuchMethod(
+  _i4.Future<void> connectSelectedWallet() => (super.noSuchMethod(
         Invocation.method(
-          #buildConnectionUri,
+          #connectSelectedWallet,
           [],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  _i4.Future<void> connectWallet([_i16.W3MWalletInfo? walletInfo]) =>
-      (super.noSuchMethod(
+  _i4.Future<void> buildConnectionUri() => (super.noSuchMethod(
         Invocation.method(
-          #connectWallet,
-          [walletInfo],
+          #buildConnectionUri,
+          [],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
@@ -2444,9 +2443,14 @@ class MockStorageService extends _i1.Mock implements _i36.StorageService {
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  String? getString(String? key) => (super.noSuchMethod(Invocation.method(
+  String? getString(
+    String? key, {
+    String? defaultValue,
+  }) =>
+      (super.noSuchMethod(Invocation.method(
         #getString,
         [key],
+        {#defaultValue: defaultValue},
       )) as String?);
   @override
   _i4.Future<bool> setString(

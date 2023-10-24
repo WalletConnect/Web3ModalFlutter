@@ -3,6 +3,7 @@
 import 'package:event/event.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 
@@ -99,9 +100,9 @@ void main() {
 
       when(es.init()).thenAnswer((_) async {});
       // await WalletConnectModalServices.explorer.init();
-      when(mockStorageService.getString(W3MService.selectedChainId))
+      when(mockStorageService.getString(StringConstants.selectedChainId))
           .thenReturn('1');
-      when(mockStorageService.setString(W3MService.selectedChainId, any))
+      when(mockStorageService.setString(StringConstants.selectedChainId, any))
           .thenAnswer((_) => Future.value(true));
       when(es.getAssetImageUrl('imageId')).thenReturn('abc');
       when(es.getRedirect(name: anyNamed('name'))).thenReturn(null);
@@ -204,10 +205,10 @@ void main() {
         await service.init();
 
         verify(
-          mockStorageService.getString(W3MService.selectedChainId),
+          mockStorageService.getString(StringConstants.selectedChainId),
         ).called(1);
         verify(
-          mockStorageService.setString(W3MService.selectedChainId, '1'),
+          mockStorageService.setString(StringConstants.selectedChainId, '1'),
         ).called(1);
         verify(es.getAssetImageUrl('imageId')).called(1);
         verify(mockEVMService.getBalance(any, any)).called(1);
@@ -244,7 +245,7 @@ void main() {
         // WalletConnectModal, setOptionalNamespaces, setSelectedChain (calls it twice)
         expect(counter, 4);
         verify(
-          mockStorageService.setString(W3MService.selectedChainId, '1'),
+          mockStorageService.setString(StringConstants.selectedChainId, '1'),
         ).called(1);
         verify(es.getAssetImageUrl('imageId')).called(1);
         verify(mockEVMService.getBalance(any, any)).called(1);
@@ -261,7 +262,7 @@ void main() {
         //
         expect(counter, 6);
         verify(
-          mockStorageService.setString(W3MService.selectedChainId, '137'),
+          mockStorageService.setString(StringConstants.selectedChainId, '137'),
         ).called(1);
         verify(es.getAssetImageUrl('imageId')).called(1);
         verify(mockEVMService.getBalance(any, any)).called(1);
@@ -277,7 +278,7 @@ void main() {
         onSessionDelete.broadcast(SessionDelete('topic'));
 
         verify(mockStorageService.setString(
-          W3MService.selectedChainId,
+          StringConstants.selectedChainId,
           '',
         ));
         verify(
