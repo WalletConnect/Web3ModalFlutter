@@ -33,22 +33,12 @@ class _WalletConnectModalToastState extends State<WalletConnectModalToast>
 
     _controller.forward().then((_) {
       Future.delayed(
-        widget.message.duration -
-            const Duration(
-              milliseconds: fadeInTime * 2,
-            ),
+        widget.message.duration - const Duration(milliseconds: fadeInTime * 2),
       ).then((_) {
         if (!mounted) {
           return;
         }
-        _controller.reverse().then(
-              (value) => toastUtils.instance.clear(),
-            );
-        // .then(
-        //   () async {
-        //     widget.message.completer.complete();
-        //   },
-        // );
+        _controller.reverse().then((value) => toastUtils.instance.clear());
       });
     });
   }
@@ -74,7 +64,7 @@ class _WalletConnectModalToastState extends State<WalletConnectModalToast>
           child: Container(
             height: 40,
             decoration: BoxDecoration(
-              color: themeColors.background300,
+              color: themeColors.background125,
               borderRadius: BorderRadius.circular(radiuses.radiusM),
               border: Border.all(
                 color: themeColors.grayGlass005,
@@ -84,38 +74,21 @@ class _WalletConnectModalToastState extends State<WalletConnectModalToast>
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
-                vertical: 2.0,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // TODO check this.
-                  // SvgPicture.asset(
-                  //   widget.message.type == ToastType.info
-                  //       ? 'assets/icons/checkmark.svg'
-                  //       : 'assets/icons/error.svg',
-                  //   width: 16,
-                  //   height: 16,
-                  //   package: 'web3modal_flutter',
-                  //   colorFilter: ColorFilter.mode(
-                  //     themeColors.accent100,
-                  //     BlendMode.srcIn,
-                  //   ),
-                  // ),
-                  const SizedBox(
-                    width: 8.0,
-                  ),
+                  widget.message.icon(context),
+                  const SizedBox(width: 8.0),
                   Text(
                     widget.message.text,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: themeData.textStyles.paragraph500.copyWith(
                       color: themeColors.foreground100,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: themeData.textStyles.fontFamily,
-                      fontSize: 14.0,
                     ),
                   ),
+                  const SizedBox(width: 8.0),
                 ],
               ),
             ),

@@ -176,10 +176,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     final service = Web3ModalProvider.of(context).service;
     await Clipboard.setData(ClipboardData(text: service.wcUri!));
     toastUtils.instance.show(
-      ToastMessage(
-        type: ToastType.info,
-        text: 'Link copied',
-      ),
+      ToastMessage(type: ToastType.success, text: 'Link copied'),
     );
   }
 }

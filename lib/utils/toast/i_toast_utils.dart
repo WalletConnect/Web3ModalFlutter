@@ -12,7 +12,7 @@ class ToastMessageCompleter {
 abstract class IToastUtils {
   Stream<ToastMessage?> get toasts;
 
-  Future<void> show(ToastMessage message);
+  void show(ToastMessage message);
 
   void clear();
 }
