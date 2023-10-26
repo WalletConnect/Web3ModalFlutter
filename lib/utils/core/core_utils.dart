@@ -38,11 +38,11 @@ class CoreUtils extends ICoreUtils {
   }
 
   @override
-  Uri? formatNativeUrl(String? appUrl, String wcUri) {
+  Uri? formatCustomSchemeUri(String? appUrl, String wcUri) {
     if (appUrl == null || appUrl.isEmpty) return null;
 
     if (isHttpUrl(appUrl)) {
-      return formatUniversalUrl(appUrl, wcUri);
+      return formatWebUrl(appUrl, wcUri);
     }
 
     String safeAppUrl = createSafeUrl(appUrl);
@@ -53,11 +53,11 @@ class CoreUtils extends ICoreUtils {
   }
 
   @override
-  Uri? formatUniversalUrl(String? appUrl, String wcUri) {
+  Uri? formatWebUrl(String? appUrl, String wcUri) {
     if (appUrl == null || appUrl.isEmpty) return null;
 
     if (!isHttpUrl(appUrl)) {
-      return formatNativeUrl(appUrl, wcUri);
+      return formatCustomSchemeUri(appUrl, wcUri);
     }
     String plainAppUrl = appUrl;
     if (!appUrl.endsWith('/')) {

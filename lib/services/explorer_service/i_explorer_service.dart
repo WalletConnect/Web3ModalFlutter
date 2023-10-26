@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
+import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 
 abstract class IExplorerService {
   /// The project ID used when querying the explorer API.
@@ -42,5 +43,5 @@ abstract class IExplorerService {
 
   String getAssetImageUrl(String imageId);
 
-  String? getRedirect({required String name});
+  WalletRedirect? getWalletRedirectByName(String name);
 }

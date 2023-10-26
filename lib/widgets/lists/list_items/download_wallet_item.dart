@@ -13,10 +13,15 @@ class DownloadWalletItem extends StatelessWidget {
   const DownloadWalletItem({
     super.key,
     required this.walletInfo,
+    this.webOnly = false,
   });
   final W3MWalletInfo walletInfo;
+  final bool webOnly;
 
   String get _storeUrl {
+    if (webOnly) {
+      return walletInfo.listing.homepage;
+    }
     if (Platform.isIOS) {
       return walletInfo.listing.appStore ?? '';
     }
@@ -29,6 +34,9 @@ class DownloadWalletItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
+    if (_storeUrl.isEmpty) {
+      return SizedBox.shrink();
+    }
     return WalletListItem(
       imageWidget: const SizedBox.shrink(),
       title: 'Don\'t have ${walletInfo.listing.name}?',

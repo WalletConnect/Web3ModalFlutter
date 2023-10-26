@@ -9,7 +9,6 @@ import 'package:walletconnect_flutter_dapp/utils/crypto/chain_data_wrapper.dart'
 import 'package:walletconnect_flutter_dapp/utils/crypto/helpers.dart';
 import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
-import 'package:walletconnect_flutter_dapp/widgets/event_widget.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.swapTheme});
@@ -101,27 +100,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _onSessionPing(SessionPing? args) => showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return EventWidget(
-            title: StringConstants.receivedPing,
-            content: 'Topic: ${args!.topic}',
-          );
-        },
-      );
+  void _onSessionPing(SessionPing? args) {
+    debugPrint('[$runtimeType] ${StringConstants.receivedPing}: $args');
+  }
 
-  void _onSessionEvent(SessionEvent? args) => showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return EventWidget(
-            title: StringConstants.receivedEvent,
-            content: 'Topic: ${args!.topic}\n'
-                'Event Name: ${args.name}\n'
-                'Event Data: ${args.data}',
-          );
-        },
-      );
+  void _onSessionEvent(SessionEvent? args) {
+    debugPrint('[$runtimeType] ${StringConstants.receivedEvent}: $args');
+  }
 }
 
 class _W3MPage extends StatefulWidget {

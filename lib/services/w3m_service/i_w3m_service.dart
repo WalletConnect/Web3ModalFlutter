@@ -5,6 +5,7 @@ import 'package:walletconnect_flutter_v2/apis/sign_api/models/session_models.dar
 import 'package:walletconnect_flutter_v2/apis/web3app/i_web3app.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
+import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 
 enum W3MServiceStatus {
   idle,
@@ -85,7 +86,7 @@ abstract class IW3MService with ChangeNotifier {
   Future<void> reconnectRelay();
 
   /// Sets the [selectedWallet] to be connected
-  Future<void> selectWallet({required W3MWalletInfo? walletInfo});
+  void selectWallet(W3MWalletInfo walletInfo);
 
   /// Used to expire and delete any inactive pairing
   Future<void> expirePreviousInactivePairings();
@@ -96,11 +97,15 @@ abstract class IW3MService with ChangeNotifier {
   /// Subscribe to listen to pairing expirations
   final Event<EventArgs> onPairingExpire = Event();
 
+  WalletRedirect? get selectedWalletRedirect;
+
   /// Connects the [selectedWallet] previously selected
-  Future<void> connectSelectedWallet();
+  Future<void> connectSelectedWallet({bool inBrowser = false});
 
   /// Opens the native wallet [selectedWallet] after connected
   Future<void> launchConnectedWallet();
+
+  List<String>? approvedChainsByConnectedWallet();
 
   /// Gets the name of the currently connected wallet.
   String getReferer();

@@ -1,5 +1,6 @@
 import 'package:appcheck/appcheck.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
@@ -72,10 +73,7 @@ class UrlUtils extends IUrlUtils {
   }
 
   @override
-  Future<bool> launchUrl(
-    Uri url, {
-    LaunchMode? mode,
-  }) async {
+  Future<bool> launchUrl(Uri url, {LaunchMode? mode}) async {
     return launchUrlFunc(
       url,
       mode: mode,
@@ -83,86 +81,43 @@ class UrlUtils extends IUrlUtils {
   }
 
   @override
-  Future<void> launchRedirect({
-    Uri? nativeUri,
-    Uri? universalUri,
+  Future<void> openRedirect(
+    WalletRedirect redirect, {
+    String? wcURI,
+    PlatformType? pType,
   }) async {
-    W3MLoggerUtil.logger.i(
-      'Navigating deep links. Native: ${nativeUri.toString()}, Universal: ${universalUri.toString()}',
-    );
-    W3MLoggerUtil.logger.t(
-      'Deep Link Query Params. Native: ${nativeUri?.queryParameters}, Universal: ${universalUri?.queryParameters}',
-    );
-
     try {
-      // Launch the link
-      if (nativeUri != null) {
-        W3MLoggerUtil.logger.i(
-          'Navigating deep links. Launching native URI.',
-        );
-        try {
-          final bool launched = await launchUrlFunc(
-            nativeUri,
-            mode: LaunchMode.externalApplication,
-          );
-          if (!launched) {
-            throw Exception('Unable to launch native URI');
-          }
-        } catch (e) {
-          W3MLoggerUtil.logger.i(
-            'Navigating deep links. Launching native failed, launching universal URI.',
-          );
-          // Fallback to universal link
-          if (universalUri != null) {
-            final bool launched = await launchUrlFunc(
-              universalUri,
-              mode: LaunchMode.externalApplication,
-            );
-            if (!launched) {
-              throw Exception('Unable to launch native URI');
-            }
-          } else {
-            throw LaunchUrlException('Unable to open the wallet');
-          }
-        }
-      } else if (universalUri != null) {
-        W3MLoggerUtil.logger.t(
-          'Navigating deep links. Launching universal URI.',
-        );
-        final bool launched = await launchUrlFunc(
-          universalUri,
-          mode: LaunchMode.externalApplication,
-        );
-        if (!launched) {
-          throw Exception('Unable to launch native URI');
-        }
-      } else {
-        throw LaunchUrlException('Unable to open the wallet');
+      Uri? uriToOpen;
+      if ((redirect.mobileOnly || pType == PlatformType.mobile) &&
+          redirect.mobile != null) {
+        uriToOpen = wcURI != null
+            ? coreUtils.instance.formatCustomSchemeUri(
+                redirect.mobile,
+                wcURI,
+              )
+            : redirect.mobileUri;
       }
+      if ((redirect.webOnly || pType == PlatformType.web) &&
+          redirect.web != null) {
+        uriToOpen = wcURI != null
+            ? coreUtils.instance.formatWebUrl(
+                redirect.web,
+                wcURI,
+              )
+            : redirect.webUri;
+      }
+      if ((redirect.desktopOnly || pType == PlatformType.desktop) &&
+          redirect.desktop != null) {
+        uriToOpen = wcURI != null
+            ? coreUtils.instance.formatCustomSchemeUri(
+                redirect.desktop,
+                wcURI,
+              )
+            : redirect.desktopUri;
+      }
+      await launchUrlFunc(uriToOpen!, mode: LaunchMode.externalApplication);
     } catch (e) {
-      throw LaunchUrlException('Unable to open the wallet');
+      throw LaunchUrlException('Unable to open the wallet. $e');
     }
-  }
-
-  @override
-  Future<void> navigateDeepLink({
-    String? nativeLink,
-    String? universalLink,
-    required String wcURI,
-  }) async {
-    // Construct the link
-    final Uri? nativeUri = coreUtils.instance.formatNativeUrl(
-      nativeLink,
-      wcURI,
-    );
-    final Uri? universalUri = coreUtils.instance.formatUniversalUrl(
-      universalLink,
-      wcURI,
-    );
-
-    await launchRedirect(
-      nativeUri: nativeUri,
-      universalUri: universalUri,
-    );
   }
 }

@@ -3,6 +3,7 @@ import 'package:web3modal_flutter/models/grid_item.dart';
 
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/network_service/network_service_singleton.dart';
+import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
 class NetworkServiceItemsListener extends StatelessWidget {
   const NetworkServiceItemsListener({
@@ -23,7 +24,17 @@ class NetworkServiceItemsListener extends StatelessWidget {
         return ValueListenableBuilder(
           valueListenable: networkService.instance.itemList,
           builder: (context, List<GridItem<W3MChainInfo>> items, _) {
-            return builder(context, initialised, items);
+            final service = Web3ModalProvider.of(context).service;
+            final supportedChains = service.approvedChainsByConnectedWallet();
+            final parsedItems = items.map((e) {
+              if (supportedChains == null) {
+                return e;
+              }
+              return e.copyWith(
+                disabled: !supportedChains.contains('eip155:${e.id}'),
+              );
+            }).toList();
+            return builder(context, initialised, parsedItems);
           },
         );
       },

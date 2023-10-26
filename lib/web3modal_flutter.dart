@@ -4,9 +4,6 @@ library web3modal_flutter;
 /// walletconnect_flutter_v2
 export 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
-/// Constants
-export 'constants/namespaces.dart'; // TODO check if this export is needed
-
 /// Models
 export 'models/w3m_chains_presets.dart';
 export 'models/w3m_chain_info.dart';
