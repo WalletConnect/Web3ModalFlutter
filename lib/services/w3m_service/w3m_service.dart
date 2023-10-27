@@ -436,7 +436,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   @override
   Future<void> connectSelectedWallet({bool inBrowser = false}) async {
     _checkInitialized();
-    // final walletToConnect = _selectedWallet ?? walletInfo;
+
     if (selectedWalletRedirect == null) {
       throw W3MServiceException(
         'You didn\'t select a wallet or walletInfo argument is null',
