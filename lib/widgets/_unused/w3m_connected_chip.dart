@@ -22,13 +22,13 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
   void initState() {
     super.initState();
 
-    widget.service.addListener(_service_updated);
+    widget.service.addListener(_serviceUpdated);
     _connected = widget.service.isConnected;
   }
 
   @override
   void dispose() {
-    widget.service.removeListener(_service_updated);
+    widget.service.removeListener(_serviceUpdated);
     super.dispose();
   }
 
@@ -90,7 +90,7 @@ class _W3MConnectedChipState extends State<W3MConnectedChip> {
     );
   }
 
-  void _service_updated() {
+  void _serviceUpdated() {
     setState(() {
       _connected = widget.service.isConnected;
     });

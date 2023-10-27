@@ -1,3 +1,7 @@
+## 3.0.0-beta13
+
+- Minor changes on analyzer
+
 ## 3.0.0-beta12
 
 - Improvements during chain switchng by properly catching errors and rejections and highlighting non-approved chains by the connected wallet.
