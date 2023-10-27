@@ -11,9 +11,11 @@ import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/services/ledger_service/ledger_service_singleton.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/url/launch_url_exception.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
@@ -199,8 +201,8 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     // Set the optional namespaces to everything in our asset util.
     final List<String> chainIds = [];
-    for (final String id in W3MChainPresets.chains.keys) {
-      chainIds.add('eip155:$id');
+    for (final chain in W3MChainPresets.chains.values) {
+      chainIds.add(chain.namespace);
     }
     final Map<String, RequiredNamespace> optionalNamespaces = {
       'eip155': RequiredNamespace(
@@ -252,6 +254,23 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
   }
 
+  bool get _sessionHasSwitchMethod {
+    return NamespaceUtils.getOptionalMethodsForChainId(
+      chainId: _currentSelectedChain!.chainId,
+      optionalNamespaces: _currentSession!.optionalNamespaces ?? {},
+    ).contains(EthUtil.walletSwitchEthChain);
+  }
+
+  bool _sessionHasApprovedChain(String namespace) {
+    return NamespaceUtils.getChainIdsFromNamespaces(
+      namespaces: _currentSession!.namespaces,
+    ).contains(namespace);
+  }
+
+  bool get _connectedToMetaMask =>
+      _currentSession?.peer.metadata.name.toLowerCase().contains('metamask') ??
+      false;
+
   @override
   Future<void> selectChain(
     W3MChainInfo? chainInfo, {
@@ -266,12 +285,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     _chainBalance = null;
     _tokenImageUrl = null;
 
-    // Store the chain for when we reload the app.
-    await storageService.instance.setString(
-      StringConstants.selectedChainId,
-      chainInfo?.chainId ?? '',
-    );
-
     // If the chain is null, disconnect and stop.
     if (chainInfo == null) {
       _currentSelectedChain = null;
@@ -280,32 +293,60 @@ class W3MService with ChangeNotifier implements IW3MService {
       return;
     }
 
-    // TODO all this logic about switching chain seems odd. A full test has to be done.
     final hasValidSession = isConnected && _currentSession != null;
     if (switchChain && hasValidSession && _currentSelectedChain != null) {
-      final hasSwitchMethod = NamespaceUtils.getNamespacesMethodsForChainId(
-        chainId: _currentSelectedChain!.namespace,
-        namespaces: _currentSession!.namespaces,
-      ).contains(EthUtil.walletSwitchEthChain);
-      final hasChainAlready = !NamespaceUtils.getChainIdsFromNamespaces(
-        namespaces: _currentSession!.namespaces,
-      ).contains(chainInfo.namespace);
-      final chainIsDifferent =
+      final hasChainAlready = _sessionHasApprovedChain(chainInfo.namespace);
+      final differentChain =
           _currentSelectedChain!.chainId != chainInfo.chainId;
-      if (hasSwitchMethod && !hasChainAlready && chainIsDifferent) {
-        // Then we swap/add the chain and launch the wallet
+      if (!hasChainAlready && differentChain) {
         _switchEthChain(_currentSelectedChain!, chainInfo);
-        await launchConnectedWallet();
+        if (_sessionHasSwitchMethod && _connectedToMetaMask) {
+          await launchConnectedWallet();
+        }
+      } else {
+        _setEthChain(chainInfo);
       }
+    } else {
+      _setEthChain(chainInfo);
+    }
+  }
+
+  @override
+  List<String>? approvedChainsByConnectedWallet() {
+    if (_currentSession == null) {
+      return null;
     }
 
+    final sessionNamespaces = _currentSession!.namespaces;
+    final nsMethods = sessionNamespaces['eip155']?.methods ?? [];
+    final nsAccounts = sessionNamespaces['eip155']?.accounts ?? [];
+
+    final supportsAllNetworks = nsMethods.contains(EthUtil.walletAddEthChain);
+    final approvedNetworks = NamespaceUtils.getChainsFromAccounts(nsAccounts);
+
+    if (supportsAllNetworks) {
+      return null;
+    }
+
+    return approvedNetworks;
+  }
+
+  void _setEthChain(W3MChainInfo chainInfo) async {
     _currentSelectedChain = chainInfo;
     // Get the token/chain icon
     _tokenImageUrl = _getTokenImage(chainInfo);
 
+    // Store the chain for when we reload the app.
+    // If switchChain is true the store is on [_switchEthChain]
+    await storageService.instance.setString(
+      StringConstants.selectedChainId,
+      _currentSelectedChain!.chainId,
+    );
+
     // Set the requiredNamespace to be the selected chain
     // This will also notify listeners
     _setRequiredNamespaces(_currentSelectedChain!.requiredNamespaces);
+    _notify();
 
     W3MLoggerUtil.logger.t('[$runtimeType] setSelectedChain success');
     _loadAccountData();
@@ -393,10 +434,10 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   @override
-  Future<void> connectSelectedWallet() async {
+  Future<void> connectSelectedWallet({bool inBrowser = false}) async {
     _checkInitialized();
-    // final walletToConnect = _selectedWallet ?? walletInfo;
-    if (_selectedWallet == null) {
+
+    if (selectedWalletRedirect == null) {
       throw W3MServiceException(
         'You didn\'t select a wallet or walletInfo argument is null',
       );
@@ -407,18 +448,27 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
     _connectingWallet = true;
 
+    var pType = platformUtils.instance.getPlatformType();
+    if (inBrowser) {
+      pType = PlatformType.web;
+    }
     try {
       await buildConnectionUri();
-      await urlUtils.instance.navigateDeepLink(
-        nativeLink: _selectedWallet!.listing.mobileLink,
-        universalLink: _selectedWallet!.listing.webappLink,
+      await urlUtils.instance.openRedirect(
+        selectedWalletRedirect!,
         wcURI: wcUri!,
+        pType: pType,
       );
-    } on LaunchUrlException catch (e, s) {
-      W3MLoggerUtil.logger.e('[$runtimeType] error launching wallet $e, $s');
+    } on LaunchUrlException catch (e) {
+      W3MLoggerUtil.logger.e(
+        '[$runtimeType] error launching wallet. '
+        '${selectedWalletRedirect?.toString()}',
+      );
       toastUtils.instance.show(
         ToastMessage(type: ToastType.error, text: e.message),
       );
+    } catch (e, s) {
+      W3MLoggerUtil.logger.e('[$runtimeType] error launching wallet. $e, $s');
     }
 
     _connectingWallet = false;
@@ -436,7 +486,7 @@ class W3MService with ChangeNotifier implements IW3MService {
 
       if (connectResponse != null) {
         try {
-          sessionFuture?.timeout(Duration.zero);
+          await sessionFuture?.timeout(Duration.zero);
         } catch (_) {
           // Ignore this error, just wanted to cancel the previous future.
         }
@@ -468,10 +518,10 @@ class W3MService with ChangeNotifier implements IW3MService {
     try {
       _currentSession = await connectResponse!.session.future;
       _setSessionValues(_currentSession!);
-      await explorerService.instance!.updateRecentPosition(
-        _selectedWallet!.listing.id,
-      );
       await _selectChainFromStoredId();
+      await explorerService.instance!.updateRecentPosition(
+        _selectedWallet?.listing.id,
+      );
     } on TimeoutException {
       W3MLoggerUtil.logger
           .i('[$runtimeType] Rebuilding session, ending future');
@@ -490,36 +540,18 @@ class W3MService with ChangeNotifier implements IW3MService {
   Future<void> launchConnectedWallet() async {
     _checkInitialized();
 
-    if (_currentSession == null) {
+    if (sessionWalletRedirect == null) {
       return;
     }
 
-    final redirect = _constructRedirect();
-
     W3MLoggerUtil.logger.t(
-      '[$runtimeType] Launching wallet: $redirect, ${_currentSession?.peer.metadata}',
+      '[$runtimeType] Launching wallet: $sessionWalletRedirect, ${_currentSession?.peer.metadata}',
     );
 
-    if (redirect == null) {
-      await urlUtils.instance.launchUrl(
-        Uri.parse(_currentSession!.peer.metadata.url),
-      );
-    } else {
-      // Get the native and universal URLs and add the 'wc' to the end
-      // in the redirect.
-      final nativeUrl = coreUtils.instance.createSafeUrl(redirect.native ?? '');
-      final universalUrl =
-          coreUtils.instance.createPlainUrl(redirect.universal ?? '');
-
-      await urlUtils.instance.launchRedirect(
-        nativeUri: Uri.parse(
-          '${nativeUrl}wc?sessionTopic=${_currentSession!.topic}',
-        ),
-        universalUri: Uri.parse(
-          '${universalUrl}wc?sessionTopic=${_currentSession!.topic}',
-        ),
-      );
-    }
+    return await urlUtils.instance.openRedirect(
+      sessionWalletRedirect!,
+      pType: platformUtils.instance.getPlatformType(),
+    );
   }
 
   @override
@@ -574,9 +606,8 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   @override
-  Future<void> selectWallet({required W3MWalletInfo? walletInfo}) async {
+  void selectWallet(W3MWalletInfo walletInfo) {
     _selectedWallet = walletInfo;
-    return;
   }
 
   @override
@@ -678,29 +709,30 @@ class W3MService with ChangeNotifier implements IW3MService {
     final int chainIdInt = int.parse(to.chainId);
     final String chainHex = chainIdInt.toRadixString(16);
     final String chainId = 'eip155:${from.chainId}';
+    final Map<String, String> params = {'chainId': '0x$chainHex'};
     _web3App!
         .request(
       topic: _currentSession!.topic,
       chainId: chainId,
       request: SessionRequestParams(
-        method: 'wallet_switchEthereumChain',
-        params: [
-          {
-            'chainId': '0x$chainHex',
-          },
-        ],
+        method: EthUtil.walletSwitchEthChain,
+        params: [params],
       ),
     )
         .catchError(
-      (e) {
-        _web3App!.request(
+      (e, s) {
+        if (_isUserRejectedError(e)) {
+          return _setEthChain(_currentSelectedChain!);
+        }
+        _web3App!
+            .request(
           topic: _currentSession!.topic,
           chainId: chainId,
           request: SessionRequestParams(
-            method: 'wallet_addEthereumChain',
+            method: EthUtil.walletAddEthChain,
             params: [
               {
-                'chainId': '0x$chainHex',
+                ...params,
                 'chainName': to.chainName,
                 'nativeCurrency': {
                   'name': to.tokenName,
@@ -711,9 +743,23 @@ class W3MService with ChangeNotifier implements IW3MService {
               },
             ],
           ),
-        );
+        )
+            .catchError((e, s) {
+          if (_isUserRejectedError(e)) {
+            return _setEthChain(_currentSelectedChain!);
+          }
+        });
       },
     );
+  }
+
+  bool _isUserRejectedError(dynamic e) {
+    if (e is JsonRpcError) {
+      final stringError = e.toJson().toString().toLowerCase();
+      final userRejected = stringError.contains('rejected');
+      return userRejected;
+    }
+    return false;
   }
 
   Future<void> _disconnectSession(SessionData toDisconnect) async {
@@ -742,25 +788,26 @@ class W3MService with ChangeNotifier implements IW3MService {
     _notify();
   }
 
-  Redirect? _constructRedirect() {
-    if (_currentSession == null) {
-      return null;
-    }
+  @override
+  WalletRedirect? get selectedWalletRedirect {
+    final walletName = _selectedWallet?.listing.name;
+    if (walletName == null) return null;
 
-    final sessionRedirect = _currentSession?.peer.metadata.redirect;
-    final explorerRedirect = explorerService.instance?.getRedirect(
-      name: _currentSession!.peer.metadata.name,
+    return explorerService.instance?.getWalletRedirectByName(
+      walletName,
     );
+  }
 
-    if (sessionRedirect == null && explorerRedirect == null) {
+  WalletRedirect? get sessionWalletRedirect {
+    final sessionRedirect = _currentSession?.peer.metadata.redirect;
+    if (sessionRedirect == null) {
       return null;
     }
 
-    // Combine the redirect data from the session and the explorer API.
-    // The explorer API is the source of truth.
-    return Redirect(
-      native: explorerRedirect ?? sessionRedirect?.native,
-      universal: explorerRedirect ?? sessionRedirect?.universal,
+    return WalletRedirect(
+      mobile: sessionRedirect.native,
+      desktop: sessionRedirect.native,
+      web: sessionRedirect.universal,
     );
   }
 
@@ -774,7 +821,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 }
 
-extension on W3MService {
+extension _W3MServiceExtension on W3MService {
   @protected
   void onSessionConnect(SessionConnect? args) async {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionConnect: $args');

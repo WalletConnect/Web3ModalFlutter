@@ -26,7 +26,7 @@ class NetworksGrid extends StatelessWidget {
             width: ResponsiveData.gridItemSzieOf(context).width,
             height: ResponsiveData.gridItemSzieOf(context).height,
             child: WalletGridItem(
-              onTap: () => onTapNetwork?.call(info.data),
+              onTap: info.disabled ? null : () => onTapNetwork?.call(info.data),
               isSelected: service.selectedChain?.chainId == info.id,
               imageUrl: info.image,
               title: info.title,

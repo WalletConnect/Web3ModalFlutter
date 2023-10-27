@@ -61,7 +61,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
                 : items.getRange(0, kLShortWalletListCount);
             return WalletsList(
               onTapWallet: (data) {
-                service.selectWallet(walletInfo: data);
+                service.selectWallet(data);
                 widgetStack.instance.push(const ConnectWalletPage());
               },
               itemList: itemsToShow.toList(),

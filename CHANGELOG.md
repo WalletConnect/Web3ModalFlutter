@@ -1,3 +1,7 @@
+## 3.0.0-beta11
+
+- Improvements during chain switchng by properly catching errors and rejections and highlighting non-approved chains by the connected wallet.
+  
 ## 3.0.0-beta10
 
 - Fix a bug where QR Code wasn't readable anymore after user rejects connection from within the chosen wallet app

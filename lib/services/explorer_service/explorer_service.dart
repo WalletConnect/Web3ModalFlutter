@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:universal_io/io.dart';
+import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
@@ -102,6 +103,7 @@ class ExplorerService implements IExplorerService {
 
   @override
   Future<void> fetchInitialWallets() async {
+    totalListings.value = 0;
     final allListings = await Future.wait([
       _fetchInstalledListings(),
       _fetchOtherListings(firstCall: true),
@@ -155,15 +157,22 @@ class ExplorerService implements IExplorerService {
   }
 
   @override
-  String? getRedirect({required String name}) {
-    try {
-      final wallet = _listings.firstWhere(
-        (l) => l.listing.name.contains(name) || name.contains(l.listing.name),
-      );
-      return wallet.listing.mobileLink;
-    } catch (e) {
+  WalletRedirect? getWalletRedirectByName(String name) {
+    final wallet = listings.value.firstWhereOrNull(
+      (l) {
+        final name1 = l.listing.name.toLowerCase();
+        final name2 = name.toLowerCase();
+        return name1.contains(name2) || name2.contains(name1);
+      },
+    );
+    if (wallet == null) {
       return null;
     }
+    return WalletRedirect(
+      mobile: wallet.listing.mobileLink,
+      desktop: wallet.listing.desktopLink,
+      web: wallet.listing.webappLink,
+    );
   }
 
   Future<List<NativeAppData>> _fetchNativeAppData() async {
@@ -172,10 +181,7 @@ class ExplorerService implements IExplorerService {
       final uri = Platform.isIOS
           ? Uri.parse('$_apiUrl/getIosData')
           : Uri.parse('$_apiUrl/getAndroidData');
-      final response = await _client.get(
-        uri,
-        headers: headers,
-      );
+      final response = await _client.get(uri, headers: headers);
       final apiResponse = ApiResponse<NativeAppData>.fromJson(
         jsonDecode(response.body),
         (json) => NativeAppData.fromJson(json),

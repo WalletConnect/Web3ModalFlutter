@@ -94,7 +94,7 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
                       isPaginating: _paginating,
                       scrollController: _controller,
                       onTapWallet: (data) async {
-                        await service.selectWallet(walletInfo: data);
+                        service.selectWallet(data);
                         widgetStack.instance.push(const ConnectWalletPage());
                       },
                       itemList: items,

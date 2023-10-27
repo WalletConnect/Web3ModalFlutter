@@ -249,6 +249,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  custom_sliding_segmented_control:
+    dependency: transitive
+    description:
+      name: custom_sliding_segmented_control
+      sha256: "05b73fa48d57218bfdf806bad68a859812b216cd81fe81c6cbefde89f39eb257"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.8.1"
   dart_style:
     dependency: transitive
     description:
@@ -600,6 +608,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  package_info_plus:
+    dependency: transitive
+    description:
+      name: package_info_plus
+      sha256: "7e76fad405b3e4016cd39d08f455a4eb5199723cf594cd1b8916d47140d93017"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.0"
+  package_info_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: package_info_plus_platform_interface
+      sha256: "9bc8ba46813a4cc42c66ab781470711781940780fd8beddd0c3da62506d3a6c6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   path:
     dependency: transitive
     description:
@@ -1089,10 +1113,10 @@ packages:
     dependency: "direct main"
     description:
       name: walletconnect_flutter_v2
-      sha256: "7619022ecea01adc771aaaefb4cace48bc3e8645d5e5962d4859347c6a0ea777"
+      sha256: "55315779dd94b5b38754c8abcccba6e8f159083e799945dc49441a20dc73cffd"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.5"
+    version: "2.1.8"
   watcher:
     dependency: transitive
     description:
@@ -1123,7 +1147,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.0.0-beta10"
+    version: "3.0.0-beta11"
   web_socket_channel:
     dependency: transitive
     description:

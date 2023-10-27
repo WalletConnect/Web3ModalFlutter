@@ -11,11 +11,13 @@ class W3MListAvatar extends StatelessWidget {
     this.borderRadius,
     this.isNetwork = false,
     this.color,
+    this.disabled = false,
   });
   final String? imageUrl;
   final double? borderRadius;
   final bool isNetwork;
   final Color? color;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +51,20 @@ class W3MListAvatar extends StatelessWidget {
               ),
         clipBehavior: Clip.antiAlias,
         child: (imageUrl ?? '').isNotEmpty
-            ? CachedNetworkImage(
-                imageUrl: imageUrl!,
-                httpHeaders: coreUtils.instance.getAPIHeaders(projectId),
-                fadeOutDuration: Duration.zero,
-                fadeInDuration: Duration.zero,
-                placeholderFadeInDuration: Duration.zero,
-                errorWidget: (context, url, error) => ColoredBox(
-                  color: themeColors.grayGlass005,
+            ? ColorFiltered(
+                colorFilter: ColorFilter.mode(
+                  disabled ? Colors.grey : Colors.transparent,
+                  BlendMode.saturation,
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl!,
+                  httpHeaders: coreUtils.instance.getAPIHeaders(projectId),
+                  fadeOutDuration: Duration.zero,
+                  fadeInDuration: Duration.zero,
+                  placeholderFadeInDuration: Duration.zero,
+                  errorWidget: (context, url, error) => ColoredBox(
+                    color: themeColors.grayGlass005,
+                  ),
                 ),
               )
             : ColoredBox(

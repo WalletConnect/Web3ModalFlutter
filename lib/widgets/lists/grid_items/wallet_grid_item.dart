@@ -42,6 +42,7 @@ class WalletGridItem extends StatelessWidget {
                     imageUrl: imageUrl,
                     isNetwork: isNetwork,
                     color: isSelected ? themeColors.accent100 : null,
+                    disabled: isNetwork && onTap == null,
                   ),
             ),
           ),

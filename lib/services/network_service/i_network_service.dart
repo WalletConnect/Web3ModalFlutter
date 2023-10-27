@@ -10,6 +10,4 @@ abstract class INetworkService {
   Future<void> init();
 
   void filterList({String? query});
-
-  void updateSort();
 }
