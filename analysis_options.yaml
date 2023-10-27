@@ -32,10 +32,16 @@ linter:
 
 analyzer:
   exclude:
-    - "**/*.g.dart"
-    - "**/*.freezed.dart"
-    - "*.freezed.dart"
-    - "*.g.dart"
+    - lib/*.g.dart
+    - lib/*.freezed.dart
+    - lib/models/*.g.dart
+    - lib/models/*.freezed.dart
+    - lib/services/*.g.dart
+    - lib/services/*.freezed.dart
+    - lib/services/blockchain_api_service/*.g.dart
+    - lib/services/blockchain_api_service/*.freezed.dart
+    - lib/theme/*.g.dart
+    - lib/theme/*.freezed.dart
   errors:
     invalid_annotation_target: ignore
 # Additional information about this file can be found at

@@ -1,10 +1,9 @@
-import 'package:w_common/disposable.dart';
 import 'dart:async';
 
 import 'package:web3modal_flutter/utils/toast/toast_message.dart';
 import 'package:web3modal_flutter/utils/toast/i_toast_utils.dart';
 
-class ToastUtils extends IToastUtils with Disposable {
+class ToastUtils extends IToastUtils {
   final _toastController = StreamController<ToastMessage?>.broadcast();
 
   @override
