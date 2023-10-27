@@ -103,6 +103,7 @@ class ExplorerService implements IExplorerService {
 
   @override
   Future<void> fetchInitialWallets() async {
+    totalListings.value = 0;
     final allListings = await Future.wait([
       _fetchInstalledListings(),
       _fetchOtherListings(firstCall: true),

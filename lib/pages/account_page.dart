@@ -67,22 +67,22 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
               right: kPadding12,
               bottom: kPadding12,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    const W3MAccountOrb(size: 72.0),
-                    const SizedBox.square(dimension: kPadding12),
-                    const W3MAddressWithCopyButton(),
-                    const W3MBalanceText(),
-                    Visibility(
-                      visible: _service?.selectedChain?.blockExplorer != null,
-                      child: Column(
-                        children: [
-                          const SizedBox.square(dimension: 12.0),
-                          SimpleIconButton(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      const W3MAccountOrb(size: 72.0),
+                      const SizedBox.square(dimension: kPadding12),
+                      const W3MAddressWithCopyButton(),
+                      const W3MBalanceText(),
+                      Visibility(
+                        visible: _service?.selectedChain?.blockExplorer != null,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: kPadding12),
+                          child: SimpleIconButton(
                             onTap: () => _service?.launchBlockExplorer(),
                             leftIcon: 'assets/icons/compass.svg',
                             rightIcon: 'assets/icons/arrow_top_right.svg',
@@ -93,41 +93,41 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                               themeColors.background200,
                             ),
                           ),
-                        ],
+                        ),
                       ),
+                    ],
+                  ),
+                  const SizedBox.square(dimension: 20.0),
+                  AccountListItem(
+                    iconWidget: RoundedIcon(
+                      imageUrl: _service?.tokenImageUrl,
+                      assetColor: themeColors.background100,
                     ),
-                  ],
-                ),
-                const SizedBox.square(dimension: 20.0),
-                AccountListItem(
-                  iconWidget: RoundedIcon(
-                    imageUrl: _service?.tokenImageUrl,
-                    assetColor: themeColors.background100,
+                    title: _service?.selectedChain?.chainName ?? '',
+                    onTap: () {
+                      widgetStack.instance.push(SelectNetworkPage(
+                        onTapNetwork: (W3MChainInfo chainInfo) {
+                          _service?.selectChain(chainInfo, switchChain: true);
+                          widgetStack.instance.pop();
+                        },
+                      ));
+                    },
                   ),
-                  title: _service?.selectedChain?.chainName ?? '',
-                  onTap: () {
-                    widgetStack.instance.push(SelectNetworkPage(
-                      onTapNetwork: (W3MChainInfo chainInfo) {
-                        _service?.selectChain(chainInfo, switchChain: true);
-                        widgetStack.instance.pop();
-                      },
-                    ));
-                  },
-                ),
-                const SizedBox.square(dimension: kPadding8),
-                AccountListItem(
-                  iconPath: 'assets/icons/disconnect.svg',
-                  trailing: const SizedBox.shrink(),
-                  title: 'Disconnect',
-                  titleStyle: themeData.textStyles.paragraph600.copyWith(
-                    color: themeColors.foreground200,
+                  const SizedBox.square(dimension: kPadding8),
+                  AccountListItem(
+                    iconPath: 'assets/icons/disconnect.svg',
+                    trailing: const SizedBox.shrink(),
+                    title: 'Disconnect',
+                    titleStyle: themeData.textStyles.paragraph600.copyWith(
+                      color: themeColors.foreground200,
+                    ),
+                    onTap: () async {
+                      _service?.closeModal();
+                      await _service?.disconnect();
+                    },
                   ),
-                  onTap: () async {
-                    _service?.closeModal();
-                    await _service?.disconnect();
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Positioned(

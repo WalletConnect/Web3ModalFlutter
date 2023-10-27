@@ -2295,14 +2295,6 @@ class MockNetworkService extends _i1.Mock implements _i33.NetworkService {
         ),
         returnValueForMissingStub: null,
       );
-  @override
-  void updateSort() => super.noSuchMethod(
-        Invocation.method(
-          #updateSort,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
 }
 
 /// A class which mocks [BlockchainApiUtils].

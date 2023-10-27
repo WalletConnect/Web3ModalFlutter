@@ -10,8 +10,11 @@ class NetworkServiceItemsListener extends StatelessWidget {
     super.key,
     required this.builder,
   });
-  final Function(BuildContext context, bool initialised,
-      List<GridItem<W3MChainInfo>> items) builder;
+  final Function(
+    BuildContext context,
+    bool initialised,
+    List<GridItem<W3MChainInfo>> items,
+  ) builder;
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +26,21 @@ class NetworkServiceItemsListener extends StatelessWidget {
         }
         return ValueListenableBuilder(
           valueListenable: networkService.instance.itemList,
-          builder: (context, List<GridItem<W3MChainInfo>> items, _) {
+          builder: (context, items, _) {
             final service = Web3ModalProvider.of(context).service;
             final supportedChains = service.approvedChainsByConnectedWallet();
-            final parsedItems = items.map((e) {
-              if (supportedChains == null) {
-                return e;
-              }
-              return e.copyWith(
-                disabled: !supportedChains.contains('eip155:${e.id}'),
-              );
-            }).toList();
+            final parsedItems = supportedChains == null
+                ? items
+                : items.map((e) {
+                    return e.copyWith(
+                      disabled: !supportedChains.contains(e.data.namespace),
+                    );
+                  }).toList()
+              ..sort((a, b) {
+                final disabledA = a.disabled ? 0 : 1;
+                final disabledB = b.disabled ? 0 : 1;
+                return disabledB.compareTo(disabledA);
+              });
             return builder(context, initialised, parsedItems);
           },
         );

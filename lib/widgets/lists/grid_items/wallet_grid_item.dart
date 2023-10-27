@@ -36,21 +36,14 @@ class WalletGridItem extends StatelessWidget {
           Expanded(
             child: Align(
               alignment: Alignment.topCenter,
-              child: Container(
-                foregroundDecoration: onTap == null
-                    ? BoxDecoration(
-                        color: Colors.grey,
-                        backgroundBlendMode: BlendMode.saturation,
-                      )
-                    : null,
-                child: imageWidget ??
-                    W3MListAvatar(
-                      borderRadius: radiuses.radiusXS,
-                      imageUrl: imageUrl,
-                      isNetwork: isNetwork,
-                      color: isSelected ? themeColors.accent100 : null,
-                    ),
-              ),
+              child: imageWidget ??
+                  W3MListAvatar(
+                    borderRadius: radiuses.radiusXS,
+                    imageUrl: imageUrl,
+                    isNetwork: isNetwork,
+                    color: isSelected ? themeColors.accent100 : null,
+                    disabled: isNetwork && onTap == null,
+                  ),
             ),
           ),
           Column(

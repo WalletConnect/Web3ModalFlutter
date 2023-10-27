@@ -201,8 +201,8 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     // Set the optional namespaces to everything in our asset util.
     final List<String> chainIds = [];
-    for (final String id in W3MChainPresets.chains.keys) {
-      chainIds.add('eip155:$id');
+    for (final chain in W3MChainPresets.chains.values) {
+      chainIds.add(chain.namespace);
     }
     final Map<String, RequiredNamespace> optionalNamespaces = {
       'eip155': RequiredNamespace(
@@ -316,16 +316,19 @@ class W3MService with ChangeNotifier implements IW3MService {
     if (_currentSession == null) {
       return null;
     }
-    // Get all of the accounts
-    final List<String> namespaceAccounts = [];
-    // Loop through the namespaces, and get the accounts
-    for (final Namespace namespace in _currentSession!.namespaces.values) {
-      namespaceAccounts.addAll(namespace.accounts);
+
+    final sessionNamespaces = _currentSession!.namespaces;
+    final nsMethods = sessionNamespaces['eip155']?.methods ?? [];
+    final nsAccounts = sessionNamespaces['eip155']?.accounts ?? [];
+
+    final supportsAllNetworks = nsMethods.contains(EthUtil.walletAddEthChain);
+    final approvedNetworks = NamespaceUtils.getChainsFromAccounts(nsAccounts);
+
+    if (supportsAllNetworks) {
+      return null;
     }
-    return namespaceAccounts.map((e) {
-      final parts = e.split(':');
-      return '${parts[0]}:${parts[1]}';
-    }).toList();
+
+    return approvedNetworks;
   }
 
   void _setEthChain(W3MChainInfo chainInfo) async {
@@ -515,10 +518,10 @@ class W3MService with ChangeNotifier implements IW3MService {
     try {
       _currentSession = await connectResponse!.session.future;
       _setSessionValues(_currentSession!);
-      await explorerService.instance!.updateRecentPosition(
-        _selectedWallet!.listing.id,
-      );
       await _selectChainFromStoredId();
+      await explorerService.instance!.updateRecentPosition(
+        _selectedWallet?.listing.id,
+      );
     } on TimeoutException {
       W3MLoggerUtil.logger
           .i('[$runtimeType] Rebuilding session, ending future');

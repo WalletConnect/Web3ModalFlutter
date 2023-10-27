@@ -37,7 +37,7 @@ abstract class IExplorerService {
   void search({String? query});
 
   /// update the recently used position to the top list
-  Future<void> updateRecentPosition(String recentId);
+  Future<void> updateRecentPosition(String? recentId);
 
   String getWalletImageUrl(String imageId);
 
