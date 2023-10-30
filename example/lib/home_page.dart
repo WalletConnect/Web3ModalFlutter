@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
-import 'package:web3modal_flutter/utils/eth_util.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
+import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/chain_data_wrapper.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/helpers.dart';
@@ -31,6 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _initialize() async {
     _web3App = await Web3App.createInstance(
       projectId: DartDefines.projectId,
+      logLevel: LogLevel.error,
       metadata: const PairingMetadata(
         name: 'Web3Modal Flutter Example',
         description: 'Web3Modal Flutter Example',
@@ -135,6 +135,7 @@ class _W3MPageState extends State<_W3MPage> {
   void _initializeService() async {
     _w3mService = W3MService(
       web3App: _web3App,
+      logLevel: LogLevel.error,
       featuredWalletIds: {
         'f2436c67184f158d1beda5df53298ee84abfc367581e4505134b5bcf5f46697d',
         '8a0ee50d1f22f6651afcae7eb4253e52a3310b90af5daef78a8c4929a9bb99d4',
@@ -242,14 +243,14 @@ class _W3MPageState extends State<_W3MPage> {
     tokenName: 'SETH',
     requiredNamespaces: {
       'eip155': const RequiredNamespace(
-        methods: EthUtil.ethRequiredMethods,
+        methods: EthConstants.ethRequiredMethods,
         chains: ['eip155:11155111'],
-        events: EthUtil.ethEvents,
+        events: EthConstants.ethEvents,
       ),
     },
     optionalNamespaces: {
       'eip155': const RequiredNamespace(
-        methods: EthUtil.ethOptionalMethods,
+        methods: EthConstants.ethOptionalMethods,
         chains: ['eip155:11155111'],
         events: [],
       ),

@@ -12,7 +12,6 @@ import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart';
 import 'package:web3modal_flutter/services/network_service/network_service_singleton.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
-import 'package:web3modal_flutter/utils/eth_util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import '../mock_classes.mocks.dart';
@@ -166,9 +165,9 @@ void main() {
         }
         final Map<String, RequiredNamespace> optionalNamespaces = {
           'eip155': RequiredNamespace(
-            methods: EthUtil.ethMethods,
+            methods: EthConstants.ethMethods,
             chains: chainIds,
-            events: EthUtil.ethEvents,
+            events: EthConstants.ethEvents,
           ),
         };
         expect(

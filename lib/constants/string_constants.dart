@@ -26,4 +26,10 @@ class StringConstants {
   // Storage
   static const String recentWallet = 'w3m_recentWallet';
   static const String selectedChainId = 'w3m_selectedChainId';
+
+  // Urls
+  static const String exploreAllWallets =
+      'https://explorer.walletconnect.com/?type=wallet';
+  static const String learnMoreUrl =
+      'https://ethereum.org/en/developers/docs/networks/';
 }
