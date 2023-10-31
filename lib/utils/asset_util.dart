@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
-import 'package:web3modal_flutter/models/w3m_chains_presets.dart';
+import 'package:web3modal_flutter/utils/w3m_chains_presets.dart';
 
 class AssetUtil {
   static String getChainIconId(String chainId) {

@@ -26,8 +26,8 @@ import 'package:web3modal_flutter/services/network_service/network_service_singl
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
-import 'package:web3modal_flutter/models/w3m_chains_presets.dart';
-import 'package:web3modal_flutter/utils/eth_util.dart';
+import 'package:web3modal_flutter/utils/w3m_chains_presets.dart';
+import 'package:web3modal_flutter/constants/eth_constants.dart';
 import 'package:web3modal_flutter/widgets/web3modal.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/utils/toast/toast_message.dart';
@@ -43,6 +43,8 @@ class W3MServiceException implements Exception {
 
 class W3MService with ChangeNotifier implements IW3MService {
   var _projectId = '';
+
+  BuildContext? _context;
 
   W3MServiceStatus _status = W3MServiceStatus.idle;
   @override
@@ -67,9 +69,6 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   ConnectResponse? connectResponse;
   Future<SessionData>? get sessionFuture => connectResponse?.session.future;
-
-  BuildContext? _context;
-
   @override
   String? get wcUri => connectResponse?.uri.toString();
 
@@ -112,6 +111,9 @@ class W3MService with ChangeNotifier implements IW3MService {
   @override
   final Event<EventArgs> onPairingExpire = Event();
 
+  @override
+  final Event<EventArgs> onWalletConnectionError = Event();
+
   bool _connectingWallet = false;
 
   W3MService({
@@ -123,6 +125,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     Set<String>? featuredWalletIds,
     Set<String>? includedWalletIds,
     Set<String>? excludedWalletIds,
+    LogLevel logLevel = LogLevel.nothing,
   }) {
     if (web3App == null && projectId == null && metadata == null) {
       throw ArgumentError(
@@ -155,6 +158,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     blockchainApiUtils.instance = BlockchainApiUtils(
       projectId: _projectId,
     );
+
+    W3MLoggerUtil.setLogLevel(logLevel);
   }
 
   ////////* PUBLIC METHODS */////////
@@ -206,9 +211,9 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
     final Map<String, RequiredNamespace> optionalNamespaces = {
       'eip155': RequiredNamespace(
-        methods: EthUtil.ethMethods,
+        methods: EthConstants.ethMethods,
         chains: chainIds,
-        events: EthUtil.ethEvents,
+        events: EthConstants.ethEvents,
       ),
     };
     _setOptionalNamespaces(optionalNamespaces);
@@ -258,7 +263,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     return NamespaceUtils.getOptionalMethodsForChainId(
       chainId: _currentSelectedChain!.chainId,
       optionalNamespaces: _currentSession!.optionalNamespaces ?? {},
-    ).contains(EthUtil.walletSwitchEthChain);
+    ).contains(EthConstants.walletSwitchEthChain);
   }
 
   bool _sessionHasApprovedChain(String namespace) {
@@ -321,7 +326,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     final nsMethods = sessionNamespaces['eip155']?.methods ?? [];
     final nsAccounts = sessionNamespaces['eip155']?.accounts ?? [];
 
-    final supportsAllNetworks = nsMethods.contains(EthUtil.walletAddEthChain);
+    final supportsAllNetworks =
+        nsMethods.contains(EthConstants.walletAddEthChain);
     final approvedNetworks = NamespaceUtils.getChainsFromAccounts(nsAccounts);
 
     if (supportsAllNetworks) {
@@ -527,11 +533,10 @@ class W3MService with ChangeNotifier implements IW3MService {
           .i('[$runtimeType] Rebuilding session, ending future');
       return;
     } on JsonRpcError catch (e) {
+      if (_isUserRejectedError(e)) {
+        onWalletConnectionError.broadcast();
+      }
       W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
-      final errorMessage = e.message ?? 'Error Connecting to Wallet';
-      toastUtils.instance.show(
-        ToastMessage(type: ToastType.error, text: errorMessage),
-      );
       return await expirePreviousInactivePairings();
     }
   }
@@ -715,7 +720,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       topic: _currentSession!.topic,
       chainId: chainId,
       request: SessionRequestParams(
-        method: EthUtil.walletSwitchEthChain,
+        method: EthConstants.walletSwitchEthChain,
         params: [params],
       ),
     )
@@ -729,7 +734,7 @@ class W3MService with ChangeNotifier implements IW3MService {
           topic: _currentSession!.topic,
           chainId: chainId,
           request: SessionRequestParams(
-            method: EthUtil.walletAddEthChain,
+            method: EthConstants.walletAddEthChain,
             params: [
               {
                 ...params,
@@ -868,7 +873,7 @@ extension _W3MServiceExtension on W3MService {
   @protected
   void onSessionEvent(SessionEvent? args) {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionEvent $args');
-    if (args?.name == EthUtil.chainChanged) {
+    if (args?.name == EthConstants.chainChanged) {
       if (W3MChainPresets.chains.containsKey('${args?.data}')) {
         final chain = W3MChainPresets.chains['${args?.data}'];
         selectChain(chain);

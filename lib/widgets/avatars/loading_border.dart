@@ -10,7 +10,7 @@ class LoadingBorder extends StatefulWidget {
     required this.child,
     this.padding = 16.0,
     this.strokeWidth = 4.0,
-    this.borderRadius = 32.0,
+    this.borderRadius = 0.0,
     this.animate = true,
   });
   final Widget child;
@@ -130,7 +130,10 @@ class _CircularBorderPainter extends CustomPainter {
 }
 
 class _CircularBorderPainter2 extends CustomPainter {
-  const _CircularBorderPainter2({required this.backColor, this.show = true});
+  const _CircularBorderPainter2({
+    required this.backColor,
+    this.show = true,
+  });
   final Color backColor;
   final bool show;
 
@@ -143,8 +146,8 @@ class _CircularBorderPainter2 extends CustomPainter {
 
     final rect2 = Rect.fromCenter(
       center: Offset(w / 2, h / 2),
-      width: w * 1.2,
-      height: h * 1.2,
+      width: w * 1.4,
+      height: h * 1.4,
     );
 
     canvas.drawArc(

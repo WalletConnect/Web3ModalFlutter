@@ -22,34 +22,40 @@ class NetworksGrid extends StatelessWidget {
     final itemSize = ResponsiveData.gridItemSzieOf(context);
     final children = itemList
         .map(
-          (info) => SizedBox(
-            width: ResponsiveData.gridItemSzieOf(context).width,
-            height: ResponsiveData.gridItemSzieOf(context).height,
-            child: WalletGridItem(
-              onTap: info.disabled ? null : () => onTapNetwork?.call(info.data),
-              isSelected: service.selectedChain?.chainId == info.id,
-              imageUrl: info.image,
-              title: info.title,
-              isNetwork: true,
-            ),
+          (info) => WalletGridItem(
+            onTap: info.disabled ? null : () => onTapNetwork?.call(info.data),
+            isSelected: service.selectedChain?.chainId == info.id,
+            imageUrl: info.image,
+            title: info.title,
+            isNetwork: true,
           ),
         )
         .toList();
     return GridView.builder(
       padding: EdgeInsets.only(
         bottom: kPadding12 + ResponsiveData.paddingBottomOf(context),
-        left: kPadding12,
-        right: kPadding12,
-        top: kPadding12,
+        left: kPadding6,
+        right: kPadding6,
+        top: ResponsiveData.isPortrait(context) ? kPadding12 : kPadding6,
       ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: ResponsiveData.gridAxisCountOf(context),
-        mainAxisSpacing: kGridAxisSpacing,
-        crossAxisSpacing: kGridAxisSpacing,
-        childAspectRatio: itemSize.width / itemSize.height,
+        mainAxisSpacing: kPadding12,
+        crossAxisSpacing: 0.0,
+        mainAxisExtent: itemSize.height,
       ),
       itemBuilder: (_, index) {
-        return children[index];
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: itemSize.width,
+              height: itemSize.height,
+              child: children[index],
+            ),
+          ],
+        );
       },
       itemCount: children.length,
     );

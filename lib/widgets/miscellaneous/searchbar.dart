@@ -167,6 +167,8 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
                   child: SvgPicture.asset(
                     'assets/icons/search.svg',
                     package: 'web3modal_flutter',
+                    width: 14.0,
+                    height: 14.0,
                     colorFilter: ColorFilter.mode(
                       themeColors.foreground275,
                       BlendMode.srcIn,
@@ -187,18 +189,35 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
                   color: themeColors.foreground275,
                   height: 1.5,
                 ),
-                suffixIcon:
-                    _controller.value.text.isNotEmpty || _focusNode.hasFocus
-                        ? IconButton(
-                            padding: const EdgeInsets.all(0.0),
-                            visualDensity: VisualDensity.compact,
-                            icon: const Icon(Icons.close),
-                            onPressed: () {
-                              _controller.clear();
-                              widget.onDismissKeyboard?.call(true);
-                            },
-                          )
-                        : null,
+                suffixIcon: _controller.value.text.isNotEmpty ||
+                        _focusNode.hasFocus
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            width: 18.0,
+                            height: 18.0,
+                            margin: const EdgeInsets.only(right: kPadding12),
+                            decoration: BoxDecoration(
+                              color: themeColors.grayGlass020,
+                              borderRadius: BorderRadius.circular(6.0),
+                            ),
+                            child: IconButton(
+                              iconSize: 10.0,
+                              padding: const EdgeInsets.all(0.0),
+                              visualDensity: VisualDensity.compact,
+                              icon: const Icon(Icons.close),
+                              color: themeColors.background150,
+                              onPressed: () {
+                                _controller.clear();
+                                widget.onDismissKeyboard?.call(true);
+                              },
+                            ),
+                          ),
+                        ],
+                      )
+                    : null,
                 border: unfocusedBorder,
                 errorBorder: unfocusedBorder,
                 enabledBorder: unfocusedBorder,

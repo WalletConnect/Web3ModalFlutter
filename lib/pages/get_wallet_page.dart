@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
-import 'package:web3modal_flutter/constants/urls_constants.dart';
+import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/grid_item.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
@@ -51,7 +51,7 @@ class GetWalletPage extends StatelessWidget {
               lastItem: AllWalletsItem(
                 title: 'Explore All',
                 onTap: () => urlUtils.instance.launchUrl(
-                  Uri.parse(UrlsConstants.exploreAllWallets),
+                  Uri.parse(StringConstants.exploreAllWallets),
                   mode: LaunchMode.externalApplication,
                 ),
                 trailing: Padding(

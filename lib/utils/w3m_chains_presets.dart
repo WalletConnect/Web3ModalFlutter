@@ -1,6 +1,6 @@
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
-import 'package:web3modal_flutter/utils/eth_util.dart';
+import 'package:web3modal_flutter/constants/eth_constants.dart';
 
 class W3MChainPresets {
   /// All RPC urls were found here: https://rpc.info/
@@ -13,14 +13,14 @@ class W3MChainPresets {
       tokenName: 'ETH',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
+          methods: EthConstants.ethRequiredMethods,
           chains: ['eip155:1'],
-          events: EthUtil.ethEvents,
+          events: EthConstants.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
+          methods: EthConstants.ethOptionalMethods,
           chains: ['eip155:1'],
           events: [],
         ),
@@ -39,14 +39,14 @@ class W3MChainPresets {
       tokenName: 'ARB',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
+          methods: EthConstants.ethRequiredMethods,
           chains: ['eip155:42161'],
-          events: EthUtil.ethEvents,
+          events: EthConstants.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
+          methods: EthConstants.ethOptionalMethods,
           chains: ['eip155:42161'],
           events: [],
         ),
@@ -65,14 +65,14 @@ class W3MChainPresets {
       tokenName: 'MATIC',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
+          methods: EthConstants.ethRequiredMethods,
           chains: ['eip155:137'],
-          events: EthUtil.ethEvents,
+          events: EthConstants.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
+          methods: EthConstants.ethOptionalMethods,
           chains: ['eip155:137'],
           events: [],
         ),
@@ -91,14 +91,14 @@ class W3MChainPresets {
       tokenName: 'AVAX',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
+          methods: EthConstants.ethRequiredMethods,
           chains: ['eip155:43114'],
-          events: EthUtil.ethEvents,
+          events: EthConstants.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
+          methods: EthConstants.ethOptionalMethods,
           chains: ['eip155:43114'],
           events: [],
         ),
@@ -117,14 +117,14 @@ class W3MChainPresets {
       tokenName: 'BNB',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
+          methods: EthConstants.ethRequiredMethods,
           chains: ['eip155:56'],
-          events: EthUtil.ethEvents,
+          events: EthConstants.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
+          methods: EthConstants.ethOptionalMethods,
           chains: ['eip155:56'],
           events: [],
         ),
@@ -143,14 +143,14 @@ class W3MChainPresets {
       tokenName: 'OP',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
+          methods: EthConstants.ethRequiredMethods,
           chains: ['eip155:10'],
-          events: EthUtil.ethEvents,
+          events: EthConstants.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
+          methods: EthConstants.ethOptionalMethods,
           chains: ['eip155:10'],
           events: [],
         ),
@@ -165,14 +165,14 @@ class W3MChainPresets {
       tokenName: 'FTM',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
+          methods: EthConstants.ethRequiredMethods,
           chains: ['eip155:250'],
-          events: EthUtil.ethEvents,
+          events: EthConstants.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
+          methods: EthConstants.ethOptionalMethods,
           chains: ['eip155:250'],
           events: [],
         ),
@@ -191,14 +191,14 @@ class W3MChainPresets {
       tokenName: 'EVMOS',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
+          methods: EthConstants.ethRequiredMethods,
           chains: ['eip155:9001'],
-          events: EthUtil.ethEvents,
+          events: EthConstants.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
+          methods: EthConstants.ethOptionalMethods,
           chains: ['eip155:9001'],
           events: [],
         ),
@@ -213,14 +213,14 @@ class W3MChainPresets {
       tokenName: 'IOTX',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
+          methods: EthConstants.ethRequiredMethods,
           chains: ['eip155:4689'],
-          events: EthUtil.ethEvents,
+          events: EthConstants.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
+          methods: EthConstants.ethOptionalMethods,
           chains: ['eip155:4689'],
           events: [],
         ),
@@ -239,14 +239,14 @@ class W3MChainPresets {
       tokenName: 'METIS',
       requiredNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethRequiredMethods,
+          methods: EthConstants.ethRequiredMethods,
           chains: ['eip155:1088'],
-          events: EthUtil.ethEvents,
+          events: EthConstants.ethEvents,
         ),
       },
       optionalNamespaces: {
         'eip155': const RequiredNamespace(
-          methods: EthUtil.ethOptionalMethods,
+          methods: EthConstants.ethOptionalMethods,
           chains: ['eip155:1088'],
           events: [],
         ),

@@ -62,10 +62,16 @@ class WalletsList extends StatelessWidget {
 
     return ListView.separated(
       padding: const EdgeInsets.symmetric(
-        horizontal: kPadding16,
-        vertical: kPadding16,
+        horizontal: kPadding12,
+        vertical: kPadding12,
       ),
-      itemBuilder: (context, index) => items[index],
+      itemBuilder: (context, index) {
+        return SizedBox(
+          height: kListItemHeight,
+          width: 1000.0,
+          child: items[index],
+        );
+      },
       separatorBuilder: (_, __) => const SizedBox.square(
         dimension: kListViewSeparatorHeight,
       ),

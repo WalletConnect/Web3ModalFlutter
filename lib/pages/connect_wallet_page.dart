@@ -1,3 +1,4 @@
+import 'package:event/event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -9,6 +10,7 @@ import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/toast/toast_message.dart';
 import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
+import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/segmented_control.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
@@ -32,14 +34,16 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
   IW3MService? _service;
   W3MWalletInfo? _selectedWallet;
   SegmentOption _selectedSegment = SegmentOption.mobile;
+  bool errorConnection = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _service = Web3ModalProvider.of(context).service;
+      _service?.onWalletConnectionError.subscribe(_connectionError);
       setState(() {
-        _service = Web3ModalProvider.of(context).service;
         _selectedWallet = _service?.selectedWallet;
       });
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -62,8 +66,15 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
 
   @override
   void dispose() {
+    _service?.onWalletConnectionError.unsubscribe(_connectionError);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void _connectionError(EventArgs? args) {
+    setState(() {
+      errorConnection = true;
+    });
   }
 
   // TODO I don't like this whole widget, must be refactored
@@ -112,33 +123,86 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                   ),
                   const SizedBox.square(dimension: 20.0),
                   LoadingBorder(
-                    animate: walletInstalled,
-                    child: W3MListAvatar(
-                      imageUrl: imageUrl,
+                    animate: walletInstalled && !errorConnection,
+                    borderRadius: themeData.radiuses.isSquare()
+                        ? 0
+                        : themeData.radiuses.radiusM + 4.0,
+                    child: Stack(
+                      children: [
+                        W3MListAvatar(
+                          imageUrl: imageUrl,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Visibility(
+                            visible: errorConnection,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30.0),
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(1.0),
+                              clipBehavior: Clip.antiAlias,
+                              child: ColoredBox(
+                                color: themeColors.background125,
+                                child: RoundedIcon(
+                                  assetPath: 'assets/icons/close.svg',
+                                  assetColor: themeColors.error100,
+                                  circleColor:
+                                      themeColors.error100.withOpacity(0.2),
+                                  borderColor: themeColors.background125,
+                                  padding: 4.0,
+                                  size: 22.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox.square(dimension: 20.0),
-                  Text(
-                    'Continue in $walletName',
-                    textAlign: TextAlign.center,
-                    style: themeData.textStyles.paragraph500.copyWith(
-                      color: themeColors.foreground100,
-                    ),
-                  ),
+                  errorConnection
+                      ? Text(
+                          'Connection declined',
+                          textAlign: TextAlign.center,
+                          style: themeData.textStyles.paragraph500.copyWith(
+                            color: themeColors.error100,
+                          ),
+                        )
+                      : Text(
+                          'Continue in $walletName',
+                          textAlign: TextAlign.center,
+                          style: themeData.textStyles.paragraph500.copyWith(
+                            color: themeColors.foreground100,
+                          ),
+                        ),
                   const SizedBox.square(dimension: 8.0),
-                  Text(
-                    webOnlyWallet || _selectedSegment == SegmentOption.browser
-                        ? 'Open and continue in a new browser tab'
-                        : 'Accept connection request in the wallet',
-                    textAlign: TextAlign.center,
-                    style: themeData.textStyles.small500.copyWith(
-                      color: themeColors.foreground200,
-                    ),
-                  ),
+                  errorConnection
+                      ? Text(
+                          'Connection can be declined if a previous request is still active',
+                          textAlign: TextAlign.center,
+                          style: themeData.textStyles.small500.copyWith(
+                            color: themeColors.foreground200,
+                          ),
+                        )
+                      : Text(
+                          webOnlyWallet ||
+                                  _selectedSegment == SegmentOption.browser
+                              ? 'Open and continue in a new browser tab'
+                              : 'Accept connection request in the wallet',
+                          textAlign: TextAlign.center,
+                          style: themeData.textStyles.small500.copyWith(
+                            color: themeColors.foreground200,
+                          ),
+                        ),
                   const SizedBox.square(dimension: kPadding16),
                   Visibility(
-                    visible:
-                        isPortrait && _selectedSegment != SegmentOption.browser,
+                    visible: isPortrait &&
+                        _selectedSegment != SegmentOption.browser &&
+                        !errorConnection,
                     child: SimpleIconButton(
                       onTap: () => service.connectSelectedWallet(),
                       leftIcon: 'assets/icons/refresh.svg',
@@ -173,7 +237,8 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                   if (isPortrait) const SizedBox.square(dimension: kPadding12),
                   Visibility(
                     visible: !isPortrait &&
-                        _selectedSegment != SegmentOption.browser,
+                        _selectedSegment != SegmentOption.browser &&
+                        !errorConnection,
                     child: SimpleIconButton(
                       onTap: () => service.connectSelectedWallet(),
                       leftIcon: 'assets/icons/refresh.svg',

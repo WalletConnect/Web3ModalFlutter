@@ -1,5 +1,7 @@
-const kListItemHeight = 58.0;
-const kGridItemHeight = 98.0;
+const kListItemHeight = 56.0;
+
+const kGridItemWidth = 76.0;
+const kGridItemHeight = 96.0;
 
 const kNavbarHeight = 64.0;
 const kShortWalletListCount = 4;
@@ -13,7 +15,9 @@ const kPadding6 = 6.0;
 
 const kGridAxisSpacing = 12.0;
 const kGridAxisCountP = 4;
+const kGridAxisCountPW = 5;
 const kGridAxisCountL = 8;
+const kGridAxisCountLW = 9;
 
 const kListViewSeparatorHeight = 8.0;
 

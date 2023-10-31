@@ -1,7 +1,7 @@
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+import 'package:web3modal_flutter/constants/eth_constants.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
-import 'package:web3modal_flutter/utils/eth_util.dart';
 
 final List<Listing> testListings1 = [
   Listing(
@@ -157,8 +157,8 @@ final testSessionWalletSwap = SessionData(
       accounts: ['eip155:1:0x123'],
       methods: [
         'method1',
-        EthUtil.walletAddEthChain,
-        EthUtil.walletSwitchEthChain,
+        EthConstants.walletAddEthChain,
+        EthConstants.walletSwitchEthChain,
       ],
       events: [],
     ),

@@ -99,6 +99,9 @@ abstract class IW3MService with ChangeNotifier {
 
   WalletRedirect? get selectedWalletRedirect;
 
+  /// When users rejects connection or an error occurs this will event
+  final Event<EventArgs> onWalletConnectionError = Event();
+
   /// Connects the [selectedWallet] previously selected
   Future<void> connectSelectedWallet({bool inBrowser = false});
 

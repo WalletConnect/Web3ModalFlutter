@@ -100,14 +100,17 @@ class ResponsiveData extends InheritedWidget {
 
   static int gridAxisCountOf(BuildContext context) {
     final isPortraitMode = isPortrait(context);
+    final maxWidth = maxWidthOf(context);
+    final maxExtent =
+        (kGridAxisCountPW * kGridItemWidth) + (kPadding12 * 2) + kPadding16;
+    if (maxWidth > maxExtent) {
+      return isPortraitMode ? kGridAxisCountPW : kGridAxisCountLW;
+    }
     return isPortraitMode ? kGridAxisCountP : kGridAxisCountL;
   }
 
   static Size gridItemSzieOf(BuildContext context) {
-    final gridAxisCount = gridAxisCountOf(context);
-    final width = ((maxWidthOf(context) - kGridAxisSpacing) / gridAxisCount);
-    // 1.2631 is the aspect ratio by design
-    return Size(width, width * 1.2631);
+    return Size(kGridItemWidth, kGridItemHeight);
   }
 
   @override
