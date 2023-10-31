@@ -44,6 +44,8 @@ class W3MServiceException implements Exception {
 class W3MService with ChangeNotifier implements IW3MService {
   var _projectId = '';
 
+  BuildContext? _context;
+
   W3MServiceStatus _status = W3MServiceStatus.idle;
   @override
   W3MServiceStatus get status => _status;
@@ -67,9 +69,6 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   ConnectResponse? connectResponse;
   Future<SessionData>? get sessionFuture => connectResponse?.session.future;
-
-  BuildContext? _context;
-
   @override
   String? get wcUri => connectResponse?.uri.toString();
 
@@ -111,6 +110,9 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   @override
   final Event<EventArgs> onPairingExpire = Event();
+
+  @override
+  final Event<EventArgs> onWalletConnectionError = Event();
 
   bool _connectingWallet = false;
 
@@ -531,11 +533,10 @@ class W3MService with ChangeNotifier implements IW3MService {
           .i('[$runtimeType] Rebuilding session, ending future');
       return;
     } on JsonRpcError catch (e) {
+      if (_isUserRejectedError(e)) {
+        onWalletConnectionError.broadcast();
+      }
       W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
-      final errorMessage = e.message ?? 'Error Connecting to Wallet';
-      toastUtils.instance.show(
-        ToastMessage(type: ToastType.error, text: errorMessage),
-      );
       return await expirePreviousInactivePairings();
     }
   }

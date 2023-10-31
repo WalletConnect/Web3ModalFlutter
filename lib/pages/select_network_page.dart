@@ -26,10 +26,10 @@ class SelectNetworkPage extends StatelessWidget {
     final isSwitch = service.selectedChain != null;
     final isPortrait = ResponsiveData.isPortrait(context);
     final maxHeight =
-        (ResponsiveData.gridItemSzieOf(context).height * 3) + kPadding8;
+        (ResponsiveData.gridItemSzieOf(context).height * 3) + (kPadding12 * 4);
 
     return Web3ModalNavbar(
-      title: isSwitch ? 'Change Network' : 'Select Network',
+      title: isSwitch ? 'Change network' : 'Select network',
       safeAreaLeft: true,
       safeAreaRight: true,
       body: Column(
@@ -68,7 +68,7 @@ class SelectNetworkPage extends StatelessWidget {
             },
             size: BaseButtonSize.small,
             leftIcon: 'assets/icons/help.svg',
-            title: 'What is a Network',
+            title: 'What is a network',
             backgroundColor: Colors.transparent,
             foregroundColor: themeColors.accent100,
             overlayColor: MaterialStateProperty.all<Color>(

@@ -39,7 +39,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
         ? (kListItemHeight * 6)
         : ResponsiveData.maxHeightOf(context);
     return Web3ModalNavbar(
-      title: 'Connect Wallet',
+      title: 'Connect wallet',
       leftAction: NavbarActionButton(
         asset: 'assets/icons/help.svg',
         action: () {
@@ -55,10 +55,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
             if (!initialised || items.isEmpty) {
               return const WalletsList(isLoading: true, itemList: []);
             }
-            final isPortrait = ResponsiveData.isPortrait(context);
-            final itemsToShow = isPortrait
-                ? items.getRange(0, kShortWalletListCount)
-                : items.getRange(0, kLShortWalletListCount);
+            final itemsToShow = items.getRange(0, kShortWalletListCount);
             return WalletsList(
               onTapWallet: (data) {
                 service.selectWallet(data);

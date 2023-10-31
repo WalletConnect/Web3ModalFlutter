@@ -7,7 +7,7 @@ import 'package:web3modal_flutter/widgets/lists/list_items/base_list_item.dart';
 class AllWalletsItem extends StatelessWidget {
   const AllWalletsItem({
     super.key,
-    this.title = 'All Wallets',
+    this.title = 'All wallets',
     this.trailing,
     this.onTap,
   });

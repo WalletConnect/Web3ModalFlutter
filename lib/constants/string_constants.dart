@@ -5,7 +5,7 @@ class StringConstants {
   static const X_CORE_SDK_VERSION = 'flutter_v2.1.8';
 
   // UI
-  static const String selectNetwork = 'Select Network';
+  static const String selectNetwork = 'Select network';
   static const String selectNetworkShort = 'Network';
   static const String connected = 'Connected';
   static const String error = 'Error';
@@ -15,7 +15,7 @@ class StringConstants {
   static const String noChain = 'No Chain';
   static const String connectButtonError = 'Network Error';
   static const String connectButtonReconnecting = 'Reconnecting';
-  static const String connectButtonIdle = 'Connect Wallet';
+  static const String connectButtonIdle = 'Connect wallet';
   static const String connectButtonIdleShort = 'Connect';
   static const String connectButtonConnecting = 'Connecting...';
   static const String connectButtonConnected = 'Disconnect';

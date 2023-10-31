@@ -59,7 +59,7 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
   Widget build(BuildContext context) {
     final service = Web3ModalProvider.of(context).service;
     return Web3ModalNavbar(
-      title: 'All Wallets',
+      title: 'All wallets',
       onTapTitle: () => _controller.animateTo(
         0,
         duration: Duration(milliseconds: 200),

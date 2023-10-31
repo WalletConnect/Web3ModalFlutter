@@ -15,7 +15,9 @@ const kPadding6 = 6.0;
 
 const kGridAxisSpacing = 12.0;
 const kGridAxisCountP = 4;
+const kGridAxisCountPW = 5;
 const kGridAxisCountL = 8;
+const kGridAxisCountLW = 9;
 
 const kListViewSeparatorHeight = 8.0;
 

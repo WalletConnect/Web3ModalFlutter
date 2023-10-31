@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
 
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
@@ -46,24 +47,31 @@ class WalletGridItem extends StatelessWidget {
                   ),
             ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.clip,
-                style: themeData.textStyles.tiny500.copyWith(
-                  color: isSelected
-                      ? themeColors.accent100
-                      : themeColors.foreground100,
-                  height: 1.0,
+          Padding(
+            padding: const EdgeInsets.only(
+              top: kPadding6,
+              left: 4.0,
+              right: 4.0,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.clip,
+                  style: themeData.textStyles.tiny500.copyWith(
+                    color: isSelected
+                        ? themeColors.accent100
+                        : themeColors.foreground100,
+                    height: 1.0,
+                  ),
                 ),
-              ),
-              bottom ?? const SizedBox.shrink(),
-            ],
+                bottom ?? const SizedBox.shrink(),
+              ],
+            ),
           ),
           const SizedBox(height: 2.0),
         ],
