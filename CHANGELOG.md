@@ -1,3 +1,7 @@
+## 3.0.0-beta14
+
+- UI Fixes based on designs
+
 ## 3.0.0-beta13
 
 - Minor changes on analyzer
