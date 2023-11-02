@@ -157,13 +157,9 @@ class ExplorerService implements IExplorerService {
   }
 
   @override
-  WalletRedirect? getWalletRedirectByName(String name) {
+  WalletRedirect? getWalletRedirectByName(Listing listing) {
     final wallet = listings.value.firstWhereOrNull(
-      (l) {
-        final name1 = l.listing.name.toLowerCase();
-        final name2 = name.toLowerCase();
-        return name1.contains(name2) || name2.contains(name1);
-      },
+      (item) => listing.id == item.listing.id,
     );
     if (wallet == null) {
       return null;

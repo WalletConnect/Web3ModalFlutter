@@ -115,9 +115,16 @@ class UrlUtils extends IUrlUtils {
               )
             : redirect.desktopUri;
       }
-      await launchUrlFunc(uriToOpen!, mode: LaunchMode.externalApplication);
+      if (await canLaunchUrl(uriToOpen!)) {
+        await launchUrlFunc(
+          uriToOpen,
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        throw LaunchUrlException('App not installed');
+      }
     } catch (e) {
-      throw LaunchUrlException('Unable to open the wallet. $e');
+      rethrow;
     }
   }
 }

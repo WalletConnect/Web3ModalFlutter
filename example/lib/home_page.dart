@@ -136,11 +136,11 @@ class _W3MPageState extends State<_W3MPage> {
     _w3mService = W3MService(
       web3App: _web3App,
       logLevel: LogLevel.error,
-      featuredWalletIds: {
-        'f2436c67184f158d1beda5df53298ee84abfc367581e4505134b5bcf5f46697d',
-        '8a0ee50d1f22f6651afcae7eb4253e52a3310b90af5daef78a8c4929a9bb99d4',
-        'f5b4eeb6015d66be3f5940a895cbaa49ef3439e518cd771270e6b553b48f31d2',
-      },
+      // featuredWalletIds: {
+      //   'f2436c67184f158d1beda5df53298ee84abfc367581e4505134b5bcf5f46697d',
+      //   '8a0ee50d1f22f6651afcae7eb4253e52a3310b90af5daef78a8c4929a9bb99d4',
+      //   'f5b4eeb6015d66be3f5940a895cbaa49ef3439e518cd771270e6b553b48f31d2',
+      // },
     );
 
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains

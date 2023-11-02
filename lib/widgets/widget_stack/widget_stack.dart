@@ -81,6 +81,7 @@ class WidgetStack extends IWidgetStack {
       push(const WalletsListShortPage(), renderScreen: true);
     } else if (pType == PlatformType.desktop || pType == PlatformType.web) {
       // add(const QRCodeAndWalletListPage());
+      push(const WalletsListShortPage(), renderScreen: true);
       // TODO fix non mobile page
     }
   }
