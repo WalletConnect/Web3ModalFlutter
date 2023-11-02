@@ -1107,7 +1107,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.0.0-beta14"
+    version: "3.0.0-beta15"
   web_socket_channel:
     dependency: transitive
     description:
