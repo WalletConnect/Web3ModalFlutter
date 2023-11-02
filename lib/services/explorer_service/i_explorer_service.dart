@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
+import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 
 abstract class IExplorerService {
@@ -43,5 +44,5 @@ abstract class IExplorerService {
 
   String getAssetImageUrl(String imageId);
 
-  WalletRedirect? getWalletRedirectByName(String name);
+  WalletRedirect? getWalletRedirectByName(Listing listing);
 }

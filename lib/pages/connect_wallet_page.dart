@@ -47,9 +47,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
         _selectedWallet = _service?.selectedWallet;
       });
       Future.delayed(const Duration(milliseconds: 500), () {
-        if (_selectedWallet?.installed == true) {
-          _service?.connectSelectedWallet();
-        }
+        _service?.connectSelectedWallet();
       });
     });
   }

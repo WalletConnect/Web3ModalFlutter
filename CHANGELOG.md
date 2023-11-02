@@ -1,3 +1,7 @@
+## 3.0.0-beta15
+
+- Fix a bug where Safe wallet was confused with SafePal wallet
+
 ## 3.0.0-beta14
 
 - UI Fixes based on designs

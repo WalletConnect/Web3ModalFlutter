@@ -229,9 +229,16 @@ class W3MService with ChangeNotifier implements IW3MService {
   void _setSessionValues(SessionData sessionData) {
     _isConnected = true;
     _currentSession = sessionData;
-    _address = NamespaceUtils.getAccount(
-      _currentSession!.namespaces.values.first.accounts.first,
-    );
+    if (_currentSession!.namespaces.isNotEmpty) {
+      final accounts = _currentSession!.namespaces.values.first.accounts;
+      if (accounts.isNotEmpty) {
+        _address = NamespaceUtils.getAccount(accounts.first);
+      } else {
+        W3MLoggerUtil.logger.e('[$runtimeType] empty accounts');
+      }
+    } else {
+      W3MLoggerUtil.logger.e('[$runtimeType] empty namespaces');
+    }
   }
 
   Future<void> _selectChainFromStoredId() async {
@@ -684,7 +691,9 @@ class W3MService with ChangeNotifier implements IW3MService {
   /// Returns true if it was able to actually load data (i.e. there is a selected chain and session)
   void _loadAccountData() async {
     // If there is no selected chain or session, stop. No account to load in.
-    if (_currentSelectedChain == null || _currentSession == null) {
+    if (_currentSelectedChain == null ||
+        _currentSession == null ||
+        _address == null) {
       return;
     }
 
@@ -692,13 +701,13 @@ class W3MService with ChangeNotifier implements IW3MService {
     // Get the chain balance.
     _chainBalance = await ledgerService.instance.getBalance(
       _currentSelectedChain!.rpcUrl,
-      address!,
+      _address!,
     );
 
     // Get the avatar, each chainId is just a number in string form.
     try {
       final blockchainId = await blockchainApiUtils.instance!.getIdentity(
-        address!,
+        _address!,
         int.parse(_currentSelectedChain!.chainId),
       );
       _avatarUrl = blockchainId.avatar;
@@ -795,12 +804,10 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   @override
   WalletRedirect? get selectedWalletRedirect {
-    final walletName = _selectedWallet?.listing.name;
-    if (walletName == null) return null;
+    final listing = _selectedWallet?.listing;
+    if (listing == null) return null;
 
-    return explorerService.instance?.getWalletRedirectByName(
-      walletName,
-    );
+    return explorerService.instance?.getWalletRedirectByName(listing);
   }
 
   WalletRedirect? get sessionWalletRedirect {
