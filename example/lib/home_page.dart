@@ -241,6 +241,8 @@ class _W3MPageState extends State<_W3MPage> {
     namespace: 'eip155:11155111',
     chainId: '11155111',
     tokenName: 'SETH',
+    chainIcon:
+        'https://assets-global.website-files.com/5f973c97cf5aea614f93a26c/6495cd7e2f11ba72bd274ef6_alchemy-rpc-node-provider-logo.png',
     requiredNamespaces: {
       'eip155': const RequiredNamespace(
         methods: EthConstants.ethRequiredMethods,

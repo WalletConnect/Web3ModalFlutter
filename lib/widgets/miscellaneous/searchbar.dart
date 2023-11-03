@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
+import 'package:web3modal_flutter/utils/asset_util.dart';
 
 class Web3ModalSearchBar extends StatefulWidget {
   const Web3ModalSearchBar({
@@ -160,26 +161,41 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
               cursorColor: themeColors.accent100,
               enableSuggestions: false,
               autocorrect: false,
-              cursorHeight: 20.0,
+              cursorHeight: 16.0,
               decoration: InputDecoration(
                 isDense: true,
-                prefixIcon: Center(
-                  child: SvgPicture.asset(
-                    'assets/icons/search.svg',
-                    package: 'web3modal_flutter',
-                    width: 14.0,
-                    height: 14.0,
-                    colorFilter: ColorFilter.mode(
-                      themeColors.foreground275,
-                      BlendMode.srcIn,
+                prefixIcon: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 16.0,
+                      height: 16.0,
+                      margin: const EdgeInsets.only(left: kPadding12),
+                      child: GestureDetector(
+                        onTap: () {
+                          _controller.clear();
+                          widget.onDismissKeyboard?.call(true);
+                        },
+                        child: SvgPicture.asset(
+                          'assets/icons/search.svg',
+                          package: 'web3modal_flutter',
+                          height: 10.0,
+                          width: 10.0,
+                          colorFilter: ColorFilter.mode(
+                            themeColors.foreground275,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
                 prefixIconConstraints: const BoxConstraints(
                   maxHeight: kSearchFieldHeight,
                   minHeight: kSearchFieldHeight,
-                  maxWidth: kSearchFieldHeight,
-                  minWidth: kSearchFieldHeight,
+                  maxWidth: 36.0,
+                  minWidth: 36.0,
                 ),
                 labelStyle: themeData.textStyles.paragraph500.copyWith(
                   color: themeColors.inverse100,
@@ -199,25 +215,31 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
                             width: 18.0,
                             height: 18.0,
                             margin: const EdgeInsets.only(right: kPadding12),
-                            decoration: BoxDecoration(
-                              color: themeColors.grayGlass020,
-                              borderRadius: BorderRadius.circular(6.0),
-                            ),
-                            child: IconButton(
-                              iconSize: 10.0,
-                              padding: const EdgeInsets.all(0.0),
-                              visualDensity: VisualDensity.compact,
-                              icon: const Icon(Icons.close),
-                              color: themeColors.background150,
-                              onPressed: () {
+                            child: GestureDetector(
+                              onTap: () {
                                 _controller.clear();
                                 widget.onDismissKeyboard?.call(true);
                               },
+                              child: SvgPicture.asset(
+                                AssetUtil.getThemedAsset(
+                                  context,
+                                  'input_cancel.svg',
+                                ),
+                                package: 'web3modal_flutter',
+                                height: 10.0,
+                                width: 10.0,
+                              ),
                             ),
                           ),
                         ],
                       )
                     : null,
+                suffixIconConstraints: const BoxConstraints(
+                  maxHeight: kSearchFieldHeight,
+                  minHeight: kSearchFieldHeight,
+                  maxWidth: 36.0,
+                  minWidth: 36.0,
+                ),
                 border: unfocusedBorder,
                 errorBorder: unfocusedBorder,
                 enabledBorder: unfocusedBorder,

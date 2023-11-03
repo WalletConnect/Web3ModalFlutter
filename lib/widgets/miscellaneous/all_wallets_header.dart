@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:web3modal_flutter/pages/qr_code_page.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
-import 'package:web3modal_flutter/theme/w3m_theme.dart';
-import 'package:web3modal_flutter/widgets/icons/themed_icon.dart';
+import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/searchbar.dart';
 
@@ -13,11 +13,8 @@ class AllWalletsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeColors = Web3ModalTheme.colorsOf(context);
     return Container(
-      decoration: BoxDecoration(
-        color: themeColors.background125,
-      ),
+      color: Colors.transparent,
       padding: const EdgeInsets.only(
         left: kPadding8,
         top: kPadding8,
@@ -28,7 +25,7 @@ class AllWalletsHeader extends StatelessWidget {
         children: [
           Expanded(
             child: Web3ModalSearchBar(
-              hint: 'Search Wallet',
+              hint: 'Search wallet',
               onTextChanged: (value) {
                 explorerService.instance!.search(query: value);
               },
@@ -41,15 +38,15 @@ class AllWalletsHeader extends StatelessWidget {
             ),
           ),
           const SizedBox.square(dimension: kPadding8),
-          IconButton(
-            padding: const EdgeInsets.all(1.0),
-            visualDensity: VisualDensity.compact,
-            onPressed: () {
+          GestureDetector(
+            onTap: () {
               widgetStack.instance.push(const QRCodePage());
             },
-            icon: const ThemedIcon(
-              size: kSearchFieldHeight,
-              iconPath: 'assets/icons/code.svg',
+            child: SvgPicture.asset(
+              AssetUtil.getThemedAsset(context, 'code_button.svg'),
+              package: 'web3modal_flutter',
+              height: kSearchFieldHeight,
+              width: kSearchFieldHeight,
             ),
           ),
         ],

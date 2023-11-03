@@ -79,10 +79,7 @@ class Web3ModalNavbar extends StatelessWidget {
             ),
           ),
         ),
-        Divider(
-          color: themeColors.grayGlass005,
-          height: 0.0,
-        ),
+        Divider(color: themeColors.grayGlass010, height: 0.0),
         Flexible(
           child: SafeArea(
             left: safeAreaLeft,

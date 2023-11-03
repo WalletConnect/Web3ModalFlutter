@@ -25,52 +25,71 @@ class W3MListAvatar extends StatelessWidget {
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final radius = borderRadius ?? radiuses.radiusM;
     final projectId = explorerService.instance?.projectId ?? '';
-    return AspectRatio(
-      aspectRatio: 1.0,
-      child: Container(
-        margin: const EdgeInsets.all(2.0),
-        decoration: isNetwork
-            ? ShapeDecoration(
-                shape: StarBorder.polygon(
-                  side: BorderSide(
-                    color: color ?? themeColors.grayGlass010,
-                    width: 1.0,
-                    strokeAlign: BorderSide.strokeAlignOutside,
-                  ),
-                  pointRounding: 0.3,
-                  sides: 6,
-                ),
-              )
-            : BoxDecoration(
-                borderRadius: BorderRadius.circular(radius),
-                border: Border.all(
-                  color: color ?? themeColors.grayGlass010,
-                  width: 1.0,
-                  strokeAlign: BorderSide.strokeAlignOutside,
-                ),
-              ),
-        clipBehavior: Clip.antiAlias,
-        child: (imageUrl ?? '').isNotEmpty
-            ? ColorFiltered(
-                colorFilter: ColorFilter.mode(
-                  disabled ? Colors.grey : Colors.transparent,
-                  BlendMode.saturation,
-                ),
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl!,
-                  httpHeaders: coreUtils.instance.getAPIHeaders(projectId),
-                  fadeOutDuration: Duration.zero,
-                  fadeInDuration: Duration.zero,
-                  placeholderFadeInDuration: Duration.zero,
-                  errorWidget: (context, url, error) => ColoredBox(
+    return Stack(
+      children: [
+        AspectRatio(
+          aspectRatio: 1.0,
+          child: Container(
+            decoration: isNetwork
+                ? ShapeDecoration(
+                    shape: StarBorder.polygon(
+                      pointRounding: 0.3,
+                      sides: 6,
+                    ),
+                  )
+                : BoxDecoration(
+                    borderRadius: BorderRadius.circular(radius),
                     color: themeColors.grayGlass005,
                   ),
-                ),
-              )
-            : ColoredBox(
-                color: themeColors.grayGlass005,
-              ),
-      ),
+            clipBehavior: Clip.antiAlias,
+            child: (imageUrl ?? '').isNotEmpty
+                ? ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      disabled ? Colors.grey : Colors.transparent,
+                      BlendMode.saturation,
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl!,
+                      httpHeaders: coreUtils.instance.getAPIHeaders(projectId),
+                      fadeOutDuration: Duration.zero,
+                      fadeInDuration: Duration.zero,
+                      placeholderFadeInDuration: Duration.zero,
+                      errorWidget: (context, url, error) => ColoredBox(
+                        color: themeColors.grayGlass005,
+                      ),
+                    ),
+                  )
+                : ColoredBox(
+                    color: themeColors.grayGlass005,
+                  ),
+          ),
+        ),
+        AspectRatio(
+          aspectRatio: 1.0,
+          child: Container(
+            decoration: isNetwork
+                ? ShapeDecoration(
+                    shape: StarBorder.polygon(
+                      side: BorderSide(
+                        color: color ?? themeColors.grayGlass010,
+                        width: 1.0,
+                        strokeAlign: BorderSide.strokeAlignInside,
+                      ),
+                      pointRounding: 0.3,
+                      sides: 6,
+                    ),
+                  )
+                : BoxDecoration(
+                    borderRadius: BorderRadius.circular(radius),
+                    border: Border.all(
+                      color: color ?? themeColors.grayGlass010,
+                      width: 1.0,
+                      strokeAlign: BorderSide.strokeAlignInside,
+                    ),
+                  ),
+          ),
+        ),
+      ],
     );
   }
 }

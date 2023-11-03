@@ -203,7 +203,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                         !errorConnection,
                     child: SimpleIconButton(
                       onTap: () => service.connectSelectedWallet(),
-                      leftIcon: 'assets/icons/refresh.svg',
+                      leftIcon: 'assets/icons/refresh_back.svg',
                       title: 'Try again',
                       backgroundColor: Colors.transparent,
                       foregroundColor: themeColors.accent100,
@@ -239,7 +239,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                         !errorConnection,
                     child: SimpleIconButton(
                       onTap: () => service.connectSelectedWallet(),
-                      leftIcon: 'assets/icons/refresh.svg',
+                      leftIcon: 'assets/icons/refresh_back.svg',
                       title: 'Try again',
                       backgroundColor: Colors.transparent,
                       foregroundColor: themeColors.accent100,
