@@ -32,6 +32,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      setState(() {
+        final platformDispatcher = View.of(context).platformDispatcher;
+        final platformBrightness = platformDispatcher.platformBrightness;
+        _isDarkMode = platformBrightness == Brightness.dark;
+      });
+    });
   }
 
   @override

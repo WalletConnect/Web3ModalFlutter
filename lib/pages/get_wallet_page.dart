@@ -49,7 +49,7 @@ class GetWalletPage extends StatelessWidget {
             return WalletsList(
               itemList: itemsToShow,
               lastItem: AllWalletsItem(
-                title: 'Explore All',
+                title: 'Explore all',
                 onTap: () => urlUtils.instance.launchUrl(
                   Uri.parse(StringConstants.exploreAllWallets),
                   mode: LaunchMode.externalApplication,

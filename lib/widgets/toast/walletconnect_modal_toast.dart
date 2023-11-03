@@ -64,11 +64,11 @@ class _WalletConnectModalToastState extends State<WalletConnectModalToast>
           child: Container(
             height: 40,
             decoration: BoxDecoration(
-              color: themeColors.background125,
+              color: themeColors.background175,
               borderRadius: BorderRadius.circular(radiuses.radiusM),
               border: Border.all(
                 color: themeColors.grayGlass005,
-                width: 2,
+                width: 1,
               ),
             ),
             child: Padding(

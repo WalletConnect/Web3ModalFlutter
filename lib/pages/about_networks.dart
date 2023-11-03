@@ -13,7 +13,7 @@ class AboutNetworks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Web3ModalNavbar(
-      title: 'What is a network',
+      title: 'What is a network?',
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

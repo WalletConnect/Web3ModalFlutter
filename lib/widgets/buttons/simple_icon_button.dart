@@ -27,6 +27,7 @@ class SimpleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final textStyles = Web3ModalTheme.getDataOf(context).textStyles;
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final borderRadius =
         radiuses.isSquare() ? 0.0 : (BaseButtonSize.regular.height / 2);
@@ -69,13 +70,18 @@ class SimpleIconButton extends StatelessWidget {
                     foregroundColor ?? themeColors.inverse100,
                     BlendMode.srcIn,
                   ),
-                  width: 13.0,
-                  height: 13.0,
+                  width: 14.0,
+                  height: 14.0,
                 ),
                 const SizedBox.square(dimension: 6.0),
               ],
             ),
-          Text(title),
+          Text(
+            title,
+            style: textStyles.paragraph600.copyWith(
+              color: foregroundColor,
+            ),
+          ),
           if (rightIcon != null)
             Row(
               children: [
@@ -87,6 +93,8 @@ class SimpleIconButton extends StatelessWidget {
                     foregroundColor ?? themeColors.inverse100,
                     BlendMode.srcIn,
                   ),
+                  width: 14.0,
+                  height: 14.0,
                 ),
               ],
             ),
