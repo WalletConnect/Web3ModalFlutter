@@ -8,7 +8,9 @@ class SimpleIconButton extends StatelessWidget {
     super.key,
     required this.onTap,
     required this.title,
+    this.fontSize,
     this.leftIcon,
+    this.iconSize,
     this.rightIcon,
     this.backgroundColor,
     this.foregroundColor,
@@ -18,7 +20,9 @@ class SimpleIconButton extends StatelessWidget {
   });
   final VoidCallback? onTap;
   final String title;
+  final double? fontSize;
   final String? leftIcon, rightIcon;
+  final double? iconSize;
   final Color? backgroundColor, foregroundColor;
   final BaseButtonSize size;
   final MaterialStateProperty<Color>? overlayColor;
@@ -55,6 +59,8 @@ class SimpleIconButton extends StatelessWidget {
                 },
               )
             : null,
+        padding:
+            MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.all(0.0)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -70,22 +76,23 @@ class SimpleIconButton extends StatelessWidget {
                     foregroundColor ?? themeColors.inverse100,
                     BlendMode.srcIn,
                   ),
-                  width: 14.0,
-                  height: 14.0,
+                  width: iconSize ?? 14.0,
+                  height: iconSize ?? 14.0,
                 ),
-                const SizedBox.square(dimension: 6.0),
+                const SizedBox.square(dimension: 4.0),
               ],
             ),
           Text(
             title,
             style: textStyles.paragraph600.copyWith(
               color: foregroundColor,
+              fontSize: fontSize,
             ),
           ),
           if (rightIcon != null)
             Row(
               children: [
-                const SizedBox.square(dimension: 8.0),
+                const SizedBox.square(dimension: 4.0),
                 SvgPicture.asset(
                   rightIcon!,
                   package: 'web3modal_flutter',
@@ -93,12 +100,23 @@ class SimpleIconButton extends StatelessWidget {
                     foregroundColor ?? themeColors.inverse100,
                     BlendMode.srcIn,
                   ),
-                  width: 14.0,
-                  height: 14.0,
+                  width: iconSize ?? 14.0,
+                  height: iconSize ?? 14.0,
                 ),
               ],
             ),
         ],
+      ),
+      overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+        size == BaseButtonSize.regular
+            ? EdgeInsets.only(
+                left: (leftIcon != null) ? 12.0 : 16.0,
+                right: (rightIcon != null) ? 12.0 : 16.0,
+              )
+            : EdgeInsets.only(
+                left: (leftIcon != null) ? 10.0 : 12.0,
+                right: (rightIcon != null) ? 10.0 : 12.0,
+              ),
       ),
     );
   }

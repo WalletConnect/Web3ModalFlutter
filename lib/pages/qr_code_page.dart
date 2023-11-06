@@ -55,8 +55,10 @@ class QRCodePage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: kPadding12),
                     child: SimpleIconButton(
                       onTap: () => _copyToClipboard(context),
-                      leftIcon: 'assets/icons/copy.svg',
+                      leftIcon: 'assets/icons/copy_14.svg',
+                      iconSize: 13.0,
                       title: 'Copy link',
+                      fontSize: 14.0,
                       backgroundColor: Colors.transparent,
                       foregroundColor: themeColors.foreground200,
                       overlayColor: MaterialStateProperty.all<Color>(

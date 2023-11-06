@@ -477,9 +477,11 @@ class W3MService with ChangeNotifier implements IW3MService {
         '[$runtimeType] error launching wallet. '
         '${selectedWalletRedirect?.toString()}',
       );
-      toastUtils.instance.show(
-        ToastMessage(type: ToastType.error, text: e.message),
-      );
+      if (e.message.toLowerCase() != 'app not installed') {
+        toastUtils.instance.show(
+          ToastMessage(type: ToastType.error, text: e.message),
+        );
+      }
     } catch (e, s) {
       W3MLoggerUtil.logger.e('[$runtimeType] error launching wallet. $e, $s');
     }

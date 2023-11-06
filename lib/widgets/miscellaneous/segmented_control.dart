@@ -49,7 +49,7 @@ class _SegmentedControlState extends State<SegmentedControl> {
               ),
               const SizedBox.square(dimension: 4.0),
               Text(
-                'Native',
+                'Mobile',
                 style: themeData.textStyles.small500.copyWith(
                   color: _selectedSegment == SegmentOption.mobile
                       ? themeColors.foreground100
