@@ -21,7 +21,7 @@ dependencies:
   json_annotation: ^4.8.1
   logger: ^2.0.2+1
   mockito: ^5.4.2
-  qr_flutter_wc: 0.0.3
+  qr_flutter_wc: ^0.0.3
   shared_preferences: ^2.2.0
   shimmer: ^3.0.0
   universal_io: ^2.2.0
