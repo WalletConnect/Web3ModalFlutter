@@ -60,6 +60,10 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
 
   @override
   Widget build(BuildContext context) {
+    final themeData = Web3ModalTheme.getDataOf(context);
+    final textStyle = widget.size == BaseButtonSize.small
+        ? themeData.textStyles.small600
+        : themeData.textStyles.paragraph600;
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final borderRadius = radiuses.isSquare() ? 0.0 : widget.size.height / 2;
@@ -71,7 +75,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
       size: widget.size,
       onTap: widget.service.status.isInitialized ? _onTap : null,
       overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-        const EdgeInsets.only(right: 4.0),
+        const EdgeInsets.only(left: 4.0, right: 4.0),
       ),
       buttonStyle: ButtonStyle(
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
@@ -101,81 +105,165 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
           },
         ),
       ),
-      icon: BaseButton(
-        size: BaseButtonSize.small,
-        onTap: _onTap,
-        overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-          const EdgeInsets.only(left: 8.0),
-        ),
-        buttonStyle: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-          foregroundColor: MaterialStateProperty.resolveWith<Color>(
-            (states) {
-              if (states.contains(MaterialState.disabled)) {
-                return themeColors.grayGlass015;
-              }
-              return themeColors.foreground100;
-            },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _BalanceButton(
+            isLoading: widget.service.status.isLoading,
+            balance: _balance,
+            tokenName: _tokenName,
+            tokenImage: _tokenImage,
+            iconSize: widget.size.iconSize + 4.0,
+            buttonSize: widget.size,
+            onTap: _onTap,
           ),
-        ),
-        icon: widget.service.status.isLoading
-            ? SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : RoundedIcon(
-                imageUrl: _tokenImage,
-                size: widget.size.iconSize + 4.0,
+          const SizedBox.square(dimension: 4.0),
+          Padding(
+            padding: EdgeInsets.only(
+              top: widget.size == BaseButtonSize.small ? 4.0 : 0.0,
+              bottom: widget.size == BaseButtonSize.small ? 4.0 : 0.0,
+            ),
+            child: BaseButton(
+              size: BaseButtonSize.small,
+              onTap: _onTap,
+              overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                EdgeInsets.only(
+                  left: widget.size == BaseButtonSize.small ? 4.0 : 6.0,
+                  right: 8.0,
+                ),
               ),
-        child: Text('$_balance ${_tokenName ?? ''}'),
-      ),
-      child: BaseButton(
-        size: BaseButtonSize.small,
-        onTap: _onTap,
-        overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-          const EdgeInsets.only(left: 8.0, right: 8.0),
-        ),
-        buttonStyle: ButtonStyle(
-          backgroundColor: MaterialStateProperty.resolveWith<Color>(
-            (states) {
-              if (states.contains(MaterialState.disabled)) {
-                return themeColors.grayGlass005;
-              }
-              return themeColors.grayGlass010;
-            },
-          ),
-          foregroundColor: MaterialStateProperty.resolveWith<Color>(
-            (states) {
-              if (states.contains(MaterialState.disabled)) {
-                return themeColors.grayGlass015;
-              }
-              return themeColors.foreground175;
-            },
-          ),
-          shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
-            (states) {
-              return RoundedRectangleBorder(
-                side: states.contains(MaterialState.disabled)
-                    ? BorderSide(
+              buttonStyle: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (states) {
+                    if (states.contains(MaterialState.disabled)) {
+                      return themeColors.grayGlass005;
+                    }
+                    return themeColors.grayGlass010;
+                  },
+                ),
+                foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (states) {
+                    if (states.contains(MaterialState.disabled)) {
+                      return themeColors.grayGlass015;
+                    }
+                    return themeColors.foreground175;
+                  },
+                ),
+                shape:
+                    MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
+                  (states) {
+                    return RoundedRectangleBorder(
+                      side: states.contains(MaterialState.disabled)
+                          ? BorderSide(
+                              color: themeColors.grayGlass005,
+                              width: 1.0,
+                            )
+                          : BorderSide(
+                              color: themeColors.grayGlass010,
+                              width: 1.0,
+                            ),
+                      borderRadius: BorderRadius.circular(innerBorderRadius),
+                    );
+                  },
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(widget.size.iconSize),
+                      border: Border.all(
                         color: themeColors.grayGlass005,
                         width: 1.0,
-                      )
-                    : BorderSide(
-                        color: themeColors.grayGlass010,
-                        width: 1.0,
+                        strokeAlign: BorderSide.strokeAlignInside,
                       ),
-                borderRadius: BorderRadius.circular(innerBorderRadius),
-              );
-            },
+                    ),
+                    child: W3MAccountAvatar(
+                      service: widget.service,
+                      size: widget.size.iconSize,
+                      disabled: false,
+                    ),
+                  ),
+                  const SizedBox.square(dimension: 4.0),
+                  Text(
+                    Util.truncate(
+                      _address ?? '',
+                      length: widget.size == BaseButtonSize.small ? 2 : 4,
+                    ),
+                    style: textStyle,
+                  ),
+                ],
+              ),
+            ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BalanceButton extends StatelessWidget {
+  const _BalanceButton({
+    required this.onTap,
+    required this.isLoading,
+    required this.balance,
+    required this.tokenName,
+    required this.tokenImage,
+    required this.iconSize,
+    required this.buttonSize,
+  });
+  final VoidCallback? onTap;
+  final bool isLoading;
+  final String balance;
+  final String? tokenName;
+  final String? tokenImage;
+  final double iconSize;
+  final BaseButtonSize buttonSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
+    final textStyle = buttonSize == BaseButtonSize.small
+        ? themeData.textStyles.small600
+        : themeData.textStyles.paragraph600;
+    return BaseButton(
+      size: BaseButtonSize.small,
+      onTap: onTap,
+      overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+        const EdgeInsets.only(left: 2.0),
+      ),
+      buttonStyle: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+        foregroundColor: MaterialStateProperty.resolveWith<Color>(
+          (states) {
+            if (states.contains(MaterialState.disabled)) {
+              return themeColors.grayGlass015;
+            }
+            return themeColors.foreground100;
+          },
         ),
-        icon: W3MAccountAvatar(
-          service: widget.service,
-          size: widget.size.iconSize,
-          disabled: false,
-        ),
-        child: Text(Util.truncate(_address ?? '')),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          isLoading
+              ? SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 1.5),
+                )
+              : RoundedIcon(
+                  imageUrl: tokenImage,
+                  size: iconSize,
+                ),
+          const SizedBox.square(dimension: 4.0),
+          Text(
+            '$balance ${tokenName ?? ''}',
+            style: textStyle,
+          ),
+        ],
       ),
     );
   }

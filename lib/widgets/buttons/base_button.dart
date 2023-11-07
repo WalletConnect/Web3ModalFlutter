@@ -29,13 +29,11 @@ class BaseButton extends StatelessWidget {
     super.key,
     required this.child,
     required this.size,
-    this.icon,
     this.onTap,
     this.buttonStyle,
     this.overridePadding,
   });
   final Widget child;
-  final Widget? icon;
   final VoidCallback? onTap;
   final BaseButtonSize size;
   final ButtonStyle? buttonStyle;

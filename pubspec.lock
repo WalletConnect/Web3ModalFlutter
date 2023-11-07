@@ -684,10 +684,10 @@ packages:
     dependency: "direct main"
     description:
       name: qr_flutter_wc
-      sha256: "1939a737eded2bdbcc96fefede3edbfbe252d06ad3bba0195237096a068e4db2"
+      sha256: a926bf6bcf7d350eea48480e205ccffffca5cc84b5d77fb2b256318693e40d07
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1"
+    version: "0.0.3"
   rxdart:
     dependency: transitive
     description:

@@ -1,7 +1,9 @@
+import 'package:event/event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
+import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
@@ -12,8 +14,45 @@ import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 import 'package:web3modal_flutter/utils/toast/toast_message.dart';
 import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
 
-class QRCodePage extends StatelessWidget {
+class QRCodePage extends StatefulWidget {
   const QRCodePage() : super(key: Web3ModalKeyConstants.qrCodePageKey);
+
+  @override
+  State<QRCodePage> createState() => _QRCodePageState();
+}
+
+class _QRCodePageState extends State<QRCodePage> {
+  IW3MService? _service;
+  Widget? _qrQodeWidget;
+  //
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _service = Web3ModalProvider.of(context).service;
+      _service!.addListener(_rebuildListener);
+      _service!.onPairingExpire.subscribe(_onPairingExpire);
+      await _service!.buildConnectionUri();
+      _qrQodeWidget = QRCodeWidget(
+        uri: _service!.wcUri!,
+        logoPath: 'assets/png/logo_wc.png',
+      );
+    });
+  }
+
+  void _rebuildListener() => setState(() {});
+  void _onPairingExpire(EventArgs? args) async {
+    await _service!.buildConnectionUri();
+  }
+
+  @override
+  void dispose() async {
+    _service!.onPairingExpire.unsubscribe(_onPairingExpire);
+    _service!.removeListener(_rebuildListener);
+    _service!.expirePreviousInactivePairings();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +67,9 @@ class QRCodePage extends StatelessWidget {
         child: Flex(
           direction: isPortrait ? Axis.vertical : Axis.horizontal,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: QRCodeWidget(logoPath: 'assets/png/logo_wc.png'),
+            Padding(
+              padding: EdgeInsets.all(kPadding16),
+              child: _qrQodeWidget ?? SizedBox.shrink(),
             ),
             Container(
               constraints: BoxConstraints(

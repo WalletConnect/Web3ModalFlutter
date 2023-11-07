@@ -47,6 +47,7 @@ class WalletGridItem extends StatelessWidget {
                   ),
             ),
           ),
+          const SizedBox(height: 2.0),
           Padding(
             padding: const EdgeInsets.only(
               top: kPadding6,
@@ -73,7 +74,6 @@ class WalletGridItem extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 2.0),
         ],
       ),
     );

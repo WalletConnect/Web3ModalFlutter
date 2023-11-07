@@ -8,12 +8,12 @@ class Util {
     return short && value.length > 8 ? '${value.substring(0, 8)}..' : value;
   }
 
-  static String truncate(String value, {int length = 8}) {
+  static String truncate(String value, {int length = 4}) {
     if (value.length <= length) {
       return value;
     }
 
-    return '${value.substring(0, 4)}...${value.substring(value.length - 4)}';
+    return '${value.substring(0, length)}...${value.substring(value.length - length)}';
   }
 
   static List<Color> get defaultAvatarColors => [

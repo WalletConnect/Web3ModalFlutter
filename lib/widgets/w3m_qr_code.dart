@@ -1,54 +1,19 @@
-import 'package:event/event.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter_wc/qr_flutter_wc.dart';
-
-import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
-
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
-import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
-class QRCodeWidget extends StatefulWidget {
+class QRCodeWidget extends StatelessWidget {
   const QRCodeWidget({
     super.key,
+    required this.uri,
     this.logoPath = '',
   });
 
-  final String logoPath;
-
-  @override
-  State<QRCodeWidget> createState() => _QRCodeWidgetState();
-}
-
-class _QRCodeWidgetState extends State<QRCodeWidget> {
-  IW3MService? _service;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _service = Web3ModalProvider.of(context).service;
-      _service!.addListener(_rebuildListener);
-      _service!.onPairingExpire.subscribe(_onPairingExpire);
-      await _service!.buildConnectionUri();
-    });
-  }
-
-  void _rebuildListener() => setState(() {});
-  void _onPairingExpire(EventArgs? args) async {
-    await _service!.buildConnectionUri();
-  }
-
-  @override
-  void dispose() async {
-    _service!.onPairingExpire.unsubscribe(_onPairingExpire);
-    _service!.removeListener(_rebuildListener);
-    _service!.expirePreviousInactivePairings();
-    super.dispose();
-  }
+  final String logoPath, uri;
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +35,10 @@ class _QRCodeWidgetState extends State<QRCodeWidget> {
       padding: const EdgeInsets.all(16.0),
       child: AspectRatio(
         aspectRatio: 1.0,
-        child: (_service?.wcUri == null)
+        child: uri.isEmpty
             ? const ContentLoading()
             : QrImageView(
-                data: _service!.wcUri!,
+                data: uri,
                 version: QrVersions.auto,
                 errorCorrectionLevel: QrErrorCorrectLevel.Q,
                 eyeStyle: const QrEyeStyle(
@@ -84,8 +49,8 @@ class _QRCodeWidgetState extends State<QRCodeWidget> {
                   dataModuleShape: QrDataModuleShape.circle,
                   color: Colors.black,
                 ),
-                embeddedImage: widget.logoPath.isNotEmpty
-                    ? AssetImage(widget.logoPath, package: 'web3modal_flutter')
+                embeddedImage: logoPath.isNotEmpty
+                    ? AssetImage(logoPath, package: 'web3modal_flutter')
                     : null,
                 embeddedImageStyle: QrEmbeddedImageStyle(
                   size: Size(imageSize, imageSize),
