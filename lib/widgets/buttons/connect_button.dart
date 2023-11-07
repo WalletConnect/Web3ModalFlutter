@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 
@@ -30,11 +31,7 @@ class ConnectButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
-    final textStyle = size == BaseButtonSize.small
-        ? themeData.textStyles.small600
-        : themeData.textStyles.paragraph600;
     final connecting = state == ConnectButtonState.connecting;
     final disabled = state == ConnectButtonState.disabled;
     final connected = state == ConnectButtonState.connected;
@@ -81,24 +78,34 @@ class ConnectButton extends StatelessWidget {
           },
         ),
       ),
+      overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+        connecting || serviceStatus.isLoading
+            ? const EdgeInsets.only(left: 6.0, right: 16.0)
+            : const EdgeInsets.only(left: 16.0, right: 16.0),
+      ),
       child: connecting || serviceStatus.isLoading
           ? Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(
-                  height: (textStyle.fontSize ?? 20.0) * 0.8,
-                  width: (textStyle.fontSize ?? 20.0) * 0.8,
+                Container(
+                  width: size.height * 0.7,
+                  height: size.height * 0.7,
+                  padding: const EdgeInsets.all(kPadding6),
                   child: CircularProgressIndicator(
                     color: themeColors.accent100,
-                    strokeWidth: 2.0,
+                    strokeWidth: size == BaseButtonSize.small ? 1.0 : 1.5,
                   ),
                 ),
-                const SizedBox.square(dimension: 8.0),
+                const SizedBox.square(dimension: 4.0),
                 if (connecting)
                   Text(
                       titleOverride ?? StringConstants.connectButtonConnecting),
                 if (serviceStatus.isLoading)
-                  Text(titleOverride ?? StringConstants.connectButtonIdle),
+                  size == BaseButtonSize.small
+                      ? Text(titleOverride ??
+                          StringConstants.connectButtonIdleShort)
+                      : Text(
+                          titleOverride ?? StringConstants.connectButtonIdle),
               ],
             )
           : connected

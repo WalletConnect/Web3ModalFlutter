@@ -32,8 +32,8 @@ class RoundedIcon extends StatelessWidget {
         border: Border.fromBorderSide(
           BorderSide(
             color: borderColor ?? themeColors.grayGlass005,
-            width: 2,
-            strokeAlign: BorderSide.strokeAlignCenter,
+            width: 1,
+            strokeAlign: BorderSide.strokeAlignInside,
           ),
         ),
         color: circleColor ?? themeColors.grayGlass015,

@@ -88,11 +88,23 @@ class _BalanceButtonState extends State<BalanceButton> {
           },
         ),
       ),
-      icon: RoundedIcon(
-        imageUrl: _tokenImage,
-        size: widget.size.height - 12.0,
+      overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+        EdgeInsets.only(
+          left: 6.0,
+          right: widget.size == BaseButtonSize.small ? 12.0 : 16.0,
+        ),
       ),
-      child: Text('$_balance ${_tokenName ?? ''}'),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RoundedIcon(
+            imageUrl: _tokenImage,
+            size: widget.size.height * 0.7,
+          ),
+          const SizedBox.square(dimension: 4.0),
+          Text('$_balance ${_tokenName ?? ''}'),
+        ],
+      ),
     );
   }
 }

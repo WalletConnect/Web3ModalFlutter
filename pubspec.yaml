@@ -1,6 +1,6 @@
 name: web3modal_flutter
 description: "WalletConnect Web3Modal: Simple, intuitive wallet login. With this drop-in UI SDK, enable any wallet's users to seamlessly log in to your app and enjoy a unified experience"
-version: 3.0.0-beta16
+version: 3.0.0-beta17
 repository: https://github.com/WalletConnect/Web3ModalFlutter
 
 environment:
@@ -21,7 +21,7 @@ dependencies:
   json_annotation: ^4.8.1
   logger: ^2.0.2+1
   mockito: ^5.4.2
-  qr_flutter_wc: ^0.0.1
+  qr_flutter_wc: 0.0.3
   shared_preferences: ^2.2.0
   shimmer: ^3.0.0
   universal_io: ^2.2.0

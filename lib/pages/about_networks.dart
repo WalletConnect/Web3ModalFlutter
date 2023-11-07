@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
 import 'package:web3modal_flutter/widgets/help/help_section.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
@@ -51,6 +52,9 @@ class AboutNetworks extends StatelessWidget {
               ),
               rightIcon: 'assets/icons/arrow_top_right.svg',
               title: 'Learn more',
+              size: BaseButtonSize.small,
+              iconSize: 12.0,
+              fontSize: 14.0,
             ),
             const SizedBox(height: 8.0),
           ],

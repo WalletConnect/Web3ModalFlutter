@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
+import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item.dart';
@@ -46,6 +47,9 @@ class DownloadWalletItem extends StatelessWidget {
         rightIcon: 'assets/icons/chevron_right.svg',
         backgroundColor: Colors.transparent,
         foregroundColor: themeColors.accent100,
+        size: BaseButtonSize.small,
+        fontSize: 14.0,
+        iconSize: 12.0,
       ),
     );
   }

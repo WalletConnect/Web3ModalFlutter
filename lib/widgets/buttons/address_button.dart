@@ -76,12 +76,24 @@ class _AddressButtonState extends State<AddressButton> {
           },
         ),
       ),
-      icon: W3MAccountAvatar(
-        service: widget.service,
-        size: widget.size.height - 12.0,
-        disabled: widget.onTap == null,
+      overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+        EdgeInsets.only(
+          left: 6.0,
+          right: widget.size == BaseButtonSize.small ? 12.0 : 16.0,
+        ),
       ),
-      child: Text(Util.truncate(_address ?? '')),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          W3MAccountAvatar(
+            service: widget.service,
+            size: widget.size.height * 0.7,
+            disabled: widget.onTap == null,
+          ),
+          const SizedBox.square(dimension: 4.0),
+          Text(Util.truncate(_address ?? '')),
+        ],
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
@@ -67,24 +68,37 @@ class NetworkButton extends StatelessWidget {
           },
         ),
       ),
-      icon: serviceStatus.isLoading
-          ? SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : RoundedIcon(
-              assetPath: 'assets/icons/network.svg',
-              imageUrl: imageUrl,
-              size: size.height - 12.0,
-              assetColor: themeColors.inverse100,
-              padding: 6.0,
-            ),
-      child: Text(
-        chainInfo?.chainName ??
-            (size == BaseButtonSize.small
-                ? StringConstants.selectNetworkShort
-                : StringConstants.selectNetwork),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          serviceStatus.isLoading
+              ? Container(
+                  width: size.height * 0.7,
+                  height: size.height * 0.7,
+                  padding: const EdgeInsets.all(kPadding6),
+                  child: CircularProgressIndicator(
+                    color: themeColors.accent100,
+                    strokeWidth: size == BaseButtonSize.small ? 1.0 : 1.5,
+                  ),
+                )
+              : RoundedIcon(
+                  assetPath: 'assets/icons/network.svg',
+                  imageUrl: imageUrl,
+                  size: size.height * 0.7,
+                  assetColor: themeColors.inverse100,
+                  padding: size == BaseButtonSize.small ? 5.0 : 6.0,
+                ),
+          const SizedBox.square(dimension: 4.0),
+          Text(
+            chainInfo?.chainName ??
+                (size == BaseButtonSize.small
+                    ? StringConstants.selectNetworkShort
+                    : StringConstants.selectNetwork),
+          ),
+        ],
+      ),
+      overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+        const EdgeInsets.only(left: 6.0, right: 16.0),
       ),
     );
   }

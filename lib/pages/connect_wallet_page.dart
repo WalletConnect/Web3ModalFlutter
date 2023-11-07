@@ -170,13 +170,22 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                             color: themeColors.error100,
                           ),
                         )
-                      : Text(
-                          'Continue in $walletName',
-                          textAlign: TextAlign.center,
-                          style: themeData.textStyles.paragraph500.copyWith(
-                            color: themeColors.foreground100,
-                          ),
-                        ),
+                      : !walletInstalled &&
+                              _selectedSegment == SegmentOption.mobile
+                          ? Text(
+                              'App not installed',
+                              textAlign: TextAlign.center,
+                              style: themeData.textStyles.paragraph500.copyWith(
+                                color: themeColors.foreground100,
+                              ),
+                            )
+                          : Text(
+                              'Continue in $walletName',
+                              textAlign: TextAlign.center,
+                              style: themeData.textStyles.paragraph500.copyWith(
+                                color: themeColors.foreground100,
+                              ),
+                            ),
                   const SizedBox.square(dimension: 8.0),
                   errorConnection
                       ? Text(
@@ -186,16 +195,19 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                             color: themeColors.foreground200,
                           ),
                         )
-                      : Text(
-                          webOnlyWallet ||
-                                  _selectedSegment == SegmentOption.browser
-                              ? 'Open and continue in a new browser tab'
-                              : 'Accept connection request in the wallet',
-                          textAlign: TextAlign.center,
-                          style: themeData.textStyles.small500.copyWith(
-                            color: themeColors.foreground200,
-                          ),
-                        ),
+                      : !walletInstalled &&
+                              _selectedSegment == SegmentOption.mobile
+                          ? SizedBox.shrink()
+                          : Text(
+                              webOnlyWallet ||
+                                      _selectedSegment == SegmentOption.browser
+                                  ? 'Open and continue in a new browser tab'
+                                  : 'Accept connection request in the wallet',
+                              textAlign: TextAlign.center,
+                              style: themeData.textStyles.small500.copyWith(
+                                color: themeColors.foreground200,
+                              ),
+                            ),
                   const SizedBox.square(dimension: kPadding16),
                   Visibility(
                     visible: isPortrait &&
@@ -217,7 +229,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                       onTap: () => service.connectSelectedWallet(
                         inBrowser: _selectedSegment == SegmentOption.browser,
                       ),
-                      leftIcon: 'assets/icons/arrow_top_right.svg',
+                      rightIcon: 'assets/icons/arrow_top_right.svg',
                       title: 'Open',
                       backgroundColor: Colors.transparent,
                       foregroundColor: themeColors.accent100,
@@ -262,8 +274,10 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                   if (!isPortrait) const SizedBox.square(dimension: kPadding8),
                   SimpleIconButton(
                     onTap: () => _copyToClipboard(context),
-                    leftIcon: 'assets/icons/copy.svg',
+                    leftIcon: 'assets/icons/copy_14.svg',
+                    iconSize: 13.0,
                     title: 'Copy link',
+                    fontSize: 14.0,
                     backgroundColor: Colors.transparent,
                     foregroundColor: themeColors.foreground200,
                     overlayColor: MaterialStateProperty.all<Color>(
