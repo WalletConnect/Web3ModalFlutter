@@ -15,10 +15,12 @@ class SessionWidget extends StatefulWidget {
     required this.session,
     required this.web3App,
     required this.launchRedirect,
+    required this.selectedChain,
   });
 
   final SessionData session;
   final IWeb3App web3App;
+  final W3MChainInfo selectedChain;
   final void Function() launchRedirect;
 
   @override
@@ -32,25 +34,49 @@ class SessionWidgetState extends State<SessionWidget> {
       const SizedBox(height: StyleConstants.linear16),
       Text(
         widget.session.peer.metadata.name,
-        style: StyleConstants.titleText,
+        style: Web3ModalTheme.getDataOf(context).textStyles.title600.copyWith(
+              color: Web3ModalTheme.colorsOf(context).foreground100,
+            ),
         textAlign: TextAlign.center,
       ),
-      const SizedBox(height: StyleConstants.linear16),
-      Text('${StringConstants.sessionTopic}${widget.session.topic}'),
+      const SizedBox(height: StyleConstants.linear8),
+      Text(
+        StringConstants.sessionTopic,
+        style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+              color: Web3ModalTheme.colorsOf(context).foreground100,
+            ),
+      ),
+      Text(
+        widget.session.topic,
+        style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
+              color: Web3ModalTheme.colorsOf(context).foreground100,
+            ),
+      ),
     ];
+
+    children.addAll([
+      const SizedBox(height: StyleConstants.linear8),
+      Text(
+        'Approved methods:',
+        style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+              color: Web3ModalTheme.colorsOf(context).foreground100,
+            ),
+      ),
+    ]);
+    children.add(_buildChainApprovedMethodsTiles());
 
     // Get all of the accounts
     final List<String> namespaceAccounts = [];
 
     // Loop through the namespaces, and get the accounts
-    for (final Namespace namespace in widget.session.namespaces.values) {
+    for (final namespace in widget.session.namespaces.values) {
       namespaceAccounts.addAll(namespace.accounts);
     }
 
-    // Loop through the namespace accounts and build the widgets
-    for (final String namespaceAccount in namespaceAccounts) {
-      children.add(_buildAccountWidget(namespaceAccount));
-    }
+    final namespace = namespaceAccounts.firstWhere(
+      (nsa) => nsa.split(':')[1] == widget.selectedChain.chainId,
+    );
+    children.add(_buildAccountWidget(namespace));
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -61,33 +87,47 @@ class SessionWidgetState extends State<SessionWidget> {
   }
 
   Widget _buildAccountWidget(String namespaceAccount) {
-    final String chainId = NamespaceUtils.getChainFromAccount(
-      namespaceAccount,
-    );
-    final String account = NamespaceUtils.getAccount(
-      namespaceAccount,
-    );
-    final ChainMetadata chainMetadata = getChainMetadataFromChain(chainId);
+    final chainId = NamespaceUtils.getChainFromAccount(namespaceAccount);
+    final account = NamespaceUtils.getAccount(namespaceAccount);
+    final chainMetadata = getChainMetadataFromChain(chainId);
 
     final List<Widget> children = [
       Text(
         chainMetadata.w3mChainInfo.chainName,
-        style: StyleConstants.subtitleText,
+        style: Web3ModalTheme.getDataOf(context).textStyles.title600.copyWith(
+              color: Web3ModalTheme.colorsOf(context).foreground100,
+            ),
       ),
       const SizedBox(height: StyleConstants.linear8),
-      Text(account, textAlign: TextAlign.center),
-      const SizedBox(height: StyleConstants.linear8),
-      const Text(
-        StringConstants.methods,
-        style: StyleConstants.buttonText,
+      Text(
+        account,
+        style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
+              color: Web3ModalTheme.colorsOf(context).foreground100,
+            ),
       ),
     ];
 
+    children.addAll([
+      const SizedBox(height: StyleConstants.linear8),
+      Text(
+        StringConstants.methods,
+        style:
+            Web3ModalTheme.getDataOf(context).textStyles.paragraph600.copyWith(
+                  color: Web3ModalTheme.colorsOf(context).foreground100,
+                ),
+      ),
+    ]);
     children.addAll(_buildChainMethodButtons(chainMetadata, account));
 
     children.addAll([
       const SizedBox(height: StyleConstants.linear8),
-      const Text(StringConstants.events, style: StyleConstants.buttonText),
+      Text(
+        StringConstants.events,
+        style:
+            Web3ModalTheme.getDataOf(context).textStyles.paragraph600.copyWith(
+                  color: Web3ModalTheme.colorsOf(context).foreground100,
+                ),
+      ),
     ]);
     children.add(_buildChainEventsTiles(chainMetadata));
 
@@ -144,8 +184,12 @@ class SessionWidgetState extends State<SessionWidget> {
             ),
             child: Text(
               method,
-              style: StyleConstants.buttonText,
-              textAlign: TextAlign.center,
+              style: Web3ModalTheme.getDataOf(context)
+                  .textStyles
+                  .small600
+                  .copyWith(
+                    color: Web3ModalTheme.colorsOf(context).foreground100,
+                  ),
             ),
           ),
         ),
@@ -153,6 +197,20 @@ class SessionWidgetState extends State<SessionWidget> {
     }
 
     return buttons;
+  }
+
+  Widget _buildChainApprovedMethodsTiles() {
+    String methods = '';
+    final approvedMethods = widget.session.namespaces['eip155']?.methods ?? [];
+    for (final method in approvedMethods) {
+      methods += '$method, ';
+    }
+    return Text(
+      methods,
+      style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
+            color: Web3ModalTheme.colorsOf(context).foreground100,
+          ),
+    );
   }
 
   Widget _buildChainEventsTiles(ChainMetadata chainMetadata) {
@@ -178,8 +236,10 @@ class SessionWidgetState extends State<SessionWidget> {
           ),
           child: Text(
             event,
-            style: StyleConstants.buttonText,
-            textAlign: TextAlign.center,
+            style:
+                Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
+                      color: Web3ModalTheme.colorsOf(context).foreground100,
+                    ),
           ),
         ),
       );

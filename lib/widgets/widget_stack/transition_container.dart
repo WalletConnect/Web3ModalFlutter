@@ -16,8 +16,8 @@ class TransitionContainer extends StatefulWidget {
 
 class _TransitionContainerState extends State<TransitionContainer>
     with TickerProviderStateMixin {
-  static const fadeDuration = Duration(milliseconds: 200);
-  static const resizeDuration = Duration(milliseconds: 150);
+  static const fadeDuration = Duration(milliseconds: 150);
+  static const resizeDuration = Duration(milliseconds: 100);
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;

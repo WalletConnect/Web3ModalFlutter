@@ -16,11 +16,13 @@ class WalletsGrid extends StatelessWidget {
     this.onTapWallet,
     this.isPaginating = false,
     this.scrollController,
+    this.paddingTop = 0.0,
   });
   final List<GridItem<W3MWalletInfo>> itemList;
   final Function(W3MWalletInfo walletInfo)? onTapWallet;
   final bool isPaginating;
   final ScrollController? scrollController;
+  final double paddingTop;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +70,7 @@ class WalletsGrid extends StatelessWidget {
         bottom: kPadding12 + ResponsiveData.paddingBottomOf(context),
         left: kPadding6,
         right: kPadding6,
+        top: paddingTop,
       ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: ResponsiveData.gridAxisCountOf(context),

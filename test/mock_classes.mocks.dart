@@ -404,6 +404,25 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValueForMissingStub: _i15.Future<void>.value(),
       ) as _i15.Future<void>);
   @override
+  _i15.Future<void> updateRecentPosition(String? recentId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateRecentPosition,
+          [recentId],
+        ),
+        returnValue: _i15.Future<void>.value(),
+        returnValueForMissingStub: _i15.Future<void>.value(),
+      ) as _i15.Future<void>);
+  @override
+  void search({String? query}) => super.noSuchMethod(
+        Invocation.method(
+          #search,
+          [],
+          {#query: query},
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
   String getWalletImageUrl(String? imageId) => (super.noSuchMethod(
         Invocation.method(
           #getWalletImageUrl,
@@ -425,25 +444,6 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         #getWalletRedirectByName,
         [listing],
       )) as _i16.WalletRedirect?);
-  @override
-  _i15.Future<void> updateRecentPosition(String? recentId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateRecentPosition,
-          [recentId],
-        ),
-        returnValue: _i15.Future<void>.value(),
-        returnValueForMissingStub: _i15.Future<void>.value(),
-      ) as _i15.Future<void>);
-  @override
-  void search({String? query}) => super.noSuchMethod(
-        Invocation.method(
-          #search,
-          [],
-          {#query: query},
-        ),
-        returnValueForMissingStub: null,
-      );
 }
 
 /// A class which mocks [W3MService].
@@ -485,17 +485,10 @@ class MockW3MService extends _i1.Mock implements _i18.W3MService {
         returnValue: _i19.W3MServiceStatus.idle,
       ) as _i19.W3MServiceStatus);
   @override
-  Map<String, _i4.RequiredNamespace> get requiredNamespaces =>
-      (super.noSuchMethod(
-        Invocation.getter(#requiredNamespaces),
-        returnValue: <String, _i4.RequiredNamespace>{},
-      ) as Map<String, _i4.RequiredNamespace>);
-  @override
-  Map<String, _i4.RequiredNamespace> get optionalNamespaces =>
-      (super.noSuchMethod(
-        Invocation.getter(#optionalNamespaces),
-        returnValue: <String, _i4.RequiredNamespace>{},
-      ) as Map<String, _i4.RequiredNamespace>);
+  bool get hasNamespaces => (super.noSuchMethod(
+        Invocation.getter(#hasNamespaces),
+        returnValue: false,
+      ) as bool);
   @override
   bool get isOpen => (super.noSuchMethod(
         Invocation.getter(#isOpen),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/pages/connect_wallet_page.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
@@ -58,6 +59,12 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
   @override
   Widget build(BuildContext context) {
     final service = Web3ModalProvider.of(context).service;
+    final totalListings = explorerService.instance!.totalListings.value;
+    final rows = (totalListings / 4.0).ceil();
+    final maxHeight = (rows * kGridItemHeight) +
+        (kPadding16 * 2.0) +
+        ResponsiveData.paddingBottomOf(context);
+    final isSearchAvailable = totalListings >= 20;
     return Web3ModalNavbar(
       title: 'All wallets',
       onTapTitle: () => _controller.animateTo(
@@ -75,11 +82,13 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
       safeAreaRight: true,
       body: ConstrainedBox(
         constraints: BoxConstraints(
-          maxHeight: ResponsiveData.maxHeightOf(context),
+          maxHeight: !isSearchAvailable
+              ? maxHeight
+              : ResponsiveData.maxHeightOf(context),
         ),
         child: Column(
           children: [
-            const AllWalletsHeader(),
+            isSearchAvailable ? const AllWalletsHeader() : SizedBox.shrink(),
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 onNotification: _processScrollNotification,
@@ -91,6 +100,7 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
                       return const ContentLoading();
                     }
                     return WalletsGrid(
+                      paddingTop: isSearchAvailable ? 0.0 : kPadding16,
                       isPaginating: _paginating,
                       scrollController: _controller,
                       onTapWallet: (data) async {

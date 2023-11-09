@@ -50,8 +50,7 @@ class ExplorerService implements IExplorerService {
   Set<String>? includedWalletIds;
 
   String? get _includedWalletsParam {
-    final includedIds = includedWalletIds = (includedWalletIds ?? <String>{})
-      ..removeAll(_installedWalletIds);
+    final includedIds = includedWalletIds ?? (includedWalletIds ?? <String>{});
     return includedIds.isNotEmpty ? includedIds.join(',') : null;
   }
 
@@ -144,33 +143,6 @@ class ExplorerService implements IExplorerService {
     listings.value = _listings;
   }
 
-  @override
-  String getWalletImageUrl(String imageId) =>
-      '$_apiUrl/getWalletImage/$imageId';
-
-  @override
-  String getAssetImageUrl(String imageId) {
-    if (imageId.contains('http')) {
-      return imageId;
-    }
-    return '$_apiUrl/public/getAssetImage/$imageId';
-  }
-
-  @override
-  WalletRedirect? getWalletRedirectByName(Listing listing) {
-    final wallet = listings.value.firstWhereOrNull(
-      (item) => listing.id == item.listing.id,
-    );
-    if (wallet == null) {
-      return null;
-    }
-    return WalletRedirect(
-      mobile: wallet.listing.mobileLink,
-      desktop: wallet.listing.desktopLink,
-      web: wallet.listing.webappLink,
-    );
-  }
-
   Future<List<NativeAppData>> _fetchNativeAppData() async {
     try {
       final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
@@ -216,7 +188,7 @@ class ExplorerService implements IExplorerService {
     bool firstCall = false,
   }) async {
     final installedCount = _installedWalletIds.length;
-    final includedCount = _includedWalletsParam?.length ?? 0;
+    final includedCount = includedWalletIds?.length ?? 0;
     final toQuery = 20 - installedCount + includedCount;
     final entriesCount = firstCall ? max(toQuery, 16) : _defaultEntriesCount;
     _requestParams = RequestParams(
@@ -318,6 +290,33 @@ class ExplorerService implements IExplorerService {
 
     listings.value = [...listings.value, ...newListins];
     W3MLoggerUtil.logger.t('[$runtimeType] _searchListings $query');
+  }
+
+  @override
+  String getWalletImageUrl(String imageId) =>
+      '$_apiUrl/getWalletImage/$imageId';
+
+  @override
+  String getAssetImageUrl(String imageId) {
+    if (imageId.contains('http')) {
+      return imageId;
+    }
+    return '$_apiUrl/public/getAssetImage/$imageId';
+  }
+
+  @override
+  WalletRedirect? getWalletRedirectByName(Listing listing) {
+    final wallet = listings.value.firstWhereOrNull(
+      (item) => listing.id == item.listing.id,
+    );
+    if (wallet == null) {
+      return null;
+    }
+    return WalletRedirect(
+      mobile: wallet.listing.mobileLink,
+      desktop: wallet.listing.desktopLink,
+      web: wallet.listing.webappLink,
+    );
   }
 
   String _getPlatformType() {

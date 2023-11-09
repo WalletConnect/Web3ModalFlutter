@@ -20,7 +20,7 @@ class ResponsiveContainer extends StatelessWidget {
             final screenWidth = constraints.maxWidth;
             final isPortrait = orientation == Orientation.portrait;
             final realMaxHeight =
-                isPortrait ? screenHeight - (kNavbarHeight * 2) : screenHeight;
+                isPortrait ? screenHeight * 0.75 : screenHeight;
             final realMinHeight = isPortrait ? 0.0 : realMaxHeight;
 
             final data = MediaQueryData.fromView(View.of(context));

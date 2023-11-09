@@ -1,6 +1,5 @@
 import 'package:event/event.dart';
 import 'package:flutter/material.dart';
-import 'package:walletconnect_flutter_v2/apis/sign_api/models/proposal_models.dart';
 import 'package:walletconnect_flutter_v2/apis/sign_api/models/session_models.dart';
 import 'package:walletconnect_flutter_v2/apis/web3app/i_web3app.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
@@ -17,6 +16,8 @@ enum W3MServiceStatus {
   bool get isLoading => this == initializing;
 }
 
+/// Either a [projectId] and [metadata] must be provided or an already created [web3App].
+/// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
 abstract class IW3MService with ChangeNotifier {
   /// Whether or not this object has been initialized.
   W3MServiceStatus get status;
@@ -25,11 +26,7 @@ abstract class IW3MService with ChangeNotifier {
   /// Otherwise, it will be null.
   dynamic get initError;
 
-  /// The required namespaces that will be used when connecting to the wallet
-  Map<String, RequiredNamespace> get requiredNamespaces;
-
-  /// The optional namespaces that will be used when connecting to the wallet
-  Map<String, RequiredNamespace> get optionalNamespaces;
+  bool get hasNamespaces;
 
   /// The object that manages sessions, authentication, events, and requests for WalletConnect.
   IWeb3App? get web3App;
