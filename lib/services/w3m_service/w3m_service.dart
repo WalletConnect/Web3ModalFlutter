@@ -140,7 +140,17 @@ class W3MService with ChangeNotifier implements IW3MService {
     if (optionalNamespaces != null) {
       // Set the optional namespaces declared by the user on W3MService object
       _optionalNamespaces = optionalNamespaces.map(
-        (key, value) => MapEntry(key, value.toRequired()),
+        (key, value) => MapEntry(
+          key,
+          RequiredNamespace(
+            chains: value.chains ??
+                W3MChainPresets.chains.values.map((e) {
+                  return e.namespace;
+                }).toList(),
+            methods: value.methods,
+            events: value.events,
+          ),
+        ),
       );
     } else {
       // Set the optional namespaces to everything in our chain presets
