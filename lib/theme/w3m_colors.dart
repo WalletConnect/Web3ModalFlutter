@@ -101,7 +101,7 @@ class Web3ModalColors with _$Web3ModalColors {
     foreground300: Color(0xFF9EA9A9),
     //
     background100: Color(0xFFFFFFFF),
-    background125: Color(0xFFF5FAFA),
+    background125: Color(0xFFFFFFFF),
     background150: Color(0xFFF3F8F8),
     background175: Color(0xFFEEF4F4),
     background200: Color(0xFFEAF1F1),

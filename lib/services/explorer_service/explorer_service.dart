@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -6,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:universal_io/io.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
+import 'package:web3modal_flutter/utils/debouncer.dart';
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
@@ -303,8 +305,10 @@ class ExplorerService implements IExplorerService {
 
     listings.value = newListins;
     W3MLoggerUtil.logger.t('[$runtimeType] _searchListings $query');
-    isSearching.value = false;
+    _debouncer.run(() => isSearching.value = false);
   }
+
+  final _debouncer = Debouncer(milliseconds: 300);
 
   @override
   String getWalletImageUrl(String imageId) =>

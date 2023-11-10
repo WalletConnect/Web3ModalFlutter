@@ -39,7 +39,7 @@ class _ExplorerServiceItemsListenerState
           valueListenable: explorerService.instance!.isSearching,
           builder: (context, searching, _) {
             if (searching) {
-              return widget.builder(context, initialised, [], searching);
+              return widget.builder(context, initialised, _items, searching);
             }
             return ValueListenableBuilder<List<W3MWalletInfo>>(
               valueListenable: explorerService.instance!.listings,

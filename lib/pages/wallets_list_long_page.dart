@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
@@ -98,7 +100,8 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
                       return WalletsGrid(
                         paddingTop: isSearchAvailable ? 0.0 : kPadding16,
                         showLoading: true,
-                        loadingCount: 20,
+                        loadingCount:
+                            items.isNotEmpty ? min(16, items.length) : 16,
                         scrollController: _controller,
                         itemList: [],
                       );
