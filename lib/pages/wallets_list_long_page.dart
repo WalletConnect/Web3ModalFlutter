@@ -11,7 +11,6 @@ import 'package:web3modal_flutter/widgets/lists/wallets_grid.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/all_wallets_header.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
-import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 
 class WalletsListLongPage extends StatefulWidget {
   const WalletsListLongPage()
@@ -94,14 +93,21 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
                 onNotification: _processScrollNotification,
                 child: ExplorerServiceItemsListener(
                   listen: !_paginating,
-                  builder: (context, initialised, items) {
-                    if (!initialised) {
-                      // TODO replace with LoadingItems
-                      return const ContentLoading();
+                  builder: (context, initialised, items, searching) {
+                    if (!initialised || searching) {
+                      return WalletsGrid(
+                        paddingTop: isSearchAvailable ? 0.0 : kPadding16,
+                        showLoading: true,
+                        loadingCount: 20,
+                        scrollController: _controller,
+                        itemList: [],
+                      );
                     }
+                    final isPortrait = ResponsiveData.isPortrait(context);
                     return WalletsGrid(
                       paddingTop: isSearchAvailable ? 0.0 : kPadding16,
-                      isPaginating: _paginating,
+                      showLoading: _paginating,
+                      loadingCount: isPortrait ? 4 : 8,
                       scrollController: _controller,
                       onTapWallet: (data) async {
                         service.selectWallet(data);

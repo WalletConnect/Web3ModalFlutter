@@ -15,17 +15,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  IWeb3App? _web3App;
+  late W3MService _w3mService;
   bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
-    _initialize();
+    _initializeService();
   }
 
-  void _initialize() async {
-    _web3App = await Web3App.createInstance(
+  void _initializeService() async {
+    // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
+    W3MChainPresets.chains.putIfAbsent('42220', () => _exampleCustomChain);
+
+    _w3mService = W3MService(
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
       metadata: const PairingMetadata(
@@ -39,32 +42,45 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+    await _w3mService.init();
 
-    _web3App!.onSessionPing.subscribe(_onSessionPing);
-    _web3App!.onSessionEvent.subscribe(_onSessionEvent);
+    // If you want to support just one chain uncomment this line and avoid using W3MNetworkSelectButton()
+    // _w3mService.selectChain(W3MChainPresets.chains['137']);
 
-    await _web3App!.init();
+    _w3mService.addListener(_serviceListener);
+    _w3mService.web3App?.onSessionEvent.subscribe(_onSessionEvent);
+    _w3mService.web3App?.onSessionConnect.subscribe(_onSessionConnect);
+    _w3mService.web3App?.onSessionDelete.subscribe(_onSessionDelete);
 
     setState(() => _initialized = true);
   }
 
   @override
   void dispose() {
-    _web3App!.onSessionPing.unsubscribe(_onSessionPing);
-    _web3App!.onSessionEvent.unsubscribe(_onSessionEvent);
+    _w3mService.web3App?.onSessionEvent.unsubscribe(_onSessionEvent);
+    _w3mService.web3App?.onSessionConnect.unsubscribe(_onSessionConnect);
+    _w3mService.web3App?.onSessionDelete.unsubscribe(_onSessionDelete);
     super.dispose();
+  }
+
+  void _serviceListener() {
+    setState(() {});
+  }
+
+  void _onSessionEvent(SessionEvent? args) {
+    debugPrint('[$runtimeType] _onSessionEvent $args');
+  }
+
+  void _onSessionConnect(SessionConnect? args) {
+    debugPrint('[$runtimeType] _onSessionConnect $args');
+  }
+
+  void _onSessionDelete(SessionDelete? args) {
+    debugPrint('[$runtimeType] _onSessionDelete $args');
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_initialized) {
-      return Center(
-        child: CircularProgressIndicator(
-          color: Web3ModalTheme.colorsOf(context).accent100,
-        ),
-      );
-    }
-
     return Scaffold(
       backgroundColor: Web3ModalTheme.colorsOf(context).background300,
       appBar: AppBar(
@@ -81,140 +97,45 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: _W3MPage(web3App: _web3App!),
+      body: Builder(builder: (context) {
+        if (!_initialized) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: Web3ModalTheme.colorsOf(context).accent100,
+            ),
+          );
+        }
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              _ButtonsView(w3mService: _w3mService),
+              const Divider(height: 0.0),
+              _ConnectedView(w3mService: _w3mService)
+            ],
+          ),
+        );
+      }),
     );
-  }
-
-  void _onSessionPing(SessionPing? args) {
-    debugPrint('[$runtimeType] ${StringConstants.receivedPing}: $args');
-  }
-
-  void _onSessionEvent(SessionEvent? args) {
-    debugPrint('[$runtimeType] ${StringConstants.receivedEvent}: $args');
   }
 }
 
-class _W3MPage extends StatefulWidget {
-  const _W3MPage({required this.web3App});
-  final IWeb3App web3App;
-
-  @override
-  State<_W3MPage> createState() => _W3MPageState();
-}
-
-class _W3MPageState extends State<_W3MPage> {
-  late IWeb3App _web3App;
-  late W3MService _w3mService;
-  bool _isConnected = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _web3App = widget.web3App;
-    _web3App.onSessionConnect.subscribe(_onWeb3AppConnect);
-    _web3App.onSessionDelete.subscribe(_onWeb3AppDisconnect);
-
-    _initializeService();
-  }
-
-  void _initializeService() async {
-    // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
-    W3MChainPresets.chains.putIfAbsent('42220', () => _exampleCustomChain);
-
-    _w3mService = W3MService(
-      web3App: _web3App,
-      logLevel: LogLevel.error,
-      // There's no need to pass optionalNamespaces rather than to override every other optionalNamespaces configuration in the single chain objects
-      // optionalNamespaces: {
-      //   'eip155': W3MNamespace(
-      //     chains:
-      //         W3MChainPresets.chains.values.map((e) => e.namespace).toList(),
-      //     methods: [
-      //       "eth_accounts",
-      //       "eth_requestAccounts",
-      //       "eth_sendRawTransaction",
-      //       "eth_sign",
-      //       "eth_signTransaction",
-      //       "eth_signTypedData",
-      //       "eth_signTypedData_v3",
-      //       "eth_signTypedData_v4",
-      //       "eth_sendTransaction",
-      //       "personal_sign",
-      //       "wallet_switchEthereumChain",
-      //       "wallet_addEthereumChain",
-      //       "wallet_getPermissions",
-      //       "wallet_requestPermissions",
-      //       "wallet_registerOnboarding",
-      //       "wallet_watchAsset",
-      //       "wallet_scanQRCode",
-      //     ],
-      //     events: [
-      //       "chainChanged",
-      //       "accountsChanged",
-      //       "message",
-      //       "disconnect",
-      //       "connect",
-      //     ],
-      //   ),
-      // },
-    );
-
-    await _w3mService.init();
-
-    _w3mService.addListener(_serviceListener);
-
-    // If you want to support just one chain uncomment this line and avoid using W3MNetworkSelectButton()
-    // _w3mService.selectChain(W3MChainPresets.chains['137']);
-
-    setState(() {
-      _isConnected = _web3App.sessions.getAll().isNotEmpty;
-    });
-  }
-
-  @override
-  void dispose() {
-    _web3App.onSessionConnect.unsubscribe(_onWeb3AppConnect);
-    _web3App.onSessionDelete.unsubscribe(_onWeb3AppDisconnect);
-    super.dispose();
-  }
-
-  void _onWeb3AppConnect(SessionConnect? args) {
-    setState(() {
-      _isConnected = true;
-    });
-  }
-
-  void _onWeb3AppDisconnect(SessionDelete? args) {
-    setState(() {
-      _isConnected = false;
-    });
-  }
-
-  void _serviceListener() {
-    debugPrint('_serviceListener');
-    setState(() {});
-  }
+class _ButtonsView extends StatelessWidget {
+  const _ButtonsView({required this.w3mService});
+  final W3MService w3mService;
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const SizedBox.square(dimension: 8.0),
-          Visibility(
-            visible: !_isConnected,
-            child: W3MNetworkSelectButton(service: _w3mService),
-          ),
-          W3MConnectWalletButton(service: _w3mService),
-          const SizedBox.square(dimension: 8.0),
-          const Divider(height: 0.0),
-          Visibility(
-            visible: _isConnected,
-            child: _ConnectedView(w3mService: _w3mService),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        const SizedBox.square(dimension: 8.0),
+        Visibility(
+          visible: !w3mService.isConnected,
+          child: W3MNetworkSelectButton(service: w3mService),
+        ),
+        W3MConnectWalletButton(service: w3mService),
+        const SizedBox.square(dimension: 8.0),
+      ],
     );
   }
 }
@@ -225,6 +146,9 @@ class _ConnectedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!w3mService.isConnected) {
+      return const SizedBox.shrink();
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

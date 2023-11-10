@@ -51,16 +51,8 @@ class _W3MAccountAvatarState extends State<W3MAccountAvatar> {
             BlendMode.saturation,
           ),
           child: (_avatarUrl ?? '').isNotEmpty
-              ? CachedNetworkImage(
-                  imageUrl: _avatarUrl!,
-                  fadeOutDuration: Duration.zero,
-                  fadeInDuration: Duration.zero,
-                  placeholderFadeInDuration: Duration.zero,
-                )
-              : GradientOrb(
-                  address: _address,
-                  size: widget.size,
-                ),
+              ? CachedNetworkImage(imageUrl: _avatarUrl!)
+              : GradientOrb(address: _address, size: widget.size),
         ),
       ),
     );

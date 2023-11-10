@@ -25,7 +25,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
     with TickerProviderStateMixin {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
-  final _debouncer = _Debouncer(milliseconds: 200);
+  final _debouncer = _Debouncer(milliseconds: 300);
 
   late DecorationTween _decorationTween = DecorationTween(
     begin: BoxDecoration(

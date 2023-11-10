@@ -64,6 +64,7 @@ class SessionWidgetState extends State<SessionWidget> {
       ),
     ]);
     children.add(_buildChainApprovedMethodsTiles());
+    children.add(const SizedBox.square(dimension: 8.0));
 
     // Get all of the accounts
     final List<String> namespaceAccounts = [];

@@ -11,9 +11,7 @@ class W3MChainInfo with _$W3MChainInfo {
     required String namespace,
     required String tokenName,
     required String rpcUrl,
-    @Deprecated('Only optionalNamespaces should be used')
-    @Default({})
-    Map<String, RequiredNamespace> requiredNamespaces,
+    @Default({}) Map<String, RequiredNamespace> requiredNamespaces,
     @Default({}) Map<String, RequiredNamespace> optionalNamespaces,
     String? chainIcon,
     W3MBlockExplorer? blockExplorer,

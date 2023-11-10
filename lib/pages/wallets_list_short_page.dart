@@ -28,12 +28,6 @@ class WalletsListShortPage extends StatefulWidget {
 
 class _WalletsListShortPageState extends State<WalletsListShortPage> {
   @override
-  void initState() {
-    super.initState();
-    explorerService.instance!.fetchInitialWallets();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final service = Web3ModalProvider.of(context).service;
     final isPortrait = ResponsiveData.isPortrait(context);
@@ -51,7 +45,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
       safeAreaLeft: true,
       safeAreaRight: true,
       body: ExplorerServiceItemsListener(
-        builder: (context, initialised, items) {
+        builder: (context, initialised, items, _) {
           if (!initialised || items.isEmpty) {
             return ConstrainedBox(
               constraints: BoxConstraints(maxHeight: maxHeight),

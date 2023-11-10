@@ -33,7 +33,7 @@ class GetWalletPage extends StatelessWidget {
       body: ConstrainedBox(
         constraints: BoxConstraints(maxHeight: maxHeight),
         child: ExplorerServiceItemsListener(
-          builder: (context, initialised, items) {
+          builder: (context, initialised, items, _) {
             if (!initialised) {
               return const ContentLoading();
             }

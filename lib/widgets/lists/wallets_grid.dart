@@ -14,13 +14,15 @@ class WalletsGrid extends StatelessWidget {
     super.key,
     required this.itemList,
     this.onTapWallet,
-    this.isPaginating = false,
+    this.showLoading = false,
+    this.loadingCount = 8,
     this.scrollController,
     this.paddingTop = 0.0,
   });
   final List<GridItem<W3MWalletInfo>> itemList;
   final Function(W3MWalletInfo walletInfo)? onTapWallet;
-  final bool isPaginating;
+  final bool showLoading;
+  final int loadingCount;
   final ScrollController? scrollController;
   final double paddingTop;
 
@@ -39,27 +41,17 @@ class WalletsGrid extends StatelessWidget {
         )
         .toList();
 
-    if (isPaginating) {
-      final isLandscape = !ResponsiveData.isPortrait(context);
-      final loadingList = [
-        const WalletGridItem(title: ''),
-        const WalletGridItem(title: ''),
-        const WalletGridItem(title: ''),
-        const WalletGridItem(title: ''),
-      ]
-          .map(
-            (e) => SizedBox(
-              child: Shimmer.fromColors(
-                baseColor: themeColors.grayGlass100,
-                highlightColor: themeColors.grayGlass025,
-                child: const WalletGridItem(title: ''),
-              ),
+    if (showLoading) {
+      for (var i = 0; i < loadingCount; i++) {
+        children.add(
+          SizedBox(
+            child: Shimmer.fromColors(
+              baseColor: themeColors.grayGlass100,
+              highlightColor: themeColors.grayGlass025,
+              child: const WalletGridItem(title: ''),
             ),
-          )
-          .toList();
-      children.addAll(loadingList);
-      if (isLandscape) {
-        children.addAll(loadingList);
+          ),
+        );
       }
     }
 

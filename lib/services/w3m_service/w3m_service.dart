@@ -396,7 +396,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _isOpen = true;
 
     // Reset the explorer
-    explorerService.instance!.search(query: '');
+    explorerService.instance!.search(query: null);
     widgetStack.instance.clear();
 
     _context = context;
@@ -554,10 +554,10 @@ class W3MService with ChangeNotifier implements IW3MService {
           .i('[$runtimeType] Rebuilding session, ending future');
       return;
     } on JsonRpcError catch (e) {
+      W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
       if (_isUserRejectedError(e)) {
         onWalletConnectionError.broadcast();
       }
-      W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
       return await expirePreviousInactivePairings();
     }
   }
@@ -785,7 +785,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     if (e is JsonRpcError) {
       final stringError = e.toJson().toString().toLowerCase();
       final userRejected = stringError.contains('rejected');
-      return userRejected;
+      final userDisapproved = stringError.contains('user disapproved');
+      return userRejected || userDisapproved;
     }
     return false;
   }
@@ -819,7 +820,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     final listing = _selectedWallet?.listing;
     if (listing == null) return null;
 
-    return explorerService.instance?.getWalletRedirectByName(listing);
+    return explorerService.instance?.getWalletRedirect(listing);
   }
 
   WalletRedirect? get sessionWalletRedirect {

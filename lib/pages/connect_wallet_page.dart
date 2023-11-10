@@ -137,23 +137,21 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                             visible: errorConnection,
                             child: Container(
                               decoration: BoxDecoration(
+                                color: themeColors.background125,
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(30.0),
                                 ),
                               ),
                               padding: const EdgeInsets.all(1.0),
                               clipBehavior: Clip.antiAlias,
-                              child: ColoredBox(
-                                color: themeColors.background125,
-                                child: RoundedIcon(
-                                  assetPath: 'assets/icons/close.svg',
-                                  assetColor: themeColors.error100,
-                                  circleColor:
-                                      themeColors.error100.withOpacity(0.2),
-                                  borderColor: themeColors.background125,
-                                  padding: 4.0,
-                                  size: 22.0,
-                                ),
+                              child: RoundedIcon(
+                                assetPath: 'assets/icons/close.svg',
+                                assetColor: themeColors.error100,
+                                circleColor:
+                                    themeColors.error100.withOpacity(0.2),
+                                borderColor: themeColors.background125,
+                                padding: 4.0,
+                                size: 24.0,
                               ),
                             ),
                           ),
@@ -212,7 +210,8 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                   Visibility(
                     visible: isPortrait &&
                         _selectedSegment != SegmentOption.browser &&
-                        !errorConnection,
+                        !errorConnection &&
+                        walletInstalled,
                     child: SimpleIconButton(
                       onTap: () => service.connectSelectedWallet(),
                       leftIcon: 'assets/icons/refresh_back.svg',
@@ -248,7 +247,8 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                   Visibility(
                     visible: !isPortrait &&
                         _selectedSegment != SegmentOption.browser &&
-                        !errorConnection,
+                        !errorConnection &&
+                        walletInstalled,
                     child: SimpleIconButton(
                       onTap: () => service.connectSelectedWallet(),
                       leftIcon: 'assets/icons/refresh_back.svg',

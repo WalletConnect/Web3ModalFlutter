@@ -104,7 +104,7 @@ void main() {
       when(mockStorageService.setString(StringConstants.selectedChainId, any))
           .thenAnswer((_) => Future.value(true));
       when(es.getAssetImageUrl('imageId')).thenReturn('abc');
-      when(es.getWalletRedirectByName(anyNamed('name'))).thenReturn(null);
+      when(es.getWalletRedirect(anyNamed('name'))).thenReturn(null);
       when(mockEVMService.getBalance(any, any)).thenAnswer(
         (_) => Future.value(1.0),
       );
@@ -289,7 +289,7 @@ void main() {
             request: anyNamed('request'),
           ),
         ).called(1);
-        verify(es.getWalletRedirectByName(anyNamed('name'))).called(1);
+        verify(es.getWalletRedirect(anyNamed('name'))).called(1);
         verify(
           mockUrlUtils.launchUrl(any),
         ).called(1);

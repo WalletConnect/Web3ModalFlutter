@@ -28,14 +28,13 @@ abstract class IExplorerService {
   /// Init service
   Future<void> init();
 
-  /// fetch initial page of wallets including the installed ones
-  Future<void> fetchInitialWallets();
-
   /// paginate subsequent wallets
   Future<void> paginate();
 
   /// search for a wallet
   void search({String? query});
+
+  ValueNotifier<bool> isSearching = ValueNotifier(false);
 
   /// update the recently used position to the top list
   Future<void> updateRecentPosition(String? recentId);
@@ -44,5 +43,5 @@ abstract class IExplorerService {
 
   String getAssetImageUrl(String imageId);
 
-  WalletRedirect? getWalletRedirectByName(Listing listing);
+  WalletRedirect? getWalletRedirect(Listing listing);
 }

@@ -48,9 +48,6 @@ class RoundedIcon extends StatelessWidget {
                 height: size,
                 fit: BoxFit.fill,
                 httpHeaders: coreUtils.instance.getAPIHeaders(projectId),
-                fadeOutDuration: Duration.zero,
-                fadeInDuration: Duration.zero,
-                placeholderFadeInDuration: Duration.zero,
                 errorWidget: (context, url, error) => ColoredBox(
                   color: themeColors.grayGlass005,
                 ),

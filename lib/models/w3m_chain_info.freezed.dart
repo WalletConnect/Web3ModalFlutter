@@ -21,7 +21,6 @@ mixin _$W3MChainInfo {
   String get namespace => throw _privateConstructorUsedError;
   String get tokenName => throw _privateConstructorUsedError;
   String get rpcUrl => throw _privateConstructorUsedError;
-  @Deprecated('Only optionalNamespaces should be used')
   Map<String, RequiredNamespace> get requiredNamespaces =>
       throw _privateConstructorUsedError;
   Map<String, RequiredNamespace> get optionalNamespaces =>
@@ -46,7 +45,6 @@ abstract class $W3MChainInfoCopyWith<$Res> {
       String namespace,
       String tokenName,
       String rpcUrl,
-      @Deprecated('Only optionalNamespaces should be used')
       Map<String, RequiredNamespace> requiredNamespaces,
       Map<String, RequiredNamespace> optionalNamespaces,
       String? chainIcon,
@@ -145,7 +143,6 @@ abstract class _$$_W3MChainInfoCopyWith<$Res>
       String namespace,
       String tokenName,
       String rpcUrl,
-      @Deprecated('Only optionalNamespaces should be used')
       Map<String, RequiredNamespace> requiredNamespaces,
       Map<String, RequiredNamespace> optionalNamespaces,
       String? chainIcon,
@@ -226,7 +223,6 @@ class _$_W3MChainInfo implements _W3MChainInfo {
       required this.namespace,
       required this.tokenName,
       required this.rpcUrl,
-      @Deprecated('Only optionalNamespaces should be used')
       final Map<String, RequiredNamespace> requiredNamespaces = const {},
       final Map<String, RequiredNamespace> optionalNamespaces = const {},
       this.chainIcon,
@@ -247,7 +243,6 @@ class _$_W3MChainInfo implements _W3MChainInfo {
   final Map<String, RequiredNamespace> _requiredNamespaces;
   @override
   @JsonKey()
-  @Deprecated('Only optionalNamespaces should be used')
   Map<String, RequiredNamespace> get requiredNamespaces {
     if (_requiredNamespaces is EqualUnmodifiableMapView)
       return _requiredNamespaces;
@@ -325,7 +320,6 @@ abstract class _W3MChainInfo implements W3MChainInfo {
       required final String namespace,
       required final String tokenName,
       required final String rpcUrl,
-      @Deprecated('Only optionalNamespaces should be used')
       final Map<String, RequiredNamespace> requiredNamespaces,
       final Map<String, RequiredNamespace> optionalNamespaces,
       final String? chainIcon,
@@ -342,7 +336,6 @@ abstract class _W3MChainInfo implements W3MChainInfo {
   @override
   String get rpcUrl;
   @override
-  @Deprecated('Only optionalNamespaces should be used')
   Map<String, RequiredNamespace> get requiredNamespaces;
   @override
   Map<String, RequiredNamespace> get optionalNamespaces;

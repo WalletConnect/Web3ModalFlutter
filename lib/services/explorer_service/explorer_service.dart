@@ -27,6 +27,9 @@ class ExplorerService implements IExplorerService {
 
   late RequestParams _requestParams;
 
+  @override
+  ValueNotifier<bool> initialized = ValueNotifier(false);
+
   String _recentWalletId = '';
   @override
   String get recentWalletId => _recentWalletId;
@@ -37,11 +40,15 @@ class ExplorerService implements IExplorerService {
   @override
   ValueNotifier<int> totalListings = ValueNotifier(0);
 
-  @override
-  ValueNotifier<List<W3MWalletInfo>> listings = ValueNotifier([]);
   List<W3MWalletInfo> _listings = [];
 
+  @override
+  ValueNotifier<List<W3MWalletInfo>> listings = ValueNotifier([]);
+
   Set<String> _installedWalletIds = <String>{};
+
+  @override
+  ValueNotifier<bool> isSearching = ValueNotifier(false);
 
   @override
   Set<String>? featuredWalletIds;
@@ -50,7 +57,7 @@ class ExplorerService implements IExplorerService {
   Set<String>? includedWalletIds;
 
   String? get _includedWalletsParam {
-    final includedIds = includedWalletIds ?? (includedWalletIds ?? <String>{});
+    final includedIds = (includedWalletIds ?? <String>{});
     return includedIds.isNotEmpty ? includedIds.join(',') : null;
   }
 
@@ -62,9 +69,6 @@ class ExplorerService implements IExplorerService {
       ..addAll(_installedWalletIds);
     return excludedIds.isNotEmpty ? excludedIds.join(',') : null;
   }
-
-  @override
-  ValueNotifier<bool> initialized = ValueNotifier(false);
 
   ExplorerService({
     required this.projectId,
@@ -84,6 +88,7 @@ class ExplorerService implements IExplorerService {
     W3MLoggerUtil.logger.t('[$runtimeType] init()');
 
     await _getInstalledWalletIds();
+    await _fetchInitialWallets();
 
     initialized.value = true;
     W3MLoggerUtil.logger.t('[$runtimeType] init() done');
@@ -94,14 +99,7 @@ class ExplorerService implements IExplorerService {
     _installedWalletIds = Set<String>.from(installed.map((e) => e.id));
   }
 
-  Future<void> _getRecentWalletAndOrder() async {
-    final recentWalletId =
-        storageService.instance.getString(StringConstants.recentWallet);
-    await updateRecentPosition(recentWalletId);
-  }
-
-  @override
-  Future<void> fetchInitialWallets() async {
+  Future<void> _fetchInitialWallets() async {
     totalListings.value = 0;
     final allListings = await Future.wait([
       _fetchInstalledListings(),
@@ -113,6 +111,12 @@ class ExplorerService implements IExplorerService {
     W3MLoggerUtil.logger
         .t('[$runtimeType] fetchInitialWallets ${_listings.length}');
     await _getRecentWalletAndOrder();
+  }
+
+  Future<void> _getRecentWalletAndOrder() async {
+    final recentWalletId =
+        storageService.instance.getString(StringConstants.recentWallet);
+    await updateRecentPosition(recentWalletId);
   }
 
   @override
@@ -267,29 +271,33 @@ class ExplorerService implements IExplorerService {
     }
 
     final q = query.toLowerCase();
-    final filtered = _listings.where((w) {
-      final name = w.listing.name.toLowerCase();
-      return name.contains(q);
-    }).toList();
-    listings.value = filtered;
-
-    W3MLoggerUtil.logger.t('[$runtimeType] search $q');
     await _searchListings(query: q);
   }
 
   Future<void> _searchListings({String? query}) async {
-    final exclude = _listings.map((e) => e.listing.id).toList().join(',');
+    isSearching.value = true;
+
+    final includedIds = (includedWalletIds ?? <String>{});
+    final include = includedIds.isNotEmpty ? includedIds.join(',') : null;
+    final excludedIds = (excludedWalletIds ?? <String>{});
+    final exclude = excludedIds.isNotEmpty ? excludedIds.join(',') : null;
+
+    W3MLoggerUtil.logger.t('[$runtimeType] search $query');
+
     final newListins = await _fetchListings(
-      params: _requestParams.copyWith(
+      params: RequestParams(
         page: 1,
+        entries: 100,
         search: query,
+        include: include,
         exclude: exclude,
       ),
       updateCount: false,
     );
 
-    listings.value = [...listings.value, ...newListins];
+    listings.value = newListins;
     W3MLoggerUtil.logger.t('[$runtimeType] _searchListings $query');
+    isSearching.value = false;
   }
 
   @override
@@ -305,7 +313,7 @@ class ExplorerService implements IExplorerService {
   }
 
   @override
-  WalletRedirect? getWalletRedirectByName(Listing listing) {
+  WalletRedirect? getWalletRedirect(Listing listing) {
     final wallet = listings.value.firstWhereOrNull(
       (item) => listing.id == item.listing.id,
     );
