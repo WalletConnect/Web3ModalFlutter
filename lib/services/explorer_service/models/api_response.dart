@@ -214,7 +214,7 @@ class RequestParams {
     this.platform,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({bool short = false}) {
     Map<String, dynamic> params = {
       'page': page.toString(),
       'entries': entries.toString(),
@@ -222,10 +222,10 @@ class RequestParams {
     if ((search ?? '').isNotEmpty) {
       params['search'] = search;
     }
-    if ((include ?? '').isNotEmpty) {
+    if ((include ?? '').isNotEmpty && !short) {
       params['include'] = include;
     }
-    if ((exclude ?? '').isNotEmpty) {
+    if ((exclude ?? '').isNotEmpty && !short) {
       params['exclude'] = exclude;
     }
     if ((platform ?? '').isNotEmpty) {

@@ -70,6 +70,12 @@ class ExplorerService implements IExplorerService {
     return excludedIds.isNotEmpty ? excludedIds.join(',') : null;
   }
 
+  int _prevCount = 0;
+
+  bool _canPaginate = true;
+  @override
+  bool get canPaginate => _canPaginate;
+
   ExplorerService({
     required this.projectId,
     required String referer,
@@ -121,10 +127,8 @@ class ExplorerService implements IExplorerService {
 
   @override
   Future<void> paginate() async {
+    if (!canPaginate) return;
     final newParams = _requestParams.nextPage();
-    final totalCount = totalListings.value;
-    if (newParams.page * newParams.entries > totalCount) return;
-
     int entries = _defaultEntriesCount - _listings.length;
     if (entries <= 0) {
       _requestParams = newParams.copyWith(entries: _defaultEntriesCount);
@@ -136,15 +140,17 @@ class ExplorerService implements IExplorerService {
         exclude: exclude,
       );
     }
-    W3MLoggerUtil.logger
-        .t('[$runtimeType] paginate ${_requestParams.toJson()}');
     final newListings = await _fetchListings(
       params: _requestParams,
       updateCount: false,
     );
-
     _listings = [..._listings, ...newListings];
     listings.value = _listings;
+    if (newListings.length < _prevCount) {
+      _canPaginate = false;
+    } else {
+      _prevCount = newListings.length;
+    }
   }
 
   Future<List<NativeAppData>> _fetchNativeAppData() async {

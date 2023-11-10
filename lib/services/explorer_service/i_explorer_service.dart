@@ -31,6 +31,8 @@ abstract class IExplorerService {
   /// paginate subsequent wallets
   Future<void> paginate();
 
+  bool get canPaginate;
+
   /// search for a wallet
   void search({String? query});
 

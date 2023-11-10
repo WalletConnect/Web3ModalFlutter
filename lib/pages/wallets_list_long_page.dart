@@ -51,7 +51,7 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
   }
 
   Future<void> _paginate() {
-    setState(() => _paginating = true);
+    setState(() => _paginating = explorerService.instance!.canPaginate);
     return explorerService.instance!.paginate();
   }
 
