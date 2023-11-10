@@ -76,7 +76,7 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
       return setState(() => _state = ConnectButtonState.connected);
     }
     // Case 1.5: No required namespaces
-    else if (widget.service.requiredNamespaces.isEmpty) {
+    else if (!widget.service.hasNamespaces) {
       return setState(() => _state = ConnectButtonState.disabled);
     }
     // Case 2: Is not open and is not connected

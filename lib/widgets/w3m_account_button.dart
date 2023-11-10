@@ -25,9 +25,9 @@ class W3MAccountButton extends StatefulWidget {
 }
 
 class _W3MAccountButtonState extends State<W3MAccountButton> {
-  String? _address;
-  String? _tokenImage;
   String _balance = BalanceButton.balanceDefault;
+  String _address = '';
+  String? _tokenImage;
   String? _tokenName;
 
   @override
@@ -45,7 +45,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
 
   void _w3mServiceUpdated() {
     setState(() {
-      _address = widget.service.address;
+      _address = widget.service.address ?? '';
       _tokenImage = widget.service.tokenImageUrl;
       _balance = BalanceButton.balanceDefault;
       if (widget.service.chainBalance != null) {
@@ -60,20 +60,15 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Web3ModalTheme.getDataOf(context);
-    final textStyle = widget.size == BaseButtonSize.small
-        ? themeData.textStyles.small600
-        : themeData.textStyles.paragraph600;
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final borderRadius = radiuses.isSquare() ? 0.0 : widget.size.height / 2;
-    final innerBorderRadius =
-        radiuses.isSquare() ? 0.0 : BaseButtonSize.small.height / 2;
+    final enabled = _address.isNotEmpty && widget.service.status.isInitialized;
     // TODO this button should be able to be disable by passing a null onTap action
     // I should decouple an AccountButton from W3MAccountButton like on ConnectButton and NetworkButton
     return BaseButton(
       size: widget.size,
-      onTap: widget.service.status.isInitialized ? _onTap : null,
+      onTap: enabled ? _onTap : null,
       overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
         const EdgeInsets.only(left: 4.0, right: 4.0),
       ),
@@ -115,89 +110,122 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
             tokenImage: _tokenImage,
             iconSize: widget.size.iconSize + 4.0,
             buttonSize: widget.size,
-            onTap: _onTap,
+            onTap: enabled ? _onTap : null,
           ),
           const SizedBox.square(dimension: 4.0),
-          Padding(
-            padding: EdgeInsets.only(
-              top: widget.size == BaseButtonSize.small ? 4.0 : 0.0,
-              bottom: widget.size == BaseButtonSize.small ? 4.0 : 0.0,
-            ),
-            child: BaseButton(
-              size: BaseButtonSize.small,
-              onTap: _onTap,
-              overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                EdgeInsets.only(
-                  left: widget.size == BaseButtonSize.small ? 4.0 : 6.0,
-                  right: 8.0,
-                ),
-              ),
-              buttonStyle: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (states) {
-                    if (states.contains(MaterialState.disabled)) {
-                      return themeColors.grayGlass005;
-                    }
-                    return themeColors.grayGlass010;
-                  },
-                ),
-                foregroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (states) {
-                    if (states.contains(MaterialState.disabled)) {
-                      return themeColors.grayGlass015;
-                    }
-                    return themeColors.foreground175;
-                  },
-                ),
-                shape:
-                    MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
-                  (states) {
-                    return RoundedRectangleBorder(
-                      side: states.contains(MaterialState.disabled)
-                          ? BorderSide(
-                              color: themeColors.grayGlass005,
-                              width: 1.0,
-                            )
-                          : BorderSide(
-                              color: themeColors.grayGlass010,
-                              width: 1.0,
-                            ),
-                      borderRadius: BorderRadius.circular(innerBorderRadius),
-                    );
-                  },
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(widget.size.iconSize),
-                      border: Border.all(
-                        color: themeColors.grayGlass005,
-                        width: 1.0,
-                        strokeAlign: BorderSide.strokeAlignInside,
-                      ),
-                    ),
-                    child: W3MAccountAvatar(
-                      service: widget.service,
-                      size: widget.size.iconSize,
-                      disabled: false,
-                    ),
-                  ),
-                  const SizedBox.square(dimension: 4.0),
-                  Text(
-                    Util.truncate(
-                      _address ?? '',
-                      length: widget.size == BaseButtonSize.small ? 2 : 4,
-                    ),
-                    style: textStyle,
-                  ),
-                ],
-              ),
-            ),
+          _AddressButton(
+            address: _address,
+            buttonSize: widget.size,
+            service: widget.service,
+            onTap: enabled ? _onTap : null,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _AddressButton extends StatelessWidget {
+  const _AddressButton({
+    required this.buttonSize,
+    required this.address,
+    required this.service,
+    required this.onTap,
+  });
+  final BaseButtonSize buttonSize;
+  final VoidCallback? onTap;
+  final String address;
+  final IW3MService service;
+
+  @override
+  Widget build(BuildContext context) {
+    if (address.isEmpty) {
+      return SizedBox.shrink();
+    }
+    final themeData = Web3ModalTheme.getDataOf(context);
+    final textStyle = buttonSize == BaseButtonSize.small
+        ? themeData.textStyles.small600
+        : themeData.textStyles.paragraph600;
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
+    final innerBorderRadius =
+        radiuses.isSquare() ? 0.0 : BaseButtonSize.small.height / 2;
+    return Padding(
+      padding: EdgeInsets.only(
+        top: buttonSize == BaseButtonSize.small ? 4.0 : 0.0,
+        bottom: buttonSize == BaseButtonSize.small ? 4.0 : 0.0,
+      ),
+      child: BaseButton(
+        size: BaseButtonSize.small,
+        onTap: onTap,
+        overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+          EdgeInsets.only(
+            left: buttonSize == BaseButtonSize.small ? 4.0 : 6.0,
+            right: 8.0,
+          ),
+        ),
+        buttonStyle: ButtonStyle(
+          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+            (states) {
+              if (states.contains(MaterialState.disabled)) {
+                return themeColors.grayGlass005;
+              }
+              return themeColors.grayGlass010;
+            },
+          ),
+          foregroundColor: MaterialStateProperty.resolveWith<Color>(
+            (states) {
+              if (states.contains(MaterialState.disabled)) {
+                return themeColors.grayGlass015;
+              }
+              return themeColors.foreground175;
+            },
+          ),
+          shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
+            (states) {
+              return RoundedRectangleBorder(
+                side: states.contains(MaterialState.disabled)
+                    ? BorderSide(
+                        color: themeColors.grayGlass005,
+                        width: 1.0,
+                      )
+                    : BorderSide(
+                        color: themeColors.grayGlass010,
+                        width: 1.0,
+                      ),
+                borderRadius: BorderRadius.circular(innerBorderRadius),
+              );
+            },
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(buttonSize.iconSize),
+                border: Border.all(
+                  color: themeColors.grayGlass005,
+                  width: 1.0,
+                  strokeAlign: BorderSide.strokeAlignInside,
+                ),
+              ),
+              child: W3MAccountAvatar(
+                service: service,
+                size: buttonSize.iconSize,
+                disabled: false,
+              ),
+            ),
+            const SizedBox.square(dimension: 4.0),
+            Text(
+              Util.truncate(
+                address,
+                length: buttonSize == BaseButtonSize.small ? 2 : 4,
+              ),
+              style: textStyle,
+            ),
+          ],
+        ),
       ),
     );
   }

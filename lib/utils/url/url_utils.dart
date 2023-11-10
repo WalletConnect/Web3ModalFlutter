@@ -1,4 +1,5 @@
 import 'package:appcheck/appcheck.dart';
+import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
@@ -58,14 +59,10 @@ class UrlUtils extends IUrlUtils {
         if (p == PlatformExact.android) {
           return await androidAppCheck(uri);
         } else if (p == PlatformExact.iOS) {
-          return await canLaunchUrlFunc(
-            Uri.parse(
-              uri,
-            ),
-          );
+          return await canLaunchUrlFunc(Uri.parse(uri));
         }
-      } catch (_) {
-        // print(e);
+      } catch (e) {
+        debugPrint('[$runtimeType] isInstalled $e');
       }
     }
 
@@ -115,12 +112,9 @@ class UrlUtils extends IUrlUtils {
               )
             : redirect.desktopUri;
       }
-      if (await canLaunchUrl(uriToOpen!)) {
-        await launchUrlFunc(
-          uriToOpen,
-          mode: LaunchMode.externalApplication,
-        );
-      } else {
+      try {
+        await launchUrlFunc(uriToOpen!, mode: LaunchMode.externalApplication);
+      } catch (_) {
         throw LaunchUrlException('App not installed');
       }
     } catch (e) {

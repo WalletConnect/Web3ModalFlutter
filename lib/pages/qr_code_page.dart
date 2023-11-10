@@ -31,25 +31,34 @@ class _QRCodePageState extends State<QRCodePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _service = Web3ModalProvider.of(context).service;
-      _service!.addListener(_rebuildListener);
+      _service!.addListener(_buildWidget);
       _service!.onPairingExpire.subscribe(_onPairingExpire);
+      _service?.onWalletConnectionError.subscribe(_onError);
       await _service!.buildConnectionUri();
-      _qrQodeWidget = QRCodeWidget(
-        uri: _service!.wcUri!,
-        logoPath: 'assets/png/logo_wc.png',
-      );
     });
   }
 
-  void _rebuildListener() => setState(() {});
+  void _buildWidget() => setState(() {
+        _qrQodeWidget = QRCodeWidget(
+          uri: _service!.wcUri!,
+          logoPath: 'assets/png/logo_wc.png',
+        );
+      });
+
   void _onPairingExpire(EventArgs? args) async {
     await _service!.buildConnectionUri();
+    setState(() {});
+  }
+
+  void _onError(EventArgs? args) {
+    _showUserRejection();
   }
 
   @override
   void dispose() async {
+    _service?.onWalletConnectionError.unsubscribe(_onError);
     _service!.onPairingExpire.unsubscribe(_onPairingExpire);
-    _service!.removeListener(_rebuildListener);
+    _service!.removeListener(_buildWidget);
     _service!.expirePreviousInactivePairings();
     super.dispose();
   }
@@ -58,6 +67,7 @@ class _QRCodePageState extends State<QRCodePage> {
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     final isPortrait = ResponsiveData.isPortrait(context);
 
     return Web3ModalNavbar(
@@ -69,7 +79,16 @@ class _QRCodePageState extends State<QRCodePage> {
           children: [
             Padding(
               padding: EdgeInsets.all(kPadding16),
-              child: _qrQodeWidget ?? SizedBox.shrink(),
+              child: _qrQodeWidget ??
+                  AspectRatio(
+                    aspectRatio: 1.0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(radiuses.radiusL),
+                        color: themeColors.grayGlass005,
+                      ),
+                    ),
+                  ),
             ),
             Container(
               constraints: BoxConstraints(
@@ -122,4 +141,8 @@ class _QRCodePageState extends State<QRCodePage> {
       ToastMessage(type: ToastType.success, text: 'Link copied'),
     );
   }
+
+  void _showUserRejection() => toastUtils.instance.show(
+        ToastMessage(type: ToastType.error, text: 'User rejected'),
+      );
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -6,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:universal_io/io.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
+import 'package:web3modal_flutter/utils/debouncer.dart';
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
@@ -27,6 +29,9 @@ class ExplorerService implements IExplorerService {
 
   late RequestParams _requestParams;
 
+  @override
+  ValueNotifier<bool> initialized = ValueNotifier(false);
+
   String _recentWalletId = '';
   @override
   String get recentWalletId => _recentWalletId;
@@ -37,11 +42,15 @@ class ExplorerService implements IExplorerService {
   @override
   ValueNotifier<int> totalListings = ValueNotifier(0);
 
-  @override
-  ValueNotifier<List<W3MWalletInfo>> listings = ValueNotifier([]);
   List<W3MWalletInfo> _listings = [];
 
+  @override
+  ValueNotifier<List<W3MWalletInfo>> listings = ValueNotifier([]);
+
   Set<String> _installedWalletIds = <String>{};
+
+  @override
+  ValueNotifier<bool> isSearching = ValueNotifier(false);
 
   @override
   Set<String>? featuredWalletIds;
@@ -50,8 +59,7 @@ class ExplorerService implements IExplorerService {
   Set<String>? includedWalletIds;
 
   String? get _includedWalletsParam {
-    final includedIds = includedWalletIds = (includedWalletIds ?? <String>{})
-      ..removeAll(_installedWalletIds);
+    final includedIds = (includedWalletIds ?? <String>{});
     return includedIds.isNotEmpty ? includedIds.join(',') : null;
   }
 
@@ -64,8 +72,11 @@ class ExplorerService implements IExplorerService {
     return excludedIds.isNotEmpty ? excludedIds.join(',') : null;
   }
 
+  int _prevCount = 0;
+
+  bool _canPaginate = true;
   @override
-  ValueNotifier<bool> initialized = ValueNotifier(false);
+  bool get canPaginate => _canPaginate;
 
   ExplorerService({
     required this.projectId,
@@ -85,6 +96,7 @@ class ExplorerService implements IExplorerService {
     W3MLoggerUtil.logger.t('[$runtimeType] init()');
 
     await _getInstalledWalletIds();
+    await _fetchInitialWallets();
 
     initialized.value = true;
     W3MLoggerUtil.logger.t('[$runtimeType] init() done');
@@ -95,14 +107,7 @@ class ExplorerService implements IExplorerService {
     _installedWalletIds = Set<String>.from(installed.map((e) => e.id));
   }
 
-  Future<void> _getRecentWalletAndOrder() async {
-    final recentWalletId =
-        storageService.instance.getString(StringConstants.recentWallet);
-    await updateRecentPosition(recentWalletId);
-  }
-
-  @override
-  Future<void> fetchInitialWallets() async {
+  Future<void> _fetchInitialWallets() async {
     totalListings.value = 0;
     final allListings = await Future.wait([
       _fetchInstalledListings(),
@@ -116,12 +121,16 @@ class ExplorerService implements IExplorerService {
     await _getRecentWalletAndOrder();
   }
 
+  Future<void> _getRecentWalletAndOrder() async {
+    final recentWalletId =
+        storageService.instance.getString(StringConstants.recentWallet);
+    await updateRecentPosition(recentWalletId);
+  }
+
   @override
   Future<void> paginate() async {
+    if (!canPaginate) return;
     final newParams = _requestParams.nextPage();
-    final totalCount = totalListings.value;
-    if (newParams.page * newParams.entries > totalCount) return;
-
     int entries = _defaultEntriesCount - _listings.length;
     if (entries <= 0) {
       _requestParams = newParams.copyWith(entries: _defaultEntriesCount);
@@ -133,42 +142,17 @@ class ExplorerService implements IExplorerService {
         exclude: exclude,
       );
     }
-    W3MLoggerUtil.logger
-        .t('[$runtimeType] paginate ${_requestParams.toJson()}');
     final newListings = await _fetchListings(
       params: _requestParams,
       updateCount: false,
     );
-
     _listings = [..._listings, ...newListings];
     listings.value = _listings;
-  }
-
-  @override
-  String getWalletImageUrl(String imageId) =>
-      '$_apiUrl/getWalletImage/$imageId';
-
-  @override
-  String getAssetImageUrl(String imageId) {
-    if (imageId.contains('http')) {
-      return imageId;
+    if (newListings.length < _prevCount) {
+      _canPaginate = false;
+    } else {
+      _prevCount = newListings.length;
     }
-    return '$_apiUrl/public/getAssetImage/$imageId';
-  }
-
-  @override
-  WalletRedirect? getWalletRedirectByName(Listing listing) {
-    final wallet = listings.value.firstWhereOrNull(
-      (item) => listing.id == item.listing.id,
-    );
-    if (wallet == null) {
-      return null;
-    }
-    return WalletRedirect(
-      mobile: wallet.listing.mobileLink,
-      desktop: wallet.listing.desktopLink,
-      web: wallet.listing.webappLink,
-    );
   }
 
   Future<List<NativeAppData>> _fetchNativeAppData() async {
@@ -216,7 +200,7 @@ class ExplorerService implements IExplorerService {
     bool firstCall = false,
   }) async {
     final installedCount = _installedWalletIds.length;
-    final includedCount = _includedWalletsParam?.length ?? 0;
+    final includedCount = includedWalletIds?.length ?? 0;
     final toQuery = 20 - installedCount + includedCount;
     final entriesCount = firstCall ? max(toQuery, 16) : _defaultEntriesCount;
     _requestParams = RequestParams(
@@ -295,29 +279,62 @@ class ExplorerService implements IExplorerService {
     }
 
     final q = query.toLowerCase();
-    final filtered = _listings.where((w) {
-      final name = w.listing.name.toLowerCase();
-      return name.contains(q);
-    }).toList();
-    listings.value = filtered;
-
-    W3MLoggerUtil.logger.t('[$runtimeType] search $q');
     await _searchListings(query: q);
   }
 
   Future<void> _searchListings({String? query}) async {
-    final exclude = _listings.map((e) => e.listing.id).toList().join(',');
+    isSearching.value = true;
+
+    final includedIds = (includedWalletIds ?? <String>{});
+    final include = includedIds.isNotEmpty ? includedIds.join(',') : null;
+    final excludedIds = (excludedWalletIds ?? <String>{});
+    final exclude = excludedIds.isNotEmpty ? excludedIds.join(',') : null;
+
+    W3MLoggerUtil.logger.t('[$runtimeType] search $query');
+
     final newListins = await _fetchListings(
-      params: _requestParams.copyWith(
+      params: RequestParams(
         page: 1,
+        entries: 100,
         search: query,
+        include: include,
         exclude: exclude,
       ),
       updateCount: false,
     );
 
-    listings.value = [...listings.value, ...newListins];
+    listings.value = newListins;
     W3MLoggerUtil.logger.t('[$runtimeType] _searchListings $query');
+    _debouncer.run(() => isSearching.value = false);
+  }
+
+  final _debouncer = Debouncer(milliseconds: 300);
+
+  @override
+  String getWalletImageUrl(String imageId) =>
+      '$_apiUrl/getWalletImage/$imageId';
+
+  @override
+  String getAssetImageUrl(String imageId) {
+    if (imageId.contains('http')) {
+      return imageId;
+    }
+    return '$_apiUrl/public/getAssetImage/$imageId';
+  }
+
+  @override
+  WalletRedirect? getWalletRedirect(Listing listing) {
+    final wallet = listings.value.firstWhereOrNull(
+      (item) => listing.id == item.listing.id,
+    );
+    if (wallet == null) {
+      return null;
+    }
+    return WalletRedirect(
+      mobile: wallet.listing.mobileLink,
+      desktop: wallet.listing.desktopLink,
+      web: wallet.listing.webappLink,
+    );
   }
 
   String _getPlatformType() {

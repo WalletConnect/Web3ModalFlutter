@@ -104,7 +104,7 @@ void main() {
       when(mockStorageService.setString(StringConstants.selectedChainId, any))
           .thenAnswer((_) => Future.value(true));
       when(es.getAssetImageUrl('imageId')).thenReturn('abc');
-      when(es.getWalletRedirectByName(anyNamed('name'))).thenReturn(null);
+      when(es.getWalletRedirect(anyNamed('name'))).thenReturn(null);
       when(mockEVMService.getBalance(any, any)).thenAnswer(
         (_) => Future.value(1.0),
       );
@@ -159,21 +159,6 @@ void main() {
         verify(mockStorageService.init()).called(1);
 
         expect(service.status, W3MServiceStatus.initialized);
-        final List<String> chainIds = [];
-        for (final String id in W3MChainPresets.chains.keys) {
-          chainIds.add('eip155:$id');
-        }
-        final Map<String, RequiredNamespace> optionalNamespaces = {
-          'eip155': RequiredNamespace(
-            methods: EthConstants.ethMethods,
-            chains: chainIds,
-            events: EthConstants.ethEvents,
-          ),
-        };
-        expect(
-          service.optionalNamespaces,
-          optionalNamespaces,
-        );
         expect(counter, 2);
 
         await service.init();
@@ -250,10 +235,6 @@ void main() {
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
         expect(service.selectedChain, W3MChainPresets.chains['1']);
-        expect(
-          service.requiredNamespaces,
-          W3MChainPresets.chains['1']!.requiredNamespaces,
-        );
 
         // Chain swap to polygon
         await service.selectChain(W3MChainPresets.chains['137']!);
@@ -267,10 +248,6 @@ void main() {
         verify(mockEVMService.getBalance(any, any)).called(1);
         verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
         expect(service.selectedChain, W3MChainPresets.chains['137']);
-        expect(
-          service.requiredNamespaces,
-          W3MChainPresets.chains['137']!.requiredNamespaces,
-        );
 
         // Setting selected chain to null will disconnect
         await service.selectChain(null);
@@ -290,10 +267,6 @@ void main() {
         expect(service.selectedChain, null);
         expect(service.chainBalance, null);
         expect(service.tokenImageUrl, null);
-        expect(
-          service.requiredNamespaces,
-          {},
-        );
 
         expect(counter, 8); // setRequiredNamespaces, disconnect
       });
@@ -316,7 +289,7 @@ void main() {
             request: anyNamed('request'),
           ),
         ).called(1);
-        verify(es.getWalletRedirectByName(anyNamed('name'))).called(1);
+        verify(es.getWalletRedirect(anyNamed('name'))).called(1);
         verify(
           mockUrlUtils.launchUrl(any),
         ).called(1);

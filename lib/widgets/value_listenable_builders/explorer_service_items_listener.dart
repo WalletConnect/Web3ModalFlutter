@@ -14,6 +14,7 @@ class ExplorerServiceItemsListener extends StatefulWidget {
     BuildContext context,
     bool initialised,
     List<GridItem<W3MWalletInfo>> items,
+    bool searching,
   ) builder;
   final bool listen;
 
@@ -32,15 +33,23 @@ class _ExplorerServiceItemsListenerState
       valueListenable: explorerService.instance!.initialized,
       builder: (context, initialised, _) {
         if (!initialised) {
-          return widget.builder(context, initialised, []);
+          return widget.builder(context, initialised, [], false);
         }
-        return ValueListenableBuilder<List<W3MWalletInfo>>(
-          valueListenable: explorerService.instance!.listings,
-          builder: (context, items, _) {
-            if (widget.listen) {
-              _items = items.toGridItems();
+        return ValueListenableBuilder<bool>(
+          valueListenable: explorerService.instance!.isSearching,
+          builder: (context, searching, _) {
+            if (searching) {
+              return widget.builder(context, initialised, _items, searching);
             }
-            return widget.builder(context, initialised, _items);
+            return ValueListenableBuilder<List<W3MWalletInfo>>(
+              valueListenable: explorerService.instance!.listings,
+              builder: (context, items, _) {
+                if (widget.listen) {
+                  _items = items.toGridItems();
+                }
+                return widget.builder(context, initialised, _items, false);
+              },
+            );
           },
         );
       },

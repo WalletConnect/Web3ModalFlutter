@@ -42,7 +42,6 @@ class SelectNetworkPage extends StatelessWidget {
               child: NetworkServiceItemsListener(
                 builder: (context, initialised, items) {
                   if (!initialised) {
-                    // TODO replace with LoadingItems
                     return const ContentLoading();
                   }
                   return NetworksGrid(

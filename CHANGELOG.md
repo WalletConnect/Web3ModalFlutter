@@ -1,3 +1,9 @@
+## 3.0.0-beta18
+
+- Fixes some issues with optionalNamespaces
+- Fixes an issue where using includedWallets was causing a exception
+- UI fixes and bug fixes
+
 ## 3.0.0-beta17
 
 - UI fixes

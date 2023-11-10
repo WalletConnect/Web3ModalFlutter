@@ -292,6 +292,22 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
   }
 
   @override
+  _i2.ValueNotifier<bool> get initialized => (super.noSuchMethod(
+        Invocation.getter(#initialized),
+        returnValue: _FakeValueNotifier_0<bool>(
+          this,
+          Invocation.getter(#initialized),
+        ),
+      ) as _i2.ValueNotifier<bool>);
+  @override
+  set initialized(_i2.ValueNotifier<bool>? _initialized) => super.noSuchMethod(
+        Invocation.setter(
+          #initialized,
+          _initialized,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
   String get projectId => (super.noSuchMethod(
         Invocation.getter(#projectId),
         returnValue: '',
@@ -332,6 +348,22 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValueForMissingStub: null,
       );
   @override
+  _i2.ValueNotifier<bool> get isSearching => (super.noSuchMethod(
+        Invocation.getter(#isSearching),
+        returnValue: _FakeValueNotifier_0<bool>(
+          this,
+          Invocation.getter(#isSearching),
+        ),
+      ) as _i2.ValueNotifier<bool>);
+  @override
+  set isSearching(_i2.ValueNotifier<bool>? _isSearching) => super.noSuchMethod(
+        Invocation.setter(
+          #isSearching,
+          _isSearching,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
   set featuredWalletIds(Set<String>? _featuredWalletIds) => super.noSuchMethod(
         Invocation.setter(
           #featuredWalletIds,
@@ -356,39 +388,19 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValueForMissingStub: null,
       );
   @override
-  _i2.ValueNotifier<bool> get initialized => (super.noSuchMethod(
-        Invocation.getter(#initialized),
-        returnValue: _FakeValueNotifier_0<bool>(
-          this,
-          Invocation.getter(#initialized),
-        ),
-      ) as _i2.ValueNotifier<bool>);
-  @override
-  set initialized(_i2.ValueNotifier<bool>? _initialized) => super.noSuchMethod(
-        Invocation.setter(
-          #initialized,
-          _initialized,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
   String get recentWalletId => (super.noSuchMethod(
         Invocation.getter(#recentWalletId),
         returnValue: '',
       ) as String);
   @override
+  bool get canPaginate => (super.noSuchMethod(
+        Invocation.getter(#canPaginate),
+        returnValue: false,
+      ) as bool);
+  @override
   _i15.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
           #init,
-          [],
-        ),
-        returnValue: _i15.Future<void>.value(),
-        returnValueForMissingStub: _i15.Future<void>.value(),
-      ) as _i15.Future<void>);
-  @override
-  _i15.Future<void> fetchInitialWallets() => (super.noSuchMethod(
-        Invocation.method(
-          #fetchInitialWallets,
           [],
         ),
         returnValue: _i15.Future<void>.value(),
@@ -403,28 +415,6 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValue: _i15.Future<void>.value(),
         returnValueForMissingStub: _i15.Future<void>.value(),
       ) as _i15.Future<void>);
-  @override
-  String getWalletImageUrl(String? imageId) => (super.noSuchMethod(
-        Invocation.method(
-          #getWalletImageUrl,
-          [imageId],
-        ),
-        returnValue: '',
-      ) as String);
-  @override
-  String getAssetImageUrl(String? imageId) => (super.noSuchMethod(
-        Invocation.method(
-          #getAssetImageUrl,
-          [imageId],
-        ),
-        returnValue: '',
-      ) as String);
-  @override
-  _i16.WalletRedirect? getWalletRedirectByName(_i17.Listing? listing) =>
-      (super.noSuchMethod(Invocation.method(
-        #getWalletRedirectByName,
-        [listing],
-      )) as _i16.WalletRedirect?);
   @override
   _i15.Future<void> updateRecentPosition(String? recentId) =>
       (super.noSuchMethod(
@@ -444,6 +434,28 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  String getWalletImageUrl(String? imageId) => (super.noSuchMethod(
+        Invocation.method(
+          #getWalletImageUrl,
+          [imageId],
+        ),
+        returnValue: '',
+      ) as String);
+  @override
+  String getAssetImageUrl(String? imageId) => (super.noSuchMethod(
+        Invocation.method(
+          #getAssetImageUrl,
+          [imageId],
+        ),
+        returnValue: '',
+      ) as String);
+  @override
+  _i16.WalletRedirect? getWalletRedirect(_i17.Listing? listing) =>
+      (super.noSuchMethod(Invocation.method(
+        #getWalletRedirect,
+        [listing],
+      )) as _i16.WalletRedirect?);
 }
 
 /// A class which mocks [W3MService].
@@ -485,17 +497,10 @@ class MockW3MService extends _i1.Mock implements _i18.W3MService {
         returnValue: _i19.W3MServiceStatus.idle,
       ) as _i19.W3MServiceStatus);
   @override
-  Map<String, _i4.RequiredNamespace> get requiredNamespaces =>
-      (super.noSuchMethod(
-        Invocation.getter(#requiredNamespaces),
-        returnValue: <String, _i4.RequiredNamespace>{},
-      ) as Map<String, _i4.RequiredNamespace>);
-  @override
-  Map<String, _i4.RequiredNamespace> get optionalNamespaces =>
-      (super.noSuchMethod(
-        Invocation.getter(#optionalNamespaces),
-        returnValue: <String, _i4.RequiredNamespace>{},
-      ) as Map<String, _i4.RequiredNamespace>);
+  bool get hasNamespaces => (super.noSuchMethod(
+        Invocation.getter(#hasNamespaces),
+        returnValue: false,
+      ) as bool);
   @override
   bool get isOpen => (super.noSuchMethod(
         Invocation.getter(#isOpen),

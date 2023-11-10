@@ -10,7 +10,7 @@ import 'package:walletconnect_flutter_dapp/utils/crypto/web3dart_extension.dart'
 
 enum EIP155UIMethods {
   personalSign,
-  ethSignTypedData,
+  ethSignTypedDataV4,
   ethSendTransaction,
   testContractCall,
 }
@@ -71,7 +71,8 @@ class EIP155 {
     EIP155UIMethods.personalSign: 'personal_sign',
     // EIP155Methods.ethSign: 'eth_sign',
     // EIP155Methods.ethSignTransaction: 'eth_signTransaction',
-    EIP155UIMethods.ethSignTypedData: 'eth_signTypedData',
+    // EIP155UIMethods.ethSignTypedData: 'eth_signTypedData',
+    EIP155UIMethods.ethSignTypedDataV4: 'eth_signTypedData_v4',
     EIP155UIMethods.testContractCall: 'test_contractCall',
     EIP155UIMethods.ethSendTransaction: 'eth_sendTransaction',
     // EIP155Methods.walletSwitchEthereumChain: 'wallet_switchEthereumChain',
@@ -90,6 +91,7 @@ class EIP155 {
     required String chainId,
     required String address,
   }) {
+    final id = int.parse(chainId.split(':')[1]);
     switch (method) {
       case EIP155UIMethods.personalSign:
         return personalSign(
@@ -99,13 +101,13 @@ class EIP155 {
           address: address,
           data: testSignData,
         );
-      case EIP155UIMethods.ethSignTypedData:
-        return ethSignTypedData(
+      case EIP155UIMethods.ethSignTypedDataV4:
+        return ethSignTypedDataV4(
           web3App: web3App,
           topic: topic,
           chainId: chainId,
           address: address,
-          data: testSignTypedData(int.parse(chainId.split(':')[1])),
+          data: typedData(id),
         );
       case EIP155UIMethods.testContractCall:
         return testContractCall(
@@ -176,7 +178,7 @@ class EIP155 {
     );
   }
 
-  static Future<dynamic> ethSignTypedData({
+  static Future<dynamic> ethSignTypedDataV4({
     required IWeb3App web3App,
     required String topic,
     required String chainId,
@@ -187,7 +189,7 @@ class EIP155 {
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(
-        method: methods[EIP155UIMethods.ethSignTypedData]!,
+        method: methods[EIP155UIMethods.ethSignTypedDataV4]!,
         params: [address, data],
       ),
     );

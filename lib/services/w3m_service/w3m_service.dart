@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-
-import 'package:web3modal_flutter/constants/namespaces.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
@@ -41,6 +39,8 @@ class W3MServiceException implements Exception {
   W3MServiceException(this.message, [this.stackTrace]) : super();
 }
 
+/// Either a [projectId] and [metadata] must be provided or an already created [web3App].
+/// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
 class W3MService with ChangeNotifier implements IW3MService {
   var _projectId = '';
 
@@ -59,13 +59,11 @@ class W3MService with ChangeNotifier implements IW3MService {
   W3MWalletInfo? get selectedWallet => _selectedWallet;
 
   Map<String, RequiredNamespace> _requiredNamespaces = {};
-  @override
-  Map<String, RequiredNamespace> get requiredNamespaces => _requiredNamespaces;
+  Map<String, RequiredNamespace> _optionalNamespaces = {};
 
-  Map<String, RequiredNamespace> _optionalNamespaces =
-      NamespaceConstants.ethereum;
   @override
-  Map<String, RequiredNamespace> get optionalNamespaces => _optionalNamespaces;
+  bool get hasNamespaces =>
+      _requiredNamespaces.isNotEmpty || _optionalNamespaces.isNotEmpty;
 
   ConnectResponse? connectResponse;
   Future<SessionData>? get sessionFuture => connectResponse?.session.future;
@@ -120,14 +118,13 @@ class W3MService with ChangeNotifier implements IW3MService {
     IWeb3App? web3App,
     String? projectId,
     PairingMetadata? metadata,
-    Map<String, RequiredNamespace>? requiredNamespaces,
-    Map<String, RequiredNamespace>? optionalNamespaces,
+    Map<String, W3MNamespace>? optionalNamespaces,
     Set<String>? featuredWalletIds,
     Set<String>? includedWalletIds,
     Set<String>? excludedWalletIds,
     LogLevel logLevel = LogLevel.nothing,
   }) {
-    if (web3App == null && projectId == null && metadata == null) {
+    if (web3App == null && metadata == null) {
       throw ArgumentError(
         'Either a projectId and metadata must be provided or an already created web3App.',
       );
@@ -140,11 +137,32 @@ class W3MService with ChangeNotifier implements IW3MService {
         );
     _projectId = projectId ?? _web3App!.core.projectId;
 
-    if (requiredNamespaces != null) {
-      _requiredNamespaces = requiredNamespaces;
-    }
     if (optionalNamespaces != null) {
-      _optionalNamespaces = optionalNamespaces;
+      // Set the optional namespaces declared by the user on W3MService object
+      _optionalNamespaces = optionalNamespaces.map(
+        (key, value) => MapEntry(
+          key,
+          RequiredNamespace(
+            chains: value.chains ??
+                W3MChainPresets.chains.values.map((e) {
+                  return e.namespace;
+                }).toList(),
+            methods: value.methods,
+            events: value.events,
+          ),
+        ),
+      );
+    } else {
+      // Set the optional namespaces to everything in our chain presets
+      _optionalNamespaces = {
+        'eip155': RequiredNamespace(
+          methods: EthConstants.optionalMethods,
+          chains: W3MChainPresets.chains.values.map((e) {
+            return e.namespace;
+          }).toList(),
+          events: EthConstants.optionalEvents,
+        ),
+      };
     }
 
     explorerService.instance = ExplorerService(
@@ -204,19 +222,9 @@ class W3MService with ChangeNotifier implements IW3MService {
       }
     }
 
-    // Set the optional namespaces to everything in our asset util.
-    final List<String> chainIds = [];
-    for (final chain in W3MChainPresets.chains.values) {
-      chainIds.add(chain.namespace);
+    if (_optionalNamespaces.isNotEmpty) {
+      _setOptionalNamespaces(_optionalNamespaces);
     }
-    final Map<String, RequiredNamespace> optionalNamespaces = {
-      'eip155': RequiredNamespace(
-        methods: EthConstants.ethMethods,
-        chains: chainIds,
-        events: EthConstants.ethEvents,
-      ),
-    };
-    _setOptionalNamespaces(optionalNamespaces);
 
     // Get the chainId of the chain we are connected to.
     await _selectChainFromStoredId();
@@ -256,7 +264,7 @@ class W3MService with ChangeNotifier implements IW3MService {
           namespaces: _currentSession!.namespaces,
         );
         if (chainIds.isNotEmpty) {
-          final String chainId = chainIds.first.split(':')[1];
+          final chainId = chainIds.first.split(':')[1];
           // If we have the chain in our presets, set it as the selected chain
           if (W3MChainPresets.chains.containsKey(chainId)) {
             await selectChain(W3MChainPresets.chains[chainId]!);
@@ -299,8 +307,6 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     // If the chain is null, disconnect and stop.
     if (chainInfo == null) {
-      _currentSelectedChain = null;
-      _setRequiredNamespaces({});
       await disconnect();
       return;
     }
@@ -345,6 +351,8 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   void _setEthChain(W3MChainInfo chainInfo) async {
+    final isSwitch = _currentSelectedChain?.chainId != chainInfo.chainId;
+
     _currentSelectedChain = chainInfo;
     // Get the token/chain icon
     _tokenImageUrl = _getTokenImage(chainInfo);
@@ -356,13 +364,17 @@ class W3MService with ChangeNotifier implements IW3MService {
       _currentSelectedChain!.chainId,
     );
 
-    // Set the requiredNamespace to be the selected chain
-    // This will also notify listeners
     _setRequiredNamespaces(_currentSelectedChain!.requiredNamespaces);
-    _notify();
+    if (_optionalNamespaces.isEmpty) {
+      _setOptionalNamespaces(_currentSelectedChain!.optionalNamespaces);
+    }
 
     W3MLoggerUtil.logger.t('[$runtimeType] setSelectedChain success');
     _loadAccountData();
+
+    if (isSwitch) {
+      debugPrint('Chain Set');
+    }
   }
 
   String _getTokenImage(W3MChainInfo chainInfo) {
@@ -384,7 +396,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _isOpen = true;
 
     // Reset the explorer
-    explorerService.instance!.search(query: '');
+    explorerService.instance!.search(query: null);
     widgetStack.instance.clear();
 
     _context = context;
@@ -495,8 +507,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     if (!_isConnected) {
       W3MLoggerUtil.logger.t(
         '[$runtimeType] Connecting to WalletConnect, '
-        'required namespaces: $requiredNamespaces, '
-        'optional namespaces: $optionalNamespaces',
+        'required namespaces: $_requiredNamespaces, '
+        'optional namespaces: $_optionalNamespaces',
       );
 
       if (connectResponse != null) {
@@ -508,8 +520,8 @@ class W3MService with ChangeNotifier implements IW3MService {
       }
 
       connectResponse = await _web3App!.connect(
-        requiredNamespaces: requiredNamespaces,
-        optionalNamespaces: optionalNamespaces,
+        requiredNamespaces: _requiredNamespaces,
+        optionalNamespaces: _optionalNamespaces,
       );
 
       _notify();
@@ -542,10 +554,10 @@ class W3MService with ChangeNotifier implements IW3MService {
           .i('[$runtimeType] Rebuilding session, ending future');
       return;
     } on JsonRpcError catch (e) {
+      W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
       if (_isUserRejectedError(e)) {
         onWalletConnectionError.broadcast();
       }
-      W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
       return await expirePreviousInactivePairings();
     }
   }
@@ -773,7 +785,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     if (e is JsonRpcError) {
       final stringError = e.toJson().toString().toLowerCase();
       final userRejected = stringError.contains('rejected');
-      return userRejected;
+      final userDisapproved = stringError.contains('user disapproved');
+      return userRejected || userDisapproved;
     }
     return false;
   }
@@ -790,14 +803,12 @@ class W3MService with ChangeNotifier implements IW3MService {
       reason: const WalletConnectError(code: 0, message: 'User disconnected'),
     );
 
-    // As a failsafe (If the session is expired for example), set the session to null and notify listeners
-    if (_currentSession != null &&
-        _currentSession!.topic == toDisconnect.topic) {
-      return _cleanSession();
-    }
+    return _cleanSession();
   }
 
   void _cleanSession() {
+    _currentSelectedChain = null;
+    _setRequiredNamespaces({});
     _isConnected = false;
     _address = '';
     _currentSession = null;
@@ -809,7 +820,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     final listing = _selectedWallet?.listing;
     if (listing == null) return null;
 
-    return explorerService.instance?.getWalletRedirectByName(listing);
+    return explorerService.instance?.getWalletRedirect(listing);
   }
 
   WalletRedirect? get sessionWalletRedirect {

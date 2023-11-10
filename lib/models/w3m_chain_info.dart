@@ -9,11 +9,11 @@ class W3MChainInfo with _$W3MChainInfo {
     required String chainName,
     required String chainId,
     required String namespace,
-    String? chainIcon,
     required String tokenName,
-    required Map<String, RequiredNamespace> requiredNamespaces,
-    required Map<String, RequiredNamespace> optionalNamespaces,
     required String rpcUrl,
+    @Default({}) Map<String, RequiredNamespace> requiredNamespaces,
+    @Default({}) Map<String, RequiredNamespace> optionalNamespaces,
+    String? chainIcon,
     W3MBlockExplorer? blockExplorer,
   }) = _W3MChainInfo;
 }
@@ -24,4 +24,26 @@ class W3MBlockExplorer with _$W3MBlockExplorer {
     required String name,
     required String url,
   }) = _W3MBlockExplorer;
+}
+
+class W3MNamespace {
+  const W3MNamespace({
+    this.chains,
+    required this.methods,
+    required this.events,
+  });
+
+  final List<String>? chains;
+  final List<String> methods;
+  final List<String> events;
+}
+
+extension W3MNamespaceExtension on W3MNamespace {
+  RequiredNamespace toRequired() {
+    return RequiredNamespace(
+      chains: chains,
+      methods: methods,
+      events: events,
+    );
+  }
 }

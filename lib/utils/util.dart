@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
 class Util {
-  static String shorten(
-    String value, {
-    bool short = false,
-  }) {
+  static String shorten(String value, {bool short = false}) {
     return short && value.length > 8 ? '${value.substring(0, 8)}..' : value;
   }
 
@@ -70,5 +68,18 @@ class Util {
     final tintedB = (rgb[2] + (255 - rgb[2]) * tint).round();
 
     return [tintedR, tintedG, tintedB];
+  }
+
+  static Set<String> getChainsFromNamespace(Map<String, RequiredNamespace> ns) {
+    return ns['eip155']?.chains?.toSet() ?? {};
+  }
+
+  static Set<String> getMethodsFromNamespace(
+      Map<String, RequiredNamespace> ns) {
+    return ns['eip155']?.methods.toSet() ?? {};
+  }
+
+  static Set<String> getEventsFromNamespace(Map<String, RequiredNamespace> ns) {
+    return ns['eip155']?.events.toSet() ?? {};
   }
 }
