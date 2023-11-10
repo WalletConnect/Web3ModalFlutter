@@ -1,8 +1,8 @@
 class StringConstants {
   // Request Headers
   static const X_SDK_TYPE = 'w3m';
-  static const X_SDK_VERSION = '3.0.0-beta17';
-  static const X_CORE_SDK_VERSION = 'flutter_v2.1.8';
+  static const X_SDK_VERSION = '3.0.0-beta18';
+  static const X_CORE_SDK_VERSION = 'flutter_v2.1.9';
 
   // UI
   static const String selectNetwork = 'Select network';
