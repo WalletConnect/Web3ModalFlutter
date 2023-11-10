@@ -393,6 +393,11 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValue: '',
       ) as String);
   @override
+  bool get canPaginate => (super.noSuchMethod(
+        Invocation.getter(#canPaginate),
+        returnValue: false,
+      ) as bool);
+  @override
   _i15.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
           #init,
