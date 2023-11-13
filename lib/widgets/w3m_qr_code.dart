@@ -32,7 +32,7 @@ class QRCodeWidget extends StatelessWidget {
         color: isDarkMode ? Colors.white : Colors.transparent,
         borderRadius: BorderRadius.circular(radiuses.radiusL),
       ),
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(20.0),
       child: AspectRatio(
         aspectRatio: 1.0,
         child: uri.isEmpty

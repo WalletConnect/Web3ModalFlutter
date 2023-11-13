@@ -78,7 +78,7 @@ class _QRCodePageState extends State<QRCodePage> {
           direction: isPortrait ? Axis.vertical : Axis.horizontal,
           children: [
             Padding(
-              padding: EdgeInsets.all(kPadding16),
+              padding: EdgeInsets.all(20.0),
               child: _qrQodeWidget ??
                   AspectRatio(
                     aspectRatio: 1.0,
