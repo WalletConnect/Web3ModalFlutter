@@ -42,7 +42,9 @@ class WalletsGrid extends StatelessWidget {
         .toList();
 
     if (showLoading) {
-      for (var i = 0; i < loadingCount; i++) {
+      final offset = itemList.length % loadingCount;
+      final count = offset == 0 ? 0 : loadingCount - offset;
+      for (var i = 0; i < (loadingCount + count); i++) {
         children.add(
           SizedBox(
             child: Shimmer.fromColors(

@@ -185,7 +185,8 @@ class W3MService with ChangeNotifier implements IW3MService {
   @override
   Future<void> init() async {
     if (!coreUtils.instance.isValidProjectID(_projectId)) {
-      W3MLoggerUtil.logger.e('[$runtimeType] Please provide a valid projectId. '
+      W3MLoggerUtil.logger.e(
+          '[$runtimeType] projectId $_projectId is invalid. Please provide a valid projectId. '
           'See https://docs.walletconnect.com/web3modal/flutter/options for details.');
       return;
     }

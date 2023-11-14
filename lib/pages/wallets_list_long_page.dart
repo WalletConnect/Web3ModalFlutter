@@ -26,14 +26,6 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
   bool _paginating = false;
   final _controller = ScrollController();
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _paginate().then((_) => setState(() => _paginating = false));
-    });
-  }
-
   bool _processScrollNotification(ScrollNotification notification) {
     if (notification is ScrollEndNotification) {
       setState(() => _paginating = false);

@@ -111,11 +111,16 @@ class ExplorerService implements IExplorerService {
     totalListings.value = 0;
     final allListings = await Future.wait([
       _fetchInstalledListings(),
-      _fetchOtherListings(firstCall: true),
+      _fetchOtherListings(),
     ]);
 
     _listings = [...allListings.first, ...allListings.last];
     listings.value = _listings;
+
+    if (_listings.length < _defaultEntriesCount) {
+      _canPaginate = false;
+    }
+
     W3MLoggerUtil.logger
         .t('[$runtimeType] fetchInitialWallets ${_listings.length}');
     await _getRecentWalletAndOrder();
@@ -130,18 +135,7 @@ class ExplorerService implements IExplorerService {
   @override
   Future<void> paginate() async {
     if (!canPaginate) return;
-    final newParams = _requestParams.nextPage();
-    int entries = _defaultEntriesCount - _listings.length;
-    if (entries <= 0) {
-      _requestParams = newParams.copyWith(entries: _defaultEntriesCount);
-    } else {
-      final exclude = _listings.map((e) => e.listing.id).toList().join(',');
-      _requestParams = newParams.copyWith(
-        entries: entries,
-        page: 1,
-        exclude: exclude,
-      );
-    }
+    _requestParams = _requestParams.nextPage();
     final newListings = await _fetchListings(
       params: _requestParams,
       updateCount: false,
@@ -196,16 +190,10 @@ class ExplorerService implements IExplorerService {
     return (await _fetchListings(params: params)).setInstalledFlag();
   }
 
-  Future<List<W3MWalletInfo>> _fetchOtherListings({
-    bool firstCall = false,
-  }) async {
-    final installedCount = _installedWalletIds.length;
-    final includedCount = includedWalletIds?.length ?? 0;
-    final toQuery = 20 - installedCount + includedCount;
-    final entriesCount = firstCall ? max(toQuery, 16) : _defaultEntriesCount;
+  Future<List<W3MWalletInfo>> _fetchOtherListings() async {
     _requestParams = RequestParams(
       page: 1,
-      entries: entriesCount,
+      entries: _defaultEntriesCount,
       include: _includedWalletsParam,
       exclude: _excludedWalletsParam,
       platform: _getPlatformType(),
@@ -237,11 +225,10 @@ class ExplorerService implements IExplorerService {
           .toList()
           .sortByRecommended(featuredWalletIds)
           .toW3MWalletInfo();
-    } catch (e, s) {
+    } catch (error) {
       W3MLoggerUtil.logger.e(
-        '[$runtimeType] Error fetching wallet listings',
-        error: e,
-        stackTrace: s,
+        '[$runtimeType] Error fetching wallet listings with params ${params?.toJson()}',
+        error: error,
       );
       throw Exception(e);
     }
