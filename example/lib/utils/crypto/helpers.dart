@@ -22,10 +22,9 @@ ChainMetadata getChainMetadataFromChain(String namespace) {
     return ChainDataWrapper.chains
         .where((element) => element.w3mChainInfo.namespace == namespace)
         .first;
-  } catch (e) {
-    debugPrint('getChainMetadataFromChain, Invalid chain: $namespace');
+  } catch (_) {
+    return ChainDataWrapper.chains[0];
   }
-  return ChainDataWrapper.chains[0];
 }
 
 List<String> getChainMethods(ChainType value) {

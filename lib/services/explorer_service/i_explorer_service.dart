@@ -46,4 +46,6 @@ abstract class IExplorerService {
   String getAssetImageUrl(String imageId);
 
   WalletRedirect? getWalletRedirect(Listing listing);
+
+  Future<WalletRedirect?> tryWalletRedirectByName(String? name);
 }

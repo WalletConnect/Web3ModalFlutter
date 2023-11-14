@@ -337,6 +337,26 @@ class ExplorerService implements IExplorerService {
     );
   }
 
+  @override
+  Future<WalletRedirect?> tryWalletRedirectByName(String? name) async {
+    if (name == null) return null;
+    final results = await _fetchListings(
+      params: RequestParams(page: 1, entries: 100, search: name),
+      updateCount: false,
+    );
+    final wallet = results.firstWhereOrNull(
+      (item) => item.listing.name.toLowerCase() == name.toLowerCase(),
+    );
+    if (wallet == null) {
+      return null;
+    }
+    return WalletRedirect(
+      mobile: wallet.listing.mobileLink,
+      desktop: wallet.listing.desktopLink,
+      web: wallet.listing.webappLink,
+    );
+  }
+
   String _getPlatformType() {
     final type = platformUtils.instance.getPlatformType();
     final platform = type.toString().toLowerCase();

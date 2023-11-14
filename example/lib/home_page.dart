@@ -41,6 +41,12 @@ class _MyHomePageState extends State<MyHomePage> {
           universal: 'https://www.walletconnect.com',
         ),
       ),
+      optionalNamespaces: {
+        'eip155': const W3MNamespace(
+          methods: EthConstants.allMethods,
+          events: EthConstants.allEvents,
+        ),
+      },
     );
     await _w3mService.init();
 
@@ -180,9 +186,9 @@ final _exampleCustomChain = W3MChainInfo(
       events: EthConstants.allEvents,
     ),
   },
-  rpcUrl: 'https://1rpc.io/celo',
+  rpcUrl: 'https://forno.celo.org/',
   blockExplorer: W3MBlockExplorer(
-    name: 'Celo Scan',
-    url: 'https://celoscan.io',
+    name: 'Celo Explorer',
+    url: 'https://explorer.celo.org/mainnet',
   ),
 );

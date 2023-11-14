@@ -456,6 +456,15 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         #getWalletRedirect,
         [listing],
       )) as _i16.WalletRedirect?);
+  @override
+  _i15.Future<_i16.WalletRedirect?> tryWalletRedirectByName(String? name) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #tryWalletRedirectByName,
+          [name],
+        ),
+        returnValue: _i15.Future<_i16.WalletRedirect?>.value(),
+      ) as _i15.Future<_i16.WalletRedirect?>);
 }
 
 /// A class which mocks [W3MService].
@@ -653,6 +662,15 @@ class MockW3MService extends _i1.Mock implements _i18.W3MService {
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  _i15.Future<_i16.WalletRedirect?> sessionWalletRedirect() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sessionWalletRedirect,
+          [],
+        ),
+        returnValue: _i15.Future<_i16.WalletRedirect?>.value(),
+      ) as _i15.Future<_i16.WalletRedirect?>);
   @override
   void addListener(_i21.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(

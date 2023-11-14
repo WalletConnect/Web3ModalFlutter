@@ -51,6 +51,8 @@ class W3MListAvatar extends StatelessWidget {
                     child: CachedNetworkImage(
                       imageUrl: imageUrl!,
                       httpHeaders: coreUtils.instance.getAPIHeaders(projectId),
+                      fadeInDuration: const Duration(milliseconds: 500),
+                      fadeOutDuration: const Duration(milliseconds: 500),
                       errorWidget: (context, url, error) => ColoredBox(
                         color: themeColors.grayGlass005,
                       ),

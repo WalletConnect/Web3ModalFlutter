@@ -42,7 +42,7 @@ class _TransitionContainerState extends State<TransitionContainer>
 
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: 0.9,
+      end: 0.98,
     ).animate(
       _fadeController,
     );

@@ -182,6 +182,10 @@ class W3MChainPresets {
         ),
       },
       rpcUrl: 'https://metis-mainnet.public.blastapi.io',
+      blockExplorer: W3MBlockExplorer(
+        name: 'Andromeda Explorer',
+        url: 'https://andromeda-explorer.metis.io',
+      ),
     ),
   };
 
