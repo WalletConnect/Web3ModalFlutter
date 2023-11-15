@@ -127,8 +127,9 @@ class ExplorerService implements IExplorerService {
   }
 
   Future<void> _getRecentWalletAndOrder() async {
-    final recentWalletId =
-        storageService.instance.getString(StringConstants.recentWallet);
+    final recentWalletId = storageService.instance.getString(
+      StringConstants.recentWallet,
+    );
     await _updateRecentWalletId(recentWalletId);
   }
 
@@ -207,11 +208,9 @@ class ExplorerService implements IExplorerService {
   }) async {
     try {
       final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
-      final uri = Uri.parse('$_apiUrl/getWallets');
-      final response = await _client.get(
-        uri.replace(queryParameters: params?.toJson() ?? {}),
-        headers: headers,
-      );
+      final uri = Uri.parse('$_apiUrl/getWallets')
+          .replace(queryParameters: params?.toJson() ?? {});
+      final response = await _client.get(uri, headers: headers);
       final apiResponse = ApiResponse<Listing>.fromJson(
         jsonDecode(response.body),
         (json) => Listing.fromJson(json),

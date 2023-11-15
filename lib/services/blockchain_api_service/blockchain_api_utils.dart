@@ -20,14 +20,11 @@ class BlockchainApiUtils extends IBlockchainApiUtils {
 
   @override
   Future<BlockchainIdentity> getIdentity(String address, int chainId) async {
-    final String scope = '$namespace:$chainId';
-    final String endpoint =
-        '$blockchainApiUriRoot/v1/identity/$address?chainId=$scope&projectId=$projectId';
+    final scope = '$namespace:$chainId';
+    final endpoint = '$blockchainApiUriRoot/v1/identity/$address'
+        '?chainId=$scope&projectId=$projectId';
 
-    final response = await http.get(
-      Uri.parse(endpoint),
-    );
-
+    final response = await http.get(Uri.parse(endpoint));
     if (response.statusCode == 200) {
       return BlockchainIdentity.fromJson(
         jsonDecode(response.body),
