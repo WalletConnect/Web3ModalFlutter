@@ -246,7 +246,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       return false;
     }
     final sessionNamespaces = _currentSession!.namespaces;
-    final nsMethods = sessionNamespaces['eip155']?.methods ?? [];
+    final nsMethods = sessionNamespaces[EthConstants.namespace]?.methods ?? [];
     final supportsAddChain = nsMethods.contains(EthConstants.walletAddEthChain);
 
     return supportsAddChain;
@@ -299,8 +299,8 @@ class W3MService with ChangeNotifier implements IW3MService {
       return null;
     }
     final sessionNamespaces = _currentSession!.namespaces;
-    final nsAccounts = sessionNamespaces['eip155']?.accounts ?? [];
-    final approvedChains = NamespaceUtils.getChainsFromAccounts(nsAccounts);
+    final accounts = sessionNamespaces[EthConstants.namespace]?.accounts ?? [];
+    final approvedChains = NamespaceUtils.getChainsFromAccounts(accounts);
 
     return approvedChains;
   }
@@ -658,7 +658,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     } else {
       // Set the required namespaces to everything in our chain presets
       _requiredNamespaces = {
-        'eip155': RequiredNamespace(
+        EthConstants.namespace: RequiredNamespace(
           methods: EthConstants.requiredMethods,
           chains: [W3MChainPresets.chains['1']!.namespace],
           events: EthConstants.requiredEvents,
@@ -684,7 +684,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     } else {
       // Set the optional namespaces to everything in our chain presets
       _optionalNamespaces = {
-        'eip155': RequiredNamespace(
+        EthConstants.namespace: RequiredNamespace(
           methods: EthConstants.optionalMethods,
           chains:
               W3MChainPresets.chains.values.map((e) => e.namespace).toList(),
@@ -727,10 +727,11 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   Future<void> _switchToEthChain(W3MChainInfo newChain) async {
-    final int chainIdInt = int.parse(newChain.chainId);
-    final String chainHex = chainIdInt.toRadixString(16);
-    final String chainId = 'eip155:${_currentSelectedChain!.chainId}';
-    final Map<String, String> params = {'chainId': '0x$chainHex'};
+    final chainIdInt = int.parse(newChain.chainId);
+    final chainHex = chainIdInt.toRadixString(16);
+    final chainId =
+        '${EthConstants.namespace}:${_currentSelectedChain!.chainId}';
+    final params = {'chainId': '0x$chainHex'};
     return _web3App!
         .request(
           topic: _currentSession!.topic,

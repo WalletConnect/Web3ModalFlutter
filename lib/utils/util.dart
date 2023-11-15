@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+import 'package:web3modal_flutter/constants/eth_constants.dart';
 
 class Util {
   static String shorten(String value, {bool short = false}) {
@@ -71,15 +72,15 @@ class Util {
   }
 
   static Set<String> getChainsFromNamespace(Map<String, RequiredNamespace> ns) {
-    return ns['eip155']?.chains?.toSet() ?? {};
+    return ns[EthConstants.namespace]?.chains?.toSet() ?? {};
   }
 
   static Set<String> getMethodsFromNamespace(
       Map<String, RequiredNamespace> ns) {
-    return ns['eip155']?.methods.toSet() ?? {};
+    return ns[EthConstants.namespace]?.methods.toSet() ?? {};
   }
 
   static Set<String> getEventsFromNamespace(Map<String, RequiredNamespace> ns) {
-    return ns['eip155']?.events.toSet() ?? {};
+    return ns[EthConstants.namespace]?.events.toSet() ?? {};
   }
 }

@@ -1,4 +1,5 @@
 class EthConstants {
+  static const namespace = 'eip155';
   static const walletSwitchEthChain = 'wallet_switchEthereumChain';
   static const walletAddEthChain = 'wallet_addEthereumChain';
   static const requiredMethods = [
