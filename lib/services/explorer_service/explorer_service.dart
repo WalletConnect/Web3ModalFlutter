@@ -129,7 +129,7 @@ class ExplorerService implements IExplorerService {
   Future<void> _getRecentWalletAndOrder() async {
     final recentWalletId =
         storageService.instance.getString(StringConstants.recentWallet);
-    await updateRecentPosition(recentWalletId);
+    await _updateRecentWalletId(recentWalletId);
   }
 
   @override
@@ -235,7 +235,17 @@ class ExplorerService implements IExplorerService {
   }
 
   @override
-  Future<void> updateRecentPosition(String? recentId) async {
+  Future<void> storeConnectedWalletData(W3MWalletInfo? walletInfo) async {
+    if (walletInfo == null) return;
+    final walletDataString = jsonEncode(walletInfo.toJson());
+    await storageService.instance.setString(
+      StringConstants.walletData,
+      walletDataString,
+    );
+    await _updateRecentWalletId(walletInfo.listing.id);
+  }
+
+  Future<void> _updateRecentWalletId(String? recentId) async {
     _recentWalletId = recentId ?? '';
     // Set the recent
     await storageService.instance.setString(

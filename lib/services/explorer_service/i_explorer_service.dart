@@ -41,7 +41,7 @@ abstract class IExplorerService {
   String get searchValue;
 
   /// update the recently used position to the top list
-  Future<void> updateRecentPosition(String? recentId);
+  Future<void> storeConnectedWalletData(W3MWalletInfo? walletInfo);
 
   String getWalletImageUrl(String imageId);
 

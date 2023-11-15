@@ -1,7 +1,7 @@
 class StringConstants {
   // Request Headers
   static const X_SDK_TYPE = 'w3m';
-  static const X_SDK_VERSION = '3.0.0-beta19';
+  static const X_SDK_VERSION = '3.0.0';
   static const X_CORE_SDK_VERSION = 'flutter_v2.1.9';
 
   // UI
@@ -25,6 +25,7 @@ class StringConstants {
 
   // Storage
   static const String recentWallet = 'w3m_recentWallet';
+  static const String walletData = 'w3m_walletData';
   static const String selectedChainId = 'w3m_selectedChainId';
 
   // Urls

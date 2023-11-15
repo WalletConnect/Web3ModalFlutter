@@ -410,11 +410,11 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValueForMissingStub: _i15.Future<void>.value(),
       ) as _i15.Future<void>);
   @override
-  _i15.Future<void> updateRecentPosition(String? recentId) =>
+  _i15.Future<void> storeConnectedWalletData(_i14.W3MWalletInfo? walletInfo) =>
       (super.noSuchMethod(
         Invocation.method(
-          #updateRecentPosition,
-          [recentId],
+          #storeConnectedWalletData,
+          [walletInfo],
         ),
         returnValue: _i15.Future<void>.value(),
         returnValueForMissingStub: _i15.Future<void>.value(),

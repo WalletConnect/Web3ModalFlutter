@@ -1,3 +1,8 @@
+## 3.0.0
+
+- Final fixes on session proposal and wallet redirection
+- Minor bug fixes
+
 ## 3.0.0-beta19
 
 - Chain switching enhancements

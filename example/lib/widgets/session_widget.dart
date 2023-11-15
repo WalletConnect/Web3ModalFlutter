@@ -12,15 +12,11 @@ import 'package:walletconnect_flutter_dapp/widgets/method_dialog.dart';
 class SessionWidget extends StatefulWidget {
   const SessionWidget({
     super.key,
-    required this.session,
-    required this.web3App,
+    required this.w3mService,
     required this.launchRedirect,
-    required this.selectedChain,
   });
 
-  final SessionData session;
-  final IWeb3App web3App;
-  final W3MChainInfo selectedChain;
+  final W3MService w3mService;
   final void Function() launchRedirect;
 
   @override
@@ -30,10 +26,11 @@ class SessionWidget extends StatefulWidget {
 class SessionWidgetState extends State<SessionWidget> {
   @override
   Widget build(BuildContext context) {
+    final session = widget.w3mService.web3App!.sessions.getAll().first;
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),
       Text(
-        widget.session.peer.metadata.name,
+        session.peer.metadata.name,
         style: Web3ModalTheme.getDataOf(context).textStyles.title600.copyWith(
               color: Web3ModalTheme.colorsOf(context).foreground100,
             ),
@@ -47,7 +44,7 @@ class SessionWidgetState extends State<SessionWidget> {
             ),
       ),
       Text(
-        widget.session.topic,
+        session.topic,
         style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
               color: Web3ModalTheme.colorsOf(context).foreground100,
             ),
@@ -70,16 +67,17 @@ class SessionWidgetState extends State<SessionWidget> {
     final List<String> namespaceAccounts = [];
 
     // Loop through the namespaces, and get the accounts
-    for (final namespace in widget.session.namespaces.values) {
+    for (final namespace in session.namespaces.values) {
       namespaceAccounts.addAll(namespace.accounts);
     }
 
+    final selectedChain = widget.w3mService.selectedChain!;
     final containsChain = namespaceAccounts.indexWhere(
-      (nsa) => nsa.split(':')[1] == widget.selectedChain.chainId,
+      (nsa) => nsa.split(':')[1] == selectedChain.chainId,
     );
     if (containsChain > -1) {
       final namespace = namespaceAccounts.firstWhere(
-        (nsa) => nsa.split(':')[1] == widget.selectedChain.chainId,
+        (nsa) => nsa.split(':')[1] == selectedChain.chainId,
       );
       children.add(_buildAccountWidget(namespace));
     }
@@ -206,8 +204,9 @@ class SessionWidgetState extends State<SessionWidget> {
   }
 
   Widget _buildChainApprovedMethodsTiles() {
+    final session = widget.w3mService.web3App!.sessions.getAll().first;
     String methods = '';
-    final approvedMethods = widget.session.namespaces['eip155']?.methods ?? [];
+    final approvedMethods = session.namespaces['eip155']?.methods ?? [];
     for (final method in approvedMethods) {
       methods += '$method, ';
     }
@@ -225,8 +224,6 @@ class SessionWidgetState extends State<SessionWidget> {
     for (final String event in getChainEvents(chainMetadata.type)) {
       values.add(
         Container(
-          // alignment: Alignment.center,
-          // height: StyleConstants.linear40,
           margin: const EdgeInsets.symmetric(
             vertical: StyleConstants.linear8,
             horizontal: StyleConstants.linear8,
@@ -263,23 +260,16 @@ class SessionWidgetState extends State<SessionWidget> {
     ChainMetadata chainMetadata,
     String address,
   ) {
+    final session = widget.w3mService.web3App!.sessions.getAll().first;
     switch (type) {
       case ChainType.eip155:
         return EIP155.callMethod(
-          web3App: widget.web3App,
-          topic: widget.session.topic,
+          w3mService: widget.w3mService,
+          topic: session.topic,
           method: method.toEip155Method()!,
           chainId: chainMetadata.w3mChainInfo.namespace,
           address: address.toLowerCase(),
         );
-      // case ChainType.kadena:
-      //   return Kadena.callMethod(
-      //     web3App: widget.web3App,
-      //     topic: widget.session.topic,
-      //     method: method.toKadenaMethod()!,
-      //     chainId: chainMetadata.chainId,
-      //     address: address.toLowerCase(),
-      //   );
       default:
         return Future<dynamic>.value();
     }
