@@ -16,6 +16,17 @@ enum W3MServiceStatus {
   bool get isLoading => this == initializing;
 }
 
+class W3MServiceException implements Exception {
+  final dynamic message;
+  final dynamic stackTrace;
+  W3MServiceException(this.message, [this.stackTrace]) : super();
+}
+
+class WalletErrorEvent implements EventArgs {
+  final String message;
+  WalletErrorEvent(this.message);
+}
+
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
 /// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
 abstract class IW3MService with ChangeNotifier {
@@ -97,7 +108,7 @@ abstract class IW3MService with ChangeNotifier {
   WalletRedirect? get selectedWalletRedirect;
 
   /// When users rejects connection or an error occurs this will event
-  final Event<EventArgs> onWalletConnectionError = Event();
+  final Event<WalletErrorEvent> onWalletConnectionError = Event();
 
   /// Connects the [selectedWallet] previously selected
   Future<void> connectSelectedWallet({bool inBrowser = false});

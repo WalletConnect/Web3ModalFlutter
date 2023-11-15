@@ -33,12 +33,6 @@ import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 
-class W3MServiceException implements Exception {
-  final dynamic message;
-  final dynamic stackTrace;
-  W3MServiceException(this.message, [this.stackTrace]) : super();
-}
-
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
 /// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
 class W3MService with ChangeNotifier implements IW3MService {
@@ -110,7 +104,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   final Event<EventArgs> onPairingExpire = Event();
 
   @override
-  final Event<EventArgs> onWalletConnectionError = Event();
+  final Event<WalletErrorEvent> onWalletConnectionError = Event();
 
   bool _connectingWallet = false;
 
@@ -256,7 +250,7 @@ class W3MService with ChangeNotifier implements IW3MService {
         namespaces: _currentSession!.namespaces,
       );
       if (chainIds.isNotEmpty) {
-        final chainId = chainIds.first.split(':')[1];
+        final chainId = (chainIds..sort()).first.split(':')[1];
         // If we have the chain in our presets, set it as the selected chain
         if (W3MChainPresets.chains.containsKey(chainId)) {
           await selectChain(W3MChainPresets.chains[chainId]!);
@@ -308,7 +302,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
 
     _chainBalance = null;
-    _tokenImageUrl = _getTokenImage(chainInfo);
 
     final hasValidSession = isConnected && _currentSession != null;
     if (switchChain && hasValidSession && _currentSelectedChain != null) {
@@ -356,6 +349,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     _currentSelectedChain = chainInfo;
     // Get the token/chain icon
     _tokenImageUrl = _getTokenImage(chainInfo);
+
+    _notify();
 
     // Store the chain for when we reload the app.
     // If switchChain is true the store is on [_switchEthChain]
@@ -494,6 +489,7 @@ class W3MService with ChangeNotifier implements IW3MService {
           ToastMessage(type: ToastType.error, text: e.message),
         );
       }
+      onWalletConnectionError.broadcast(WalletErrorEvent('not installed'));
     } catch (e, s) {
       W3MLoggerUtil.logger.e('[$runtimeType] error launching wallet. $e, $s');
     }
@@ -555,7 +551,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     } on JsonRpcError catch (e) {
       W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
       if (_isUserRejectedError(e)) {
-        onWalletConnectionError.broadcast();
+        onWalletConnectionError.broadcast(WalletErrorEvent('rejected'));
       }
       return await expirePreviousInactivePairings();
     }
@@ -686,19 +682,23 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   void _setRequiredNamespaces(Map<String, RequiredNamespace> requiredNSpaces) {
-    _checkInitialized();
-    W3MLoggerUtil.logger
-        .i('[$runtimeType] _setRequiredNamespaces $requiredNSpaces');
-    _requiredNamespaces = requiredNSpaces;
-    _notify();
+    if (requiredNSpaces.isNotEmpty) {
+      _checkInitialized();
+      W3MLoggerUtil.logger
+          .i('[$runtimeType] _setRequiredNamespaces $requiredNSpaces');
+      _requiredNamespaces = requiredNSpaces;
+      _notify();
+    }
   }
 
   void _setOptionalNamespaces(Map<String, RequiredNamespace> optionalNSpaces) {
-    _checkInitialized();
-    W3MLoggerUtil.logger
-        .i('[$runtimeType] _setOptionalNamespaces: $optionalNSpaces');
-    _optionalNamespaces = optionalNSpaces;
-    _notify();
+    if (optionalNSpaces.isNotEmpty) {
+      _checkInitialized();
+      W3MLoggerUtil.logger
+          .i('[$runtimeType] _setOptionalNamespaces: $optionalNSpaces');
+      _optionalNamespaces = optionalNSpaces;
+      _notify();
+    }
   }
 
   /// Loads account balance and avatar.
@@ -810,7 +810,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _currentSelectedChain = null;
     _setRequiredNamespaces({});
     _isConnected = false;
-    _address = '';
+    _address = null;
     _currentSession = null;
     _notify();
   }
@@ -865,21 +865,16 @@ extension _W3MServiceExtension on W3MService {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionConnect: $args');
     _setSessionValues(args!.session);
     _selectChainFromStoredId();
-
+    _loadAccountData();
     if (_isOpen) {
       closeModal();
     }
-
-    _loadAccountData();
   }
 
   @protected
   void onSessionDelete(SessionDelete? args) {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionDelete: $args');
-    _isConnected = false;
-    _address = '';
-    _currentSession = null;
-    _notify();
+    _cleanSession();
   }
 
   @protected
@@ -901,15 +896,16 @@ extension _W3MServiceExtension on W3MService {
   @protected
   void onSessionUpdate(SessionUpdate? args) {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionUpdate $args');
+    _notify();
   }
 
   @protected
-  void onSessionEvent(SessionEvent? args) {
+  void onSessionEvent(SessionEvent? args) async {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionEvent $args');
     if (args?.name == EthConstants.chainChanged) {
       if (W3MChainPresets.chains.containsKey('${args?.data}')) {
         final chain = W3MChainPresets.chains['${args?.data}'];
-        selectChain(chain);
+        await selectChain(chain);
       }
     }
   }

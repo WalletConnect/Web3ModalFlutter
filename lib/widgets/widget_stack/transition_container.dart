@@ -17,7 +17,7 @@ class TransitionContainer extends StatefulWidget {
 class _TransitionContainerState extends State<TransitionContainer>
     with TickerProviderStateMixin {
   static const fadeDuration = Duration(milliseconds: 150);
-  static const resizeDuration = Duration(milliseconds: 100);
+  static const resizeDuration = Duration(milliseconds: 150);
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -77,15 +77,12 @@ class _TransitionContainerState extends State<TransitionContainer>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: Listenable.merge([_fadeAnimation, _scaleAnimation]),
-      builder: (BuildContext context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: Opacity(
-            opacity: _fadeAnimation.value,
-            child: AnimatedSize(
-              duration: resizeDuration,
-              child: _currentScreen,
-            ),
+      builder: (context, _) {
+        return Opacity(
+          opacity: _fadeAnimation.value,
+          child: AnimatedSize(
+            duration: resizeDuration,
+            child: _currentScreen,
           ),
         );
       },

@@ -261,6 +261,7 @@ class ExplorerService implements IExplorerService {
   @override
   void search({String? query}) async {
     if (query == null || query.isEmpty) {
+      _currentSearchValue = null;
       listings.value = _listings;
       return;
     }
@@ -278,12 +279,12 @@ class ExplorerService implements IExplorerService {
     final exclude = excludedIds.isNotEmpty ? excludedIds.join(',') : null;
 
     W3MLoggerUtil.logger.t('[$runtimeType] search $query');
-
+    _currentSearchValue = query;
     final newListins = await _fetchListings(
       params: RequestParams(
         page: 1,
         entries: 100,
-        search: query,
+        search: _currentSearchValue,
         include: include,
         exclude: exclude,
       ),
@@ -294,6 +295,10 @@ class ExplorerService implements IExplorerService {
     W3MLoggerUtil.logger.t('[$runtimeType] _searchListings $query');
     _debouncer.run(() => isSearching.value = false);
   }
+
+  String? _currentSearchValue;
+  @override
+  String get searchValue => _currentSearchValue ?? '';
 
   final _debouncer = Debouncer(milliseconds: 300);
 

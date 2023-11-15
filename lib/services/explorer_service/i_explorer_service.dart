@@ -38,6 +38,8 @@ abstract class IExplorerService {
 
   ValueNotifier<bool> isSearching = ValueNotifier(false);
 
+  String get searchValue;
+
   /// update the recently used position to the top list
   Future<void> updateRecentPosition(String? recentId);
 
