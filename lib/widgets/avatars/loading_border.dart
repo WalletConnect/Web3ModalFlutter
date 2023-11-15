@@ -42,13 +42,15 @@ class _LoadingBorderState extends State<LoadingBorder>
       begin: 0.0,
       end: 1.0,
     ).animate(_controller);
+
+    _controller.repeat();
   }
 
   @override
   void didUpdateWidget(covariant LoadingBorder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!oldWidget.animate && widget.animate) {
-      _controller.repeat();
+    if (!widget.animate) {
+      _controller.stop();
       setState(() {});
     }
   }

@@ -111,11 +111,16 @@ class ExplorerService implements IExplorerService {
     totalListings.value = 0;
     final allListings = await Future.wait([
       _fetchInstalledListings(),
-      _fetchOtherListings(firstCall: true),
+      _fetchOtherListings(),
     ]);
 
     _listings = [...allListings.first, ...allListings.last];
     listings.value = _listings;
+
+    if (_listings.length < _defaultEntriesCount) {
+      _canPaginate = false;
+    }
+
     W3MLoggerUtil.logger
         .t('[$runtimeType] fetchInitialWallets ${_listings.length}');
     await _getRecentWalletAndOrder();
@@ -130,18 +135,7 @@ class ExplorerService implements IExplorerService {
   @override
   Future<void> paginate() async {
     if (!canPaginate) return;
-    final newParams = _requestParams.nextPage();
-    int entries = _defaultEntriesCount - _listings.length;
-    if (entries <= 0) {
-      _requestParams = newParams.copyWith(entries: _defaultEntriesCount);
-    } else {
-      final exclude = _listings.map((e) => e.listing.id).toList().join(',');
-      _requestParams = newParams.copyWith(
-        entries: entries,
-        page: 1,
-        exclude: exclude,
-      );
-    }
+    _requestParams = _requestParams.nextPage();
     final newListings = await _fetchListings(
       params: _requestParams,
       updateCount: false,
@@ -196,16 +190,10 @@ class ExplorerService implements IExplorerService {
     return (await _fetchListings(params: params)).setInstalledFlag();
   }
 
-  Future<List<W3MWalletInfo>> _fetchOtherListings({
-    bool firstCall = false,
-  }) async {
-    final installedCount = _installedWalletIds.length;
-    final includedCount = includedWalletIds?.length ?? 0;
-    final toQuery = 20 - installedCount + includedCount;
-    final entriesCount = firstCall ? max(toQuery, 16) : _defaultEntriesCount;
+  Future<List<W3MWalletInfo>> _fetchOtherListings() async {
     _requestParams = RequestParams(
       page: 1,
-      entries: entriesCount,
+      entries: _defaultEntriesCount,
       include: _includedWalletsParam,
       exclude: _excludedWalletsParam,
       platform: _getPlatformType(),
@@ -237,11 +225,10 @@ class ExplorerService implements IExplorerService {
           .toList()
           .sortByRecommended(featuredWalletIds)
           .toW3MWalletInfo();
-    } catch (e, s) {
+    } catch (error) {
       W3MLoggerUtil.logger.e(
-        '[$runtimeType] Error fetching wallet listings',
-        error: e,
-        stackTrace: s,
+        '[$runtimeType] Error fetching wallet listings with params ${params?.toJson()}',
+        error: error,
       );
       throw Exception(e);
     }
@@ -274,6 +261,7 @@ class ExplorerService implements IExplorerService {
   @override
   void search({String? query}) async {
     if (query == null || query.isEmpty) {
+      _currentSearchValue = null;
       listings.value = _listings;
       return;
     }
@@ -291,12 +279,12 @@ class ExplorerService implements IExplorerService {
     final exclude = excludedIds.isNotEmpty ? excludedIds.join(',') : null;
 
     W3MLoggerUtil.logger.t('[$runtimeType] search $query');
-
+    _currentSearchValue = query;
     final newListins = await _fetchListings(
       params: RequestParams(
         page: 1,
         entries: 100,
-        search: query,
+        search: _currentSearchValue,
         include: include,
         exclude: exclude,
       ),
@@ -307,6 +295,10 @@ class ExplorerService implements IExplorerService {
     W3MLoggerUtil.logger.t('[$runtimeType] _searchListings $query');
     _debouncer.run(() => isSearching.value = false);
   }
+
+  String? _currentSearchValue;
+  @override
+  String get searchValue => _currentSearchValue ?? '';
 
   final _debouncer = Debouncer(milliseconds: 300);
 
@@ -326,6 +318,26 @@ class ExplorerService implements IExplorerService {
   WalletRedirect? getWalletRedirect(Listing listing) {
     final wallet = listings.value.firstWhereOrNull(
       (item) => listing.id == item.listing.id,
+    );
+    if (wallet == null) {
+      return null;
+    }
+    return WalletRedirect(
+      mobile: wallet.listing.mobileLink,
+      desktop: wallet.listing.desktopLink,
+      web: wallet.listing.webappLink,
+    );
+  }
+
+  @override
+  Future<WalletRedirect?> tryWalletRedirectByName(String? name) async {
+    if (name == null) return null;
+    final results = await _fetchListings(
+      params: RequestParams(page: 1, entries: 100, search: name),
+      updateCount: false,
+    );
+    final wallet = results.firstWhereOrNull(
+      (item) => item.listing.name.toLowerCase() == name.toLowerCase(),
     );
     if (wallet == null) {
       return null;

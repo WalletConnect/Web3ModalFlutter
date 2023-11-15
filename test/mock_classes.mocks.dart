@@ -258,19 +258,8 @@ class _FakeBlockchainIdentity_17 extends _i1.SmartFake
         );
 }
 
-class _FakeValueListenable_18<T> extends _i1.SmartFake
-    implements _i2.ValueListenable<T> {
-  _FakeValueListenable_18(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeWidget_19 extends _i1.SmartFake implements _i12.Widget {
-  _FakeWidget_19(
+class _FakeWidget_18 extends _i1.SmartFake implements _i12.Widget {
+  _FakeWidget_18(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -398,6 +387,11 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValue: false,
       ) as bool);
   @override
+  String get searchValue => (super.noSuchMethod(
+        Invocation.getter(#searchValue),
+        returnValue: '',
+      ) as String);
+  @override
   _i15.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
           #init,
@@ -456,6 +450,15 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         #getWalletRedirect,
         [listing],
       )) as _i16.WalletRedirect?);
+  @override
+  _i15.Future<_i16.WalletRedirect?> tryWalletRedirectByName(String? name) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #tryWalletRedirectByName,
+          [name],
+        ),
+        returnValue: _i15.Future<_i16.WalletRedirect?>.value(),
+      ) as _i15.Future<_i16.WalletRedirect?>);
 }
 
 /// A class which mocks [W3MService].
@@ -484,13 +487,14 @@ class MockW3MService extends _i1.Mock implements _i18.W3MService {
         ),
       ) as _i3.Event<_i3.EventArgs>);
   @override
-  _i3.Event<_i3.EventArgs> get onWalletConnectionError => (super.noSuchMethod(
+  _i3.Event<_i19.WalletErrorEvent> get onWalletConnectionError =>
+      (super.noSuchMethod(
         Invocation.getter(#onWalletConnectionError),
-        returnValue: _FakeEvent_1<_i3.EventArgs>(
+        returnValue: _FakeEvent_1<_i19.WalletErrorEvent>(
           this,
           Invocation.getter(#onWalletConnectionError),
         ),
-      ) as _i3.Event<_i3.EventArgs>);
+      ) as _i3.Event<_i19.WalletErrorEvent>);
   @override
   _i19.W3MServiceStatus get status => (super.noSuchMethod(
         Invocation.getter(#status),
@@ -653,6 +657,15 @@ class MockW3MService extends _i1.Mock implements _i18.W3MService {
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  _i15.Future<_i16.WalletRedirect?> sessionWalletRedirect() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sessionWalletRedirect,
+          [],
+        ),
+        returnValue: _i15.Future<_i16.WalletRedirect?>.value(),
+      ) as _i15.Future<_i16.WalletRedirect?>);
   @override
   void addListener(_i21.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
@@ -2143,14 +2156,6 @@ class MockWidgetStack extends _i1.Mock implements _i37.WidgetStack {
   }
 
   @override
-  _i2.ValueListenable<_i12.Widget> get current => (super.noSuchMethod(
-        Invocation.getter(#current),
-        returnValue: _FakeValueListenable_18<_i12.Widget>(
-          this,
-          Invocation.getter(#current),
-        ),
-      ) as _i2.ValueListenable<_i12.Widget>);
-  @override
   _i2.ValueNotifier<bool> get onRenderScreen => (super.noSuchMethod(
         Invocation.getter(#onRenderScreen),
         returnValue: _FakeValueNotifier_0<bool>(
@@ -2169,7 +2174,7 @@ class MockWidgetStack extends _i1.Mock implements _i37.WidgetStack {
           #getCurrent,
           [],
         ),
-        returnValue: _FakeWidget_19(
+        returnValue: _FakeWidget_18(
           this,
           Invocation.method(
             #getCurrent,

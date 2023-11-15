@@ -38,6 +38,8 @@ abstract class IExplorerService {
 
   ValueNotifier<bool> isSearching = ValueNotifier(false);
 
+  String get searchValue;
+
   /// update the recently used position to the top list
   Future<void> updateRecentPosition(String? recentId);
 
@@ -46,4 +48,6 @@ abstract class IExplorerService {
   String getAssetImageUrl(String imageId);
 
   WalletRedirect? getWalletRedirect(Listing listing);
+
+  Future<WalletRedirect?> tryWalletRedirectByName(String? name);
 }

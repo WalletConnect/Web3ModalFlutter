@@ -33,12 +33,6 @@ import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 
-class W3MServiceException implements Exception {
-  final dynamic message;
-  final dynamic stackTrace;
-  W3MServiceException(this.message, [this.stackTrace]) : super();
-}
-
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
 /// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
 class W3MService with ChangeNotifier implements IW3MService {
@@ -110,7 +104,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   final Event<EventArgs> onPairingExpire = Event();
 
   @override
-  final Event<EventArgs> onWalletConnectionError = Event();
+  final Event<WalletErrorEvent> onWalletConnectionError = Event();
 
   bool _connectingWallet = false;
 
@@ -185,7 +179,8 @@ class W3MService with ChangeNotifier implements IW3MService {
   @override
   Future<void> init() async {
     if (!coreUtils.instance.isValidProjectID(_projectId)) {
-      W3MLoggerUtil.logger.e('[$runtimeType] Please provide a valid projectId. '
+      W3MLoggerUtil.logger.e(
+          '[$runtimeType] projectId $_projectId is invalid. Please provide a valid projectId. '
           'See https://docs.walletconnect.com/web3modal/flutter/options for details.');
       return;
     }
@@ -251,45 +246,43 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   Future<void> _selectChainFromStoredId() async {
     if (_currentSession != null) {
-      final chainId = storageService.instance.getString(
-        StringConstants.selectedChainId,
-        defaultValue: '',
-      )!;
-      // If we had a chainId stored, use it!
-      if (chainId.isNotEmpty && W3MChainPresets.chains.containsKey(chainId)) {
-        await selectChain(W3MChainPresets.chains[chainId]!);
+      final chainIds = NamespaceUtils.getChainIdsFromNamespaces(
+        namespaces: _currentSession!.namespaces,
+      );
+      if (chainIds.isNotEmpty) {
+        final chainId = (chainIds..sort()).first.split(':')[1];
+        // If we have the chain in our presets, set it as the selected chain
+        if (W3MChainPresets.chains.containsKey(chainId)) {
+          await selectChain(W3MChainPresets.chains[chainId]!);
+        }
       } else {
-        // Otherwise, just get the first chainId from the namespaces of the session and use that
-        final chainIds = NamespaceUtils.getChainIdsFromNamespaces(
-          namespaces: _currentSession!.namespaces,
-        );
-        if (chainIds.isNotEmpty) {
-          final chainId = chainIds.first.split(':')[1];
-          // If we have the chain in our presets, set it as the selected chain
-          if (W3MChainPresets.chains.containsKey(chainId)) {
-            await selectChain(W3MChainPresets.chains[chainId]!);
-          }
+        final chainId = storageService.instance.getString(
+          StringConstants.selectedChainId,
+          defaultValue: '',
+        )!;
+        if (chainId.isNotEmpty && W3MChainPresets.chains.containsKey(chainId)) {
+          await selectChain(W3MChainPresets.chains[chainId]!);
         }
       }
     }
   }
 
-  bool get _sessionHasSwitchMethod {
-    return NamespaceUtils.getOptionalMethodsForChainId(
-      chainId: _currentSelectedChain!.chainId,
-      optionalNamespaces: _currentSession!.optionalNamespaces ?? {},
-    ).contains(EthConstants.walletSwitchEthChain);
+  bool _sessionHasSwitchMethod() {
+    if (_currentSession == null) {
+      return false;
+    }
+    final sessionNamespaces = _currentSession!.namespaces;
+    final nsMethods = sessionNamespaces['eip155']?.methods ?? [];
+    final supportsAddChain = nsMethods.contains(EthConstants.walletAddEthChain);
+
+    return supportsAddChain;
   }
 
-  bool _sessionHasApprovedChain(String namespace) {
+  bool _sessionHasApprovedChain(String chainId) {
     return NamespaceUtils.getChainIdsFromNamespaces(
       namespaces: _currentSession!.namespaces,
-    ).contains(namespace);
+    ).contains(chainId);
   }
-
-  bool get _connectedToMetaMask =>
-      _currentSession?.peer.metadata.name.toLowerCase().contains('metamask') ??
-      false;
 
   @override
   Future<void> selectChain(
@@ -302,23 +295,21 @@ class W3MService with ChangeNotifier implements IW3MService {
       return;
     }
 
-    _chainBalance = null;
-    _tokenImageUrl = null;
-
     // If the chain is null, disconnect and stop.
     if (chainInfo == null) {
       await disconnect();
       return;
     }
 
+    _chainBalance = null;
+
     final hasValidSession = isConnected && _currentSession != null;
     if (switchChain && hasValidSession && _currentSelectedChain != null) {
       final hasChainAlready = _sessionHasApprovedChain(chainInfo.namespace);
-      final differentChain =
-          _currentSelectedChain!.chainId != chainInfo.chainId;
-      if (!hasChainAlready && differentChain) {
-        _switchEthChain(_currentSelectedChain!, chainInfo);
-        if (_sessionHasSwitchMethod && _connectedToMetaMask) {
+      if (!hasChainAlready) {
+        _switchToEthChain(chainInfo);
+        final hasSwitchMethod = _sessionHasSwitchMethod();
+        if (hasSwitchMethod) {
           await launchConnectedWallet();
         }
       } else {
@@ -329,25 +320,27 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
   }
 
-  @override
-  List<String>? approvedChainsByConnectedWallet() {
+  List<String>? _getApprovedChains() {
     if (_currentSession == null) {
       return null;
     }
-
     final sessionNamespaces = _currentSession!.namespaces;
-    final nsMethods = sessionNamespaces['eip155']?.methods ?? [];
     final nsAccounts = sessionNamespaces['eip155']?.accounts ?? [];
+    final approvedChains = NamespaceUtils.getChainsFromAccounts(nsAccounts);
 
-    final supportsAllNetworks =
-        nsMethods.contains(EthConstants.walletAddEthChain);
-    final approvedNetworks = NamespaceUtils.getChainsFromAccounts(nsAccounts);
+    return approvedChains;
+  }
 
-    if (supportsAllNetworks) {
+  @override
+  List<String>? approvedChainsByConnectedWallet() {
+    // if there's no session or
+    // if supportsAddChain method
+    // then every chain can be used
+    if (_currentSession == null || _sessionHasSwitchMethod()) {
       return null;
     }
 
-    return approvedNetworks;
+    return _getApprovedChains();
   }
 
   void _setEthChain(W3MChainInfo chainInfo) async {
@@ -356,6 +349,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     _currentSelectedChain = chainInfo;
     // Get the token/chain icon
     _tokenImageUrl = _getTokenImage(chainInfo);
+
+    _notify();
 
     // Store the chain for when we reload the app.
     // If switchChain is true the store is on [_switchEthChain]
@@ -494,6 +489,7 @@ class W3MService with ChangeNotifier implements IW3MService {
           ToastMessage(type: ToastType.error, text: e.message),
         );
       }
+      onWalletConnectionError.broadcast(WalletErrorEvent('not installed'));
     } catch (e, s) {
       W3MLoggerUtil.logger.e('[$runtimeType] error launching wallet. $e, $s');
     }
@@ -545,7 +541,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     try {
       _currentSession = await connectResponse!.session.future;
       _setSessionValues(_currentSession!);
-      await _selectChainFromStoredId();
       await explorerService.instance!.updateRecentPosition(
         _selectedWallet?.listing.id,
       );
@@ -556,7 +551,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     } on JsonRpcError catch (e) {
       W3MLoggerUtil.logger.e('[$runtimeType] Error connecting to wallet: $e');
       if (_isUserRejectedError(e)) {
-        onWalletConnectionError.broadcast();
+        onWalletConnectionError.broadcast(WalletErrorEvent('rejected'));
       }
       return await expirePreviousInactivePairings();
     }
@@ -566,7 +561,8 @@ class W3MService with ChangeNotifier implements IW3MService {
   Future<void> launchConnectedWallet() async {
     _checkInitialized();
 
-    if (sessionWalletRedirect == null) {
+    final sessionRedirect = await sessionWalletRedirect();
+    if (sessionRedirect == null) {
       return;
     }
 
@@ -575,7 +571,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     );
 
     return await urlUtils.instance.openRedirect(
-      sessionWalletRedirect!,
+      sessionRedirect,
       pType: platformUtils.instance.getPlatformType(),
     );
   }
@@ -686,19 +682,23 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   void _setRequiredNamespaces(Map<String, RequiredNamespace> requiredNSpaces) {
-    _checkInitialized();
-    W3MLoggerUtil.logger
-        .i('[$runtimeType] _setRequiredNamespaces $requiredNSpaces');
-    _requiredNamespaces = requiredNSpaces;
-    _notify();
+    if (requiredNSpaces.isNotEmpty) {
+      _checkInitialized();
+      W3MLoggerUtil.logger
+          .i('[$runtimeType] _setRequiredNamespaces $requiredNSpaces');
+      _requiredNamespaces = requiredNSpaces;
+      _notify();
+    }
   }
 
   void _setOptionalNamespaces(Map<String, RequiredNamespace> optionalNSpaces) {
-    _checkInitialized();
-    W3MLoggerUtil.logger
-        .i('[$runtimeType] _setOptionalNamespaces: $optionalNSpaces');
-    _optionalNamespaces = optionalNSpaces;
-    _notify();
+    if (optionalNSpaces.isNotEmpty) {
+      _checkInitialized();
+      W3MLoggerUtil.logger
+          .i('[$runtimeType] _setOptionalNamespaces: $optionalNSpaces');
+      _optionalNamespaces = optionalNSpaces;
+      _notify();
+    }
   }
 
   /// Loads account balance and avatar.
@@ -733,50 +733,50 @@ class W3MService with ChangeNotifier implements IW3MService {
     _notify();
   }
 
-  Future<void> _switchEthChain(W3MChainInfo from, W3MChainInfo to) async {
-    final int chainIdInt = int.parse(to.chainId);
+  Future<void> _switchToEthChain(W3MChainInfo newChain) async {
+    final int chainIdInt = int.parse(newChain.chainId);
     final String chainHex = chainIdInt.toRadixString(16);
-    final String chainId = 'eip155:${from.chainId}';
+    final String chainId = 'eip155:${_currentSelectedChain!.chainId}';
     final Map<String, String> params = {'chainId': '0x$chainHex'};
-    _web3App!
+    return _web3App!
         .request(
-      topic: _currentSession!.topic,
-      chainId: chainId,
-      request: SessionRequestParams(
-        method: EthConstants.walletSwitchEthChain,
-        params: [params],
-      ),
-    )
-        .catchError(
-      (e, s) {
-        if (_isUserRejectedError(e)) {
-          return _setEthChain(_currentSelectedChain!);
-        }
-        _web3App!
-            .request(
           topic: _currentSession!.topic,
           chainId: chainId,
           request: SessionRequestParams(
-            method: EthConstants.walletAddEthChain,
-            params: [
-              {
-                ...params,
-                'chainName': to.chainName,
-                'nativeCurrency': {
-                  'name': to.tokenName,
-                  'symbol': to.tokenName,
-                  'decimals': 18,
-                },
-                'rpcUrls': [to.rpcUrl],
-              },
-            ],
+            method: EthConstants.walletSwitchEthChain,
+            params: [params],
           ),
         )
-            .catchError((e, s) {
-          if (_isUserRejectedError(e)) {
-            return _setEthChain(_currentSelectedChain!);
-          }
-        });
+        .then((_) => _setEthChain(newChain))
+        .catchError(
+      (e, s) {
+        // if request errors due to user rejection then set the previous chain
+        if (_isUserRejectedError(e)) {
+          _setEthChain(_currentSelectedChain!);
+        }
+        // Otherwise it meas chain has to be added.
+        _web3App!
+            .request(
+              topic: _currentSession!.topic,
+              chainId: chainId,
+              request: SessionRequestParams(
+                method: EthConstants.walletAddEthChain,
+                params: [
+                  {
+                    ...params,
+                    'chainName': newChain.chainName,
+                    'nativeCurrency': {
+                      'name': newChain.tokenName,
+                      'symbol': newChain.tokenName,
+                      'decimals': 18,
+                    },
+                    'rpcUrls': [newChain.rpcUrl],
+                  },
+                ],
+              ),
+            )
+            .then((_) => _setEthChain(newChain))
+            .catchError((_) => _setEthChain(_currentSelectedChain!));
       },
     );
   }
@@ -810,7 +810,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _currentSelectedChain = null;
     _setRequiredNamespaces({});
     _isConnected = false;
-    _address = '';
+    _address = null;
     _currentSession = null;
     _notify();
   }
@@ -823,10 +823,23 @@ class W3MService with ChangeNotifier implements IW3MService {
     return explorerService.instance?.getWalletRedirect(listing);
   }
 
-  WalletRedirect? get sessionWalletRedirect {
-    final sessionRedirect = _currentSession?.peer.metadata.redirect;
+  Future<WalletRedirect?> sessionWalletRedirect() async {
+    final metadata = _currentSession?.peer.metadata;
+    final sessionRedirect = metadata?.redirect;
     if (sessionRedirect == null) {
-      return null;
+      final redirect = await explorerService.instance?.tryWalletRedirectByName(
+        metadata?.name,
+      );
+
+      if (redirect == null) {
+        return null;
+      }
+
+      return WalletRedirect(
+        mobile: redirect.mobile,
+        desktop: redirect.desktop,
+        web: redirect.web,
+      );
     }
 
     return WalletRedirect(
@@ -852,21 +865,16 @@ extension _W3MServiceExtension on W3MService {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionConnect: $args');
     _setSessionValues(args!.session);
     _selectChainFromStoredId();
-
+    _loadAccountData();
     if (_isOpen) {
       closeModal();
     }
-
-    _loadAccountData();
   }
 
   @protected
   void onSessionDelete(SessionDelete? args) {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionDelete: $args');
-    _isConnected = false;
-    _address = '';
-    _currentSession = null;
-    _notify();
+    _cleanSession();
   }
 
   @protected
@@ -879,7 +887,7 @@ extension _W3MServiceExtension on W3MService {
 
   @protected
   void onRelayClientError(ErrorEvent? args) {
-    W3MLoggerUtil.logger.e('[$runtimeType] onRelayClientError: $args');
+    W3MLoggerUtil.logger.e('[$runtimeType] onRelayClientError: ${args?.error}');
     _initError = args?.error;
     _status = W3MServiceStatus.error;
     _notify();
@@ -888,15 +896,16 @@ extension _W3MServiceExtension on W3MService {
   @protected
   void onSessionUpdate(SessionUpdate? args) {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionUpdate $args');
+    _notify();
   }
 
   @protected
-  void onSessionEvent(SessionEvent? args) {
+  void onSessionEvent(SessionEvent? args) async {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionEvent $args');
     if (args?.name == EthConstants.chainChanged) {
       if (W3MChainPresets.chains.containsKey('${args?.data}')) {
         final chain = W3MChainPresets.chains['${args?.data}'];
-        selectChain(chain);
+        await selectChain(chain);
       }
     }
   }

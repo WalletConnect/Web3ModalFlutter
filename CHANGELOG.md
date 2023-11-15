@@ -1,3 +1,9 @@
+## 3.0.0-beta19
+
+- Chain switching enhancements
+- Smoother animations
+- UI changes and bug fixes
+
 ## 3.0.0-beta18
 
 - Fixes some issues with optionalNamespaces

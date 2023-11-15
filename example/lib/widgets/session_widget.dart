@@ -74,13 +74,18 @@ class SessionWidgetState extends State<SessionWidget> {
       namespaceAccounts.addAll(namespace.accounts);
     }
 
-    final namespace = namespaceAccounts.firstWhere(
+    final containsChain = namespaceAccounts.indexWhere(
       (nsa) => nsa.split(':')[1] == widget.selectedChain.chainId,
     );
-    children.add(_buildAccountWidget(namespace));
+    if (containsChain > -1) {
+      final namespace = namespaceAccounts.firstWhere(
+        (nsa) => nsa.split(':')[1] == widget.selectedChain.chainId,
+      );
+      children.add(_buildAccountWidget(namespace));
+    }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
       child: Column(
         children: children,
       ),
