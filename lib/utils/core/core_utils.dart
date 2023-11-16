@@ -71,6 +71,16 @@ class CoreUtils extends ICoreUtils {
   }
 
   @override
+  String formatChainBalance(double? chainBalance, {int precision = 1}) {
+    if (chainBalance == null) {
+      return '_._';
+    }
+    return chainBalance
+        .toStringAsPrecision(precision)
+        .replaceAll(RegExp(r'([.]*0+)(?!.*\d)'), '');
+  }
+
+  @override
   String getUserAgent() {
     String userAgent = '${StringConstants.X_SDK_TYPE}'
         '-flutter-'

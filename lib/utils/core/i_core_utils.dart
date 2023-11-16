@@ -19,6 +19,8 @@ abstract class ICoreUtils {
   /// https://metamask.app.link/ is a universal URL
   Uri? formatWebUrl(String? appUrl, String wcUri);
 
+  String formatChainBalance(double? chainBalance, {int precision = 1});
+
   /// Returns the user agent string. Used with the explorer and other API endpoints.
   String getUserAgent();
 

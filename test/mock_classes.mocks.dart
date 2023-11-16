@@ -281,6 +281,11 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
   }
 
   @override
+  String get projectId => (super.noSuchMethod(
+        Invocation.getter(#projectId),
+        returnValue: '',
+      ) as String);
+  @override
   _i2.ValueNotifier<bool> get initialized => (super.noSuchMethod(
         Invocation.getter(#initialized),
         returnValue: _FakeValueNotifier_0<bool>(
@@ -296,11 +301,6 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         ),
         returnValueForMissingStub: null,
       );
-  @override
-  String get projectId => (super.noSuchMethod(
-        Invocation.getter(#projectId),
-        returnValue: '',
-      ) as String);
   @override
   _i2.ValueNotifier<int> get totalListings => (super.noSuchMethod(
         Invocation.getter(#totalListings),
@@ -382,15 +382,15 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValue: '',
       ) as String);
   @override
-  bool get canPaginate => (super.noSuchMethod(
-        Invocation.getter(#canPaginate),
-        returnValue: false,
-      ) as bool);
-  @override
   String get searchValue => (super.noSuchMethod(
         Invocation.getter(#searchValue),
         returnValue: '',
       ) as String);
+  @override
+  bool get canPaginate => (super.noSuchMethod(
+        Invocation.getter(#canPaginate),
+        returnValue: false,
+      ) as bool);
   @override
   _i15.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
