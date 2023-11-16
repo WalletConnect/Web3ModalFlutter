@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_dapp/home_page.dart';
+import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 void main() {
@@ -15,18 +16,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _isDarkMode = false;
-  // ignore: unused_field
-  final _themeData = Web3ModalThemeData(
-    lightColors: Web3ModalColors.lightMode.copyWith(
-      accent100: Colors.red,
-      background125: Colors.yellow.shade300,
-    ),
-    darkColors: Web3ModalColors.darkMode.copyWith(
-      accent100: Colors.green,
-      background125: Colors.brown,
-    ),
-    radiuses: Web3ModalRadiuses.square,
-  );
+  Web3ModalThemeData? _themeData;
 
   @override
   void initState() {
@@ -64,12 +54,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Web3ModalTheme(
       isDarkMode: _isDarkMode,
-      // Uncomment to see how modal theme is changed
-      // themeData: _themeData,
+      themeData: _themeData,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        home: MyHomePage(swapTheme: () => _swapTheme()),
+        title: StringConstants.w3mPageTitleV3,
+        home: MyHomePage(
+          swapTheme: () => _swapTheme(),
+          changeTheme: () => _changeTheme(),
+        ),
       ),
     );
   }
@@ -77,6 +69,24 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void _swapTheme() {
     setState(() {
       _isDarkMode = !_isDarkMode;
+    });
+  }
+
+  void _changeTheme() {
+    setState(() {
+      _themeData = (_themeData == null)
+          ? Web3ModalThemeData(
+              lightColors: Web3ModalColors.lightMode.copyWith(
+                accent100: Colors.red,
+                background125: Colors.yellow.shade300,
+              ),
+              darkColors: Web3ModalColors.darkMode.copyWith(
+                accent100: Colors.green,
+                background125: Colors.brown,
+              ),
+              radiuses: Web3ModalRadiuses.square,
+            )
+          : null;
     });
   }
 }
