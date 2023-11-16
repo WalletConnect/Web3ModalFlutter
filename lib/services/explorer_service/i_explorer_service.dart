@@ -22,9 +22,6 @@ abstract class IExplorerService {
   /// If excludedWalletIds is set wallets from this list are going to be excluded
   Set<String>? excludedWalletIds;
 
-  /// Id of the recently used wallet app
-  String get recentWalletId;
-
   /// Init service
   Future<void> init();
 

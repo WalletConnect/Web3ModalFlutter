@@ -35,10 +35,6 @@ class ExplorerService implements IExplorerService {
   @override
   ValueNotifier<bool> initialized = ValueNotifier(false);
 
-  String _recentWalletId = '';
-  @override
-  String get recentWalletId => _recentWalletId;
-
   @override
   ValueNotifier<int> totalListings = ValueNotifier(0);
 
@@ -129,10 +125,17 @@ class ExplorerService implements IExplorerService {
   }
 
   Future<void> _getRecentWalletAndOrder() async {
-    final recentWalletId = storageService.instance.getString(
-      StringConstants.recentWallet,
+    W3MWalletInfo? walletInfo;
+    final walletString = storageService.instance.getString(
+      StringConstants.walletData,
     );
-    await _updateRecentWalletId(recentWalletId);
+    final recentWalletId = storageService.instance.getString(
+      StringConstants.recentWalletId,
+    );
+    if ((walletString ?? '').isNotEmpty) {
+      walletInfo = W3MWalletInfo.fromJson(jsonDecode(walletString!));
+    }
+    await _updateRecentWalletId(walletInfo, walletId: recentWalletId);
   }
 
   @override
@@ -240,21 +243,24 @@ class ExplorerService implements IExplorerService {
       StringConstants.walletData,
       walletDataString,
     );
-    await _updateRecentWalletId(walletInfo.listing.id);
+    await _updateRecentWalletId(walletInfo);
   }
 
-  Future<void> _updateRecentWalletId(String? recentId) async {
-    _recentWalletId = recentId ?? '';
+  Future<void> _updateRecentWalletId(
+    W3MWalletInfo? walletInfo, {
+    String? walletId,
+  }) async {
+    final recentId = walletInfo?.listing.id ?? walletId ?? '';
     // Set the recent
     await storageService.instance.setString(
-      StringConstants.recentWallet,
-      _recentWalletId,
+      StringConstants.recentWalletId,
+      recentId,
     );
     final currentListings = List<W3MWalletInfo>.from(
       _listings.map((e) => e.copyWith(recent: false)).toList(),
     );
     final recentWallet = currentListings.firstWhereOrNull(
-      (e) => e.listing.id == _recentWalletId,
+      (e) => e.listing.id == recentId,
     );
     if (recentWallet != null) {
       final rw = recentWallet.copyWith(recent: true);

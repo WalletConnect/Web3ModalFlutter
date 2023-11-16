@@ -377,11 +377,6 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValueForMissingStub: null,
       );
   @override
-  String get recentWalletId => (super.noSuchMethod(
-        Invocation.getter(#recentWalletId),
-        returnValue: '',
-      ) as String);
-  @override
   String get searchValue => (super.noSuchMethod(
         Invocation.getter(#searchValue),
         returnValue: '',
