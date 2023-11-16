@@ -11,8 +11,6 @@ class W3MChainInfo with _$W3MChainInfo {
     required String namespace,
     required String tokenName,
     required String rpcUrl,
-    @Default({}) Map<String, RequiredNamespace> requiredNamespaces,
-    @Default({}) Map<String, RequiredNamespace> optionalNamespaces,
     String? chainIcon,
     W3MBlockExplorer? blockExplorer,
   }) = _W3MChainInfo;

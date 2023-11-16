@@ -22,9 +22,6 @@ abstract class IExplorerService {
   /// If excludedWalletIds is set wallets from this list are going to be excluded
   Set<String>? excludedWalletIds;
 
-  /// Id of the recently used wallet app
-  String get recentWalletId;
-
   /// Init service
   Future<void> init();
 
@@ -41,7 +38,7 @@ abstract class IExplorerService {
   String get searchValue;
 
   /// update the recently used position to the top list
-  Future<void> updateRecentPosition(String? recentId);
+  Future<void> storeConnectedWalletData(W3MWalletInfo? walletInfo);
 
   String getWalletImageUrl(String imageId);
 

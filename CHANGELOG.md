@@ -1,3 +1,9 @@
+## 3.0.0
+
+- Production version!
+- Minor fixes on session proposal and wallet redirection after connection
+- Minor bug fixes
+
 ## 3.0.0-beta19
 
 - Chain switching enhancements

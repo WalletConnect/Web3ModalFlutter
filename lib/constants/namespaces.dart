@@ -1,5 +1,7 @@
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
+@Deprecated(
+    'This file is going to be deleted soon. Refer to EthConstants or W3MChainPresets')
 class NamespaceConstants {
   static const Map<String, RequiredNamespace> ethereum = {
     'eip155': RequiredNamespace(

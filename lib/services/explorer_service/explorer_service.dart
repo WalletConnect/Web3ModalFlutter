@@ -30,34 +30,34 @@ class ExplorerService implements IExplorerService {
   late RequestParams _requestParams;
 
   @override
-  ValueNotifier<bool> initialized = ValueNotifier(false);
-
-  String _recentWalletId = '';
-  @override
-  String get recentWalletId => _recentWalletId;
-
-  @override
   final String projectId;
+
+  @override
+  ValueNotifier<bool> initialized = ValueNotifier(false);
 
   @override
   ValueNotifier<int> totalListings = ValueNotifier(0);
 
   List<W3MWalletInfo> _listings = [];
-
   @override
   ValueNotifier<List<W3MWalletInfo>> listings = ValueNotifier([]);
 
-  Set<String> _installedWalletIds = <String>{};
+  final _debouncer = Debouncer(milliseconds: 300);
+
+  String? _currentSearchValue;
+  @override
+  String get searchValue => _currentSearchValue ?? '';
 
   @override
   ValueNotifier<bool> isSearching = ValueNotifier(false);
+
+  Set<String> _installedWalletIds = <String>{};
 
   @override
   Set<String>? featuredWalletIds;
 
   @override
   Set<String>? includedWalletIds;
-
   String? get _includedWalletsParam {
     final includedIds = (includedWalletIds ?? <String>{});
     return includedIds.isNotEmpty ? includedIds.join(',') : null;
@@ -65,15 +65,13 @@ class ExplorerService implements IExplorerService {
 
   @override
   Set<String>? excludedWalletIds;
-
   String? get _excludedWalletsParam {
     final excludedIds = (excludedWalletIds ?? <String>{})
       ..addAll(_installedWalletIds);
     return excludedIds.isNotEmpty ? excludedIds.join(',') : null;
   }
 
-  int _prevCount = 0;
-
+  int _currentWalletsCount = 0;
   bool _canPaginate = true;
   @override
   bool get canPaginate => _canPaginate;
@@ -127,9 +125,17 @@ class ExplorerService implements IExplorerService {
   }
 
   Future<void> _getRecentWalletAndOrder() async {
-    final recentWalletId =
-        storageService.instance.getString(StringConstants.recentWallet);
-    await updateRecentPosition(recentWalletId);
+    W3MWalletInfo? walletInfo;
+    final walletString = storageService.instance.getString(
+      StringConstants.walletData,
+    );
+    final recentWalletId = storageService.instance.getString(
+      StringConstants.recentWalletId,
+    );
+    if ((walletString ?? '').isNotEmpty) {
+      walletInfo = W3MWalletInfo.fromJson(jsonDecode(walletString!));
+    }
+    await _updateRecentWalletId(walletInfo, walletId: recentWalletId);
   }
 
   @override
@@ -142,10 +148,10 @@ class ExplorerService implements IExplorerService {
     );
     _listings = [..._listings, ...newListings];
     listings.value = _listings;
-    if (newListings.length < _prevCount) {
+    if (newListings.length < _currentWalletsCount) {
       _canPaginate = false;
     } else {
-      _prevCount = newListings.length;
+      _currentWalletsCount = newListings.length;
     }
   }
 
@@ -205,13 +211,11 @@ class ExplorerService implements IExplorerService {
     RequestParams? params,
     bool updateCount = true,
   }) async {
+    final p = params?.toJson() ?? {};
     try {
       final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
-      final uri = Uri.parse('$_apiUrl/getWallets');
-      final response = await _client.get(
-        uri.replace(queryParameters: params?.toJson() ?? {}),
-        headers: headers,
-      );
+      final uri = Uri.parse('$_apiUrl/getWallets').replace(queryParameters: p);
+      final response = await _client.get(uri, headers: headers);
       final apiResponse = ApiResponse<Listing>.fromJson(
         jsonDecode(response.body),
         (json) => Listing.fromJson(json),
@@ -219,34 +223,44 @@ class ExplorerService implements IExplorerService {
       if (updateCount) {
         totalListings.value += apiResponse.count;
       }
-      W3MLoggerUtil.logger
-          .t('[$runtimeType] _fetchListings() $uri ${params?.toJson()}');
+      W3MLoggerUtil.logger.t('[$runtimeType] _fetchListings() $uri $p');
       return apiResponse.data
           .toList()
           .sortByRecommended(featuredWalletIds)
           .toW3MWalletInfo();
     } catch (error) {
-      W3MLoggerUtil.logger.e(
-        '[$runtimeType] Error fetching wallet listings with params ${params?.toJson()}',
-        error: error,
-      );
+      W3MLoggerUtil.logger
+          .e('[$runtimeType] Error fetch wallets params: $p', error: error);
       throw Exception(e);
     }
   }
 
   @override
-  Future<void> updateRecentPosition(String? recentId) async {
-    _recentWalletId = recentId ?? '';
+  Future<void> storeConnectedWalletData(W3MWalletInfo? walletInfo) async {
+    if (walletInfo == null) return;
+    final walletDataString = jsonEncode(walletInfo.toJson());
+    await storageService.instance.setString(
+      StringConstants.walletData,
+      walletDataString,
+    );
+    await _updateRecentWalletId(walletInfo);
+  }
+
+  Future<void> _updateRecentWalletId(
+    W3MWalletInfo? walletInfo, {
+    String? walletId,
+  }) async {
+    final recentId = walletInfo?.listing.id ?? walletId ?? '';
     // Set the recent
     await storageService.instance.setString(
-      StringConstants.recentWallet,
-      _recentWalletId,
+      StringConstants.recentWalletId,
+      recentId,
     );
     final currentListings = List<W3MWalletInfo>.from(
       _listings.map((e) => e.copyWith(recent: false)).toList(),
     );
     final recentWallet = currentListings.firstWhereOrNull(
-      (e) => e.listing.id == _recentWalletId,
+      (e) => e.listing.id == recentId,
     );
     if (recentWallet != null) {
       final rw = recentWallet.copyWith(recent: true);
@@ -295,12 +309,6 @@ class ExplorerService implements IExplorerService {
     W3MLoggerUtil.logger.t('[$runtimeType] _searchListings $query');
     _debouncer.run(() => isSearching.value = false);
   }
-
-  String? _currentSearchValue;
-  @override
-  String get searchValue => _currentSearchValue ?? '';
-
-  final _debouncer = Debouncer(milliseconds: 300);
 
   @override
   String getWalletImageUrl(String imageId) =>

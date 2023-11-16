@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/util.dart';
-import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
+import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_account_avatar.dart';
 import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 
@@ -47,11 +48,9 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     setState(() {
       _address = widget.service.address ?? '';
       _tokenImage = widget.service.tokenImageUrl;
-      _balance = BalanceButton.balanceDefault;
-      if (widget.service.chainBalance != null) {
-        _balance = widget.service.chainBalance!.toStringAsPrecision(4);
-        _balance = _balance.replaceAll(RegExp(r'([.]*0+)(?!.*\d)'), '');
-      }
+      _balance = coreUtils.instance.formatChainBalance(
+        widget.service.chainBalance,
+      );
       _tokenName = widget.service.selectedChain?.tokenName;
     });
   }

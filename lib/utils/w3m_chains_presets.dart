@@ -1,6 +1,4 @@
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/models/w3m_chain_info.dart';
-import 'package:web3modal_flutter/constants/eth_constants.dart';
 
 class W3MChainPresets {
   /// All RPC urls were found here: https://rpc.info/
@@ -11,13 +9,6 @@ class W3MChainPresets {
       chainId: '1',
       chainIcon: chainImagesId['1'],
       tokenName: 'ETH',
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthConstants.allMethods,
-          chains: ['eip155:1'],
-          events: EthConstants.allEvents,
-        ),
-      },
       rpcUrl: 'https://eth.drpc.org',
       blockExplorer: W3MBlockExplorer(
         name: 'Etherscan',
@@ -30,13 +21,6 @@ class W3MChainPresets {
       chainId: '42161',
       chainIcon: chainImagesId['42161'],
       tokenName: 'ARB',
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthConstants.allMethods,
-          chains: ['eip155:42161'],
-          events: EthConstants.allEvents,
-        ),
-      },
       rpcUrl: 'https://arbitrum.blockpi.network/v1/rpc/public',
       blockExplorer: W3MBlockExplorer(
         name: 'Arbiscan',
@@ -49,13 +33,6 @@ class W3MChainPresets {
       chainId: '137',
       chainIcon: chainImagesId['137'],
       tokenName: 'MATIC',
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthConstants.allMethods,
-          chains: ['eip155:137'],
-          events: EthConstants.allEvents,
-        ),
-      },
       rpcUrl: 'https://polygon.drpc.org',
       blockExplorer: W3MBlockExplorer(
         name: 'Explorer',
@@ -68,13 +45,6 @@ class W3MChainPresets {
       chainId: '43114',
       chainIcon: chainImagesId['43114'],
       tokenName: 'AVAX',
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthConstants.allMethods,
-          chains: ['eip155:43114'],
-          events: EthConstants.allEvents,
-        ),
-      },
       rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
       blockExplorer: W3MBlockExplorer(
         name: 'Snowtrace',
@@ -87,13 +57,6 @@ class W3MChainPresets {
       chainId: '56',
       chainIcon: chainImagesId['56'],
       tokenName: 'BNB',
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthConstants.allMethods,
-          chains: ['eip155:56'],
-          events: EthConstants.allEvents,
-        ),
-      },
       rpcUrl: 'https://bsc-dataseed.binance.org/',
       blockExplorer: W3MBlockExplorer(
         name: 'BSC Scan',
@@ -106,13 +69,6 @@ class W3MChainPresets {
       chainId: '10',
       chainIcon: chainImagesId['10'],
       tokenName: 'OP',
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthConstants.allMethods,
-          chains: ['eip155:10'],
-          events: EthConstants.allEvents,
-        ),
-      },
       rpcUrl: 'https://mainnet.optimism.io/',
     ),
     '250': W3MChainInfo(
@@ -121,13 +77,6 @@ class W3MChainPresets {
       chainId: '250',
       chainIcon: chainImagesId['250'],
       tokenName: 'FTM',
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthConstants.allMethods,
-          chains: ['eip155:250'],
-          events: EthConstants.allEvents,
-        ),
-      },
       rpcUrl: 'https://rpc.ftm.tools/',
       blockExplorer: W3MBlockExplorer(
         name: 'FTM Scan',
@@ -140,13 +89,6 @@ class W3MChainPresets {
       chainId: '9001',
       chainIcon: chainImagesId['9001'],
       tokenName: 'EVMOS',
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthConstants.allMethods,
-          chains: ['eip155:9001'],
-          events: EthConstants.allEvents,
-        ),
-      },
       rpcUrl: 'https://evmos-evm.publicnode.com',
     ),
     '4689': W3MChainInfo(
@@ -155,13 +97,6 @@ class W3MChainPresets {
       chainId: '4689',
       chainIcon: chainImagesId['4689'],
       tokenName: 'IOTX',
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthConstants.allMethods,
-          chains: ['eip155:4689'],
-          events: EthConstants.allEvents,
-        ),
-      },
       rpcUrl: 'https://rpc.ankr.com/iotex',
       blockExplorer: W3MBlockExplorer(
         name: 'IOTEX Scan',
@@ -174,13 +109,6 @@ class W3MChainPresets {
       chainId: '1088',
       chainIcon: chainImagesId['1088'],
       tokenName: 'METIS',
-      optionalNamespaces: {
-        'eip155': const RequiredNamespace(
-          methods: EthConstants.allMethods,
-          chains: ['eip155:1088'],
-          events: EthConstants.allEvents,
-        ),
-      },
       rpcUrl: 'https://metis-mainnet.public.blastapi.io',
       blockExplorer: W3MBlockExplorer(
         name: 'Andromeda Explorer',

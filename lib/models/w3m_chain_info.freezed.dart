@@ -21,10 +21,6 @@ mixin _$W3MChainInfo {
   String get namespace => throw _privateConstructorUsedError;
   String get tokenName => throw _privateConstructorUsedError;
   String get rpcUrl => throw _privateConstructorUsedError;
-  Map<String, RequiredNamespace> get requiredNamespaces =>
-      throw _privateConstructorUsedError;
-  Map<String, RequiredNamespace> get optionalNamespaces =>
-      throw _privateConstructorUsedError;
   String? get chainIcon => throw _privateConstructorUsedError;
   W3MBlockExplorer? get blockExplorer => throw _privateConstructorUsedError;
 
@@ -45,8 +41,6 @@ abstract class $W3MChainInfoCopyWith<$Res> {
       String namespace,
       String tokenName,
       String rpcUrl,
-      Map<String, RequiredNamespace> requiredNamespaces,
-      Map<String, RequiredNamespace> optionalNamespaces,
       String? chainIcon,
       W3MBlockExplorer? blockExplorer});
 
@@ -71,8 +65,6 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
     Object? namespace = null,
     Object? tokenName = null,
     Object? rpcUrl = null,
-    Object? requiredNamespaces = null,
-    Object? optionalNamespaces = null,
     Object? chainIcon = freezed,
     Object? blockExplorer = freezed,
   }) {
@@ -97,14 +89,6 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
           ? _value.rpcUrl
           : rpcUrl // ignore: cast_nullable_to_non_nullable
               as String,
-      requiredNamespaces: null == requiredNamespaces
-          ? _value.requiredNamespaces
-          : requiredNamespaces // ignore: cast_nullable_to_non_nullable
-              as Map<String, RequiredNamespace>,
-      optionalNamespaces: null == optionalNamespaces
-          ? _value.optionalNamespaces
-          : optionalNamespaces // ignore: cast_nullable_to_non_nullable
-              as Map<String, RequiredNamespace>,
       chainIcon: freezed == chainIcon
           ? _value.chainIcon
           : chainIcon // ignore: cast_nullable_to_non_nullable
@@ -143,8 +127,6 @@ abstract class _$$_W3MChainInfoCopyWith<$Res>
       String namespace,
       String tokenName,
       String rpcUrl,
-      Map<String, RequiredNamespace> requiredNamespaces,
-      Map<String, RequiredNamespace> optionalNamespaces,
       String? chainIcon,
       W3MBlockExplorer? blockExplorer});
 
@@ -168,8 +150,6 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
     Object? namespace = null,
     Object? tokenName = null,
     Object? rpcUrl = null,
-    Object? requiredNamespaces = null,
-    Object? optionalNamespaces = null,
     Object? chainIcon = freezed,
     Object? blockExplorer = freezed,
   }) {
@@ -194,14 +174,6 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
           ? _value.rpcUrl
           : rpcUrl // ignore: cast_nullable_to_non_nullable
               as String,
-      requiredNamespaces: null == requiredNamespaces
-          ? _value._requiredNamespaces
-          : requiredNamespaces // ignore: cast_nullable_to_non_nullable
-              as Map<String, RequiredNamespace>,
-      optionalNamespaces: null == optionalNamespaces
-          ? _value._optionalNamespaces
-          : optionalNamespaces // ignore: cast_nullable_to_non_nullable
-              as Map<String, RequiredNamespace>,
       chainIcon: freezed == chainIcon
           ? _value.chainIcon
           : chainIcon // ignore: cast_nullable_to_non_nullable
@@ -223,12 +195,8 @@ class _$_W3MChainInfo implements _W3MChainInfo {
       required this.namespace,
       required this.tokenName,
       required this.rpcUrl,
-      final Map<String, RequiredNamespace> requiredNamespaces = const {},
-      final Map<String, RequiredNamespace> optionalNamespaces = const {},
       this.chainIcon,
-      this.blockExplorer})
-      : _requiredNamespaces = requiredNamespaces,
-        _optionalNamespaces = optionalNamespaces;
+      this.blockExplorer});
 
   @override
   final String chainName;
@@ -240,26 +208,6 @@ class _$_W3MChainInfo implements _W3MChainInfo {
   final String tokenName;
   @override
   final String rpcUrl;
-  final Map<String, RequiredNamespace> _requiredNamespaces;
-  @override
-  @JsonKey()
-  Map<String, RequiredNamespace> get requiredNamespaces {
-    if (_requiredNamespaces is EqualUnmodifiableMapView)
-      return _requiredNamespaces;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_requiredNamespaces);
-  }
-
-  final Map<String, RequiredNamespace> _optionalNamespaces;
-  @override
-  @JsonKey()
-  Map<String, RequiredNamespace> get optionalNamespaces {
-    if (_optionalNamespaces is EqualUnmodifiableMapView)
-      return _optionalNamespaces;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_optionalNamespaces);
-  }
-
   @override
   final String? chainIcon;
   @override
@@ -267,7 +215,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
 
   @override
   String toString() {
-    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, namespace: $namespace, tokenName: $tokenName, rpcUrl: $rpcUrl, requiredNamespaces: $requiredNamespaces, optionalNamespaces: $optionalNamespaces, chainIcon: $chainIcon, blockExplorer: $blockExplorer)';
+    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, namespace: $namespace, tokenName: $tokenName, rpcUrl: $rpcUrl, chainIcon: $chainIcon, blockExplorer: $blockExplorer)';
   }
 
   @override
@@ -283,10 +231,6 @@ class _$_W3MChainInfo implements _W3MChainInfo {
             (identical(other.tokenName, tokenName) ||
                 other.tokenName == tokenName) &&
             (identical(other.rpcUrl, rpcUrl) || other.rpcUrl == rpcUrl) &&
-            const DeepCollectionEquality()
-                .equals(other._requiredNamespaces, _requiredNamespaces) &&
-            const DeepCollectionEquality()
-                .equals(other._optionalNamespaces, _optionalNamespaces) &&
             (identical(other.chainIcon, chainIcon) ||
                 other.chainIcon == chainIcon) &&
             (identical(other.blockExplorer, blockExplorer) ||
@@ -294,17 +238,8 @@ class _$_W3MChainInfo implements _W3MChainInfo {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      chainName,
-      chainId,
-      namespace,
-      tokenName,
-      rpcUrl,
-      const DeepCollectionEquality().hash(_requiredNamespaces),
-      const DeepCollectionEquality().hash(_optionalNamespaces),
-      chainIcon,
-      blockExplorer);
+  int get hashCode => Object.hash(runtimeType, chainName, chainId, namespace,
+      tokenName, rpcUrl, chainIcon, blockExplorer);
 
   @JsonKey(ignore: true)
   @override
@@ -320,8 +255,6 @@ abstract class _W3MChainInfo implements W3MChainInfo {
       required final String namespace,
       required final String tokenName,
       required final String rpcUrl,
-      final Map<String, RequiredNamespace> requiredNamespaces,
-      final Map<String, RequiredNamespace> optionalNamespaces,
       final String? chainIcon,
       final W3MBlockExplorer? blockExplorer}) = _$_W3MChainInfo;
 
@@ -335,10 +268,6 @@ abstract class _W3MChainInfo implements W3MChainInfo {
   String get tokenName;
   @override
   String get rpcUrl;
-  @override
-  Map<String, RequiredNamespace> get requiredNamespaces;
-  @override
-  Map<String, RequiredNamespace> get optionalNamespaces;
   @override
   String? get chainIcon;
   @override

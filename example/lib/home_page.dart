@@ -7,8 +7,13 @@ import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.swapTheme});
-  final void Function() swapTheme;
+  const MyHomePage({
+    super.key,
+    required this.swapTheme,
+    required this.changeTheme,
+  });
+  final VoidCallback swapTheme;
+  final VoidCallback changeTheme;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -32,8 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
       metadata: const PairingMetadata(
-        name: 'Web3Modal Flutter Example',
-        description: 'Web3Modal Flutter Example',
+        name: StringConstants.w3mPageTitleV3,
+        description: StringConstants.w3mPageTitleV3,
         url: 'https://www.walletconnect.com/',
         icons: ['https://web3modal.com/images/rpc-illustration.png'],
         redirect: Redirect(
@@ -41,12 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
           universal: 'https://www.walletconnect.com',
         ),
       ),
-      optionalNamespaces: {
-        'eip155': const W3MNamespace(
-          methods: EthConstants.allMethods,
-          events: EthConstants.allEvents,
-        ),
-      },
     );
     await _w3mService.init();
 
@@ -87,6 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isSquare = Web3ModalTheme.radiusesOf(context).isSquare();
     return Scaffold(
       backgroundColor: Web3ModalTheme.colorsOf(context).background300,
       appBar: AppBar(
@@ -95,6 +95,12 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Web3ModalTheme.colorsOf(context).background100,
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
         actions: [
+          IconButton(
+            icon: isSquare
+                ? const Icon(Icons.yard_outlined)
+                : const Icon(Icons.yard),
+            onPressed: widget.changeTheme,
+          ),
           IconButton(
             icon: Web3ModalTheme.maybeOf(context)?.isDarkMode ?? false
                 ? const Icon(Icons.light_mode)
@@ -161,9 +167,7 @@ class _ConnectedView extends StatelessWidget {
         const SizedBox.square(dimension: 12.0),
         W3MAccountButton(service: w3mService),
         SessionWidget(
-          session: w3mService.web3App!.sessions.getAll().first,
-          web3App: w3mService.web3App!,
-          selectedChain: w3mService.selectedChain!,
+          w3mService: w3mService,
           launchRedirect: () {
             w3mService.launchConnectedWallet();
           },
@@ -179,13 +183,6 @@ final _exampleCustomChain = W3MChainInfo(
   namespace: 'eip155:42220',
   chainId: '42220',
   tokenName: 'CELO',
-  optionalNamespaces: {
-    'eip155': const RequiredNamespace(
-      methods: EthConstants.allMethods,
-      chains: ['eip155:42220'],
-      events: EthConstants.allEvents,
-    ),
-  },
   rpcUrl: 'https://forno.celo.org/',
   blockExplorer: W3MBlockExplorer(
     name: 'Celo Explorer',
