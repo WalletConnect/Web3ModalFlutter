@@ -157,7 +157,6 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
           textAlignVertical: TextAlignVertical.center,
           style: TextStyle(
             color: themeColors.foreground100,
-            height: 1.5,
           ),
           cursorColor: themeColors.accent100,
           enableSuggestions: false,

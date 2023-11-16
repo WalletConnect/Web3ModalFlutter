@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -48,6 +49,17 @@ class GetWalletPage extends StatelessWidget {
 
             return WalletsList(
               itemList: itemsToShow,
+              onTapWallet: (data) {
+                final url = Platform.isIOS
+                    ? data.listing.appStore
+                    : data.listing.playStore;
+                if ((url ?? '').isNotEmpty) {
+                  urlUtils.instance.launchUrl(
+                    Uri.parse(url!),
+                    mode: LaunchMode.externalApplication,
+                  );
+                }
+              },
               lastItem: AllWalletsItem(
                 title: 'Explore all',
                 onTap: () => urlUtils.instance.launchUrl(
