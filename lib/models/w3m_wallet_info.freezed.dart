@@ -74,22 +74,22 @@ class _$W3MWalletInfoCopyWithImpl<$Res, $Val extends W3MWalletInfo>
 }
 
 /// @nodoc
-abstract class _$$_W3MWalletInfoCopyWith<$Res>
+abstract class _$$W3MWalletInfoImplCopyWith<$Res>
     implements $W3MWalletInfoCopyWith<$Res> {
-  factory _$$_W3MWalletInfoCopyWith(
-          _$_W3MWalletInfo value, $Res Function(_$_W3MWalletInfo) then) =
-      __$$_W3MWalletInfoCopyWithImpl<$Res>;
+  factory _$$W3MWalletInfoImplCopyWith(
+          _$W3MWalletInfoImpl value, $Res Function(_$W3MWalletInfoImpl) then) =
+      __$$W3MWalletInfoImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({Listing listing, bool installed, bool recent});
 }
 
 /// @nodoc
-class __$$_W3MWalletInfoCopyWithImpl<$Res>
-    extends _$W3MWalletInfoCopyWithImpl<$Res, _$_W3MWalletInfo>
-    implements _$$_W3MWalletInfoCopyWith<$Res> {
-  __$$_W3MWalletInfoCopyWithImpl(
-      _$_W3MWalletInfo _value, $Res Function(_$_W3MWalletInfo) _then)
+class __$$W3MWalletInfoImplCopyWithImpl<$Res>
+    extends _$W3MWalletInfoCopyWithImpl<$Res, _$W3MWalletInfoImpl>
+    implements _$$W3MWalletInfoImplCopyWith<$Res> {
+  __$$W3MWalletInfoImplCopyWithImpl(
+      _$W3MWalletInfoImpl _value, $Res Function(_$W3MWalletInfoImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -99,7 +99,7 @@ class __$$_W3MWalletInfoCopyWithImpl<$Res>
     Object? installed = null,
     Object? recent = null,
   }) {
-    return _then(_$_W3MWalletInfo(
+    return _then(_$W3MWalletInfoImpl(
       listing: null == listing
           ? _value.listing
           : listing // ignore: cast_nullable_to_non_nullable
@@ -118,12 +118,12 @@ class __$$_W3MWalletInfoCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_W3MWalletInfo implements _W3MWalletInfo {
-  const _$_W3MWalletInfo(
+class _$W3MWalletInfoImpl implements _W3MWalletInfo {
+  const _$W3MWalletInfoImpl(
       {required this.listing, required this.installed, required this.recent});
 
-  factory _$_W3MWalletInfo.fromJson(Map<String, dynamic> json) =>
-      _$$_W3MWalletInfoFromJson(json);
+  factory _$W3MWalletInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$W3MWalletInfoImplFromJson(json);
 
   @override
   final Listing listing;
@@ -141,7 +141,7 @@ class _$_W3MWalletInfo implements _W3MWalletInfo {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_W3MWalletInfo &&
+            other is _$W3MWalletInfoImpl &&
             (identical(other.listing, listing) || other.listing == listing) &&
             (identical(other.installed, installed) ||
                 other.installed == installed) &&
@@ -155,12 +155,12 @@ class _$_W3MWalletInfo implements _W3MWalletInfo {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_W3MWalletInfoCopyWith<_$_W3MWalletInfo> get copyWith =>
-      __$$_W3MWalletInfoCopyWithImpl<_$_W3MWalletInfo>(this, _$identity);
+  _$$W3MWalletInfoImplCopyWith<_$W3MWalletInfoImpl> get copyWith =>
+      __$$W3MWalletInfoImplCopyWithImpl<_$W3MWalletInfoImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_W3MWalletInfoToJson(
+    return _$$W3MWalletInfoImplToJson(
       this,
     );
   }
@@ -170,10 +170,10 @@ abstract class _W3MWalletInfo implements W3MWalletInfo {
   const factory _W3MWalletInfo(
       {required final Listing listing,
       required final bool installed,
-      required final bool recent}) = _$_W3MWalletInfo;
+      required final bool recent}) = _$W3MWalletInfoImpl;
 
   factory _W3MWalletInfo.fromJson(Map<String, dynamic> json) =
-      _$_W3MWalletInfo.fromJson;
+      _$W3MWalletInfoImpl.fromJson;
 
   @override
   Listing get listing;
@@ -183,6 +183,6 @@ abstract class _W3MWalletInfo implements W3MWalletInfo {
   bool get recent;
   @override
   @JsonKey(ignore: true)
-  _$$_W3MWalletInfoCopyWith<_$_W3MWalletInfo> get copyWith =>
+  _$$W3MWalletInfoImplCopyWith<_$W3MWalletInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

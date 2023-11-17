@@ -46,6 +46,11 @@ class _MyHomePageState extends State<MyHomePage> {
           universal: 'https://www.walletconnect.com',
         ),
       ),
+      // requiredNamespaces: {},
+      // optionalNamespaces: {},
+      // featuredWalletIds: {},
+      // includedWalletIds: {},
+      // excludedWalletIds: {},
     );
     await _w3mService.init();
 

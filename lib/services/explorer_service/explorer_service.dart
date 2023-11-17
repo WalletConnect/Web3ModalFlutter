@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -231,7 +230,7 @@ class ExplorerService implements IExplorerService {
     } catch (error) {
       W3MLoggerUtil.logger
           .e('[$runtimeType] Error fetch wallets params: $p', error: error);
-      throw Exception(e);
+      throw Exception(error);
     }
   }
 
@@ -357,9 +356,8 @@ class ExplorerService implements IExplorerService {
     );
   }
 
-  String _getPlatformType() {
+  String? _getPlatformType() {
     final type = platformUtils.instance.getPlatformType();
-    final platform = type.toString().toLowerCase();
     switch (type) {
       case PlatformType.mobile:
         if (Platform.isIOS) {
@@ -367,10 +365,10 @@ class ExplorerService implements IExplorerService {
         } else if (Platform.isAndroid) {
           return 'android';
         } else {
-          return 'mobile';
+          return null;
         }
       default:
-        return platform;
+        return null;
     }
   }
 }
