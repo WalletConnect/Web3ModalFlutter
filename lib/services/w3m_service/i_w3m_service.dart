@@ -116,6 +116,7 @@ abstract class IW3MService with ChangeNotifier {
   /// Opens the native wallet [selectedWallet] after connected
   Future<void> launchConnectedWallet();
 
+  /// List of approved chains by connected wallet
   List<String>? approvedChainsByConnectedWallet();
 
   /// Gets the name of the currently connected wallet.

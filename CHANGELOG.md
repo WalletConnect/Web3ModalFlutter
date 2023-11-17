@@ -1,3 +1,7 @@
+## 3.0.1
+
+- Fix an issue where MetaMask would not show the sign modal if dApp is on different chain than the wallet
+
 ## 3.0.0
 
 - Production version!

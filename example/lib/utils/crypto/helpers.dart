@@ -3,6 +3,7 @@ import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/chain_data_wrapper.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/eip155.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/solana_data.dart';
+import 'package:web3modal_flutter/utils/w3m_chains_presets.dart';
 
 String getChainName(String chain) {
   try {
@@ -23,7 +24,13 @@ ChainMetadata getChainMetadataFromChain(String namespace) {
         .where((element) => element.w3mChainInfo.namespace == namespace)
         .first;
   } catch (_) {
-    return ChainDataWrapper.chains[0];
+    return ChainMetadata(
+      color: Colors.grey,
+      type: ChainType.eip155,
+      w3mChainInfo: W3MChainPresets.chains.values.firstWhere(
+        (e) => e.namespace == namespace,
+      ),
+    );
   }
 }
 

@@ -71,15 +71,19 @@ class SessionWidgetState extends State<SessionWidget> {
       namespaceAccounts.addAll(namespace.accounts);
     }
 
-    final selectedChain = widget.w3mService.selectedChain!;
-    final containsChain = namespaceAccounts.indexWhere(
-      (nsa) => nsa.split(':')[1] == selectedChain.chainId,
-    );
-    if (containsChain > -1) {
-      final namespace = namespaceAccounts.firstWhere(
-        (nsa) => nsa.split(':')[1] == selectedChain.chainId,
+    try {
+      final selectedChain = widget.w3mService.selectedChain;
+      final containsChain = namespaceAccounts.indexWhere(
+        (nsa) => nsa.split(':')[1] == selectedChain?.chainId,
       );
-      children.add(_buildAccountWidget(namespace));
+      if (containsChain > -1) {
+        final namespace = namespaceAccounts.firstWhere(
+          (nsa) => nsa.split(':')[1] == selectedChain?.chainId,
+        );
+        children.add(_buildAccountWidget(namespace));
+      }
+    } catch (e) {
+      debugPrint(e.toString());
     }
 
     return Padding(

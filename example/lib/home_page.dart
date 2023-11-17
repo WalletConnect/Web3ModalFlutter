@@ -35,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
-      logLevel: LogLevel.error,
+      logLevel: LogLevel.verbose,
       metadata: const PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
