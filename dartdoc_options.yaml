@@ -3,11 +3,10 @@ dartdoc:
     [
       # constants
       "lib/constants/key_constants.dart",
+      "lib/constants/namespaces.dart",
       "lib/constants/string_constants.dart",
-      "lib/constants/urls_constants.dart",
       # models
       "lib/models/grid_item.dart",
-      "lib/models/w3m_wallet_info.dart",
       # pages
       "lib/pages/*.dart",
       # services
@@ -17,7 +16,6 @@ dartdoc:
       "lib/services/ledger_service/*.dart",
       "lib/services/network_service/*.dart",
       "lib/services/storage_service/*.dart",
-      "lib/services/w3m_service/w3m_services_instances.dart",
       # theme
       "lib/theme/constants.dart",
       # utils
@@ -26,18 +24,17 @@ dartdoc:
       "lib/utils/toast/*.dart",
       "lib/utils/url/*.dart",
       "lib/utils/asset_util.dart",
-      "lib/utils/eth_util.dart",
+      "lib/utils/debouncer.dart",
       "lib/utils/util.dart",
+      "lib/utils/w3m_logger.dart",
       # widgets
-      "lib/widgets/_unused/*.dart",
-      "lib/widgets/_unused/disconnect/*.dart",
       "lib/widgets/avatars/*.dart",
       "lib/widgets/buttons/*.dart",
       "lib/widgets/help/*.dart",
       "lib/widgets/icons/*.dart",
-      "lib/widgets/lists/*.dart",
       "lib/widgets/lists/grid_items/*.dart",
       "lib/widgets/lists/list_items/*.dart",
+      "lib/widgets/lists/*.dart",
       "lib/widgets/miscellaneous/*.dart",
       "lib/widgets/navigation/*.dart",
       "lib/widgets/text/*.dart",
