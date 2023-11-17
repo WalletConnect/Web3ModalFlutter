@@ -107,11 +107,11 @@ class _$Web3ModalRadiusesCopyWithImpl<$Res, $Val extends Web3ModalRadiuses>
 }
 
 /// @nodoc
-abstract class _$$_Web3ModalRadiusesCopyWith<$Res>
+abstract class _$$Web3ModalRadiusesImplCopyWith<$Res>
     implements $Web3ModalRadiusesCopyWith<$Res> {
-  factory _$$_Web3ModalRadiusesCopyWith(_$_Web3ModalRadiuses value,
-          $Res Function(_$_Web3ModalRadiuses) then) =
-      __$$_Web3ModalRadiusesCopyWithImpl<$Res>;
+  factory _$$Web3ModalRadiusesImplCopyWith(_$Web3ModalRadiusesImpl value,
+          $Res Function(_$Web3ModalRadiusesImpl) then) =
+      __$$Web3ModalRadiusesImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -126,11 +126,11 @@ abstract class _$$_Web3ModalRadiusesCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_Web3ModalRadiusesCopyWithImpl<$Res>
-    extends _$Web3ModalRadiusesCopyWithImpl<$Res, _$_Web3ModalRadiuses>
-    implements _$$_Web3ModalRadiusesCopyWith<$Res> {
-  __$$_Web3ModalRadiusesCopyWithImpl(
-      _$_Web3ModalRadiuses _value, $Res Function(_$_Web3ModalRadiuses) _then)
+class __$$Web3ModalRadiusesImplCopyWithImpl<$Res>
+    extends _$Web3ModalRadiusesCopyWithImpl<$Res, _$Web3ModalRadiusesImpl>
+    implements _$$Web3ModalRadiusesImplCopyWith<$Res> {
+  __$$Web3ModalRadiusesImplCopyWithImpl(_$Web3ModalRadiusesImpl _value,
+      $Res Function(_$Web3ModalRadiusesImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -145,7 +145,7 @@ class __$$_Web3ModalRadiusesCopyWithImpl<$Res>
     Object? radiusL = null,
     Object? radius3XL = null,
   }) {
-    return _then(_$_Web3ModalRadiuses(
+    return _then(_$Web3ModalRadiusesImpl(
       radius4XS: null == radius4XS
           ? _value.radius4XS
           : radius4XS // ignore: cast_nullable_to_non_nullable
@@ -184,8 +184,8 @@ class __$$_Web3ModalRadiusesCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Web3ModalRadiuses implements _Web3ModalRadiuses {
-  const _$_Web3ModalRadiuses(
+class _$Web3ModalRadiusesImpl implements _Web3ModalRadiuses {
+  const _$Web3ModalRadiusesImpl(
       {this.radius4XS = 6.0,
       this.radius3XS = 8.0,
       this.radius2XS = 12.0,
@@ -229,7 +229,7 @@ class _$_Web3ModalRadiuses implements _Web3ModalRadiuses {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Web3ModalRadiuses &&
+            other is _$Web3ModalRadiusesImpl &&
             (identical(other.radius4XS, radius4XS) ||
                 other.radius4XS == radius4XS) &&
             (identical(other.radius3XS, radius3XS) ||
@@ -252,8 +252,8 @@ class _$_Web3ModalRadiuses implements _Web3ModalRadiuses {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_Web3ModalRadiusesCopyWith<_$_Web3ModalRadiuses> get copyWith =>
-      __$$_Web3ModalRadiusesCopyWithImpl<_$_Web3ModalRadiuses>(
+  _$$Web3ModalRadiusesImplCopyWith<_$Web3ModalRadiusesImpl> get copyWith =>
+      __$$Web3ModalRadiusesImplCopyWithImpl<_$Web3ModalRadiusesImpl>(
           this, _$identity);
 }
 
@@ -266,7 +266,7 @@ abstract class _Web3ModalRadiuses implements Web3ModalRadiuses {
       final double radiusS,
       final double radiusM,
       final double radiusL,
-      final double radius3XL}) = _$_Web3ModalRadiuses;
+      final double radius3XL}) = _$Web3ModalRadiusesImpl;
 
   @override
   double get radius4XS;
@@ -286,6 +286,6 @@ abstract class _Web3ModalRadiuses implements Web3ModalRadiuses {
   double get radius3XL;
   @override
   @JsonKey(ignore: true)
-  _$$_Web3ModalRadiusesCopyWith<_$_Web3ModalRadiuses> get copyWith =>
+  _$$Web3ModalRadiusesImplCopyWith<_$Web3ModalRadiusesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
