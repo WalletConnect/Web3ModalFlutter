@@ -1,6 +1,4 @@
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:web3modal_flutter/constants/eth_constants.dart';
-import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
 
 final List<Listing> testListings1 = [
