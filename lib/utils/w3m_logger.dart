@@ -8,8 +8,8 @@ class W3MLoggerUtil {
     printer: PrettyPrinter(),
   );
 
-  static void setLogLevel(LogLevel level) {
-    if (kDebugMode && level == LogLevel.verbose) {
+  static void setLogLevel(LogLevel level, {bool debugMode = false}) {
+    if (kDebugMode && debugMode) {
       Logger.addLogListener((LogEvent event) => debugPrint('${event.message}'));
     }
     logger = Logger(

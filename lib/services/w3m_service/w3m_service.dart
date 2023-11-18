@@ -306,7 +306,21 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
   }
 
-  List<String>? _getApprovedChains() {
+  @protected
+  @override
+  List<String>? getAvailableChains() {
+    // if there's no session or
+    // if supportsAddChain method
+    // then every chain can be used
+    if (_currentSession == null || _sessionHasSwitchMethod()) {
+      return null;
+    }
+
+    return getApprovedChains();
+  }
+
+  @override
+  List<String>? getApprovedChains() {
     if (_currentSession == null) {
       return null;
     }
@@ -315,18 +329,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     final approvedChains = NamespaceUtils.getChainsFromAccounts(accounts);
 
     return approvedChains;
-  }
-
-  @override
-  List<String>? approvedChainsByConnectedWallet() {
-    // if there's no session or
-    // if supportsAddChain method
-    // then every chain can be used
-    if (_currentSession == null || _sessionHasSwitchMethod()) {
-      return null;
-    }
-
-    return _getApprovedChains();
   }
 
   void _setEthChain(W3MChainInfo chainInfo) async {

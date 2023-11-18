@@ -119,8 +119,6 @@ class ExplorerService implements IExplorerService {
       _canPaginate = false;
     }
 
-    W3MLoggerUtil.logger
-        .t('[$runtimeType] fetchInitialWallets ${_listings.length}');
     await _getRecentWalletAndOrder();
   }
 

@@ -1,3 +1,7 @@
+## 3.0.1-beta02
+
+- Added new method `getApprovedChains()`
+
 ## 3.0.1-beta01
 
 - Fix an issue where MetaMask would not show the sign modal if dApp is on different chain than the wallet

@@ -6,7 +6,6 @@ import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_item_chip.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/wallet_list_item.dart';
-import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 
 class WalletsList extends StatelessWidget {
   const WalletsList({
