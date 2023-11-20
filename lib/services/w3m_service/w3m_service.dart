@@ -5,9 +5,7 @@ import 'package:event/event.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
-import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
@@ -17,16 +15,13 @@ import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/url/launch_url_exception.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
-import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils_singleton.dart';
 import 'package:web3modal_flutter/services/network_service/network_service_singleton.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/theme/w3m_theme.dart';
-import 'package:web3modal_flutter/utils/w3m_chains_presets.dart';
-import 'package:web3modal_flutter/constants/eth_constants.dart';
 import 'package:web3modal_flutter/widgets/web3modal.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/utils/toast/toast_message.dart';
@@ -187,6 +182,16 @@ class W3MService with ChangeNotifier implements IW3MService {
     final currentPairings = _web3App!.pairings.getAll();
     final currentSessions = _web3App!.sessions.getAll();
 
+    // Loop through all the chain data
+    for (final chain in W3MChainPresets.chains.values) {
+      for (final event in EthConstants.allEvents) {
+        web3App?.registerEventHandler(
+          chainId: chain.namespace,
+          event: event,
+        );
+      }
+    }
+
     if (currentSessions.isNotEmpty) {
       _setSessionValues(currentSessions.first);
       // session should not outlive the pairing
@@ -220,22 +225,24 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   Future<void> _selectChainFromStoredId() async {
     if (_currentSession != null) {
-      final chainIds = NamespaceUtils.getChainIdsFromNamespaces(
-        namespaces: _currentSession!.namespaces,
-      );
-      if (chainIds.isNotEmpty) {
-        final chainId = (chainIds..sort()).first.split(':')[1];
-        // If we have the chain in our presets, set it as the selected chain
-        if (W3MChainPresets.chains.containsKey(chainId)) {
-          await selectChain(W3MChainPresets.chains[chainId]!);
-        }
+      final chainId = storageService.instance.getString(
+        StringConstants.selectedChainId,
+        defaultValue: '',
+      )!;
+      if (chainId.isNotEmpty && W3MChainPresets.chains.containsKey(chainId)) {
+        await selectChain(W3MChainPresets.chains[chainId]!);
       } else {
-        final chainId = storageService.instance.getString(
-          StringConstants.selectedChainId,
-          defaultValue: '',
-        )!;
-        if (chainId.isNotEmpty && W3MChainPresets.chains.containsKey(chainId)) {
-          await selectChain(W3MChainPresets.chains[chainId]!);
+        final chainIds = NamespaceUtils.getChainIdsFromNamespaces(
+          namespaces: _currentSession!.namespaces,
+        );
+        if (chainIds.isNotEmpty) {
+          final chainId = (chainIds..sort()).first.split(':')[1];
+          // If we have the chain in our presets, set it as the selected chain
+          if (W3MChainPresets.chains.containsKey(chainId)) {
+            await selectChain(W3MChainPresets.chains[chainId]!);
+          }
+        } else {
+          await selectChain(W3MChainPresets.chains['1']!);
         }
       }
     }
@@ -294,7 +301,21 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
   }
 
-  List<String>? _getApprovedChains() {
+  @protected
+  @override
+  List<String>? getAvailableChains() {
+    // if there's no session or
+    // if supportsAddChain method
+    // then every chain can be used
+    if (_currentSession == null || _sessionHasSwitchMethod()) {
+      return null;
+    }
+
+    return getApprovedChains();
+  }
+
+  @override
+  List<String>? getApprovedChains() {
     if (_currentSession == null) {
       return null;
     }
@@ -303,18 +324,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     final approvedChains = NamespaceUtils.getChainsFromAccounts(accounts);
 
     return approvedChains;
-  }
-
-  @override
-  List<String>? approvedChainsByConnectedWallet() {
-    // if there's no session or
-    // if supportsAddChain method
-    // then every chain can be used
-    if (_currentSession == null || _sessionHasSwitchMethod()) {
-      return null;
-    }
-
-    return _getApprovedChains();
   }
 
   void _setEthChain(W3MChainInfo chainInfo) async {
@@ -331,7 +340,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       _currentSelectedChain!.chainId,
     );
 
-    W3MLoggerUtil.logger.t('[$runtimeType] setSelectedChain success');
+    W3MLoggerUtil.logger.t('[$runtimeType] set chain ${chainInfo.namespace}');
     _loadAccountData();
   }
 
@@ -626,7 +635,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     _web3App!.onSessionEvent.subscribe(onSessionEvent);
     _web3App!.onSessionUpdate.subscribe(onSessionUpdate);
     _web3App!.core.pairing.onPairingExpire.subscribe(onPairingExpireEvent);
-    _web3App!.core.heartbeat.onPulse.subscribe(onHeartbeatPulse);
   }
 
   void _unregisterListeners() {
@@ -639,7 +647,6 @@ class W3MService with ChangeNotifier implements IW3MService {
     _web3App!.onSessionEvent.unsubscribe(onSessionEvent);
     _web3App!.onSessionUpdate.unsubscribe(onSessionUpdate);
     _web3App!.core.pairing.onPairingExpire.unsubscribe(onPairingExpireEvent);
-    _web3App!.core.heartbeat.onPulse.unsubscribe(onHeartbeatPulse);
   }
 
   void _setRequiredNamespaces(Map<String, W3MNamespace>? requiredNSpaces) {
@@ -863,6 +870,17 @@ extension _W3MServiceExtension on W3MService {
   }
 
   @protected
+  void onSessionEvent(SessionEvent? args) async {
+    W3MLoggerUtil.logger.t('[$runtimeType] onSessionEvent $args');
+    if (args?.name == EthConstants.chainChanged) {
+      if (W3MChainPresets.chains.containsKey('${args?.data}')) {
+        final chain = W3MChainPresets.chains['${args?.data}'];
+        await selectChain(chain);
+      }
+    }
+  }
+
+  @protected
   void onSessionDelete(SessionDelete? args) {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionDelete: $args');
     _cleanSession();
@@ -891,24 +909,8 @@ extension _W3MServiceExtension on W3MService {
   }
 
   @protected
-  void onSessionEvent(SessionEvent? args) async {
-    W3MLoggerUtil.logger.t('[$runtimeType] onSessionEvent $args');
-    if (args?.name == EthConstants.chainChanged) {
-      if (W3MChainPresets.chains.containsKey('${args?.data}')) {
-        final chain = W3MChainPresets.chains['${args?.data}'];
-        await selectChain(chain);
-      }
-    }
-  }
-
-  @protected
   void onPairingExpireEvent(PairingEvent? args) {
     W3MLoggerUtil.logger.t('[$runtimeType] onPairingExpireEvent $args');
     onPairingExpire.broadcast();
-  }
-
-  @protected
-  void onHeartbeatPulse(EventArgs? args) {
-    W3MLoggerUtil.logger.t('[$runtimeType] onHeartbeatPulse');
   }
 }

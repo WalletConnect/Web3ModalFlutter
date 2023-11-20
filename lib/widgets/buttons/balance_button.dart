@@ -46,7 +46,6 @@ class _BalanceButtonState extends State<BalanceButton> {
       _tokenImage = widget.service.tokenImageUrl;
       _balance = coreUtils.instance.formatChainBalance(
         widget.service.chainBalance,
-        precision: 4,
       );
       _tokenName = widget.service.selectedChain?.tokenName;
     });

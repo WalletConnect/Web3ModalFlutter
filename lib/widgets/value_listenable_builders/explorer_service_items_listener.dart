@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/models/grid_item.dart';
-import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 
 class ExplorerServiceItemsListener extends StatefulWidget {

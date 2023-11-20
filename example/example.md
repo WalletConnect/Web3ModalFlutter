@@ -23,6 +23,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   void _initializeW3MService() async {
+    // Add your own custom chain to chains presets list to show when using W3MNetworkSelectButton
+    // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
+    // W3MChainPresets.chains.putIfAbsent('<chainID>', () => <Your W3MChainInfo>);
+
     _w3mService = W3MService(
       projectId: 'YOUR_PROJECT_ID',
       metadata: const PairingMetadata(
@@ -38,12 +42,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
 
     await _w3mService.init();
-  }
-
-  @override
-  void dispose() {
-    _w3mService.removeListener(_onWalletUpdated);
-    super.dispose();
   }
 
   @override

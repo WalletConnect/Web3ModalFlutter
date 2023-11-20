@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 abstract class IExplorerService {
   /// The project ID used when querying the explorer API.

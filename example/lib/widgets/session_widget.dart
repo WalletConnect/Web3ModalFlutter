@@ -51,17 +51,25 @@ class SessionWidgetState extends State<SessionWidget> {
       ),
     ];
 
-    children.addAll([
-      const SizedBox(height: StyleConstants.linear8),
-      Text(
-        'Approved methods:',
-        style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
-              color: Web3ModalTheme.colorsOf(context).foreground100,
+    children.add(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              children: _buildChainApprovedMethodsTiles(),
             ),
+          ),
+          const SizedBox.square(dimension: 8.0),
+          Expanded(
+            child: Column(
+              children: _buildApprovedChainsTiles(),
+            ),
+          ),
+        ],
       ),
-    ]);
-    children.add(_buildChainApprovedMethodsTiles());
-    children.add(const SizedBox.square(dimension: 8.0));
+    );
 
     // Get all of the accounts
     final List<String> namespaceAccounts = [];
@@ -71,15 +79,19 @@ class SessionWidgetState extends State<SessionWidget> {
       namespaceAccounts.addAll(namespace.accounts);
     }
 
-    final selectedChain = widget.w3mService.selectedChain!;
-    final containsChain = namespaceAccounts.indexWhere(
-      (nsa) => nsa.split(':')[1] == selectedChain.chainId,
-    );
-    if (containsChain > -1) {
-      final namespace = namespaceAccounts.firstWhere(
-        (nsa) => nsa.split(':')[1] == selectedChain.chainId,
+    try {
+      final selectedChain = widget.w3mService.selectedChain;
+      final containsChain = namespaceAccounts.indexWhere(
+        (nsa) => nsa.split(':')[1] == selectedChain?.chainId,
       );
-      children.add(_buildAccountWidget(namespace));
+      if (containsChain > -1) {
+        final namespace = namespaceAccounts.firstWhere(
+          (nsa) => nsa.split(':')[1] == selectedChain?.chainId,
+        );
+        children.add(_buildAccountWidget(namespace));
+      }
+    } catch (e) {
+      debugPrint(e.toString());
     }
 
     return Padding(
@@ -203,19 +215,51 @@ class SessionWidgetState extends State<SessionWidget> {
     return buttons;
   }
 
-  Widget _buildChainApprovedMethodsTiles() {
+  List<Widget> _buildChainApprovedMethodsTiles() {
     final session = widget.w3mService.web3App!.sessions.getAll().first;
-    String methods = '';
     final approvedMethods = session.namespaces['eip155']?.methods ?? [];
-    for (final method in approvedMethods) {
-      methods += '$method, ';
-    }
-    return Text(
-      methods,
+    List<Widget> children = [];
+
+    children.addAll([
+      const SizedBox(height: StyleConstants.linear8),
+      Text(
+        'Approved methods:',
+        style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+              color: Web3ModalTheme.colorsOf(context).foreground100,
+            ),
+      ),
+    ]);
+
+    children.add(Text(
+      approvedMethods.join(', '),
       style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
             color: Web3ModalTheme.colorsOf(context).foreground100,
           ),
+    ));
+    return children;
+  }
+
+  List<Widget> _buildApprovedChainsTiles() {
+    List<Widget> children = [];
+    children.addAll([
+      const SizedBox(height: StyleConstants.linear8),
+      Text(
+        'Approved chains:',
+        style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+              color: Web3ModalTheme.colorsOf(context).foreground100,
+            ),
+      ),
+    ]);
+    final approvedChains = widget.w3mService.getApprovedChains() ?? <String>[];
+    children.add(
+      Text(
+        approvedChains.join(', '),
+        style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
+              color: Web3ModalTheme.colorsOf(context).foreground100,
+            ),
+      ),
     );
+    return children;
   }
 
   Widget _buildChainEventsTiles(ChainMetadata chainMetadata) {

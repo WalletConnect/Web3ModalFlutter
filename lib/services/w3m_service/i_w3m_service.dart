@@ -1,10 +1,7 @@
 import 'package:event/event.dart';
 import 'package:flutter/material.dart';
-import 'package:walletconnect_flutter_v2/apis/sign_api/models/session_models.dart';
-import 'package:walletconnect_flutter_v2/apis/web3app/i_web3app.dart';
-import 'package:web3modal_flutter/models/w3m_wallet_info.dart';
-import 'package:web3modal_flutter/models/w3m_chain_info.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 enum W3MServiceStatus {
   idle,
@@ -116,7 +113,10 @@ abstract class IW3MService with ChangeNotifier {
   /// Opens the native wallet [selectedWallet] after connected
   Future<void> launchConnectedWallet();
 
-  List<String>? approvedChainsByConnectedWallet();
+  List<String>? getAvailableChains();
+
+  /// List of approved chains by connected wallet
+  List<String>? getApprovedChains();
 
   /// Gets the name of the currently connected wallet.
   String getReferer();

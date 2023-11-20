@@ -71,13 +71,15 @@ class CoreUtils extends ICoreUtils {
   }
 
   @override
-  String formatChainBalance(double? chainBalance, {int precision = 1}) {
+  String formatChainBalance(double? chainBalance, {int precision = 3}) {
     if (chainBalance == null) {
-      return '_._';
+      return '_.'.padRight(precision + 2, '_');
     }
-    return chainBalance
-        .toStringAsPrecision(precision)
-        .replaceAll(RegExp(r'([.]*0+)(?!.*\d)'), '');
+    if (chainBalance == 0.0) {
+      return '0.'.padRight(precision + 2, '0');
+    }
+    return chainBalance.toStringAsPrecision(precision)
+      ..replaceAll(RegExp(r'([.]*0+)(?!.*\d)'), '');
   }
 
   @override

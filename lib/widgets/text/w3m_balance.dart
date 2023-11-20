@@ -46,7 +46,6 @@ class _W3MBalanceTextState extends State<W3MBalanceText> {
     setState(() {
       _balance = coreUtils.instance.formatChainBalance(
         _service!.chainBalance,
-        precision: 4,
       );
       _tokenName = _service?.selectedChain?.tokenName;
     });
