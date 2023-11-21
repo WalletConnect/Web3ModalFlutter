@@ -13,19 +13,22 @@ class AllWalletsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.transparent,
+    return Padding(
       padding: const EdgeInsets.only(
-        left: kPadding8,
+        left: kPadding12,
         top: kPadding8,
         bottom: kPadding8,
         right: kPadding12,
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Web3ModalSearchBar(
               hint: 'Search wallet',
+              iconPath: 'assets/icons/search.svg',
               onTextChanged: (value) {
                 explorerService.instance!.search(query: value);
               },

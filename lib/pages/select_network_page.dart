@@ -52,7 +52,7 @@ class SelectNetworkPage extends StatelessWidget {
               ),
             ),
           ),
-          Divider(color: themeColors.grayGlass010, height: 0.0),
+          Divider(color: themeColors.grayGlass005, height: 0.0),
           const SizedBox.square(dimension: 8.0),
           Text(
             'Your connected wallet may not support some of the networks available for this dApp',

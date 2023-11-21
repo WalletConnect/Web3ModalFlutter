@@ -21,7 +21,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late W3MService _w3mService;
-  bool _initialized = false;
 
   @override
   void initState() {
@@ -56,8 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.web3App?.onSessionEvent.subscribe(_onSessionEvent);
     _w3mService.web3App?.onSessionConnect.subscribe(_onSessionConnect);
     _w3mService.web3App?.onSessionDelete.subscribe(_onSessionDelete);
-
-    setState(() => _initialized = true);
   }
 
   @override
@@ -109,25 +106,16 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: Builder(builder: (context) {
-        if (!_initialized) {
-          return Center(
-            child: CircularProgressIndicator(
-              color: Web3ModalTheme.colorsOf(context).accent100,
-            ),
-          );
-        }
-        return SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              _ButtonsView(w3mService: _w3mService),
-              const Divider(height: 0.0),
-              _ConnectedView(w3mService: _w3mService)
-            ],
-          ),
-        );
-      }),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _ButtonsView(w3mService: _w3mService),
+            const Divider(height: 0.0),
+            _ConnectedView(w3mService: _w3mService)
+          ],
+        ),
+      ),
     );
   }
 }

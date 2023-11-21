@@ -12,10 +12,12 @@ class Web3ModalSearchBar extends StatefulWidget {
     required this.onTextChanged,
     this.onDismissKeyboard,
     this.hint = '',
+    this.iconPath,
   });
   final Function(String) onTextChanged;
   final String hint;
   final Function(bool)? onDismissKeyboard;
+  final String? iconPath;
 
   @override
   State<Web3ModalSearchBar> createState() => _Web3ModalSearchBarState();
@@ -178,7 +180,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
                       widget.onDismissKeyboard?.call(true);
                     },
                     child: SvgPicture.asset(
-                      'assets/icons/search.svg',
+                      widget.iconPath ?? '',
                       package: 'web3modal_flutter',
                       height: 10.0,
                       width: 10.0,
