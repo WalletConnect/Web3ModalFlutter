@@ -748,14 +748,15 @@ class W3MService with ChangeNotifier implements IW3MService {
     final chainHex = chainIdInt.toRadixString(16);
     final chainId =
         '${EthConstants.namespace}:${_currentSelectedChain!.chainId}';
-    final params = {'chainId': '0x$chainHex'};
     return _web3App!
         .request(
           topic: _currentSession!.topic,
           chainId: chainId,
           request: SessionRequestParams(
             method: EthConstants.walletSwitchEthChain,
-            params: [params],
+            params: [
+              {'chainId': '0x$chainHex'}
+            ],
           ),
         )
         .then((_) => _setEthChain(newChain))
@@ -773,16 +774,7 @@ class W3MService with ChangeNotifier implements IW3MService {
               request: SessionRequestParams(
                 method: EthConstants.walletAddEthChain,
                 params: [
-                  {
-                    ...params,
-                    'chainName': newChain.chainName,
-                    'nativeCurrency': {
-                      'name': newChain.tokenName,
-                      'symbol': newChain.tokenName,
-                      'decimals': 18,
-                    },
-                    'rpcUrls': [newChain.rpcUrl],
-                  },
+                  newChain.toJson(),
                 ],
               ),
             )
