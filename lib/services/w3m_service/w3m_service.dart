@@ -10,6 +10,7 @@ import 'package:web3modal_flutter/services/explorer_service/explorer_service.dar
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/services/ledger_service/ledger_service_singleton.dart';
+import 'package:web3modal_flutter/services/webview_service/webview_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
@@ -165,6 +166,15 @@ class W3MService with ChangeNotifier implements IW3MService {
     _initError = null;
     _notify();
 
+    webviewService.instance.onInit = ({bool? error = false}) {
+      debugPrint('[$runtimeType] onInit (error: $error)');
+      _status =
+          error == true ? W3MServiceStatus.error : W3MServiceStatus.initialized;
+      W3MLoggerUtil.logger.t('[$runtimeType] initialized');
+      _notify();
+      webviewService.instance.connectEmail('alfredo@walletconnect.com');
+    };
+    webviewService.instance.init();
     await storageService.instance.init();
     await networkService.instance.init();
     await explorerService.instance!.init();
@@ -203,9 +213,9 @@ class W3MService with ChangeNotifier implements IW3MService {
     // Get the chainId of the chain we are connected to.
     await _selectChainFromStoredId();
 
-    _status = W3MServiceStatus.initialized;
-    W3MLoggerUtil.logger.t('[$runtimeType] initialized');
-    _notify();
+    // _status = W3MServiceStatus.initialized;
+    // W3MLoggerUtil.logger.t('[$runtimeType] initialized');
+    // _notify();
   }
 
   void _setSessionValues(SessionData sessionData) {
@@ -890,7 +900,7 @@ extension _W3MServiceExtension on W3MService {
   void onRelayClientConnect(EventArgs? args) {
     W3MLoggerUtil.logger.t('[$runtimeType] onRelayClientConnect: $args');
     _initError = null;
-    _status = W3MServiceStatus.initialized;
+    // _status = W3MServiceStatus.initialized;
     _notify();
   }
 
@@ -898,7 +908,7 @@ extension _W3MServiceExtension on W3MService {
   void onRelayClientError(ErrorEvent? args) {
     W3MLoggerUtil.logger.e('[$runtimeType] onRelayClientError: ${args?.error}');
     _initError = args?.error;
-    _status = W3MServiceStatus.error;
+    // _status = W3MServiceStatus.error;
     _notify();
   }
 

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/services/webview_service/webview_service.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/connect_button.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class W3MConnectWalletButton extends StatefulWidget {
   const W3MConnectWalletButton({
@@ -46,11 +48,22 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
 
   @override
   Widget build(BuildContext context) {
-    return ConnectButton(
-      serviceStatus: widget.service.status,
-      state: _state,
-      size: widget.size,
-      onTap: () => _onConnectPressed(context),
+    return Stack(
+      children: [
+        SizedBox(
+          height: 1.0,
+          width: 1.0,
+          child: WebViewWidget(
+            controller: webviewService.instance.controller,
+          ),
+        ),
+        ConnectButton(
+          serviceStatus: widget.service.status,
+          state: _state,
+          size: widget.size,
+          onTap: () => _onConnectPressed(context),
+        ),
+      ],
     );
   }
 
