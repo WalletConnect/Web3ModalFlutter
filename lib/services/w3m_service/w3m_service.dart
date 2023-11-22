@@ -166,56 +166,53 @@ class W3MService with ChangeNotifier implements IW3MService {
     _initError = null;
     _notify();
 
-    webviewService.instance.onInit = ({bool? error = false}) {
-      debugPrint('[$runtimeType] onInit (error: $error)');
-      _status =
-          error == true ? W3MServiceStatus.error : W3MServiceStatus.initialized;
+    webviewService.instance.onInit = ({bool? error = false}) async {
+      await storageService.instance.init();
+      await networkService.instance.init();
+      await explorerService.instance!.init();
+
+      await expirePreviousInactivePairings();
+
+      _registerListeners();
+
+      try {
+        await _web3App!.init();
+      } catch (e, s) {
+        throw W3MServiceException(e, s);
+      }
+
+      final currentPairings = _web3App!.pairings.getAll();
+      final currentSessions = _web3App!.sessions.getAll();
+
+      // Loop through all the chain data
+      for (final chain in W3MChainPresets.chains.values) {
+        for (final event in EthConstants.allEvents) {
+          web3App?.registerEventHandler(
+            chainId: chain.namespace,
+            event: event,
+          );
+        }
+      }
+
+      if (currentSessions.isNotEmpty) {
+        _setSessionValues(currentSessions.first);
+        // session should not outlive the pairing
+        if (currentPairings.isEmpty) {
+          await disconnect();
+        }
+      }
+
+      // Get the chainId of the chain we are connected to.
+      await _selectChainFromStoredId();
+
+      _status = W3MServiceStatus.initialized;
+      if (error == true) {
+        _status = W3MServiceStatus.error;
+      }
       W3MLoggerUtil.logger.t('[$runtimeType] initialized');
       _notify();
-      webviewService.instance.connectEmail('alfredo@walletconnect.com');
     };
-    webviewService.instance.init();
-    await storageService.instance.init();
-    await networkService.instance.init();
-    await explorerService.instance!.init();
-
-    await expirePreviousInactivePairings();
-
-    _registerListeners();
-
-    try {
-      await _web3App!.init();
-    } catch (e, s) {
-      throw W3MServiceException(e, s);
-    }
-
-    final currentPairings = _web3App!.pairings.getAll();
-    final currentSessions = _web3App!.sessions.getAll();
-
-    // Loop through all the chain data
-    for (final chain in W3MChainPresets.chains.values) {
-      for (final event in EthConstants.allEvents) {
-        web3App?.registerEventHandler(
-          chainId: chain.namespace,
-          event: event,
-        );
-      }
-    }
-
-    if (currentSessions.isNotEmpty) {
-      _setSessionValues(currentSessions.first);
-      // session should not outlive the pairing
-      if (currentPairings.isEmpty) {
-        await disconnect();
-      }
-    }
-
-    // Get the chainId of the chain we are connected to.
-    await _selectChainFromStoredId();
-
-    // _status = W3MServiceStatus.initialized;
-    // W3MLoggerUtil.logger.t('[$runtimeType] initialized');
-    // _notify();
+    webviewService.instance.init(projectId: _projectId);
   }
 
   void _setSessionValues(SessionData sessionData) {

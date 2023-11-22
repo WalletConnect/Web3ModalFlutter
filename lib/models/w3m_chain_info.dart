@@ -14,27 +14,6 @@ class W3MChainInfo with _$W3MChainInfo {
     String? chainIcon,
     W3MBlockExplorer? blockExplorer,
   }) = _W3MChainInfo;
-
-  Map<String, dynamic> toJson() {
-    return {
-      'chainId': '0x${int.parse(chainId).toRadixString(16)}',
-      'chainName': chainName,
-      'nativeCurrency': {
-        'name': tokenName,
-        'symbol': tokenName,
-        'decimals': 18,
-      },
-      'rpcUrls': [
-        rpcUrl,
-      ],
-      'blockExplorers': {
-        'default': {
-          'name': blockExplorer?.name,
-          'url': blockExplorer?.url,
-        },
-      },
-    };
-  }
 }
 
 @freezed
@@ -64,5 +43,28 @@ extension W3MNamespaceExtension on W3MNamespace {
       methods: methods,
       events: events,
     );
+  }
+}
+
+extension W3MChainInfoExtension on W3MChainInfo {
+  Map<String, dynamic> toJson() {
+    return {
+      'chainId': '0x${int.parse(chainId).toRadixString(16)}',
+      'chainName': chainName,
+      'nativeCurrency': {
+        'name': tokenName,
+        'symbol': tokenName,
+        'decimals': 18,
+      },
+      'rpcUrls': [
+        rpcUrl,
+      ],
+      'blockExplorers': {
+        'default': {
+          'name': blockExplorer?.name,
+          'url': blockExplorer?.url,
+        },
+      },
+    };
   }
 }
