@@ -168,8 +168,62 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
                 ),
               ),
             ),
-          );
-        },
+            child: Web3ModalSearchBar(
+              hint: 'Email',
+              iconPath: 'assets/icons/mail.svg',
+              onTextChanged: (value) {
+                debugPrint(value);
+              },
+              onDismissKeyboard: (clear) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+            ),
+          ),
+          _LoginDivider(),
+          ExplorerServiceItemsListener(
+            builder: (context, initialised, items, _) {
+              if (!initialised || items.isEmpty) {
+                return ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: maxHeight),
+                  child: const WalletsList(
+                    isLoading: true,
+                    itemList: [],
+                  ),
+                );
+              }
+              final itemsCount = min(kShortWalletListCount, items.length);
+              final itemsToShow = items.getRange(0, itemsCount);
+              if (itemsCount < kShortWalletListCount && isPortrait) {
+                maxHeight = kListItemHeight * (itemsCount + 1);
+              }
+              return ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: maxHeight),
+                child: WalletsList(
+                  onTapWallet: (data) {
+                    service.selectWallet(data);
+                    widgetStack.instance.push(const ConnectWalletPage());
+                  },
+                  itemList: itemsToShow.toList(),
+                  lastItem: (itemsCount < kShortWalletListCount)
+                      ? null
+                      : AllWalletsItem(
+                          trailing: ValueListenableBuilder<int>(
+                            valueListenable:
+                                explorerService.instance!.totalListings,
+                            builder: (context, value, _) {
+                              return WalletItemChip(value: value.lazyCount);
+                            },
+                          ),
+                          onTap: () {
+                            widgetStack.instance
+                                .push(const WalletsListLongPage());
+                          },
+                        ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -186,6 +240,36 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
     _controller.clear();
     magicService.instance.setEmail('');
     FocusManager.instance.primaryFocus?.unfocus();
+  }
+}
+
+class _LoginDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    final themeData = Web3ModalTheme.getDataOf(context);
+    return Row(
+      children: [
+        Expanded(
+          child: Divider(color: themeColors.grayGlass005, height: 0.0),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+            left: kPadding12,
+            right: kPadding12,
+          ),
+          child: Text(
+            'Or',
+            style: themeData.textStyles.small400.copyWith(
+              color: themeColors.foreground200,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Divider(color: themeColors.grayGlass005, height: 0.0),
+        ),
+      ],
+    );
   }
 }
 
