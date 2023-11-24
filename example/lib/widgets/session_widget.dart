@@ -26,7 +26,11 @@ class SessionWidget extends StatefulWidget {
 class SessionWidgetState extends State<SessionWidget> {
   @override
   Widget build(BuildContext context) {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
+    final allSessions = widget.w3mService.web3App!.sessions.getAll();
+    if (allSessions.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final session = allSessions.first;
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),
       Text(

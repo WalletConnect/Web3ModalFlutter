@@ -68,12 +68,11 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
   }
 
   void _onConnectPressed(BuildContext context) {
-    webviewService.instance.connectEmail('alfredo@walletconnect.com');
-    // if (widget.service.isConnected) {
-    //   widget.service.disconnect();
-    // } else {
-    //   widget.service.openModal(context);
-    // }
+    if (widget.service.isConnected) {
+      widget.service.disconnect();
+    } else {
+      widget.service.openModal(context);
+    }
   }
 
   void _updateState() {

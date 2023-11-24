@@ -33,8 +33,8 @@ class _MyHomePageState extends State<MyHomePage> {
     W3MChainPresets.chains.putIfAbsent('42220', () => _exampleCustomChain);
 
     _w3mService = W3MService(
-      projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
+      projectId: DartDefines.projectId,
       metadata: const PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
@@ -45,6 +45,10 @@ class _MyHomePageState extends State<MyHomePage> {
           universal: 'https://www.walletconnect.com',
         ),
       ),
+      // includedWalletIds: {
+      //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask
+      //   'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a', // Uniswap
+      // },
     );
     await _w3mService.init();
 

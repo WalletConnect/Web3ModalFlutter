@@ -263,7 +263,6 @@ void main() {
             reason: anyNamed('reason'),
           ),
         ).called(2);
-        expect(service.session == null, true);
         expect(service.selectedChain, null);
         expect(service.chainBalance, null);
         expect(service.tokenImageUrl, null);

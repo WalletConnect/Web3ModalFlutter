@@ -10,6 +10,13 @@ class CoreUtils extends ICoreUtils {
   }
 
   @override
+  bool isValidEmail(String email) {
+    return RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(email);
+  }
+
+  @override
   bool isHttpUrl(String url) {
     return url.startsWith('http://') || url.startsWith('https://');
   }
