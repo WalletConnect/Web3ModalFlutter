@@ -29,6 +29,7 @@ class AllWalletsHeader extends StatelessWidget {
             child: Web3ModalSearchBar(
               hint: 'Search wallet',
               iconPath: 'assets/icons/search.svg',
+              initialValue: explorerService.instance!.searchValue,
               onTextChanged: (value) {
                 explorerService.instance!.search(query: value);
               },

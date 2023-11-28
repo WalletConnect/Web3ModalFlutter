@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar_action_button.dart';
+
+final bodyKey = GlobalKey(debugLabel: 'body_key');
 
 class Web3ModalNavbar extends StatelessWidget {
   const Web3ModalNavbar({
@@ -30,6 +33,9 @@ class Web3ModalNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final paddingBottom = ResponsiveData.paddingBottomOf(context);
+    // final dy = bodyKey.globalPaintBounds?.top;
+    // debugPrint('absolute coordinates on screen: $dy');
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -85,10 +91,27 @@ class Web3ModalNavbar extends StatelessWidget {
             left: safeAreaLeft,
             right: safeAreaRight,
             bottom: safeAreaBottom,
-            child: body,
+            child: Container(
+              key: bodyKey,
+              padding: EdgeInsets.only(bottom: paddingBottom),
+              child: body,
+            ),
           ),
         ),
       ],
     );
+  }
+}
+
+extension GlobalKeyExtension on GlobalKey {
+  Rect? get globalPaintBounds {
+    final renderObject = currentContext?.findRenderObject();
+    final translation = renderObject?.getTransformTo(null).getTranslation();
+    if (translation != null && renderObject?.paintBounds != null) {
+      final offset = Offset(translation.x, translation.y);
+      return renderObject!.paintBounds.shift(offset);
+    } else {
+      return null;
+    }
   }
 }

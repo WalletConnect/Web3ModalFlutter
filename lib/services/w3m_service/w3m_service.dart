@@ -10,7 +10,9 @@ import 'package:web3modal_flutter/services/explorer_service/explorer_service.dar
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/services/ledger_service/ledger_service_singleton.dart';
-import 'package:web3modal_flutter/services/webview_service/webview_service.dart';
+import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
+import 'package:web3modal_flutter/services/magic_service/models/magic_session.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_session.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
@@ -57,7 +59,6 @@ class W3MService with ChangeNotifier implements IW3MService {
       _requiredNamespaces.isNotEmpty || _optionalNamespaces.isNotEmpty;
 
   ConnectResponse? connectResponse;
-  Future<SessionData>? get sessionFuture => connectResponse?.session.future;
   @override
   String? get wcUri => connectResponse?.uri.toString();
 
@@ -89,10 +90,6 @@ class W3MService with ChangeNotifier implements IW3MService {
   @override
   bool get isConnected => _isConnected;
 
-  SessionData? _currentSession;
-  @override
-  SessionData? get session => _currentSession;
-
   String? _address;
   @override
   String? get address => _address;
@@ -103,6 +100,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   @override
   final Event<WalletErrorEvent> onWalletConnectionError = Event();
 
+  W3MSession? _currentSession;
   bool _connectingWallet = false;
 
   W3MService({
@@ -116,10 +114,15 @@ class W3MService with ChangeNotifier implements IW3MService {
     Set<String>? excludedWalletIds,
     LogLevel logLevel = LogLevel.nothing,
   }) {
-    if (web3App == null && metadata == null) {
-      throw ArgumentError(
-        'Either a projectId and metadata must be provided or an already created web3App.',
-      );
+    if (web3App == null) {
+      if (projectId == null) {
+        throw ArgumentError(
+          'Either a projectId and metadata must be provided or an already created web3App.',
+        );
+      }
+      if (metadata == null) {
+        throw ArgumentError('Metada is required when using projectId.');
+      }
     }
 
     _web3App = web3App ??
@@ -166,7 +169,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _initError = null;
     _notify();
 
-    webviewService.instance.onInit = ({bool? error = false}) async {
+    magicService.instance.onInit = ({bool? error = false}) async {
       await storageService.instance.init();
       await networkService.instance.init();
       await explorerService.instance!.init();
@@ -195,7 +198,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       }
 
       if (currentSessions.isNotEmpty) {
-        _setSessionValues(currentSessions.first);
+        _setSessionValues(sessionData: currentSessions.first);
         // session should not outlive the pairing
         if (currentPairings.isEmpty) {
           await disconnect();
@@ -212,21 +215,50 @@ class W3MService with ChangeNotifier implements IW3MService {
       W3MLoggerUtil.logger.t('[$runtimeType] initialized');
       _notify();
     };
-    webviewService.instance.init(projectId: _projectId);
+    magicService.instance.onUserConnected = ({userData}) async {
+      if (userData != null) {
+        final chainId = userData.chainId.toString();
+        await selectChain(W3MChainPresets.chains[chainId]!);
+        final ms = MagicSession(jwt: '', pk: '', rt: '', userData: userData);
+        _setSessionValues(magicSession: ms);
+        _notify();
+        if (_isOpen) {
+          closeModal();
+        }
+      }
+    };
+    magicService.instance.onError = ({error}) {
+      toastUtils.instance.show(
+        ToastMessage(type: ToastType.error, text: error),
+      );
+    };
+    magicService.instance.init(projectId: _projectId);
   }
 
-  void _setSessionValues(SessionData sessionData) {
+  void _setSessionValues({
+    SessionData? sessionData,
+    MagicSession? magicSession,
+  }) {
     _isConnected = true;
-    _currentSession = sessionData;
-    if (_currentSession!.namespaces.isNotEmpty) {
-      final accounts = _currentSession!.namespaces.values.first.accounts;
-      if (accounts.isNotEmpty) {
-        _address = NamespaceUtils.getAccount(accounts.first);
+    _currentSession = W3MSession(
+      sessionData: sessionData,
+      magicSession: magicSession,
+    );
+    if (_currentSession!.sessionData != null) {
+      final sessionData = _currentSession!.sessionData!;
+      if (sessionData.namespaces.isNotEmpty) {
+        final accounts = sessionData.namespaces.values.first.accounts;
+        if (accounts.isNotEmpty) {
+          _address = NamespaceUtils.getAccount(accounts.first);
+        } else {
+          W3MLoggerUtil.logger.e('[$runtimeType] empty accounts');
+        }
       } else {
-        W3MLoggerUtil.logger.e('[$runtimeType] empty accounts');
+        W3MLoggerUtil.logger.e('[$runtimeType] empty namespaces');
       }
     } else {
-      W3MLoggerUtil.logger.e('[$runtimeType] empty namespaces');
+      final magicSession = _currentSession!.magicSession;
+      _address = magicSession?.userData.address;
     }
   }
 
@@ -240,7 +272,7 @@ class W3MService with ChangeNotifier implements IW3MService {
         await selectChain(W3MChainPresets.chains[chainId]!);
       } else {
         final chainIds = NamespaceUtils.getChainIdsFromNamespaces(
-          namespaces: _currentSession!.namespaces,
+          namespaces: _currentSession!.sessionData!.namespaces,
         );
         if (chainIds.isNotEmpty) {
           final chainId = (chainIds..sort()).first.split(':')[1];
@@ -259,7 +291,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     if (_currentSession == null) {
       return false;
     }
-    final sessionNamespaces = _currentSession!.namespaces;
+    final sessionNamespaces = _currentSession!.sessionData!.namespaces;
     final nsMethods = sessionNamespaces[EthConstants.namespace]?.methods ?? [];
     final supportsAddChain = nsMethods.contains(EthConstants.walletAddEthChain);
 
@@ -268,7 +300,7 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   bool _sessionHasApprovedChain(String chainId) {
     return NamespaceUtils.getChainIdsFromNamespaces(
-      namespaces: _currentSession!.namespaces,
+      namespaces: _currentSession!.sessionData!.namespaces,
     ).contains(chainId);
   }
 
@@ -326,7 +358,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     if (_currentSession == null) {
       return null;
     }
-    final sessionNamespaces = _currentSession!.namespaces;
+    final sessionNamespaces = _currentSession!.sessionData!.namespaces;
     final accounts = sessionNamespaces[EthConstants.namespace]?.accounts ?? [];
     final approvedChains = NamespaceUtils.getChainsFromAccounts(accounts);
 
@@ -488,7 +520,7 @@ class W3MService with ChangeNotifier implements IW3MService {
 
       if (connectResponse != null) {
         try {
-          await sessionFuture?.timeout(Duration.zero);
+          await connectResponse?.session.future.timeout(Duration.zero);
         } catch (_) {
           // Ignore this error, just wanted to cancel the previous future.
         }
@@ -518,8 +550,8 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
 
     try {
-      _currentSession = await connectResponse!.session.future;
-      _setSessionValues(_currentSession!);
+      final sessionData = await connectResponse!.session.future;
+      _setSessionValues(sessionData: sessionData);
       await explorerService.instance!.storeConnectedWalletData(_selectedWallet);
     } on TimeoutException {
       W3MLoggerUtil.logger
@@ -543,8 +575,9 @@ class W3MService with ChangeNotifier implements IW3MService {
       return;
     }
 
+    final peerMetadata = _currentSession?.sessionData?.peer.metadata;
     W3MLoggerUtil.logger.t(
-      '[$runtimeType] Launching wallet: $sessionWalletRedirect, ${_currentSession?.peer.metadata}',
+      '[$runtimeType] Launching wallet: $sessionWalletRedirect, $peerMetadata',
     );
 
     return await urlUtils.instance.openRedirect(
@@ -572,9 +605,10 @@ class W3MService with ChangeNotifier implements IW3MService {
     _checkInitialized();
 
     // If we don't have a session, disconnect automatically and notify listeners
-    if (_currentSession == null) {
+    if (_currentSession?.sessionData == null) {
       return _cleanSession();
     }
+    _currentSession?.magicSession = null;
 
     // If we want to disconnect all sessions, loop through them and disconnect them
     if (disconnectAllSessions) {
@@ -583,7 +617,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       }
     } else {
       // Disconnect the session
-      await _disconnectSession(_currentSession!);
+      await _disconnectSession(_currentSession!.sessionData!);
     }
   }
 
@@ -712,9 +746,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   /// Returns true if it was able to actually load data (i.e. there is a selected chain and session)
   void _loadAccountData() async {
     // If there is no selected chain or session, stop. No account to load in.
-    if (_currentSelectedChain == null ||
-        _currentSession == null ||
-        _address == null) {
+    if (_currentSelectedChain == null || _address == null) {
       return;
     }
 
@@ -747,7 +779,7 @@ class W3MService with ChangeNotifier implements IW3MService {
         '${EthConstants.namespace}:${_currentSelectedChain!.chainId}';
     return _web3App!
         .request(
-          topic: _currentSession!.topic,
+          topic: _currentSession!.sessionData!.topic,
           chainId: chainId,
           request: SessionRequestParams(
             method: EthConstants.walletSwitchEthChain,
@@ -766,7 +798,7 @@ class W3MService with ChangeNotifier implements IW3MService {
         // Otherwise it meas chain has to be added.
         _web3App!
             .request(
-              topic: _currentSession!.topic,
+              topic: _currentSession!.sessionData!.topic,
               chainId: chainId,
               request: SessionRequestParams(
                 method: EthConstants.walletAddEthChain,
@@ -811,6 +843,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _isConnected = false;
     _address = null;
     _currentSession = null;
+    magicService.instance.setEmail('');
     _notify();
   }
 
@@ -823,7 +856,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   Future<WalletRedirect?> sessionWalletRedirect() async {
-    final metadata = _currentSession?.peer.metadata;
+    final metadata = _currentSession?.sessionData!.peer.metadata;
     final sessionRedirect = metadata?.redirect;
     if (sessionRedirect == null) {
       final walletString = storageService.instance.getString(
@@ -860,7 +893,7 @@ extension _W3MServiceExtension on W3MService {
   @protected
   void onSessionConnect(SessionConnect? args) async {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionConnect: $args');
-    _setSessionValues(args!.session);
+    _setSessionValues(sessionData: args!.session);
     _selectChainFromStoredId();
     _loadAccountData();
     if (_isOpen) {

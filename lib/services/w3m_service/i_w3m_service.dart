@@ -49,9 +49,6 @@ abstract class IW3MService with ChangeNotifier {
   /// This is only available after the [openModal] function is called.
   String? get wcUri;
 
-  /// The current session's data.
-  SessionData? get session;
-
   /// The address of the currently connected account.
   String? get address;
 

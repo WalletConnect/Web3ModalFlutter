@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
@@ -10,14 +10,48 @@ class Web3ModalSearchBar extends StatefulWidget {
   const Web3ModalSearchBar({
     super.key,
     required this.onTextChanged,
+    this.controller,
     this.onDismissKeyboard,
     this.hint = '',
+    this.initialValue = '',
     this.iconPath,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.textAlign,
+    this.textInputType,
+    this.textInputAction,
+    this.onSubmitted,
+    this.autofocus,
+    this.onFocusChange,
+    this.noIcons = false,
+    this.showCursor = true,
+    this.textStyle,
+    this.debounce = true,
+    this.focusNode,
+    this.width,
+    this.inputFormatters,
   });
   final Function(String) onTextChanged;
   final String hint;
   final Function(bool)? onDismissKeyboard;
+  final TextEditingController? controller;
   final String? iconPath;
+  final String initialValue;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
+  final TextAlign? textAlign;
+  final TextInputType? textInputType;
+  final TextInputAction? textInputAction;
+  final Function(String)? onSubmitted;
+  final bool? autofocus;
+  final Function(bool)? onFocusChange;
+  final bool noIcons;
+  final bool showCursor;
+  final TextStyle? textStyle;
+  final bool debounce;
+  final FocusNode? focusNode;
+  final double? width;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<Web3ModalSearchBar> createState() => _Web3ModalSearchBarState();
@@ -25,8 +59,8 @@ class Web3ModalSearchBar extends StatefulWidget {
 
 class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
     with TickerProviderStateMixin {
-  final _controller = TextEditingController();
-  final _focusNode = FocusNode();
+  late final TextEditingController _controller;
+  late final FocusNode _focusNode;
   final _debouncer = Debouncer(milliseconds: 300);
 
   late DecorationTween _decorationTween = DecorationTween(
@@ -62,9 +96,11 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
   @override
   void initState() {
     super.initState();
+    _controller = widget.controller ?? TextEditingController();
+    _focusNode = widget.focusNode ?? FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _setDecoration();
-      _controller.text = explorerService.instance!.searchValue;
+      _controller.text = widget.initialValue;
       _controller.addListener(_updateState);
       _focusNode.addListener(_updateState);
     });
@@ -117,6 +153,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
       _hasFocus = _focusNode.hasFocus;
       _animationController.reverse();
     }
+    widget.onFocusChange?.call(_focusNode.hasFocus);
     setState(() {});
   }
 
@@ -146,58 +183,70 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
       decoration: _decorationTween.animate(_animationController),
       child: Container(
         height: kSearchFieldHeight + 8.0,
+        width: widget.width,
         padding: const EdgeInsets.all(4.0),
         child: TextFormField(
+          keyboardType: widget.textInputType ?? TextInputType.text,
+          textInputAction:
+              widget.textInputAction ?? TextInputAction.unspecified,
+          autofocus: widget.autofocus ?? false,
+          onFieldSubmitted: widget.onSubmitted,
+          onEditingComplete: () {},
           focusNode: _focusNode,
           controller: _controller,
+          inputFormatters: widget.inputFormatters,
           onChanged: (value) {
-            _debouncer.run(() => widget.onTextChanged(value));
+            if (!widget.debounce) {
+              widget.onTextChanged(value);
+            } else {
+              _debouncer.run(() => widget.onTextChanged(value));
+            }
           },
-          onTapOutside: (_) {
-            widget.onDismissKeyboard?.call(false);
-          },
+          onTapOutside: (_) => widget.onDismissKeyboard?.call(false),
           textAlignVertical: TextAlignVertical.center,
-          style: TextStyle(
-            color: themeColors.foreground100,
-          ),
+          textAlign: widget.textAlign ?? TextAlign.left,
+          style:
+              widget.textStyle ?? TextStyle(color: themeColors.foreground100),
           cursorColor: themeColors.accent100,
           enableSuggestions: false,
           autocorrect: false,
           cursorHeight: 16.0,
+          showCursor: widget.showCursor,
           decoration: InputDecoration(
             isDense: true,
-            prefixIcon: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 16.0,
-                  height: 16.0,
-                  margin: const EdgeInsets.only(left: kPadding12),
-                  child: GestureDetector(
-                    onTap: () {
-                      _controller.clear();
-                      widget.onDismissKeyboard?.call(true);
-                    },
-                    child: SvgPicture.asset(
-                      widget.iconPath ?? '',
-                      package: 'web3modal_flutter',
-                      height: 10.0,
-                      width: 10.0,
-                      colorFilter: ColorFilter.mode(
-                        themeColors.foreground275,
-                        BlendMode.srcIn,
+            prefixIcon: widget.prefixIcon ??
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 16.0,
+                      height: 16.0,
+                      margin: const EdgeInsets.only(left: kPadding12),
+                      child: GestureDetector(
+                        onTap: () {
+                          _controller.clear();
+                          widget.onDismissKeyboard?.call(true);
+                        },
+                        child: SvgPicture.asset(
+                          widget.iconPath ?? '',
+                          package: 'web3modal_flutter',
+                          height: 10.0,
+                          width: 10.0,
+                          colorFilter: ColorFilter.mode(
+                            themeColors.foreground275,
+                            BlendMode.srcIn,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-            prefixIconConstraints: const BoxConstraints(
+            prefixIconConstraints: BoxConstraints(
               maxHeight: kSearchFieldHeight,
               minHeight: kSearchFieldHeight,
               maxWidth: 36.0,
-              minWidth: 36.0,
+              minWidth: widget.noIcons ? 0.0 : 36.0,
             ),
             labelStyle: themeData.textStyles.paragraph500.copyWith(
               color: themeColors.inverse100,
@@ -207,39 +256,40 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
               color: themeColors.foreground275,
               height: 1.5,
             ),
-            suffixIcon: _controller.value.text.isNotEmpty || _focusNode.hasFocus
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        width: 18.0,
-                        height: 18.0,
-                        margin: const EdgeInsets.only(right: kPadding12),
-                        child: GestureDetector(
-                          onTap: () {
-                            _controller.clear();
-                            widget.onDismissKeyboard?.call(true);
-                          },
-                          child: SvgPicture.asset(
-                            AssetUtil.getThemedAsset(
-                              context,
-                              'input_cancel.svg',
+            suffixIcon: widget.suffixIcon ??
+                (_controller.value.text.isNotEmpty || _focusNode.hasFocus
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            width: 18.0,
+                            height: 18.0,
+                            margin: const EdgeInsets.only(right: kPadding12),
+                            child: GestureDetector(
+                              onTap: () {
+                                _controller.clear();
+                                widget.onDismissKeyboard?.call(true);
+                              },
+                              child: SvgPicture.asset(
+                                AssetUtil.getThemedAsset(
+                                  context,
+                                  'input_cancel.svg',
+                                ),
+                                package: 'web3modal_flutter',
+                                height: 10.0,
+                                width: 10.0,
+                              ),
                             ),
-                            package: 'web3modal_flutter',
-                            height: 10.0,
-                            width: 10.0,
                           ),
-                        ),
-                      ),
-                    ],
-                  )
-                : null,
-            suffixIconConstraints: const BoxConstraints(
+                        ],
+                      )
+                    : null),
+            suffixIconConstraints: BoxConstraints(
               maxHeight: kSearchFieldHeight,
               minHeight: kSearchFieldHeight,
               maxWidth: 36.0,
-              minWidth: 36.0,
+              minWidth: widget.noIcons ? 0.0 : 36.0,
             ),
             border: unfocusedBorder,
             errorBorder: unfocusedBorder,
@@ -258,8 +308,10 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
 
 // ignore: unused_element
 class _DecoratedInputBorder extends InputBorder {
-  _DecoratedInputBorder({required this.child, required this.shadow})
-      : super(borderSide: child.borderSide);
+  _DecoratedInputBorder({
+    required this.child,
+    required this.shadow,
+  }) : super(borderSide: child.borderSide);
 
   final InputBorder child;
 
