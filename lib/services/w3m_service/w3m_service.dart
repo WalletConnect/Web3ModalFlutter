@@ -114,6 +114,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   @override
   final Event<WalletErrorEvent> onWalletConnectionError = Event();
 
+  W3MSession? _currentSession;
   bool _connectingWallet = false;
 
   W3MService({

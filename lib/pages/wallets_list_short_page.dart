@@ -273,6 +273,82 @@ class _LoginDivider extends StatelessWidget {
   }
 }
 
+class InputEmailWidget extends StatefulWidget {
+  const InputEmailWidget({super.key});
+
+  @override
+  State<InputEmailWidget> createState() => _InputEmailWidgetState();
+}
+
+class _InputEmailWidgetState extends State<InputEmailWidget> {
+  bool hasFocus = false;
+  final _controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    return Web3ModalSearchBar(
+      controller: _controller,
+      hint: 'Email',
+      iconPath: 'assets/icons/mail.svg',
+      textInputType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.go,
+      onSubmitted: _connectEmail,
+      debounce: false,
+      onTextChanged: magicService.instance.setEmail,
+      onFocusChange: (focus) => setState(() => hasFocus = focus),
+      suffixIcon: ValueListenableBuilder<String>(
+        valueListenable: magicService.instance.email,
+        builder: (context, value, _) {
+          if (!hasFocus) {
+            return SizedBox.shrink();
+          }
+          if (value.isEmpty || !coreUtils.instance.isValidEmail(value)) {
+            return GestureDetector(
+              onTap: _clearEmail,
+              child: Padding(
+                padding: const EdgeInsets.all(kPadding8),
+                child: SvgPicture.asset(
+                  AssetUtil.getThemedAsset(context, 'input_cancel.svg'),
+                  package: 'web3modal_flutter',
+                ),
+              ),
+            );
+          }
+          return GestureDetector(
+            onTap: () => _connectEmail(value),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SvgPicture.asset(
+                'assets/icons/chevron_right.svg',
+                package: 'web3modal_flutter',
+                colorFilter: ColorFilter.mode(
+                  themeColors.foreground300,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _connectEmail(String value) {
+    if (value.isEmpty || !coreUtils.instance.isValidEmail(value)) {
+      return;
+    }
+    magicService.instance.connectEmail();
+    widgetStack.instance.push(ConfirmEmailPage());
+  }
+
+  void _clearEmail() {
+    _controller.clear();
+    magicService.instance.setEmail('');
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+}
+
 class _LoginDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
