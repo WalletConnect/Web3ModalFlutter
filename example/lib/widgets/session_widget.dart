@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_session.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -24,17 +25,68 @@ class SessionWidget extends StatefulWidget {
 }
 
 class SessionWidgetState extends State<SessionWidget> {
+  W3MSession? currentSession;
+
+  @override
+  void initState() {
+    super.initState();
+    currentSession = widget.w3mService.currentSession;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final allSessions = widget.w3mService.web3App!.sessions.getAll();
-    if (allSessions.isEmpty) {
+    // TODO magicSession shouldn't be exposed, instead create a wrap object for both kind of sessions
+    final magicSession = currentSession?.magicSession;
+    if (magicSession != null) {
+      final chainId = 'eip155:${magicSession.userData.chainId}';
+      final chainMetadata = getChainMetadataFromChain(chainId);
+      return Container(
+        height: StyleConstants.linear40,
+        width: double.infinity,
+        margin: const EdgeInsets.all(StyleConstants.linear16),
+        child: ElevatedButton(
+          onPressed: () async {
+            final future = callChainMethod(
+              ChainType.eip155,
+              'personal_sign',
+              chainMetadata,
+              magicSession.userData.address,
+              '',
+            );
+            MethodDialog.show(context, 'personal_sign', future);
+          },
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+              chainMetadata.color,
+            ),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  StyleConstants.linear8,
+                ),
+              ),
+            ),
+          ),
+          child: Text(
+            'personal_sign',
+            style:
+                Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+                      color: Web3ModalTheme.colorsOf(context).foreground100,
+                    ),
+          ),
+        ),
+      );
+    }
+
+    final sessionData = currentSession?.sessionData;
+    if (sessionData == null) {
       return const SizedBox.shrink();
     }
-    final session = allSessions.first;
+
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),
       Text(
-        session.peer.metadata.name,
+        sessionData.peer.metadata.name,
         style: Web3ModalTheme.getDataOf(context).textStyles.title600.copyWith(
               color: Web3ModalTheme.colorsOf(context).foreground100,
             ),
@@ -48,7 +100,7 @@ class SessionWidgetState extends State<SessionWidget> {
             ),
       ),
       Text(
-        session.topic,
+        sessionData.topic,
         style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
               color: Web3ModalTheme.colorsOf(context).foreground100,
             ),
@@ -79,7 +131,7 @@ class SessionWidgetState extends State<SessionWidget> {
     final List<String> namespaceAccounts = [];
 
     // Loop through the namespaces, and get the accounts
-    for (final namespace in session.namespaces.values) {
+    for (final namespace in sessionData.namespaces.values) {
       namespaceAccounts.addAll(namespace.accounts);
     }
 
@@ -181,11 +233,13 @@ class SessionWidgetState extends State<SessionWidget> {
           margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
           child: ElevatedButton(
             onPressed: () async {
+              final sessionTopic = currentSession?.sessionData?.topic ?? '';
               final future = callChainMethod(
                 chainMetadata.type,
                 method,
                 chainMetadata,
                 address,
+                sessionTopic,
               );
               MethodDialog.show(context, method, future);
               widget.launchRedirect();
@@ -220,8 +274,8 @@ class SessionWidgetState extends State<SessionWidget> {
   }
 
   List<Widget> _buildChainApprovedMethodsTiles() {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
-    final approvedMethods = session.namespaces['eip155']?.methods ?? [];
+    final session = currentSession?.sessionData;
+    final approvedMethods = session?.namespaces['eip155']?.methods ?? [];
     List<Widget> children = [];
 
     children.addAll([
@@ -307,13 +361,13 @@ class SessionWidgetState extends State<SessionWidget> {
     String method,
     ChainMetadata chainMetadata,
     String address,
+    String sessionTopic,
   ) {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
     switch (type) {
       case ChainType.eip155:
         return EIP155.callMethod(
           w3mService: widget.w3mService,
-          topic: session.topic,
+          topic: sessionTopic,
           method: method.toEip155Method()!,
           chainId: chainMetadata.w3mChainInfo.namespace,
           address: address.toLowerCase(),

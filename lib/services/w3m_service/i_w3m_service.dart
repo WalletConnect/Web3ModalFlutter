@@ -1,6 +1,7 @@
 import 'package:event/event.dart';
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
+import 'package:web3modal_flutter/services/w3m_service/w3m_session.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 enum W3MServiceStatus {
@@ -22,6 +23,12 @@ class W3MServiceException implements Exception {
 class WalletErrorEvent implements EventArgs {
   final String message;
   WalletErrorEvent(this.message);
+}
+
+enum W3MConnectionService {
+  wc,
+  magic,
+  unknown,
 }
 
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
@@ -52,6 +59,8 @@ abstract class IW3MService with ChangeNotifier {
   /// The address of the currently connected account.
   String? get address;
 
+  W3MSession? get currentSession;
+
   /// Returns the url of the token of the currently selected chain.
   /// Pass this into a [Image.network] and it will load the token image.
   String? get tokenImageUrl;
@@ -68,6 +77,8 @@ abstract class IW3MService with ChangeNotifier {
 
   /// The currently selected wallet.
   W3MWalletInfo? get selectedWallet;
+
+  W3MConnectionService get connectionService;
 
   /// Sets the [selectedChain] and gets the [chainBalance].
   /// If the wallet is already connected, it will request the chain to be changed and will update the session with the new chain.
@@ -124,6 +135,12 @@ abstract class IW3MService with ChangeNotifier {
   /// Disconnects the session and pairing, if any.
   /// If there is no session, this does nothing.
   Future<void> disconnect({bool disconnectAllSessions = true});
+
+  Future<dynamic> request({
+    required String topic,
+    required String chainId,
+    required SessionRequestParams request,
+  });
 
   @override
   void dispose();

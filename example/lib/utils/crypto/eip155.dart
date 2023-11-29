@@ -134,7 +134,7 @@ class EIP155 {
     required String address,
     required String data,
   }) async {
-    return await w3mService.web3App!.request(
+    return await w3mService.request(
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(
@@ -151,7 +151,7 @@ class EIP155 {
     required String address,
     required String data,
   }) async {
-    return await w3mService.web3App!.request(
+    return await w3mService.request(
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(
@@ -182,7 +182,7 @@ class EIP155 {
       parameters: [EthereumAddress.fromHex(ContractDetails.balanceAddress)],
     );
 
-    return await w3mService.web3App!.request(
+    return await w3mService.request(
       topic: topic,
       chainId: ethChain.namespace,
       request: SessionRequestParams(
@@ -201,7 +201,7 @@ class EIP155 {
     required String chainId,
     required EthereumTransaction transaction,
   }) async {
-    return await w3mService.web3App!.request(
+    return await w3mService.request(
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(

@@ -493,6 +493,11 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValue: _i17.W3MServiceStatus.idle,
       ) as _i17.W3MServiceStatus);
   @override
+  _i17.W3MConnectionService get connectionService => (super.noSuchMethod(
+        Invocation.getter(#connectionService),
+        returnValue: _i17.W3MConnectionService.wc,
+      ) as _i17.W3MConnectionService);
+  @override
   bool get hasNamespaces => (super.noSuchMethod(
         Invocation.getter(#hasNamespaces),
         returnValue: false,
@@ -642,14 +647,6 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  void dispose() => super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
   _i14.Future<_i15.WalletRedirect?> sessionWalletRedirect() =>
       (super.noSuchMethod(
         Invocation.method(
@@ -658,6 +655,32 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         ),
         returnValue: _i14.Future<_i15.WalletRedirect?>.value(),
       ) as _i14.Future<_i15.WalletRedirect?>);
+  @override
+  _i14.Future<dynamic> request({
+    String? topic,
+    String? chainId,
+    required _i4.SessionRequestParams? request,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #request,
+          [],
+          {
+            #topic: topic,
+            #chainId: chainId,
+            #request: request,
+          },
+        ),
+        returnValue: _i14.Future<dynamic>.value(),
+      ) as _i14.Future<dynamic>);
+  @override
+  void dispose() => super.noSuchMethod(
+        Invocation.method(
+          #dispose,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
   @override
   void addListener(_i18.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(

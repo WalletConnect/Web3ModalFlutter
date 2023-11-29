@@ -107,6 +107,10 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                     onTap: () {
                       widgetStack.instance.push(SelectNetworkPage(
                         onTapNetwork: (W3MChainInfo chainInfo) {
+                          // TODO
+                          // magicService.instance.switchNetowrk(
+                          //   chainId: chainInfo.chainId,
+                          // );
                           _service?.selectChain(chainInfo, switchChain: true);
                           widgetStack.instance.pop();
                         },

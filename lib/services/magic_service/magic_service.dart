@@ -24,8 +24,9 @@ class MagicService {
   static const _frameError = '{type: \'@w3m-frame/ERROR\'}';
   static const _htmlString = '<html><body></body></html>';
 
-  late WebViewController _webViewController;
+  MagicUserData? _currentUser;
 
+  late WebViewController _webViewController;
   WebViewController get controller => _webViewController;
 
   void Function({bool error})? onInit;
@@ -65,7 +66,7 @@ class MagicService {
         ),
       )
       ..addJavaScriptChannel(
-        'w3mwebview',
+        'w3mWebview',
         onMessageReceived: _onMessageReceived,
       )
       ..setOnConsoleMessage(_onDebugConsoleReceived)
@@ -119,12 +120,34 @@ class MagicService {
 
   void _onUserConnected({Map<String, dynamic>? payload}) {
     try {
-      final userData = MagicUserData.fromJson(payload ?? {});
-      onUserConnected?.call(userData: userData);
+      _currentUser = MagicUserData.fromJson(payload ?? {});
+      onUserConnected?.call(userData: _currentUser);
     } catch (e) {
       onError?.call(error: e);
     }
   }
+
+  Future<void> getChainId() async {
+    await _webViewController.runJavaScript('getChainId()');
+  }
+
+  Future<void> switchNetowrk({required String chainId}) async {
+    debugPrint('switchNetowrk($chainId)');
+    final cid = int.parse(chainId);
+    await _webViewController.runJavaScript('switchNetowrk($cid)');
+  }
+
+  Future<void> request({required Map<String, dynamic> body}) async {
+    await _webViewController.runJavaScript('request(\'${jsonEncode(body)}\')');
+  }
+
+  // Future<void> personalSign({required String message}) async {
+  //   Map<String, dynamic> body = {
+  //     'params': [message, _currentUser!.address],
+  //     'method': 'personal_sign',
+  //   };
+  //   return request(body: body);
+  // }
 
   Future<void> disconnectUser() async {
     await _webViewController.runJavaScript('disconnect()');
@@ -139,26 +162,46 @@ class MagicService {
 
       const checkConnected = async () => {
         // await provider.isConnected();
-        window.w3mwebview.postMessage(JSON.stringify($_initialized))
+        window.w3mWebview.postMessage(JSON.stringify($_initialized))
       }
 
       const connectEmail = async (email) => {
+        console.log('connectEmail(' + email + ')')
         await provider.connectEmail({ email })
       }
 
       const connectDevice = async () => {
+        console.log('connectDevice()')
         await provider.connectDevice()
       }
 
       const connectOtp = async (otp) => {
+        console.log('connectOtp(' + otp + ')')
         await provider.connectOtp({ otp })
       }
 
       const connect = async () => {
+        console.log('connect()')
         await provider.connect()
       }
 
+      const getChainId = async () => {
+        console.log('getChainId()')
+        await provider.getChainId()
+      }
+
+      const switchNetowrk = async (chainId) => {
+        console.log('switchNetowrk(' + chainId + ')')
+        await provider.switchNetowrk({ chainId })
+      }
+
+      const request = async (req) => {
+        console.log('request(' + req + ')')
+        await provider.request({ req })
+      }
+
       const disconnect = async () => {
+        console.log('disconnect()')
         await provider.disconnect()
       }
 
@@ -168,22 +211,15 @@ class MagicService {
       document.body.appendChild(iframeO)
 
       iframeO.onload = () => {
-        window.w3mwebview.postMessage(JSON.stringify($_frameLoaded))
+        window.w3mWebview.postMessage(JSON.stringify($_frameLoaded))
 
         window.addEventListener('message', ({ data }) => {
-          window.w3mwebview.postMessage(JSON.stringify(data))
-
-          if ('indexedDB' in window) {
-            console.log('IndexedDB is available.');
-            window.indexedDB.databases().then(r => console.log(r))
-          } else {
-            console.log('IndexedDB is not available.');
-          }
+          window.w3mWebview.postMessage(JSON.stringify(data))
         })
       }
 
       iframeO.onerror = () => {
-        window.w3mwebview.postMessage(JSON.stringify($_frameError))
+        window.w3mWebview.postMessage(JSON.stringify($_frameError))
       }
     ''');
   }
