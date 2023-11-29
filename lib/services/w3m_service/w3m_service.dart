@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
-// import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
+import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
@@ -150,9 +150,9 @@ class W3MService with ChangeNotifier implements IW3MService {
       projectId: _projectId,
     );
 
-    // coinbaseService.instance = CoinbaseService(
-    //   metadata: _web3App.metadata,
-    // );
+    coinbaseService.instance = CoinbaseService(
+      metadata: _web3App.metadata,
+    );
 
     W3MLoggerUtil.setLogLevel(logLevel);
   }
@@ -178,7 +178,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     await storageService.instance.init();
     await networkService.instance.init();
     await explorerService.instance.init();
-    // await coinbaseService.instance.init();
+    await coinbaseService.instance.init();
 
     await expirePreviousInactivePairings();
 

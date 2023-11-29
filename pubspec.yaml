@@ -9,6 +9,7 @@ environment:
 dependencies:
   appcheck: ^1.0.6
   cached_network_image: ^3.3.0
+  coinbase_wallet_sdk: ^1.0.6
   collection: ^1.17.2
   cupertino_icons: ^1.0.2
   custom_sliding_segmented_control: ^1.8.1
