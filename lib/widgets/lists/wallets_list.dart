@@ -12,13 +12,13 @@ class WalletsList extends StatelessWidget {
     super.key,
     required this.itemList,
     this.firstItem,
-    this.lastItem,
+    this.bottomItems = const [],
     this.onTapWallet,
     this.isLoading = false,
   });
   final List<GridItem<W3MWalletInfo>> itemList;
   final Widget? firstItem;
-  final Widget? lastItem;
+  final List<Widget> bottomItems;
   final Function(W3MWalletInfo walletInfo)? onTapWallet;
   final bool isLoading;
 
@@ -55,8 +55,8 @@ class WalletsList extends StatelessWidget {
     if (firstItem != null) {
       items.insert(0, firstItem!);
     }
-    if (lastItem != null) {
-      items.add(lastItem!);
+    if (bottomItems.isNotEmpty) {
+      items.addAll(bottomItems);
     }
 
     return ListView.separated(
@@ -66,7 +66,7 @@ class WalletsList extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         return SizedBox(
-          height: kListItemHeight,
+          // height: kListItemHeight,
           width: 1000.0,
           child: items[index],
         );

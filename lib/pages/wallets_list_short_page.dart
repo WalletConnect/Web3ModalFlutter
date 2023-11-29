@@ -60,6 +60,8 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
           if (itemsCount < kShortWalletListCount && isPortrait) {
             maxHeight = kListItemHeight * (itemsCount + 1);
           }
+          // if coinbaseEnabled
+          // maxHeight += kListItemHeight;
           return ConstrainedBox(
             constraints: BoxConstraints(maxHeight: maxHeight),
             child: WalletsList(
@@ -68,20 +70,28 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
                 widgetStack.instance.push(const ConnectWalletPage());
               },
               itemList: itemsToShow.toList(),
-              lastItem: (itemsCount < kShortWalletListCount)
-                  ? null
-                  : AllWalletsItem(
-                      trailing: ValueListenableBuilder<int>(
-                        valueListenable:
-                            explorerService.instance!.totalListings,
-                        builder: (context, value, _) {
-                          return WalletItemChip(value: value.lazyCount);
+              bottomItems: (itemsCount < kShortWalletListCount)
+                  ? []
+                  : [
+                      // CoinbaseListItem(
+                      //   onTap: () {
+                      //     coinbaseService.instance.getAccount();
+                      //   },
+                      // ),
+                      AllWalletsItem(
+                        trailing: ValueListenableBuilder<int>(
+                          valueListenable:
+                              explorerService.instance.totalListings,
+                          builder: (context, value, _) {
+                            return WalletItemChip(value: value.lazyCount);
+                          },
+                        ),
+                        onTap: () {
+                          widgetStack.instance
+                              .push(const WalletsListLongPage());
                         },
                       ),
-                      onTap: () {
-                        widgetStack.instance.push(const WalletsListLongPage());
-                      },
-                    ),
+                    ],
             ),
           );
         },
