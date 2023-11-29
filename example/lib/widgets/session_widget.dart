@@ -87,7 +87,7 @@ class SessionWidgetState extends State<SessionWidget> {
     if (allSessions.isEmpty) {
       return const SizedBox.shrink();
     }
-    final session = allSessions.first;
+
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),
       Text(
