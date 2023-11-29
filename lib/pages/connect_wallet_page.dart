@@ -55,7 +55,8 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       final isOpen = _service?.isOpen ?? false;
-      if (isOpen && _service?.session != null) {
+      final isConnected = _service?.isConnected ?? false;
+      if (isOpen && isConnected) {
         _service?.closeModal();
       }
     }

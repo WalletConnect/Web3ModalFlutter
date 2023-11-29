@@ -508,6 +508,80 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValue: false,
       ) as bool);
   @override
+  _i3.Event<_i4.AuthResponse> get onAuthResponseEvent => (super.noSuchMethod(
+        Invocation.getter(#onAuthResponseEvent),
+        returnValue: _FakeEvent_1<_i4.AuthResponse>(
+          this,
+          Invocation.getter(#onAuthResponseEvent),
+        ),
+      ) as _i3.Event<_i4.AuthResponse>);
+  @override
+  _i3.Event<_i4.SessionProposalEvent> get onProposalExpireEvent =>
+      (super.noSuchMethod(
+        Invocation.getter(#onProposalExpireEvent),
+        returnValue: _FakeEvent_1<_i4.SessionProposalEvent>(
+          this,
+          Invocation.getter(#onProposalExpireEvent),
+        ),
+      ) as _i3.Event<_i4.SessionProposalEvent>);
+  @override
+  _i3.Event<_i4.SessionConnect> get onSessionConnectEvent =>
+      (super.noSuchMethod(
+        Invocation.getter(#onSessionConnectEvent),
+        returnValue: _FakeEvent_1<_i4.SessionConnect>(
+          this,
+          Invocation.getter(#onSessionConnectEvent),
+        ),
+      ) as _i3.Event<_i4.SessionConnect>);
+  @override
+  _i3.Event<_i4.SessionDelete> get onSessionDeleteEvent => (super.noSuchMethod(
+        Invocation.getter(#onSessionDeleteEvent),
+        returnValue: _FakeEvent_1<_i4.SessionDelete>(
+          this,
+          Invocation.getter(#onSessionDeleteEvent),
+        ),
+      ) as _i3.Event<_i4.SessionDelete>);
+  @override
+  _i3.Event<_i4.SessionEvent> get onSessionEventEvent => (super.noSuchMethod(
+        Invocation.getter(#onSessionEventEvent),
+        returnValue: _FakeEvent_1<_i4.SessionEvent>(
+          this,
+          Invocation.getter(#onSessionEventEvent),
+        ),
+      ) as _i3.Event<_i4.SessionEvent>);
+  @override
+  _i3.Event<_i4.SessionExpire> get onSessionExpireEvent => (super.noSuchMethod(
+        Invocation.getter(#onSessionExpireEvent),
+        returnValue: _FakeEvent_1<_i4.SessionExpire>(
+          this,
+          Invocation.getter(#onSessionExpireEvent),
+        ),
+      ) as _i3.Event<_i4.SessionExpire>);
+  @override
+  _i3.Event<_i4.SessionExtend> get onSessionExtendEvent => (super.noSuchMethod(
+        Invocation.getter(#onSessionExtendEvent),
+        returnValue: _FakeEvent_1<_i4.SessionExtend>(
+          this,
+          Invocation.getter(#onSessionExtendEvent),
+        ),
+      ) as _i3.Event<_i4.SessionExtend>);
+  @override
+  _i3.Event<_i4.SessionPing> get onSessionPingEvent => (super.noSuchMethod(
+        Invocation.getter(#onSessionPingEvent),
+        returnValue: _FakeEvent_1<_i4.SessionPing>(
+          this,
+          Invocation.getter(#onSessionPingEvent),
+        ),
+      ) as _i3.Event<_i4.SessionPing>);
+  @override
+  _i3.Event<_i4.SessionUpdate> get onSessionUpdateEvent => (super.noSuchMethod(
+        Invocation.getter(#onSessionUpdateEvent),
+        returnValue: _FakeEvent_1<_i4.SessionUpdate>(
+          this,
+          Invocation.getter(#onSessionUpdateEvent),
+        ),
+      ) as _i3.Event<_i4.SessionUpdate>);
+  @override
   bool get hasListeners => (super.noSuchMethod(
         Invocation.getter(#hasListeners),
         returnValue: false,
@@ -642,13 +716,23 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  void dispose() => super.noSuchMethod(
+  _i14.Future<dynamic> request({
+    required String? topic,
+    required String? chainId,
+    required _i4.SessionRequestParams? request,
+  }) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #dispose,
+          #request,
           [],
+          {
+            #topic: topic,
+            #chainId: chainId,
+            #request: request,
+          },
         ),
-        returnValueForMissingStub: null,
-      );
+        returnValue: _i14.Future<dynamic>.value(),
+      ) as _i14.Future<dynamic>);
   @override
   _i14.Future<_i15.WalletRedirect?> sessionWalletRedirect() =>
       (super.noSuchMethod(
@@ -658,6 +742,14 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         ),
         returnValue: _i14.Future<_i15.WalletRedirect?>.value(),
       ) as _i14.Future<_i15.WalletRedirect?>);
+  @override
+  void dispose() => super.noSuchMethod(
+        Invocation.method(
+          #dispose,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
   @override
   void addListener(_i18.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(

@@ -26,7 +26,7 @@ class SessionWidget extends StatefulWidget {
 class SessionWidgetState extends State<SessionWidget> {
   @override
   Widget build(BuildContext context) {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
+    final session = widget.w3mService.session!;
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),
       Text(
@@ -216,7 +216,7 @@ class SessionWidgetState extends State<SessionWidget> {
   }
 
   List<Widget> _buildChainApprovedMethodsTiles() {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
+    final session = widget.w3mService.session!;
     final approvedMethods = session.namespaces['eip155']?.methods ?? [];
     List<Widget> children = [];
 
@@ -304,7 +304,7 @@ class SessionWidgetState extends State<SessionWidget> {
     ChainMetadata chainMetadata,
     String address,
   ) {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
+    final session = widget.w3mService.session!;
     switch (type) {
       case ChainType.eip155:
         return EIP155.callMethod(

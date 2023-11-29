@@ -53,18 +53,18 @@ class _MyHomePageState extends State<MyHomePage> {
     // _w3mService.selectChain(W3MChainPresets.chains['137']);
 
     _w3mService.addListener(_serviceListener);
-    _w3mService.web3App?.onSessionEvent.subscribe(_onSessionEvent);
-    _w3mService.web3App?.onSessionConnect.subscribe(_onSessionConnect);
-    _w3mService.web3App?.onSessionDelete.subscribe(_onSessionDelete);
+    _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
+    _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
+    _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
 
     setState(() => _initialized = true);
   }
 
   @override
   void dispose() {
-    _w3mService.web3App?.onSessionEvent.unsubscribe(_onSessionEvent);
-    _w3mService.web3App?.onSessionConnect.unsubscribe(_onSessionConnect);
-    _w3mService.web3App?.onSessionDelete.unsubscribe(_onSessionDelete);
+    _w3mService.onSessionEventEvent.unsubscribe(_onSessionEvent);
+    _w3mService.onSessionConnectEvent.unsubscribe(_onSessionConnect);
+    _w3mService.onSessionDeleteEvent.unsubscribe(_onSessionDelete);
     super.dispose();
   }
 

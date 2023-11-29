@@ -45,3 +45,28 @@ extension W3MNamespaceExtension on W3MNamespace {
     );
   }
 }
+
+extension W3MChainInfoExtension on W3MChainInfo {
+  String get chainHexId => '0x${int.parse(chainId).toRadixString(16)}';
+
+  Map<String, dynamic> toJson() {
+    return {
+      'chainId': chainHexId,
+      'chainName': chainName,
+      'nativeCurrency': {
+        'name': tokenName,
+        'symbol': tokenName,
+        'decimals': 18,
+      },
+      'rpcUrls': [
+        rpcUrl,
+      ],
+      'blockExplorers': {
+        'default': {
+          'name': blockExplorer?.name,
+          'url': blockExplorer?.url,
+        },
+      },
+    };
+  }
+}

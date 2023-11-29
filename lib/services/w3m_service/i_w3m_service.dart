@@ -128,6 +128,24 @@ abstract class IW3MService with ChangeNotifier {
   /// If there is no session, this does nothing.
   Future<void> disconnect({bool disconnectAllSessions = true});
 
+  Future<dynamic> request({
+    required String topic,
+    required String chainId,
+    required SessionRequestParams request,
+  });
+
   @override
   void dispose();
+
+  abstract final Event<SessionConnect> onSessionConnectEvent;
+  abstract final Event<SessionDelete> onSessionDeleteEvent;
+  abstract final Event<SessionExpire> onSessionExpireEvent;
+  abstract final Event<SessionPing> onSessionPingEvent;
+  abstract final Event<SessionProposalEvent> onProposalExpireEvent;
+
+  abstract final Event<SessionUpdate> onSessionUpdateEvent;
+  abstract final Event<SessionExtend> onSessionExtendEvent;
+  abstract final Event<SessionEvent> onSessionEventEvent;
+
+  abstract final Event<AuthResponse> onAuthResponseEvent;
 }
