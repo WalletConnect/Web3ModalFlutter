@@ -90,7 +90,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     final selectedWallet = _service!.selectedWallet;
     final walletName = selectedWallet?.listing.name ?? 'Wallet';
     final imageId = selectedWallet?.listing.imageId ?? '';
-    final imageUrl = explorerService.instance!.getWalletImageUrl(imageId);
+    final imageUrl = explorerService.instance.getWalletImageUrl(imageId);
     //
     return Web3ModalNavbar(
       title: walletName,

@@ -45,14 +45,14 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
   }
 
   Future<void> _paginate() {
-    setState(() => _paginating = explorerService.instance!.canPaginate);
-    return explorerService.instance!.paginate();
+    setState(() => _paginating = explorerService.instance.canPaginate);
+    return explorerService.instance.paginate();
   }
 
   @override
   Widget build(BuildContext context) {
     final service = Web3ModalProvider.of(context).service;
-    final totalListings = explorerService.instance!.totalListings.value;
+    final totalListings = explorerService.instance.totalListings.value;
     final rows = (totalListings / 4.0).ceil();
     final maxHeight = (rows * kGridItemHeight) +
         (kPadding16 * 2.0) +
@@ -67,7 +67,7 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
       ),
       onBack: () {
         FocusManager.instance.primaryFocus?.unfocus();
-        explorerService.instance!.search(query: null);
+        explorerService.instance.search(query: null);
         widgetStack.instance.pop();
       },
       safeAreaBottom: false,

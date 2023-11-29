@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
+// import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
@@ -149,6 +150,10 @@ class W3MService with ChangeNotifier implements IW3MService {
       projectId: _projectId,
     );
 
+    // coinbaseService.instance = CoinbaseService(
+    //   metadata: _web3App.metadata,
+    // );
+
     W3MLoggerUtil.setLogLevel(logLevel);
   }
 
@@ -172,7 +177,8 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     await storageService.instance.init();
     await networkService.instance.init();
-    await explorerService.instance!.init();
+    await explorerService.instance.init();
+    // await coinbaseService.instance.init();
 
     await expirePreviousInactivePairings();
 
@@ -354,7 +360,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       return chainInfo.chainIcon!;
     }
     final chainImageId = AssetUtil.getChainIconId(chainInfo.chainId);
-    return explorerService.instance!.getAssetImageUrl(chainImageId);
+    return explorerService.instance.getAssetImageUrl(chainImageId);
   }
 
   @override
@@ -368,7 +374,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _isOpen = true;
 
     // Reset the explorer
-    explorerService.instance!.search(query: null);
+    explorerService.instance.search(query: null);
     widgetStack.instance.clear();
 
     _context = context;
@@ -518,7 +524,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     try {
       _currentSession = await connectResponse!.session.future;
       _setSessionValues(_currentSession!);
-      await explorerService.instance!.storeConnectedWalletData(_selectedWallet);
+      await explorerService.instance.storeConnectedWalletData(_selectedWallet);
     } on TimeoutException {
       W3MLoggerUtil.logger
           .i('[$runtimeType] Rebuilding session, ending future');
@@ -637,7 +643,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     final listing = _selectedWallet?.listing;
     if (listing == null) return null;
 
-    return explorerService.instance?.getWalletRedirect(listing);
+    return explorerService.instance.getWalletRedirect(listing);
   }
 
   Future<WalletRedirect?> sessionWalletRedirect() async {
@@ -649,10 +655,10 @@ class W3MService with ChangeNotifier implements IW3MService {
       );
       if ((walletString ?? '').isNotEmpty) {
         final walletInfo = W3MWalletInfo.fromJson(jsonDecode(walletString!));
-        return explorerService.instance!.getWalletRedirect(walletInfo.listing);
+        return explorerService.instance.getWalletRedirect(walletInfo.listing);
       }
 
-      return await explorerService.instance?.tryWalletRedirectByName(
+      return await explorerService.instance.tryWalletRedirectByName(
         metadata?.name,
       );
     }
@@ -792,38 +798,36 @@ class W3MService with ChangeNotifier implements IW3MService {
     final topic = _currentSession!.topic;
     final currentChainId =
         '${EthConstants.namespace}:${_currentSelectedChain!.chainId}';
-    return _web3App
-        .request(
-          topic: topic,
-          chainId: currentChainId,
-          request: SessionRequestParams(
-            method: EthConstants.walletSwitchEthChain,
-            params: [
-              {'chainId': newChain.chainHexId}
-            ],
-          ),
-        )
-        .then((_) => _setEthChain(newChain))
-        .catchError(
+    return request(
+      topic: topic,
+      chainId: currentChainId,
+      request: SessionRequestParams(
+        method: EthConstants.walletSwitchEthChain,
+        params: [
+          {'chainId': newChain.chainHexId}
+        ],
+      ),
+    ).then((_) {
+      _setEthChain(newChain);
+    }).catchError(
       (e, s) {
         // if request errors due to user rejection then set the previous chain
         if (_isUserRejectedError(e)) {
           _setEthChain(_currentSelectedChain!);
         }
         // Otherwise it meas chain has to be added.
-        _web3App
-            .request(
-              topic: topic,
-              chainId: currentChainId,
-              request: SessionRequestParams(
-                method: EthConstants.walletAddEthChain,
-                params: [
-                  newChain.toJson(),
-                ],
-              ),
-            )
-            .then((_) => _setEthChain(newChain))
-            .catchError((_) => _setEthChain(_currentSelectedChain!));
+        request(
+          topic: topic,
+          chainId: currentChainId,
+          request: SessionRequestParams(
+            method: EthConstants.walletAddEthChain,
+            params: [newChain.toJson()],
+          ),
+        ).then((_) {
+          _setEthChain(newChain);
+        }).catchError((_) {
+          _setEthChain(_currentSelectedChain!);
+        });
       },
     );
   }
