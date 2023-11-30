@@ -20,6 +20,11 @@ class Web3ModalTheme extends InheritedWidget {
     return result!;
   }
 
+  static bool isCustomTheme(BuildContext context) {
+    final Web3ModalTheme? theme = maybeOf(context);
+    return theme?.themeData != null;
+  }
+
   static Web3ModalTheme? maybeOf(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<Web3ModalTheme>();
   }

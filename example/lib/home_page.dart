@@ -118,10 +118,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           );
         }
+        final isCustom = Web3ModalTheme.isCustomTheme(context);
         return SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Text('Custom theme is: ${isCustom ? 'ON' : 'OFF'}'),
               _ButtonsView(w3mService: _w3mService),
               const Divider(height: 0.0),
               _ConnectedView(w3mService: _w3mService)
