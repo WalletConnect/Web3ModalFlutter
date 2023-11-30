@@ -299,6 +299,7 @@ class ExplorerService implements IExplorerService {
         search: _currentSearchValue,
         include: include,
         exclude: exclude,
+        platform: _getPlatformType(),
       ),
       updateCount: false,
     );

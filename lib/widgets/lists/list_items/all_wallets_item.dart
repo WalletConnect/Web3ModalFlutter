@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
-import 'package:web3modal_flutter/utils/asset_util.dart';
+import 'package:web3modal_flutter/widgets/icons/themed_icon.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/base_list_item.dart';
 
 class AllWalletsItem extends StatelessWidget {
@@ -25,13 +24,10 @@ class AllWalletsItem extends StatelessWidget {
       child: Row(
         children: [
           LayoutBuilder(
-            builder: (context, constraints) {
-              return AspectRatio(
-                aspectRatio: 1.0,
-                child: SvgPicture.asset(
-                  AssetUtil.getThemedAsset(context, 'all_wallets_button.svg'),
-                  package: 'web3modal_flutter',
-                ),
+            builder: (_, constraints) {
+              return ThemedIcon(
+                iconPath: 'assets/icons/dots.svg',
+                size: constraints.maxHeight,
               );
             },
           ),

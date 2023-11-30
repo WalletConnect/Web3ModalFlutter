@@ -35,6 +35,10 @@ SPEC REPOS:
   trunk:
     - FMDB
 
+SPEC REPOS:
+  trunk:
+    - FMDB
+
 EXTERNAL SOURCES:
   appcheck:
     :path: ".symlinks/plugins/appcheck/ios"

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:qr_flutter_wc/qr_flutter_wc.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
@@ -22,6 +24,7 @@ class QRCodeWidget extends StatelessWidget {
     final isPortrait = ResponsiveData.isPortrait(context);
     final isDarkMode = Web3ModalTheme.maybeOf(context)?.isDarkMode ?? false;
     final imageSize = isPortrait ? 90.0 : 60.0;
+    final maxRadius = min(radiuses.radiusL, 36.0);
     return Container(
       constraints: BoxConstraints(
         maxWidth: isPortrait
@@ -30,7 +33,7 @@ class QRCodeWidget extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.white : Colors.transparent,
-        borderRadius: BorderRadius.circular(radiuses.radiusL),
+        borderRadius: BorderRadius.circular(maxRadius),
       ),
       padding: const EdgeInsets.all(20.0),
       child: AspectRatio(

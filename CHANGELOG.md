@@ -1,3 +1,7 @@
+## 3.0.1
+
+- UI fixes and custom theming enhancements
+
 ## 3.0.1-beta02
 
 - Added new method `getApprovedChains()`

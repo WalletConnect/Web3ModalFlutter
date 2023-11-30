@@ -78,13 +78,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ? Web3ModalThemeData(
               lightColors: Web3ModalColors.lightMode.copyWith(
                 accent100: Colors.red,
-                background125: Colors.yellow.shade300,
+                background100: const Color.fromARGB(255, 187, 234, 255),
+                background125: const Color.fromARGB(255, 187, 234, 255),
               ),
               darkColors: Web3ModalColors.darkMode.copyWith(
-                accent100: Colors.green,
-                background125: Colors.brown,
+                accent100: Colors.orange,
+                background100: const Color.fromARGB(255, 36, 0, 120),
+                background125: const Color.fromARGB(255, 36, 0, 120),
               ),
-              radiuses: Web3ModalRadiuses.square,
+              radiuses: Web3ModalRadiuses.circular,
             )
           : null;
     });

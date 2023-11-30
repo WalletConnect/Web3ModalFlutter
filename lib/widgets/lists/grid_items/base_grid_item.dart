@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
@@ -17,8 +19,10 @@ class BaseGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
+    final maxRadius = min(radiuses.radiusXS, 32.0);
     return FilledButton(
       onPressed: onTap,
+      clipBehavior: Clip.antiAlias,
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all<Size>(
           const Size(kGridItemWidth, kGridItemHeight),
@@ -31,7 +35,7 @@ class BaseGridItem extends StatelessWidget {
         ),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiuses.radiusXS),
+            borderRadius: BorderRadius.circular(maxRadius),
           ),
         ),
         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
