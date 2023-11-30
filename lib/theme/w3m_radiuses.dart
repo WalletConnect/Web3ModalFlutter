@@ -25,6 +25,17 @@ class Web3ModalRadiuses with _$Web3ModalRadiuses {
     radiusL: 0.0,
     radius3XL: 0.0,
   );
+
+  static const circular = Web3ModalRadiuses(
+    radius4XS: 100.0,
+    radius3XS: 100.0,
+    radius2XS: 100.0,
+    radiusXS: 100.0,
+    radiusS: 100.0,
+    radiusM: 100.0,
+    radiusL: 100.0,
+    radius3XL: 100.0,
+  );
 }
 
 extension Web3ModalRadiusesExtension on Web3ModalRadiuses {
@@ -37,5 +48,16 @@ extension Web3ModalRadiusesExtension on Web3ModalRadiuses {
         radiusM == 0.0 &&
         radiusL == 0.0 &&
         radius3XL == 0.0;
+  }
+
+  bool isCircular() {
+    return radius4XS == 100.0 &&
+        radius3XS == 100.0 &&
+        radius2XS == 100.0 &&
+        radiusXS == 100.0 &&
+        radiusS == 100.0 &&
+        radiusM == 100.0 &&
+        radiusL == 100.0 &&
+        radius3XL == 100.0;
   }
 }

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import 'package:web3modal_flutter/pages/qr_code_page.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
-import 'package:web3modal_flutter/utils/asset_util.dart';
-import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
+import 'package:web3modal_flutter/widgets/icons/themed_icon.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/searchbar.dart';
+import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 
 class AllWalletsHeader extends StatelessWidget {
   const AllWalletsHeader({super.key});
@@ -15,12 +13,7 @@ class AllWalletsHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.transparent,
-      padding: const EdgeInsets.only(
-        left: kPadding8,
-        top: kPadding8,
-        bottom: kPadding8,
-        right: kPadding12,
-      ),
+      padding: const EdgeInsets.all(kPadding8),
       child: Row(
         children: [
           Expanded(
@@ -38,17 +31,14 @@ class AllWalletsHeader extends StatelessWidget {
             ),
           ),
           const SizedBox.square(dimension: kPadding8),
-          GestureDetector(
-            onTap: () {
+          ThemedButton(
+            size: kSearchFieldHeight,
+            iconPath: 'assets/icons/code.svg',
+            onPressed: () {
               widgetStack.instance.push(const QRCodePage());
             },
-            child: SvgPicture.asset(
-              AssetUtil.getThemedAsset(context, 'code_button.svg'),
-              package: 'web3modal_flutter',
-              height: kSearchFieldHeight,
-              width: kSearchFieldHeight,
-            ),
           ),
+          const SizedBox.square(dimension: 2.0),
         ],
       ),
     );

@@ -51,8 +51,8 @@ class WalletGridItem extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(
               top: kPadding6,
-              left: 4.0,
-              right: 4.0,
+              left: kPadding8,
+              right: kPadding8,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -62,7 +62,10 @@ class WalletGridItem extends StatelessWidget {
                   title,
                   textAlign: TextAlign.center,
                   maxLines: 1,
-                  overflow: TextOverflow.clip,
+                  overflow: radiuses.isCircular()
+                      ? TextOverflow.fade
+                      : TextOverflow.ellipsis,
+                  softWrap: !radiuses.isCircular(),
                   style: themeData.textStyles.tiny500.copyWith(
                     color: isSelected
                         ? themeColors.accent100

@@ -143,8 +143,8 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
     return DecoratedBoxTransition(
       decoration: _decorationTween.animate(_animationController),
       child: Container(
-        height: kSearchFieldHeight + 8.0,
-        padding: const EdgeInsets.all(4.0),
+        height: kSearchFieldHeight + 6.0,
+        padding: const EdgeInsets.all(3.0),
         child: TextFormField(
           focusNode: _focusNode,
           controller: _controller,
