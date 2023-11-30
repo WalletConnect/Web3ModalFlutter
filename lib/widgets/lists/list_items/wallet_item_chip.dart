@@ -17,11 +17,10 @@ class WalletItemChip extends StatelessWidget {
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
-    final borderRadius = radiuses.isSquare() ? 0.0 : 5.0;
     return Container(
       decoration: BoxDecoration(
         color: color ?? themeColors.grayGlass010,
-        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+        borderRadius: BorderRadius.all(Radius.circular(radiuses.radius4XS)),
       ),
       padding: const EdgeInsets.all(5.0),
       margin: const EdgeInsets.only(right: 8.0),

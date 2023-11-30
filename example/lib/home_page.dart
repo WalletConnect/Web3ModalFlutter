@@ -87,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final isSquare = Web3ModalTheme.radiusesOf(context).isSquare();
+    final isCircular = Web3ModalTheme.radiusesOf(context).isCircular();
     return Scaffold(
       backgroundColor: Web3ModalTheme.colorsOf(context).background300,
       appBar: AppBar(
@@ -96,9 +97,9 @@ class _MyHomePageState extends State<MyHomePage> {
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
         actions: [
           IconButton(
-            icon: isSquare
-                ? const Icon(Icons.yard_outlined)
-                : const Icon(Icons.yard),
+            icon: isSquare || isCircular
+                ? const Icon(Icons.yard)
+                : const Icon(Icons.yard_outlined),
             onPressed: widget.changeTheme,
           ),
           IconButton(

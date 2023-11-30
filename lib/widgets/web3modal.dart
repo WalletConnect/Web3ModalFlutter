@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
@@ -54,16 +56,17 @@ class _Web3ModalState extends State<Web3Modal> {
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final bool bottomSheet = platformUtils.instance.isBottomSheet();
+    final maxRadius = min(radiuses.radiusM, 36.0);
     final BorderRadius innerContainerBorderRadius = bottomSheet
         ? BorderRadius.only(
-            topLeft: Radius.circular(radiuses.radiusM),
-            topRight: Radius.circular(radiuses.radiusM),
+            topLeft: Radius.circular(maxRadius),
+            topRight: Radius.circular(maxRadius),
           )
         : BorderRadius.only(
-            topLeft: Radius.circular(radiuses.radiusM),
-            topRight: Radius.circular(radiuses.radiusM),
-            bottomLeft: Radius.circular(radiuses.radiusM),
-            bottomRight: Radius.circular(radiuses.radiusM),
+            topLeft: Radius.circular(maxRadius),
+            topRight: Radius.circular(maxRadius),
+            bottomLeft: Radius.circular(maxRadius),
+            bottomRight: Radius.circular(maxRadius),
           );
 
     return ResponsiveContainer(
