@@ -19,9 +19,17 @@ class MagicServiceSingleton {
 class MagicService {
   static const _url =
       'https://secure-web3modal-git-preview-3-walletconnect1.vercel.app/sdk';
+  static const _url2 = 'http://192.168.0.83:3010/sdk';
+  //
+  static const _packageUrl =
+      'https://esm.sh/@web3modal/smart-account@3.4.0-e3959a31';
+  static const _packageUrl2 =
+      'https://esm.sh/@web3modal/smart-account@3.4.0-7c9b36dd';
+  //
   static const _initialized = '{type: \'@w3m-app/INITIALIZED\'}';
   static const _frameLoaded = '{type: \'@w3m-app/FRAME_LOADED\'}';
   static const _frameError = '{type: \'@w3m-frame/ERROR\'}';
+  //
   static const _htmlString = '<html><body></body></html>';
 
   MagicUserData? _currentUser;
@@ -156,7 +164,7 @@ class MagicService {
   Future<void> _runJavascript(String projectId) async {
     await _webViewController.runJavaScript('''
       let provider;
-      import('https://esm.sh/@web3modal/smart-account@3.4.0-e3959a31').then((package) => {
+      import('$_packageUrl').then((package) => {
         provider = new package.W3mFrameProvider('$projectId')
       });
 
