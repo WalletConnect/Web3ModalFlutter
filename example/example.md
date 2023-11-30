@@ -1,4 +1,7 @@
 ```dart
+///
+/// For a more complete example please refer to the /example folder
+///
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 

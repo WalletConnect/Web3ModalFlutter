@@ -74,21 +74,22 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void _changeTheme() {
     setState(() {
-      _themeData = (_themeData == null)
-          ? Web3ModalThemeData(
-              lightColors: Web3ModalColors.lightMode.copyWith(
-                accent100: Colors.red,
-                background100: const Color.fromARGB(255, 187, 234, 255),
-                background125: const Color.fromARGB(255, 187, 234, 255),
-              ),
-              darkColors: Web3ModalColors.darkMode.copyWith(
-                accent100: Colors.orange,
-                background100: const Color.fromARGB(255, 36, 0, 120),
-                background125: const Color.fromARGB(255, 36, 0, 120),
-              ),
-              radiuses: Web3ModalRadiuses.circular,
-            )
-          : null;
+      // Uncomment this to see Theme changing
+      // _themeData = (_themeData == null)
+      //     ? Web3ModalThemeData(
+      //         lightColors: Web3ModalColors.lightMode.copyWith(
+      //           accent100: Colors.red,
+      //           background100: const Color.fromARGB(255, 187, 234, 255),
+      //           background125: const Color.fromARGB(255, 187, 234, 255),
+      //         ),
+      //         darkColors: Web3ModalColors.darkMode.copyWith(
+      //           accent100: Colors.orange,
+      //           background100: const Color.fromARGB(255, 36, 0, 120),
+      //           background125: const Color.fromARGB(255, 36, 0, 120),
+      //         ),
+      //         radiuses: Web3ModalRadiuses.circular,
+      //       )
+      //     : null;
     });
   }
 }
