@@ -32,7 +32,7 @@ import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
 /// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
-class W3MService with ChangeNotifier implements IW3MService {
+class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   var _projectId = '';
 
   BuildContext? _context;
@@ -150,10 +150,6 @@ class W3MService with ChangeNotifier implements IW3MService {
       projectId: _projectId,
     );
 
-    coinbaseService.instance = CoinbaseService(
-      metadata: _web3App.metadata,
-    );
-
     W3MLoggerUtil.setLogLevel(logLevel);
   }
 
@@ -178,7 +174,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     await storageService.instance.init();
     await networkService.instance.init();
     await explorerService.instance.init();
-    await coinbaseService.instance.init();
+    await initCoinbase(metadata: _web3App.metadata);
 
     await expirePreviousInactivePairings();
 
@@ -434,6 +430,14 @@ class W3MService with ChangeNotifier implements IW3MService {
         await _web3App.core.expirer.expire(pairing.topic);
       }
     }
+  }
+
+  @override
+  Future<void> connectCoinbaseWallet() async {
+    _checkInitialized();
+
+    final account = await getCoinbaseAccount();
+    debugPrint('coinbase account ${account?.toJson()}');
   }
 
   @override

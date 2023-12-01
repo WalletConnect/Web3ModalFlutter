@@ -16,23 +16,23 @@ class CoinbaseServiceSingleton {
 }
 
 abstract class ICoinbaseService {
-  Future<void> init();
-  Future<Account?> getAccount();
-  Future<String> personalSign();
-  Future<bool> resetSession();
+  Future<void> initCoinbase({required PairingMetadata metadata});
+  Future<Account?> getCoinbaseAccount();
+  // Future<String> personalSign();
+  Future<bool> resetCoinbaseSession();
 }
 
 class CoinbaseService implements ICoinbaseService {
-  late final PairingMetadata _metadata;
-  CoinbaseService({required PairingMetadata metadata}) : _metadata = metadata;
-
+  // late final PairingMetadata _metadata;
+  // CoinbaseService({required PairingMetadata metadata}) : _metadata = metadata;
+  @protected
   @override
-  Future<void> init() async {
+  Future<void> initCoinbase({required PairingMetadata metadata}) async {
     // Reset previous session
     // await CoinbaseWalletSDK.shared.resetSession();
     // Configure SDK for each platform
-    final universal = _metadata.redirect?.universal ?? _metadata.url;
-    final nativeLink = _metadata.redirect?.native ?? '';
+    final universal = metadata.redirect?.universal ?? metadata.url;
+    final nativeLink = metadata.redirect?.native ?? '';
     if (universal.isNotEmpty && nativeLink.isNotEmpty) {
       final config = Configuration(
         ios: IOSConfiguration(
@@ -50,8 +50,9 @@ class CoinbaseService implements ICoinbaseService {
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
+  @protected
   @override
-  Future<Account?> getAccount() async {
+  Future<Account?> getCoinbaseAccount() async {
     try {
       final results = await CoinbaseWalletSDK.shared.initiateHandshake([
         const RequestAccounts(),
@@ -63,33 +64,32 @@ class CoinbaseService implements ICoinbaseService {
     }
   }
 
-  @override
-  Future<String> personalSign() async {
-    return '';
-    // String message = 'Hello, world!';
-    // String signed = '';
-    // try {
-    //   final request = Request(
-    //     actions: [
-    //       PersonalSign(
-    //         address: addy,
-    //         message: message,
-    //       ),
-    //     ],
-    //   );
-    //   final results = await CoinbaseWalletSDK.shared.makeRequest(request);
-    //   signed = results[0].value ?? '<no signature>';
-    // } catch (e) {
-    //   if (kDebugMode) {
-    //     print(e);
-    //   }
-    // }
+  // @override
+  // Future<String> personalSign() async {
+  //   String message = 'Hello, world!';
+  //   String signed = '';
+  //   try {
+  //     final request = Request(
+  //       actions: [
+  //         PersonalSign(
+  //           address: addy,
+  //           message: message,
+  //         ),
+  //       ],
+  //     );
+  //     final results = await CoinbaseWalletSDK.shared.makeRequest(request);
+  //     signed = results[0].value ?? '<no signature>';
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print(e);
+  //     }
+  //   }
 
-    // return signed;
-  }
+  //   return signed;
+  // }
 
   @override
-  Future<bool> resetSession() async {
+  Future<bool> resetCoinbaseSession() async {
     try {
       await CoinbaseWalletSDK.shared.resetSession();
       return true;

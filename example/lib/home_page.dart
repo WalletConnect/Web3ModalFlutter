@@ -39,11 +39,11 @@ class _MyHomePageState extends State<MyHomePage> {
       metadata: const PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
-        url: 'https://www.walletconnect.com/',
+        url: 'https://web3modal.com/',
         icons: ['https://web3modal.com/images/rpc-illustration.png'],
         redirect: Redirect(
-          native: 'flutterdapp://',
-          universal: 'https://www.walletconnect.com',
+          native: 'web3modalflutter://',
+          universal: 'https://web3modal.com',
         ),
       ),
     );

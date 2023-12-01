@@ -1,5 +1,6 @@
 import 'package:event/event.dart';
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -26,7 +27,7 @@ class WalletErrorEvent implements EventArgs {
 
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
 /// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
-abstract class IW3MService with ChangeNotifier {
+abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// Whether or not this object has been initialized.
   W3MServiceStatus get status;
 
@@ -106,6 +107,8 @@ abstract class IW3MService with ChangeNotifier {
 
   /// When users rejects connection or an error occurs this will event
   final Event<WalletErrorEvent> onWalletConnectionError = Event();
+
+  Future<void> connectCoinbaseWallet();
 
   /// Connects the [selectedWallet] previously selected
   Future<void> connectSelectedWallet({bool inBrowser = false});

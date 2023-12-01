@@ -18,7 +18,6 @@ import 'package:web3modal_flutter/widgets/navigation/navbar_action_button.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
-import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/coinbase_list_item.dart';
 
 class WalletsListShortPage extends StatefulWidget {
@@ -78,7 +77,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
                   : [
                       CoinbaseListItem(
                         onTap: () {
-                          coinbaseService.instance.getAccount();
+                          service.connectCoinbaseWallet();
                         },
                       ),
                       AllWalletsItem(

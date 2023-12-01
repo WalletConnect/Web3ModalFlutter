@@ -25,6 +25,8 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>com.web3modal.flutterExample</string>
 			<key>CFBundleURLSchemes</key>
