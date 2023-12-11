@@ -29,7 +29,7 @@ jobs:
       env:
         PROJECT_ID: ${{ secrets.PROJECT_ID }}
       # run: echo $PROJECT_ID
-      run: flutter build ipa --dart-define='PROJECT_ID=$PROJECT_ID' --release;
+      run: echo pwd;flutter build ipa --dart-define=PROJECT_ID=$PROJECT_ID --release;
     - name: Deploying with fastlane
       shell: bash
       run: cd ios;fastlane beta;
