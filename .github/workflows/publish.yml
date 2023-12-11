@@ -9,7 +9,7 @@ jobs:
     name: Publish to pub.dev
     permissions:
       id-token: write
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       # Checkout the repo
@@ -19,7 +19,8 @@ jobs:
       - name: Install and set Flutter version
         uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
+          flutter-version: '3.16.0'
+          channel: 'stable'
 
       # Setup Dart SDK
       - uses: dart-lang/setup-dart@v1
@@ -27,14 +28,14 @@ jobs:
       # Generates package files
       - name: Generate files
         shell: bash
-        run: flutter pub get
+        run: flutter pub get -v
       - shell: bash
-        run: flutter pub run build_runner build --delete-conflicting-outputs
+        run: flutter pub run build_runner build --delete-conflicting-outputs -v
 
       # Publish
       - name: Check Publish Warnings
         shell: bash
-        run: flutter pub publish --dry-run
+        run: flutter pub publish --dry-run -v
       # - name: Publish Package
       #   shell: bash
       #   run: flutter pub publish -f

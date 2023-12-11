@@ -11,7 +11,7 @@ final bodyKey = GlobalKey(debugLabel: 'body_key');
 
 class Web3ModalNavbar extends StatelessWidget {
   const Web3ModalNavbar({
-    Key? key,
+    super.key,
     this.onBack,
     this.onTapTitle,
     required this.body,
@@ -20,7 +20,7 @@ class Web3ModalNavbar extends StatelessWidget {
     this.safeAreaLeft = false,
     this.safeAreaRight = false,
     this.safeAreaBottom = true,
-  }) : super(key: key);
+  });
 
   final VoidCallback? onBack;
   final VoidCallback? onTapTitle;
