@@ -8,14 +8,14 @@ part of 'w3m_wallet_info.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_W3MWalletInfo _$$_W3MWalletInfoFromJson(Map<String, dynamic> json) =>
-    _$_W3MWalletInfo(
+_$W3MWalletInfoImpl _$$W3MWalletInfoImplFromJson(Map<String, dynamic> json) =>
+    _$W3MWalletInfoImpl(
       listing: Listing.fromJson(json['listing']),
       installed: json['installed'] as bool,
       recent: json['recent'] as bool,
     );
 
-Map<String, dynamic> _$$_W3MWalletInfoToJson(_$_W3MWalletInfo instance) =>
+Map<String, dynamic> _$$W3MWalletInfoImplToJson(_$W3MWalletInfoImpl instance) =>
     <String, dynamic>{
       'listing': instance.listing.toJson(),
       'installed': instance.installed,

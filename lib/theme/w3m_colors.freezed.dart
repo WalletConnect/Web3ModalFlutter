@@ -275,11 +275,11 @@ class _$Web3ModalColorsCopyWithImpl<$Res, $Val extends Web3ModalColors>
 }
 
 /// @nodoc
-abstract class _$$_Web3ModalColorsCopyWith<$Res>
+abstract class _$$Web3ModalColorsImplCopyWith<$Res>
     implements $Web3ModalColorsCopyWith<$Res> {
-  factory _$$_Web3ModalColorsCopyWith(
-          _$_Web3ModalColors value, $Res Function(_$_Web3ModalColors) then) =
-      __$$_Web3ModalColorsCopyWithImpl<$Res>;
+  factory _$$Web3ModalColorsImplCopyWith(_$Web3ModalColorsImpl value,
+          $Res Function(_$Web3ModalColorsImpl) then) =
+      __$$Web3ModalColorsImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -318,11 +318,11 @@ abstract class _$$_Web3ModalColorsCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_Web3ModalColorsCopyWithImpl<$Res>
-    extends _$Web3ModalColorsCopyWithImpl<$Res, _$_Web3ModalColors>
-    implements _$$_Web3ModalColorsCopyWith<$Res> {
-  __$$_Web3ModalColorsCopyWithImpl(
-      _$_Web3ModalColors _value, $Res Function(_$_Web3ModalColors) _then)
+class __$$Web3ModalColorsImplCopyWithImpl<$Res>
+    extends _$Web3ModalColorsCopyWithImpl<$Res, _$Web3ModalColorsImpl>
+    implements _$$Web3ModalColorsImplCopyWith<$Res> {
+  __$$Web3ModalColorsImplCopyWithImpl(
+      _$Web3ModalColorsImpl _value, $Res Function(_$Web3ModalColorsImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -361,7 +361,7 @@ class __$$_Web3ModalColorsCopyWithImpl<$Res>
     Object? purple100 = null,
     Object? yellow100 = null,
   }) {
-    return _then(_$_Web3ModalColors(
+    return _then(_$Web3ModalColorsImpl(
       accent100: null == accent100
           ? _value.accent100
           : accent100 // ignore: cast_nullable_to_non_nullable
@@ -496,8 +496,8 @@ class __$$_Web3ModalColorsCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Web3ModalColors implements _Web3ModalColors {
-  const _$_Web3ModalColors(
+class _$Web3ModalColorsImpl implements _Web3ModalColors {
+  const _$Web3ModalColorsImpl(
       {required this.accent100,
       required this.accent090,
       required this.accent080,
@@ -609,7 +609,7 @@ class _$_Web3ModalColors implements _Web3ModalColors {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Web3ModalColors &&
+            other is _$Web3ModalColorsImpl &&
             (identical(other.accent100, accent100) ||
                 other.accent100 == accent100) &&
             (identical(other.accent090, accent090) ||
@@ -715,8 +715,9 @@ class _$_Web3ModalColors implements _Web3ModalColors {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_Web3ModalColorsCopyWith<_$_Web3ModalColors> get copyWith =>
-      __$$_Web3ModalColorsCopyWithImpl<_$_Web3ModalColors>(this, _$identity);
+  _$$Web3ModalColorsImplCopyWith<_$Web3ModalColorsImpl> get copyWith =>
+      __$$Web3ModalColorsImplCopyWithImpl<_$Web3ModalColorsImpl>(
+          this, _$identity);
 }
 
 abstract class _Web3ModalColors implements Web3ModalColors {
@@ -752,7 +753,7 @@ abstract class _Web3ModalColors implements Web3ModalColors {
       required final Color indigo100,
       required final Color orange100,
       required final Color purple100,
-      required final Color yellow100}) = _$_Web3ModalColors;
+      required final Color yellow100}) = _$Web3ModalColorsImpl;
 
   @override
   Color get accent100;
@@ -820,6 +821,6 @@ abstract class _Web3ModalColors implements Web3ModalColors {
   Color get yellow100;
   @override
   @JsonKey(ignore: true)
-  _$$_Web3ModalColorsCopyWith<_$_Web3ModalColors> get copyWith =>
+  _$$Web3ModalColorsImplCopyWith<_$Web3ModalColorsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
