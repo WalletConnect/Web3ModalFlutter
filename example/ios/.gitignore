@@ -33,9 +33,6 @@ Runner/GeneratedPluginRegistrant.*
 !default.pbxuser
 !default.perspectivev3
 
-# Fastlane
-fastlane/.env*
-# fastlane/Appfile
 
 *.zip
 *.ipa
