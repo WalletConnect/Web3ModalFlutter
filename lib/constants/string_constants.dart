@@ -1,8 +1,12 @@
+import 'package:web3modal_flutter/version.dart';
+// ignore: implementation_imports
+import 'package:walletconnect_flutter_v2/src/version.dart' as wcfv2;
+
 class StringConstants {
   // Request Headers
   static const X_SDK_TYPE = 'w3m';
-  static const X_SDK_VERSION = '3.0.1';
-  static const X_CORE_SDK_VERSION = 'flutter_v2.1.10';
+  static const X_SDK_VERSION = packageVersion;
+  static const X_CORE_SDK_VERSION = 'flutter_${wcfv2.packageVersion}';
 
   // UI
   static const String selectNetwork = 'Select network';

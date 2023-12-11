@@ -1,8 +1,8 @@
-import 'package:json_annotation/json_annotation.dart';
+// import 'package:json_annotation/json_annotation.dart';
 
-part 'ethereum_transaction.g.dart';
+// part 'ethereum_transaction.g.dart';
 
-@JsonSerializable(includeIfNull: false)
+// @JsonSerializable(includeIfNull: false)
 class EthereumTransaction {
   final String from;
   final String to;
@@ -28,10 +28,39 @@ class EthereumTransaction {
     this.data,
   });
 
-  factory EthereumTransaction.fromJson(Map<String, dynamic> json) =>
-      _$EthereumTransactionFromJson(json);
+  // factory EthereumTransaction.fromJson(Map<String, dynamic> json) {
+  //   return EthereumTransaction(from: from, to: to, value: value,);
+  // }
 
-  Map<String, dynamic> toJson() => _$EthereumTransactionToJson(this);
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = {
+      'from': from,
+      'to': to,
+      'value': value,
+    };
+    if (nonce != null) {
+      json['nonce'] = nonce;
+    }
+    if (gasPrice != null) {
+      json['gasPrice'] = gasPrice;
+    }
+    if (maxFeePerGas != null) {
+      json['maxFeePerGas'] = maxFeePerGas;
+    }
+    if (maxPriorityFeePerGas != null) {
+      json['maxPriorityFeePerGas'] = maxPriorityFeePerGas;
+    }
+    if (gas != null) {
+      json['gas'] = gas;
+    }
+    if (gasLimit != null) {
+      json['gasLimit'] = gasLimit;
+    }
+    if (data != null) {
+      json['data'] = data;
+    }
+    return json;
+  }
 
   @override
   String toString() {
