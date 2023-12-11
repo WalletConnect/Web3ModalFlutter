@@ -28,14 +28,23 @@ jobs:
       # Generates package files
       - name: Generate files
         shell: bash
-        run: flutter pub get -v
+        run: flutter pub get
       - shell: bash
-        run: flutter pub run build_runner build --delete-conflicting-outputs -v
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      # Generates example app files
+      - shell: bash
+        run: cd example
+      - shell: bash
+        run: flutter pub get
+      - shell: bash
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - shell: bash
+        run: cd ..
 
       # Publish
       - name: Check Publish Warnings
         shell: bash
-        run: flutter pub publish --dry-run -v
+        run: flutter pub publish --dry-run
       # - name: Publish Package
       #   shell: bash
       #   run: flutter pub publish -f
