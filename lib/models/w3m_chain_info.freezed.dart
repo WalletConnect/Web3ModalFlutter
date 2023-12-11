@@ -114,11 +114,11 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
 }
 
 /// @nodoc
-abstract class _$$_W3MChainInfoCopyWith<$Res>
+abstract class _$$W3MChainInfoImplCopyWith<$Res>
     implements $W3MChainInfoCopyWith<$Res> {
-  factory _$$_W3MChainInfoCopyWith(
-          _$_W3MChainInfo value, $Res Function(_$_W3MChainInfo) then) =
-      __$$_W3MChainInfoCopyWithImpl<$Res>;
+  factory _$$W3MChainInfoImplCopyWith(
+          _$W3MChainInfoImpl value, $Res Function(_$W3MChainInfoImpl) then) =
+      __$$W3MChainInfoImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -135,11 +135,11 @@ abstract class _$$_W3MChainInfoCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_W3MChainInfoCopyWithImpl<$Res>
-    extends _$W3MChainInfoCopyWithImpl<$Res, _$_W3MChainInfo>
-    implements _$$_W3MChainInfoCopyWith<$Res> {
-  __$$_W3MChainInfoCopyWithImpl(
-      _$_W3MChainInfo _value, $Res Function(_$_W3MChainInfo) _then)
+class __$$W3MChainInfoImplCopyWithImpl<$Res>
+    extends _$W3MChainInfoCopyWithImpl<$Res, _$W3MChainInfoImpl>
+    implements _$$W3MChainInfoImplCopyWith<$Res> {
+  __$$W3MChainInfoImplCopyWithImpl(
+      _$W3MChainInfoImpl _value, $Res Function(_$W3MChainInfoImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -153,7 +153,7 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
     Object? chainIcon = freezed,
     Object? blockExplorer = freezed,
   }) {
-    return _then(_$_W3MChainInfo(
+    return _then(_$W3MChainInfoImpl(
       chainName: null == chainName
           ? _value.chainName
           : chainName // ignore: cast_nullable_to_non_nullable
@@ -188,8 +188,8 @@ class __$$_W3MChainInfoCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_W3MChainInfo implements _W3MChainInfo {
-  _$_W3MChainInfo(
+class _$W3MChainInfoImpl implements _W3MChainInfo {
+  _$W3MChainInfoImpl(
       {required this.chainName,
       required this.chainId,
       required this.namespace,
@@ -222,7 +222,7 @@ class _$_W3MChainInfo implements _W3MChainInfo {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_W3MChainInfo &&
+            other is _$W3MChainInfoImpl &&
             (identical(other.chainName, chainName) ||
                 other.chainName == chainName) &&
             (identical(other.chainId, chainId) || other.chainId == chainId) &&
@@ -244,8 +244,8 @@ class _$_W3MChainInfo implements _W3MChainInfo {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_W3MChainInfoCopyWith<_$_W3MChainInfo> get copyWith =>
-      __$$_W3MChainInfoCopyWithImpl<_$_W3MChainInfo>(this, _$identity);
+  _$$W3MChainInfoImplCopyWith<_$W3MChainInfoImpl> get copyWith =>
+      __$$W3MChainInfoImplCopyWithImpl<_$W3MChainInfoImpl>(this, _$identity);
 }
 
 abstract class _W3MChainInfo implements W3MChainInfo {
@@ -256,7 +256,7 @@ abstract class _W3MChainInfo implements W3MChainInfo {
       required final String tokenName,
       required final String rpcUrl,
       final String? chainIcon,
-      final W3MBlockExplorer? blockExplorer}) = _$_W3MChainInfo;
+      final W3MBlockExplorer? blockExplorer}) = _$W3MChainInfoImpl;
 
   @override
   String get chainName;
@@ -274,7 +274,7 @@ abstract class _W3MChainInfo implements W3MChainInfo {
   W3MBlockExplorer? get blockExplorer;
   @override
   @JsonKey(ignore: true)
-  _$$_W3MChainInfoCopyWith<_$_W3MChainInfo> get copyWith =>
+  _$$W3MChainInfoImplCopyWith<_$W3MChainInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -327,22 +327,22 @@ class _$W3MBlockExplorerCopyWithImpl<$Res, $Val extends W3MBlockExplorer>
 }
 
 /// @nodoc
-abstract class _$$_W3MBlockExplorerCopyWith<$Res>
+abstract class _$$W3MBlockExplorerImplCopyWith<$Res>
     implements $W3MBlockExplorerCopyWith<$Res> {
-  factory _$$_W3MBlockExplorerCopyWith(
-          _$_W3MBlockExplorer value, $Res Function(_$_W3MBlockExplorer) then) =
-      __$$_W3MBlockExplorerCopyWithImpl<$Res>;
+  factory _$$W3MBlockExplorerImplCopyWith(_$W3MBlockExplorerImpl value,
+          $Res Function(_$W3MBlockExplorerImpl) then) =
+      __$$W3MBlockExplorerImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String name, String url});
 }
 
 /// @nodoc
-class __$$_W3MBlockExplorerCopyWithImpl<$Res>
-    extends _$W3MBlockExplorerCopyWithImpl<$Res, _$_W3MBlockExplorer>
-    implements _$$_W3MBlockExplorerCopyWith<$Res> {
-  __$$_W3MBlockExplorerCopyWithImpl(
-      _$_W3MBlockExplorer _value, $Res Function(_$_W3MBlockExplorer) _then)
+class __$$W3MBlockExplorerImplCopyWithImpl<$Res>
+    extends _$W3MBlockExplorerCopyWithImpl<$Res, _$W3MBlockExplorerImpl>
+    implements _$$W3MBlockExplorerImplCopyWith<$Res> {
+  __$$W3MBlockExplorerImplCopyWithImpl(_$W3MBlockExplorerImpl _value,
+      $Res Function(_$W3MBlockExplorerImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -351,7 +351,7 @@ class __$$_W3MBlockExplorerCopyWithImpl<$Res>
     Object? name = null,
     Object? url = null,
   }) {
-    return _then(_$_W3MBlockExplorer(
+    return _then(_$W3MBlockExplorerImpl(
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -366,8 +366,8 @@ class __$$_W3MBlockExplorerCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_W3MBlockExplorer implements _W3MBlockExplorer {
-  _$_W3MBlockExplorer({required this.name, required this.url});
+class _$W3MBlockExplorerImpl implements _W3MBlockExplorer {
+  _$W3MBlockExplorerImpl({required this.name, required this.url});
 
   @override
   final String name;
@@ -383,7 +383,7 @@ class _$_W3MBlockExplorer implements _W3MBlockExplorer {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_W3MBlockExplorer &&
+            other is _$W3MBlockExplorerImpl &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.url, url) || other.url == url));
   }
@@ -394,14 +394,15 @@ class _$_W3MBlockExplorer implements _W3MBlockExplorer {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_W3MBlockExplorerCopyWith<_$_W3MBlockExplorer> get copyWith =>
-      __$$_W3MBlockExplorerCopyWithImpl<_$_W3MBlockExplorer>(this, _$identity);
+  _$$W3MBlockExplorerImplCopyWith<_$W3MBlockExplorerImpl> get copyWith =>
+      __$$W3MBlockExplorerImplCopyWithImpl<_$W3MBlockExplorerImpl>(
+          this, _$identity);
 }
 
 abstract class _W3MBlockExplorer implements W3MBlockExplorer {
   factory _W3MBlockExplorer(
       {required final String name,
-      required final String url}) = _$_W3MBlockExplorer;
+      required final String url}) = _$W3MBlockExplorerImpl;
 
   @override
   String get name;
@@ -409,6 +410,6 @@ abstract class _W3MBlockExplorer implements W3MBlockExplorer {
   String get url;
   @override
   @JsonKey(ignore: true)
-  _$$_W3MBlockExplorerCopyWith<_$_W3MBlockExplorer> get copyWith =>
+  _$$W3MBlockExplorerImplCopyWith<_$W3MBlockExplorerImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

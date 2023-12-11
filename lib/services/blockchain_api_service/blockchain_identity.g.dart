@@ -8,15 +8,15 @@ part of 'blockchain_identity.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_BlockchainIdentity _$$_BlockchainIdentityFromJson(
+_$BlockchainIdentityImpl _$$BlockchainIdentityImplFromJson(
         Map<String, dynamic> json) =>
-    _$_BlockchainIdentity(
+    _$BlockchainIdentityImpl(
       name: json['name'] as String?,
       avatar: json['avatar'] as String?,
     );
 
-Map<String, dynamic> _$$_BlockchainIdentityToJson(
-        _$_BlockchainIdentity instance) =>
+Map<String, dynamic> _$$BlockchainIdentityImplToJson(
+        _$BlockchainIdentityImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
       'avatar': instance.avatar,

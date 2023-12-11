@@ -68,22 +68,22 @@ class _$BlockchainIdentityCopyWithImpl<$Res, $Val extends BlockchainIdentity>
 }
 
 /// @nodoc
-abstract class _$$_BlockchainIdentityCopyWith<$Res>
+abstract class _$$BlockchainIdentityImplCopyWith<$Res>
     implements $BlockchainIdentityCopyWith<$Res> {
-  factory _$$_BlockchainIdentityCopyWith(_$_BlockchainIdentity value,
-          $Res Function(_$_BlockchainIdentity) then) =
-      __$$_BlockchainIdentityCopyWithImpl<$Res>;
+  factory _$$BlockchainIdentityImplCopyWith(_$BlockchainIdentityImpl value,
+          $Res Function(_$BlockchainIdentityImpl) then) =
+      __$$BlockchainIdentityImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String? name, String? avatar});
 }
 
 /// @nodoc
-class __$$_BlockchainIdentityCopyWithImpl<$Res>
-    extends _$BlockchainIdentityCopyWithImpl<$Res, _$_BlockchainIdentity>
-    implements _$$_BlockchainIdentityCopyWith<$Res> {
-  __$$_BlockchainIdentityCopyWithImpl(
-      _$_BlockchainIdentity _value, $Res Function(_$_BlockchainIdentity) _then)
+class __$$BlockchainIdentityImplCopyWithImpl<$Res>
+    extends _$BlockchainIdentityCopyWithImpl<$Res, _$BlockchainIdentityImpl>
+    implements _$$BlockchainIdentityImplCopyWith<$Res> {
+  __$$BlockchainIdentityImplCopyWithImpl(_$BlockchainIdentityImpl _value,
+      $Res Function(_$BlockchainIdentityImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -92,7 +92,7 @@ class __$$_BlockchainIdentityCopyWithImpl<$Res>
     Object? name = freezed,
     Object? avatar = freezed,
   }) {
-    return _then(_$_BlockchainIdentity(
+    return _then(_$BlockchainIdentityImpl(
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -107,11 +107,11 @@ class __$$_BlockchainIdentityCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_BlockchainIdentity implements _BlockchainIdentity {
-  const _$_BlockchainIdentity({this.name, this.avatar});
+class _$BlockchainIdentityImpl implements _BlockchainIdentity {
+  const _$BlockchainIdentityImpl({this.name, this.avatar});
 
-  factory _$_BlockchainIdentity.fromJson(Map<String, dynamic> json) =>
-      _$$_BlockchainIdentityFromJson(json);
+  factory _$BlockchainIdentityImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BlockchainIdentityImplFromJson(json);
 
   @override
   final String? name;
@@ -127,7 +127,7 @@ class _$_BlockchainIdentity implements _BlockchainIdentity {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_BlockchainIdentity &&
+            other is _$BlockchainIdentityImpl &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.avatar, avatar) || other.avatar == avatar));
   }
@@ -139,13 +139,13 @@ class _$_BlockchainIdentity implements _BlockchainIdentity {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_BlockchainIdentityCopyWith<_$_BlockchainIdentity> get copyWith =>
-      __$$_BlockchainIdentityCopyWithImpl<_$_BlockchainIdentity>(
+  _$$BlockchainIdentityImplCopyWith<_$BlockchainIdentityImpl> get copyWith =>
+      __$$BlockchainIdentityImplCopyWithImpl<_$BlockchainIdentityImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_BlockchainIdentityToJson(
+    return _$$BlockchainIdentityImplToJson(
       this,
     );
   }
@@ -153,10 +153,10 @@ class _$_BlockchainIdentity implements _BlockchainIdentity {
 
 abstract class _BlockchainIdentity implements BlockchainIdentity {
   const factory _BlockchainIdentity(
-      {final String? name, final String? avatar}) = _$_BlockchainIdentity;
+      {final String? name, final String? avatar}) = _$BlockchainIdentityImpl;
 
   factory _BlockchainIdentity.fromJson(Map<String, dynamic> json) =
-      _$_BlockchainIdentity.fromJson;
+      _$BlockchainIdentityImpl.fromJson;
 
   @override
   String? get name;
@@ -164,6 +164,6 @@ abstract class _BlockchainIdentity implements BlockchainIdentity {
   String? get avatar;
   @override
   @JsonKey(ignore: true)
-  _$$_BlockchainIdentityCopyWith<_$_BlockchainIdentity> get copyWith =>
+  _$$BlockchainIdentityImplCopyWith<_$BlockchainIdentityImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
