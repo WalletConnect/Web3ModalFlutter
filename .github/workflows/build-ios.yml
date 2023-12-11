@@ -16,31 +16,20 @@ jobs:
         channel: "stable"
         architecture: x64
     # Generates package files
-    - shell: bash
-      run: flutter pub get
-    - shell: bash
-      run: flutter pub run build_runner build --delete-conflicting-outputs
-    - shell: bash
-      run: cd ios;pod install;
-    # Generates ios files
-    - shell: bash
-      run: cd ..;cd example;
-    - shell: bash
-      run: flutter pub get
-    - shell: bash
-      run: flutter pub run build_runner build --delete-conflicting-outputs
-    - shell: bash
-      run: cd ios;pod install;
-    - shell: bash
-      run: cd ..
+    - name: Generate package files
+      shell: bash
+      run: flutter pub get;flutter pub run build_runner build --delete-conflicting-outputs;
+    # Generates example app files
+    - name: Generate example app files
+      shell: bash
+      run: cd example;flutter pub get;flutter pub run build_runner build --delete-conflicting-outputs;cd ..;
     # Build ios app
-    - shell: bash
-      run: echo '########## 🍎🍎 Delivering IPA to TestFlight...'
+    - name: Delivering IPA
+      shell: bash
       env:
-        PROJECT_ID: ${{ env.PROJECT_ID }}
-    - shell: bash
-      run: flutter build ipa --dart-define='PROJECT_ID=$PROJECT_ID' --release
-    - shell: bash
-      run: cd ios
-    - shell: bash
-      run: fastlane beta
+        PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      # run: echo $PROJECT_ID
+      run: flutter build ipa --dart-define='PROJECT_ID=$PROJECT_ID' --release;
+    - name: Deploying with fastlane
+      shell: bash
+      run: cd ios;fastlane beta;
