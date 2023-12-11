@@ -729,6 +729,7 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
   _i14.Future<dynamic> request({
     required String? topic,
     required String? chainId,
+    String? requestedChain,
     required _i4.SessionRequestParams? request,
   }) =>
       (super.noSuchMethod(
@@ -738,6 +739,7 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
           {
             #topic: topic,
             #chainId: chainId,
+            #requestedChain: requestedChain,
             #request: request,
           },
         ),
@@ -785,10 +787,10 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  _i14.Future<void> initCoinbase({required _i4.PairingMetadata? metadata}) =>
+  _i14.Future<void> cbInit({required _i4.PairingMetadata? metadata}) =>
       (super.noSuchMethod(
         Invocation.method(
-          #initCoinbase,
+          #cbInit,
           [],
           {#metadata: metadata},
         ),
@@ -796,25 +798,52 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
-  _i14.Future<_i19.Account?> getCoinbaseAccount() => (super.noSuchMethod(
+  _i14.Future<bool> cbIsConnected() => (super.noSuchMethod(
         Invocation.method(
-          #getCoinbaseAccount,
-          [],
-        ),
-        returnValue: _i14.Future<_i19.Account?>.value(),
-      ) as _i14.Future<_i19.Account?>);
-  @override
-  _i14.Future<bool> resetCoinbaseSession() => (super.noSuchMethod(
-        Invocation.method(
-          #resetCoinbaseSession,
+          #cbIsConnected,
           [],
         ),
         returnValue: _i14.Future<bool>.value(false),
       ) as _i14.Future<bool>);
   @override
-  _i14.Future<bool> checkInstalled() => (super.noSuchMethod(
+  _i14.Future<_i19.Account?> cbGetAccount() => (super.noSuchMethod(
         Invocation.method(
-          #checkInstalled,
+          #cbGetAccount,
+          [],
+        ),
+        returnValue: _i14.Future<_i19.Account?>.value(),
+      ) as _i14.Future<_i19.Account?>);
+  @override
+  _i14.Future<dynamic> cbRequest({
+    String? topic,
+    String? chainId,
+    required _i4.SessionRequestParams? request,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #cbRequest,
+          [],
+          {
+            #topic: topic,
+            #chainId: chainId,
+            #request: request,
+          },
+        ),
+        returnValue: _i14.Future<dynamic>.value(),
+      ) as _i14.Future<dynamic>);
+  @override
+  _i14.Future<void> cbResetSession() => (super.noSuchMethod(
+        Invocation.method(
+          #cbResetSession,
+          [],
+        ),
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
+  @override
+  _i14.Future<bool> cbCheckInstalled() => (super.noSuchMethod(
+        Invocation.method(
+          #cbCheckInstalled,
           [],
         ),
         returnValue: _i14.Future<bool>.value(false),

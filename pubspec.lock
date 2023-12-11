@@ -197,10 +197,10 @@ packages:
     dependency: "direct main"
     description:
       name: coinbase_wallet_sdk
-      sha256: "71a7e0667d8f3d769223bee6f08aa29c41852d388a3b25b5aa50893888ce6d09"
+      sha256: "0e8d78359a2d8e6e7c57274342bb9d8b7257d4b42961a09399acc50d254aeae8"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.6"
+    version: "1.0.7"
   collection:
     dependency: "direct main"
     description:

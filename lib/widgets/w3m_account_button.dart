@@ -46,7 +46,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
 
   void _w3mServiceUpdated() {
     setState(() {
-      _address = widget.service.address ?? '';
+      _address = widget.service.session?.address ?? '';
       _tokenImage = widget.service.tokenImageUrl;
       _balance = coreUtils.instance.formatChainBalance(
         widget.service.chainBalance,

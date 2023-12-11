@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/services/w3m_service/models/w3m_session.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -30,7 +31,7 @@ class SessionWidgetState extends State<SessionWidget> {
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),
       Text(
-        session.peer.metadata.name,
+        session.connectedWalletName ?? '',
         style: Web3ModalTheme.getDataOf(context).textStyles.title600.copyWith(
               color: Web3ModalTheme.colorsOf(context).foreground100,
             ),
@@ -44,7 +45,7 @@ class SessionWidgetState extends State<SessionWidget> {
             ),
       ),
       Text(
-        session.topic,
+        session.topic ?? 'No topic',
         style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
               color: Web3ModalTheme.colorsOf(context).foreground100,
             ),
@@ -58,7 +59,7 @@ class SessionWidgetState extends State<SessionWidget> {
         children: [
           Expanded(
             child: Column(
-              children: _buildChainApprovedMethodsTiles(),
+              children: _buildChainApprovedMethodsTiles(session),
             ),
           ),
           const SizedBox.square(dimension: 8.0),
@@ -72,20 +73,14 @@ class SessionWidgetState extends State<SessionWidget> {
     );
 
     // Get all of the accounts
-    final List<String> namespaceAccounts = [];
-
-    // Loop through the namespaces, and get the accounts
-    for (final namespace in session.namespaces.values) {
-      namespaceAccounts.addAll(namespace.accounts);
-    }
-
+    final accounts = session.getAccounts() ?? [];
     try {
       final selectedChain = widget.w3mService.selectedChain;
-      final containsChain = namespaceAccounts.indexWhere(
+      final containsChain = accounts.indexWhere(
         (nsa) => nsa.split(':')[1] == selectedChain?.chainId,
       );
       if (containsChain > -1) {
-        final namespace = namespaceAccounts.firstWhere(
+        final namespace = accounts.firstWhere(
           (nsa) => nsa.split(':')[1] == selectedChain?.chainId,
         );
         children.add(_buildAccountWidget(namespace));
@@ -96,9 +91,7 @@ class SessionWidgetState extends State<SessionWidget> {
 
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -215,9 +208,7 @@ class SessionWidgetState extends State<SessionWidget> {
     return buttons;
   }
 
-  List<Widget> _buildChainApprovedMethodsTiles() {
-    final session = widget.w3mService.session!;
-    final approvedMethods = session.namespaces['eip155']?.methods ?? [];
+  List<Widget> _buildChainApprovedMethodsTiles(W3MSession session) {
     List<Widget> children = [];
 
     children.addAll([
@@ -229,6 +220,8 @@ class SessionWidgetState extends State<SessionWidget> {
             ),
       ),
     ]);
+
+    final approvedMethods = session.getApprovedMethods() ?? [];
 
     children.add(Text(
       approvedMethods.join(', '),
@@ -309,7 +302,7 @@ class SessionWidgetState extends State<SessionWidget> {
       case ChainType.eip155:
         return EIP155.callMethod(
           w3mService: widget.w3mService,
-          topic: session.topic,
+          topic: session.topic ?? '',
           method: method.toEip155Method()!,
           chainId: chainMetadata.w3mChainInfo.namespace,
           address: address.toLowerCase(),

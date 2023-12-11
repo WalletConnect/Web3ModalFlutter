@@ -2,6 +2,7 @@ import 'package:event/event.dart';
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
+import 'package:web3modal_flutter/services/w3m_service/models/w3m_session.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 enum W3MServiceStatus {
@@ -51,10 +52,7 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   String? get wcUri;
 
   /// The current session's data.
-  SessionData? get session;
-
-  /// The address of the currently connected account.
-  String? get address;
+  W3MSession? get session;
 
   /// Returns the url of the token of the currently selected chain.
   /// Pass this into a [Image.network] and it will load the token image.
@@ -64,11 +62,11 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// Pass this into a [Image.network] and it will load the avatar image.
   String? get avatarUrl;
 
-  /// The currently selected chain.
-  W3MChainInfo? get selectedChain;
-
   /// Returns the balance of the currently connected wallet on the selected chain.
   double? get chainBalance;
+
+  /// The currently selected chain.
+  W3MChainInfo? get selectedChain;
 
   /// The currently selected wallet.
   W3MWalletInfo? get selectedWallet;
@@ -134,6 +132,7 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   Future<dynamic> request({
     required String topic,
     required String chainId,
+    String? requestedChain,
     required SessionRequestParams request,
   });
 
