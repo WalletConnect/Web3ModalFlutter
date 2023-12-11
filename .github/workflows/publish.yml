@@ -42,5 +42,5 @@ jobs:
       - name: Delivering IPA
         shell: bash
         env:
-          PROJECT_ID: ${{ env.PROJECT_ID }}
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
         run: echo $PROJECT_ID
