@@ -38,3 +38,9 @@ jobs:
       # - name: Publish Package
       #   shell: bash
       #   run: flutter pub publish -f
+      - shell: bash
+        run: echo '########## 🍎🍎 Delivering IPA to TestFlight...'
+        env:
+          PROJECT_ID: ${{ env.PROJECT_ID }}
+      - shell: bash
+        run: echo 'PROJECT_ID=$PROJECT_ID'
