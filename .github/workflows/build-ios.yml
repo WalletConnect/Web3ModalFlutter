@@ -49,21 +49,40 @@ jobs:
       run: |
         flutter pub get
         flutter pub run build_runner build --delete-conflicting-outputs
+        cd ios
+        pod install
+    - name: Execute pod install package
+      working-directory: ios
+      run: pod install
     # Generates example app files
     - name: Generate example app files
+      working-directory: example
       run: |
-        cd example
         flutter pub get
         flutter pub run build_runner build --delete-conflicting-outputs
+    - name: Execute pod install example app
+      working-directory: example/ios
+      run: pod install
     # Build ios app
     - name: Delivering IPA
       env:
         PROJECT_ID: ${{ secrets.PROJECT_ID }}
       run: |
+        FILE_VALUE=`cat lib/version.dart`
+        VERSION=`echo $FILE_VALUE | sed "s/[^']*'\([^']*\)'.*/\1/"`
+        VNAME=`echo $VERSION | sed "s/+.*//"`
+        VBUILD=${VERSION#*+}
         cd example
-        flutter build ipa --dart-define="PROJECT_ID=$PROJECT_ID" --release
-        cd ios
-        fastlane beta
-    # - name: Deploying with fastlane
-    #   shell: bash
-    #   run: cd ios;fastlane beta;
+        flutter build ipa --build-name $VNAME --build-number $VBUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release
+    # Run fastlane
+    - name: Execute fastlane beta
+      working-directory: example/ios
+      env:
+        FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+        FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+      run: bundle exec fastlane beta
+    - name: Clean up keychain and provisioning profile
+      if: ${{ always() }}
+      run: |
+        security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+        rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
