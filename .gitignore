@@ -46,3 +46,4 @@ app.*.map.json
 # Scripts
 *.sh
 example/ios/fastlane/.env*
+.github/workflows/.env*
