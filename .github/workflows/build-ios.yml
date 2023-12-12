@@ -49,22 +49,13 @@ jobs:
       run: |
         flutter pub get
         flutter pub run build_runner build --delete-conflicting-outputs
-        cd ios
-        pod install
-    - name: Execute pod install package
-      working-directory: ios
-      run: pod install
-    # Generates example app files
     - name: Generate example app files
       working-directory: example
       run: |
         flutter pub get
         flutter pub run build_runner build --delete-conflicting-outputs
-    - name: Execute pod install example app
-      working-directory: example/ios
-      run: pod install
     # Build ios app
-    - name: Delivering IPA
+    - name: Creating IPA
       env:
         PROJECT_ID: ${{ secrets.PROJECT_ID }}
       run: |
@@ -75,14 +66,43 @@ jobs:
         cd example
         flutter build ipa --build-name $VNAME --build-number $VBUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release
     # Run fastlane
-    - name: Execute fastlane beta
-      working-directory: example/ios
+    # - name: Delivering with fastlane
+    #   working-directory: example/ios
+    #   env:
+    #     FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+    #     FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+    #   run: fastlane beta
+    # - name: Get App Store Connect API Key
+    #   uses: timheuer/base64-to-file@v1.2.4
+    #   with:
+    #     fileName: AuthKey_${{ secrets.APP_STORE_KEY_ID }}.p8
+    #     fileDir: example/build/ios/ipa/private_keys
+    #     encodedString: ${{ secrets.APP_STORE_CONNECT_KEY }}
+    - name: Create p8 Auth Key
       env:
-        FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-        FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
-      run: bundle exec fastlane beta
+        APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
+        APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+      run: |
+        # Create private_keys folder
+        mkdir -p example/build/ios/ipa/private_keys
+        AUTH_KEY_PATH=example/build/ios/ipa/private_keys/AuthKey_$APP_STORE_KEY_ID.p8
+
+        # import certificate and provisioning profile from secrets
+        echo -n "$APP_STORE_CONNECT_KEY" | base64 --decode -o $AUTH_KEY_PATH
+    - name: Upload IPA
+      working-directory: example/build/ios/ipa
+      env:
+        APPLE_ISSUER_ID: ${{ secrets.APPLE_ISSUER_ID }}
+        APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+      run: xcrun altool --upload-app --type ios -f web3modal_flutter.ipa --apiKey $APP_STORE_KEY_ID --apiIssuer $APPLE_ISSUER_ID
     - name: Clean up keychain and provisioning profile
       if: ${{ always() }}
       run: |
         security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
         rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
+    - name: Clean up Flutter envs
+      if: ${{ always() }}
+      run: |
+        flutter clean
+        cd example
+        flutter clean

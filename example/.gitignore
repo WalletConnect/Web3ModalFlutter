@@ -50,3 +50,5 @@ app.*.map.json
 # Scripts
 *.sh
 
+# Fastlane
+fastlane/
