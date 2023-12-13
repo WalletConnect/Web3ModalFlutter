@@ -87,8 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isSquare = Web3ModalTheme.radiusesOf(context).isSquare();
-    final isCircular = Web3ModalTheme.radiusesOf(context).isCircular();
+    final isCustom = Web3ModalTheme.isCustomTheme(context);
     return Scaffold(
       backgroundColor: Web3ModalTheme.colorsOf(context).background300,
       appBar: AppBar(
@@ -98,40 +97,30 @@ class _MyHomePageState extends State<MyHomePage> {
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
         actions: [
           IconButton(
-            icon: isSquare || isCircular
+            icon: isCustom
                 ? const Icon(Icons.yard)
                 : const Icon(Icons.yard_outlined),
             onPressed: widget.changeTheme,
           ),
           IconButton(
             icon: Web3ModalTheme.maybeOf(context)?.isDarkMode ?? false
-                ? const Icon(Icons.light_mode)
-                : const Icon(Icons.dark_mode),
+                ? const Icon(Icons.light_mode_outlined)
+                : const Icon(Icons.dark_mode_outlined),
             onPressed: widget.swapTheme,
           ),
         ],
       ),
-      body: Builder(builder: (context) {
-        if (!_initialized) {
-          return Center(
-            child: CircularProgressIndicator(
-              color: Web3ModalTheme.colorsOf(context).accent100,
-            ),
-          );
-        }
-        final isCustom = Web3ModalTheme.isCustomTheme(context);
-        return SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text('Custom theme is: ${isCustom ? 'ON' : 'OFF'}'),
-              _ButtonsView(w3mService: _w3mService),
-              const Divider(height: 0.0),
-              _ConnectedView(w3mService: _w3mService)
-            ],
-          ),
-        );
-      }),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text('Custom theme is: ${isCustom ? 'ON' : 'OFF'}'),
+            _ButtonsView(w3mService: _w3mService),
+            const Divider(height: 0.0),
+            _ConnectedView(w3mService: _w3mService)
+          ],
+        ),
+      ),
     );
   }
 }
