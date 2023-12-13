@@ -18,12 +18,14 @@ jobs:
         BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
         DISTRIBUTION_CERT_BASE64: ${{ secrets.DISTRIBUTION_CERT_BASE64 }}
         APPLE_DISTRIB_CERT_BASE64: ${{ secrets.APPLE_DISTRIB_CERT_BASE64 }}
+        IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
         P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
         BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
         KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       run: |
         # create variables
         BUILD_CERT_PATH=$RUNNER_TEMP/build_certificate.p12
+        DISTRIB_P12_PATH=$RUNNER_TEMP/ios_distribution.p12
         DISTRIB_CERT_PATH=$RUNNER_TEMP/ios_distribution.cer
         APPLE_DISTRIB_CERT_PATH=$RUNNER_TEMP/apple_distribution.cer
         PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
@@ -33,6 +35,7 @@ jobs:
         echo -n "$DISTRIBUTION_CERT_BASE64" | base64 --decode -o $DISTRIB_CERT_PATH
         echo -n "$APPLE_DISTRIB_CERT_BASE64" | base64 --decode -o $APPLE_DISTRIB_CERT_PATH
         echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $BUILD_CERT_PATH
+        echo -n "$IOS_DISTRIBUTION_P12_BASE64" | base64 --decode -o $DISTRIB_P12_PATH
         echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
 
         # create temporary keychain
@@ -44,6 +47,7 @@ jobs:
         security import $DISTRIB_CERT_PATH -P "$P12_PASSWORD" -A -t cert -k $KEYCHAIN_PATH
         security import $APPLE_DISTRIB_CERT_PATH -P "$P12_PASSWORD" -A -t cert -k $KEYCHAIN_PATH
         security import $BUILD_CERT_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+        security import $DISTRIB_P12_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
         security list-keychain -d user -s $KEYCHAIN_PATH
 
         # apply provisioning profile
