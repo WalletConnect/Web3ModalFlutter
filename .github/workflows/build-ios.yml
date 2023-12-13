@@ -27,7 +27,7 @@ jobs:
       run: |
         # create variables
         BUILD_CERT_PATH=$RUNNER_TEMP/build_certificate.p12        
-        PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+        PP_PATH=$RUNNER_TEMP/FlutterAppStoreProfileWithPush.mobileprovision
         KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
         # import certificate and provisioning profile from secrets
@@ -100,8 +100,8 @@ jobs:
         /usr/libexec/Plistbuddy -c "Set CFBundleShortVersionString $VNAME" "ios/Runner/Info.plist"
 
         # Archive and export
-        xcodebuild -workspace "$GITHUB_WORKSPACE/example/ios/Runner.xcworkspace" -scheme Runner -sdk iphoneos -destination generic/platform=iOS -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" -allowProvisioningUpdates archive -allowProvisioningUpdates
-        xcodebuild -exportArchive -sdk iphoneos -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" -exportOptionsPlist "$GITHUB_WORKSPACE/example/ios/Runner/ExportOptionsRelease.plist" -exportPath "$GITHUB_WORKSPACE/example/build/ios/ipa" -authenticationKeyIssuerID $APPLE_ISSUER_ID -authenticationKeyID $APP_STORE_KEY_ID -authenticationKeyPath "$GITHUB_WORKSPACE/example/build/ios/ipa/private_keys/AuthKey_$APP_STORE_KEY_ID.p8"
+        xcodebuild -workspace "$GITHUB_WORKSPACE/example/ios/Runner.xcworkspace" -scheme Runner -sdk iphoneos -destination generic/platform=iOS -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" archive
+        xcodebuild -exportArchive -allowProvisioningUpdates -sdk iphoneos -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" -exportOptionsPlist "$GITHUB_WORKSPACE/example/ios/Runner/ExportOptionsRelease.plist" -exportPath "$GITHUB_WORKSPACE/example/build/ios/ipa" -authenticationKeyIssuerID $APPLE_ISSUER_ID -authenticationKeyID $APP_STORE_KEY_ID -authenticationKeyPath "$GITHUB_WORKSPACE/example/build/ios/ipa/private_keys/AuthKey_$APP_STORE_KEY_ID.p8"
     # Run fastlane
     # - name: Delivering with fastlane
     #   working-directory: example/ios
