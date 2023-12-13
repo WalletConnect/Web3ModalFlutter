@@ -107,7 +107,7 @@ jobs:
         /usr/libexec/Plistbuddy -c "Set CFBundleShortVersionString $VNAME" "ios/Runner/Info.plist"
 
         # Archive and export
-        xcodebuild -workspace "$GITHUB_WORKSPACE/example/ios/Runner.xcworkspace" -scheme Runner -sdk iphoneos -destination generic/platform=iOS -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" archive
+        xcodebuild -workspace "$GITHUB_WORKSPACE/example/ios/Runner.xcworkspace" -scheme Runner -sdk iphoneos -destination generic/platform=iOS -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" -allowProvisioningUpdates archive -allowProvisioningUpdates
         xcodebuild -exportArchive -sdk iphoneos -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" -exportOptionsPlist "$GITHUB_WORKSPACE/example/ios/Runner/ExportOptionsRelease.plist" -exportPath "$GITHUB_WORKSPACE/example/build/ios/ipa" -authenticationKeyIssuerID $APPLE_ISSUER_ID -authenticationKeyID $APP_STORE_KEY_ID -authenticationKeyPath "$GITHUB_WORKSPACE/example/build/ios/ipa/private_keys/AuthKey_$APP_STORE_KEY_ID.p8"
     # Run fastlane
     # - name: Delivering with fastlane
