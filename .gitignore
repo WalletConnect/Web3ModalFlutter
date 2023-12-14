@@ -43,7 +43,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Scripts
-*.sh
-example/ios/fastlane/.env*
-.github/workflows/.env*
+**/*.env*

@@ -1,6 +1,6 @@
 ## 3.0.2
 
-- Minor fixes
+- Minor improvements
 
 ## 3.0.1
 
