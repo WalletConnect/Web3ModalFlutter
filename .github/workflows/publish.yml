@@ -26,19 +26,20 @@ jobs:
       # Setup Dart SDK
       - uses: dart-lang/setup-dart@v1
 
-      # Generates package files
-      - name: Generate package files
-        shell: bash
-        run: flutter pub get;flutter pub run build_runner build --delete-conflicting-outputs;
-      # Generates example app files
-      - name: Generate example app files
-        shell: bash
-        run: cd example;flutter pub get;flutter pub run build_runner build --delete-conflicting-outputs;cd ..;
+      # Get package dependencies and generate files
+      - name: Get package dependencies and generate files
+        run: |
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
+      # Get example app dependencies and generate files
+      - name: Get example app dependencies and generate files
+        working-directory: example
+        run: |
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
 
       # Publish
       - name: Check Publish Warnings
-        shell: bash
         run: flutter pub publish --dry-run
-      - name: Publish Package
-        shell: bash
-        run: flutter pub publish -f
+      # - name: Publish Package
+      #   run: flutter pub publish -f

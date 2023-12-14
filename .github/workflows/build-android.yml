@@ -1,9 +1,9 @@
 name: Build Android App
 
-on: workflow_dispatch
-  # workflow_dispatch:
-  # release:
-  #   types: [ published ]
+on:
+  workflow_dispatch:
+  release:
+    types: [ published ]
 
 jobs:
   build_with_signing:
