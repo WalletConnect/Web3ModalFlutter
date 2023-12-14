@@ -13,7 +13,6 @@ import 'package:web3modal_flutter/services/ledger_service/ledger_service_singlet
 import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_session.dart';
 import 'package:web3modal_flutter/services/w3m_service/w3m_session.dart';
-import 'package:web3modal_flutter/services/webview_service/webview_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
