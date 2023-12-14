@@ -19,18 +19,25 @@ class MagicServiceSingleton {
 class MagicService {
   static const _url =
       'https://secure-web3modal-git-preview-3-walletconnect1.vercel.app/sdk';
-  static const _url2 = 'http://192.168.0.83:3010/sdk';
+  // static const _url2 = 'http://192.168.0.83:3010/sdk';
   //
   static const _packageUrl =
       'https://esm.sh/@web3modal/smart-account@3.4.0-e3959a31';
-  static const _packageUrl2 =
-      'https://esm.sh/@web3modal/smart-account@3.4.0-7c9b36dd';
+  // static const _packageUrl2 =
+  //     'https://esm.sh/@web3modal/smart-account@3.4.0-7c9b36dd';
   //
   static const _initialized = '{type: \'@w3m-app/INITIALIZED\'}';
   static const _frameLoaded = '{type: \'@w3m-app/FRAME_LOADED\'}';
   static const _frameError = '{type: \'@w3m-frame/ERROR\'}';
   //
-  static const _htmlString = '<html><body></body></html>';
+  // static const _htmlString = '<html><body></body></html>';
+
+  // static const _authorizedHosts = [
+  //   'web3modal.com',
+  //   'secure-web3modal-git-preview-3-walletconnect1.vercel.app',
+  //   'verify.walletconnect.com',
+  //   'auth.magic.link',
+  // ];
 
   MagicUserData? _currentUser;
 
@@ -51,7 +58,10 @@ class MagicService {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (NavigationRequest request) {
-            // if (request.url.startsWith('https://www.youtube.com/')) {
+            // final uri = Uri.parse(request.url);
+            // debugPrint(uri.host);
+            // debugPrint('-----');
+            // if (!_authorizedHosts.contains(uri.host)) {
             //   debugPrint('[$runtimeType] blocking ${request.url}');
             //   return NavigationDecision.prevent;
             // }
@@ -78,7 +88,7 @@ class MagicService {
         onMessageReceived: _onMessageReceived,
       )
       ..setOnConsoleMessage(_onDebugConsoleReceived)
-      ..loadHtmlString(_htmlString);
+      ..loadRequest(Uri.parse('https://web3modal.com'));
 
     try {
       // enable inspector for iOS
@@ -166,6 +176,7 @@ class MagicService {
       let provider;
       import('$_packageUrl').then((package) => {
         provider = new package.W3mFrameProvider('$projectId')
+        // checkConnected()
       });
 
       const checkConnected = async () => {
