@@ -1,8 +1,9 @@
 name: Build iOS App
 
-on: workflow_dispatch
-  # release:
-  #   types: [published]
+on:
+  workflow_dispatch:
+  release:
+    types: [ published ]
 
 jobs:
   build_with_signing:
@@ -86,12 +87,11 @@ jobs:
         VBUILD=${VERSION#*+}
 
         # Build ios app with flutter
-        # flutter build ipa --build-name $VNAME --build-number $VBUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release
-        flutter build ios --config-only --dart-define="PROJECT_ID=$PROJECT_ID" --release
+        flutter build ios --build-name $VNAME --build-number $VBUILD --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
 
         # Set version values to Info.plist
-        /usr/libexec/Plistbuddy -c "Set CFBundleVersion $VBUILD" "ios/Runner/Info.plist"
-        /usr/libexec/Plistbuddy -c "Set CFBundleShortVersionString $VNAME" "ios/Runner/Info.plist"
+        # /usr/libexec/Plistbuddy -c "Set CFBundleVersion $VBUILD" "ios/Runner/Info.plist"
+        # /usr/libexec/Plistbuddy -c "Set CFBundleShortVersionString $VNAME" "ios/Runner/Info.plist"
 
         # Archive and export
         xcodebuild -workspace "$GITHUB_WORKSPACE/example/ios/Runner.xcworkspace" -scheme Runner -sdk iphoneos -destination generic/platform=iOS -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" archive
@@ -103,16 +103,12 @@ jobs:
         APPLE_ISSUER_ID: ${{ secrets.APPLE_ISSUER_ID }}
         APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
       run: xcrun altool --upload-app --type ios -f web3modal_flutter.ipa --apiKey $APP_STORE_KEY_ID --apiIssuer $APPLE_ISSUER_ID
-    # Clean up keychain and provisioning profile
-    - name: Clean up keychain and provisioning profile
+    # Clean up
+    - name: Clean up
       if: ${{ always() }}
       run: |
         security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
         rm ~/Library/MobileDevice/Provisioning\ Profiles/FlutterAppStoreProfileWithPush.mobileprovision
-    # Clean up Flutter envs
-    - name: Clean up Flutter envs
-      if: ${{ always() }}
-      run: |
         flutter clean
         cd example
         flutter clean

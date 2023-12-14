@@ -1,8 +1,9 @@
 name: Publish to pub.dev
 
-on: #workflow_dispatch
+on:
+  workflow_dispatch:
   release:
-    types: [published]
+    types: [ published ]
 
 jobs:
   publish:
