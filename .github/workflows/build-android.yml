@@ -1,0 +1,78 @@
+name: Build Android App
+
+on:
+  workflow_dispatch:
+  release:
+    types: [ published ]
+
+jobs:
+  build_with_signing:
+    runs-on: macos-latest
+    
+    steps:
+    # Checkout the repo
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Create temp firebase key
+      env:
+        FIREBASE_KEY_BASE64: ${{ secrets.FIREBASE_KEY_BASE64 }}
+      run: |
+        # create variables
+        FIREBASE_KEY_PATH=$RUNNER_TEMP/flutter-c7c2c-6df892fe6ddb.json
+
+        # import certificate and provisioning profile from secrets
+        echo -n "$FIREBASE_KEY_BASE64" | base64 --decode -o $FIREBASE_KEY_PATH
+    # Install Flutter SDK
+    - name: Install Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: "stable"
+        architecture: x64
+    # Get package dependencies and generate files
+    - name: Get package dependencies and generate files
+      run: |
+        flutter pub get
+        flutter pub run build_runner build --delete-conflicting-outputs
+    # Get example app dependencies and generate files
+    - name: Get example app dependencies and generate files
+      working-directory: example
+      run: |
+        flutter pub get
+        flutter pub run build_runner build --delete-conflicting-outputs
+    # Build Android example app
+    - name: Build Android APK
+      working-directory: example
+      env:
+        PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      run: |
+        # Get app version from file
+        FILE_VALUE=`cat $GITHUB_WORKSPACE/lib/version.dart`
+        VERSION=`echo $FILE_VALUE | sed "s/[^']*'\([^']*\)'.*/\1/"`
+        VNAME=`echo $VERSION | sed "s/+.*//"`
+        VBUILD=${VERSION#*+}
+
+        # Build ios app with flutter
+        flutter build apk --build-name $VNAME --build-number $VBUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release
+    # Setup Node
+    - name: Setup Node
+      uses: actions/setup-node@v3
+    # Setup Firebase
+    - name: Setup Firebase
+      uses: w9jds/setup-firebase@main
+      with:
+        tools-version: 13.0.1
+        firebase_token: ${{ secrets.FIREBASE_TOKEN }}
+    - name: Upload APK
+      working-directory: example/build/app/outputs/flutter-apk
+      env:
+        APP_ID: ${{ secrets.ANDROID_APP_ID }}
+      run: |
+        firebase appdistribution:distribute app-release.apk --app $APP_ID --release-notes "Web3Modal Flutter beta testing" --groups flutter-team
+    # Clean up Flutter envs
+    - name: Clean up
+      if: ${{ always() }}
+      run: |
+        rm $RUNNER_TEMP/flutter-c7c2c-6df892fe6ddb.json
+        flutter clean
+        cd example
+        flutter clean
