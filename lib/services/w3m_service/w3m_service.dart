@@ -616,6 +616,11 @@ class W3MService with ChangeNotifier implements IW3MService {
   Future<void> disconnect({bool disconnectAllSessions = true}) async {
     _checkInitialized();
 
+    // If we don't have a session, disconnect automatically and notify listeners
+    if (_currentSession?.magicSession != null) {
+      magicService.instance.disconnectUser();
+    }
+
     // If we want to disconnect all sessions, loop through them and disconnect them
     if (disconnectAllSessions) {
       for (final SessionData session in _web3App!.sessions.getAll()) {

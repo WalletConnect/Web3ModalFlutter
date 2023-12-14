@@ -221,7 +221,7 @@ class MagicService {
 
       const disconnect = async () => {
         console.log('disconnect()')
-        await provider.disconnect()
+        await provider.signOut()
       }
 
       const iframeO = document.createElement('iframe')
