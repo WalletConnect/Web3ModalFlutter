@@ -1,6 +1,6 @@
 name: Build iOS App
 
-on:
+on: # workflow_dispatch
   workflow_dispatch:
   release:
     types: [ published ]
@@ -83,15 +83,12 @@ jobs:
         # Get app version from file
         FILE_VALUE=`cat $GITHUB_WORKSPACE/lib/version.dart`
         VERSION=`echo $FILE_VALUE | sed "s/[^']*'\([^']*\)'.*/\1/"`
-        VNAME=`echo $VERSION | sed "s/+.*//"`
-        VBUILD=${VERSION#*+}
+
+        agvtool new-marketing-version $VERSION
+        agvtool next-version -all
 
         # Build ios app with flutter
-        flutter build ios --build-name $VNAME --build-number $VBUILD --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
-
-        # Set version values to Info.plist
-        # /usr/libexec/Plistbuddy -c "Set CFBundleVersion $VBUILD" "ios/Runner/Info.plist"
-        # /usr/libexec/Plistbuddy -c "Set CFBundleShortVersionString $VNAME" "ios/Runner/Info.plist"
+        flutter build ios --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
 
         # Archive and export
         xcodebuild -workspace "$GITHUB_WORKSPACE/example/ios/Runner.xcworkspace" -scheme Runner -sdk iphoneos -destination generic/platform=iOS -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" archive
