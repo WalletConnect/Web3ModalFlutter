@@ -47,8 +47,4 @@ app.*.map.json
 *.zip
 *.ipa
 
-# Scripts
-*.sh
 
-# Fastlane
-fastlane/

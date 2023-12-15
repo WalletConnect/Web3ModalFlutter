@@ -1,3 +1,7 @@
+## 3.0.20
+
+- Minor improvements
+
 ## 3.0.1
 
 - UI fixes and custom theming enhancements

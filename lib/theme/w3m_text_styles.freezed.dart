@@ -177,11 +177,11 @@ class _$Web3ModalTextStylesCopyWithImpl<$Res, $Val extends Web3ModalTextStyles>
 }
 
 /// @nodoc
-abstract class _$$_Web3ModalTextStylesCopyWith<$Res>
+abstract class _$$Web3ModalTextStylesImplCopyWith<$Res>
     implements $Web3ModalTextStylesCopyWith<$Res> {
-  factory _$$_Web3ModalTextStylesCopyWith(_$_Web3ModalTextStyles value,
-          $Res Function(_$_Web3ModalTextStyles) then) =
-      __$$_Web3ModalTextStylesCopyWithImpl<$Res>;
+  factory _$$Web3ModalTextStylesImplCopyWith(_$Web3ModalTextStylesImpl value,
+          $Res Function(_$Web3ModalTextStylesImpl) then) =
+      __$$Web3ModalTextStylesImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -206,11 +206,11 @@ abstract class _$$_Web3ModalTextStylesCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_Web3ModalTextStylesCopyWithImpl<$Res>
-    extends _$Web3ModalTextStylesCopyWithImpl<$Res, _$_Web3ModalTextStyles>
-    implements _$$_Web3ModalTextStylesCopyWith<$Res> {
-  __$$_Web3ModalTextStylesCopyWithImpl(_$_Web3ModalTextStyles _value,
-      $Res Function(_$_Web3ModalTextStyles) _then)
+class __$$Web3ModalTextStylesImplCopyWithImpl<$Res>
+    extends _$Web3ModalTextStylesCopyWithImpl<$Res, _$Web3ModalTextStylesImpl>
+    implements _$$Web3ModalTextStylesImplCopyWith<$Res> {
+  __$$Web3ModalTextStylesImplCopyWithImpl(_$Web3ModalTextStylesImpl _value,
+      $Res Function(_$Web3ModalTextStylesImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -235,7 +235,7 @@ class __$$_Web3ModalTextStylesCopyWithImpl<$Res>
     Object? micro600 = null,
     Object? micro700 = null,
   }) {
-    return _then(_$_Web3ModalTextStyles(
+    return _then(_$Web3ModalTextStylesImpl(
       fontFamily: null == fontFamily
           ? _value.fontFamily
           : fontFamily // ignore: cast_nullable_to_non_nullable
@@ -314,8 +314,8 @@ class __$$_Web3ModalTextStylesCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Web3ModalTextStyles implements _Web3ModalTextStyles {
-  const _$_Web3ModalTextStyles(
+class _$Web3ModalTextStylesImpl implements _Web3ModalTextStyles {
+  const _$Web3ModalTextStylesImpl(
       {required this.fontFamily,
       required this.title400,
       required this.title500,
@@ -381,7 +381,7 @@ class _$_Web3ModalTextStyles implements _Web3ModalTextStyles {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Web3ModalTextStyles &&
+            other is _$Web3ModalTextStylesImpl &&
             (identical(other.fontFamily, fontFamily) ||
                 other.fontFamily == fontFamily) &&
             (identical(other.title400, title400) ||
@@ -442,8 +442,8 @@ class _$_Web3ModalTextStyles implements _Web3ModalTextStyles {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_Web3ModalTextStylesCopyWith<_$_Web3ModalTextStyles> get copyWith =>
-      __$$_Web3ModalTextStylesCopyWithImpl<_$_Web3ModalTextStyles>(
+  _$$Web3ModalTextStylesImplCopyWith<_$Web3ModalTextStylesImpl> get copyWith =>
+      __$$Web3ModalTextStylesImplCopyWithImpl<_$Web3ModalTextStylesImpl>(
           this, _$identity);
 }
 
@@ -466,7 +466,7 @@ abstract class _Web3ModalTextStyles implements Web3ModalTextStyles {
       required final TextStyle tiny500,
       required final TextStyle tiny600,
       required final TextStyle micro600,
-      required final TextStyle micro700}) = _$_Web3ModalTextStyles;
+      required final TextStyle micro700}) = _$Web3ModalTextStylesImpl;
 
   @override
   String get fontFamily;
@@ -506,6 +506,6 @@ abstract class _Web3ModalTextStyles implements Web3ModalTextStyles {
   TextStyle get micro700;
   @override
   @JsonKey(ignore: true)
-  _$$_Web3ModalTextStylesCopyWith<_$_Web3ModalTextStyles> get copyWith =>
+  _$$Web3ModalTextStylesImplCopyWith<_$Web3ModalTextStylesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
