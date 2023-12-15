@@ -10,21 +10,19 @@ jobs:
     name: Publish to pub.dev
     permissions:
       id-token: write
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
       # Checkout the repo
       - uses: actions/checkout@v3
-
+      # Setup Dart SDK
+      - uses: dart-lang/setup-dart@v1
       # Install Flutter
       - name: Install and set Flutter version
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.16.0'
           channel: 'stable'
-
-      # Setup Dart SDK
-      - uses: dart-lang/setup-dart@v1
 
       # Get package dependencies and generate files
       - name: Get package dependencies and generate files

@@ -32,4 +32,7 @@ awk -F"=" -v newval="$NEW_VERSION" 'BEGIN{OFS=FS} $1=="versionName"{$2=newval}1'
 # Increment versionCode (build number) on gradle.properties
 awk -F"=" 'BEGIN{OFS=FS} $1=="versionCode"{$2=$2+1}1' gradle.properties > gradle.properties.tmp && mv gradle.properties.tmp gradle.properties
 
+cd ..
+cd ..
 
+flutter pub publish --dry-run
