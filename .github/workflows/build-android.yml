@@ -63,13 +63,24 @@ jobs:
         PROJECT_ID: ${{ secrets.PROJECT_ID }}
       run: |
         # Get app version from file
-        FILE_VALUE=`cat $GITHUB_WORKSPACE/lib/version.dart`
-        VERSION=`echo $FILE_VALUE | sed "s/[^']*'\([^']*\)'.*/\1/"`
-        VNAME=`echo $VERSION | sed "s/+.*//"`
-        VBUILD=${VERSION#*+}
+        # Get app version from file
+        GRADLE_FILE=android/gradle.properties
+        VERSION_FILE=$GITHUB_WORKSPACE/lib/version.dart
 
-        # Build ios app with flutter
-        flutter build apk --build-name $VNAME --build-number $VBUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release
+        VERSION=`echo $(cat $VERSION_FILE) | sed "s/[^']*'\([^']*\)'.*/\1/"`
+
+        # Set versionName on gradle.properties
+        awk -F"=" -v newval="$VERSION" 'BEGIN{OFS=FS} $1=="versionName"{$2=newval}1' $GRADLE_FILE > "$GRADLE_FILE.tmp" && mv "$GRADLE_FILE.tmp" $GRADLE_FILE
+
+        # Increment versionCode (build number) on gradle.properties
+        awk -F"=" 'BEGIN{OFS=FS} $1=="versionCode"{$2=$2+1}1' $GRADLE_FILE > "$GRADLE_FILE.tmp" && mv "$GRADLE_FILE.tmp" $GRADLE_FILE
+
+        # Get new versionCode
+        NEXT_BUILD=$(grep 'versionCode' $GRADLE_FILE | cut -d'=' -f2)
+
+        # Build Android app with flutter
+        flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release
+        
     # Setup Node
     - name: Setup Node
       uses: actions/setup-node@v3

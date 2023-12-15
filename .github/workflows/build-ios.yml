@@ -1,6 +1,6 @@
 name: Build iOS App
 
-on: # workflow_dispatch
+on:
   workflow_dispatch:
   release:
     types: [ published ]
@@ -85,7 +85,6 @@ jobs:
         VERSION=`echo $FILE_VALUE | sed "s/[^']*'\([^']*\)'.*/\1/"`
 
         # Build ios app with flutter
-        # flutter build ios --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
         flutter build ios --build-name $VERSION --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
         
         cd ios
