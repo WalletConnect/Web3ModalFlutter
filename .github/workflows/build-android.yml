@@ -95,6 +95,17 @@ jobs:
         APP_ID: ${{ secrets.ANDROID_APP_ID }}
       run: |
         firebase appdistribution:distribute app-release.apk --app $APP_ID --release-notes "Web3Modal Flutter beta testing" --groups flutter-team
+    - name: Notify Channel
+      uses: slackapi/slack-github-action@v1.24.0
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_TYPE: 'INCOMING_WEBHOOK'
+      with:
+        payload: |-
+          {
+            "text":"New Android Example app for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
+          }
+    
     # Clean up Flutter envs
     - name: Clean up
       if: ${{ always() }}

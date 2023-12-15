@@ -37,9 +37,18 @@ jobs:
         run: |
           flutter pub get
           flutter pub run build_runner build --delete-conflicting-outputs
-
       # Publish
       - name: Check Publish Warnings
         run: flutter pub publish --dry-run
       - name: Publish Package
         run: flutter pub publish -f
+      - name: Notify Channel
+        uses: slackapi/slack-github-action@v1.24.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: 'INCOMING_WEBHOOK'
+        with:
+          payload: |-
+            {
+              "text":"Web3Modal Flutter ${{ github.event.release.name }} was just published at https://pub.dev/packages/web3modal_flutter"
+            }
