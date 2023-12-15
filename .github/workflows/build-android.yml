@@ -63,7 +63,6 @@ jobs:
         PROJECT_ID: ${{ secrets.PROJECT_ID }}
       run: |
         # Get app version from file
-        # Get app version from file
         GRADLE_FILE=android/gradle.properties
         VERSION_FILE=$GITHUB_WORKSPACE/lib/version.dart
 
