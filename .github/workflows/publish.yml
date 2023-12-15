@@ -48,5 +48,5 @@ jobs:
         with:
           payload: |-
             {
-              "text":"Web3Modal Flutter ${{ github.event.release.name }} was just published at https://pub.dev/packages/web3modal_flutter"
+              "text":"Web3Modal Flutter ${{ github.ref_name }} was just published at https://pub.dev/packages/web3modal_flutter"
             }

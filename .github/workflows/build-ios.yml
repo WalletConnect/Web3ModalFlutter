@@ -1,9 +1,9 @@
 name: Build iOS App
 
 on:
-  workflow_dispatch:
-  release:
-    types: [ published ]
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
 
 jobs:
   build_with_signing:
@@ -109,7 +109,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"New iOS Example app for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
+            "text":"New iOS Example app for Web3Modal Flutter ${{ github.ref_name }} was just deployed."
           }
     # Clean up
     - name: Clean up
