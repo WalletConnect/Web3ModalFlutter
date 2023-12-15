@@ -44,4 +44,3 @@ app.*.map.json
 /android/app/release
 
 **/*.env*
-scripts/bump.sh
