@@ -213,7 +213,7 @@ class _ConfirmEmailPageState extends State<ConfirmEmailPage> {
     if (_digit[index]!.isNotEmpty) {
       if (index == 5) {
         final code = _digit.values.join();
-        magicService.instance.connectOtp(otp: code);
+        magicService.instance.connectEmailOtp(otp: code);
       } else {
         node.nextFocus();
       }

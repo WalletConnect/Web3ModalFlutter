@@ -19,18 +19,14 @@ class MagicServiceSingleton {
 class MagicService {
   static const _url =
       'https://secure-web3modal-git-preview-3-walletconnect1.vercel.app/sdk';
-  // static const _url2 = 'http://192.168.0.83:3010/sdk';
   //
   static const _packageUrl =
       'https://esm.sh/@web3modal/smart-account@3.4.0-e3959a31';
-  // static const _packageUrl2 =
-  //     'https://esm.sh/@web3modal/smart-account@3.4.0-7c9b36dd';
-  //
+  // static const _packageUrl = 'https://esm.sh/@web3modal/wallet@3.6.0-alpha.0';
+
   static const _initialized = '{type: \'@w3m-app/INITIALIZED\'}';
   static const _frameLoaded = '{type: \'@w3m-app/FRAME_LOADED\'}';
   static const _frameError = '{type: \'@w3m-frame/ERROR\'}';
-  //
-  // static const _htmlString = '<html><body></body></html>';
 
   // static const _authorizedHosts = [
   //   'web3modal.com',
@@ -115,25 +111,29 @@ class MagicService {
 
   void setEmail(String value) => email.value = value;
 
-  Future<void> checkConnected() async {
-    await _webViewController.runJavaScript('checkConnected()');
+  Future<void> isConnected() async {
+    await _webViewController.runJavaScript('isConnected()');
   }
 
   Future<void> connectEmail() async {
     await _webViewController.runJavaScript('connectEmail(\'${email.value}\')');
   }
 
-  Future<void> connectDevice() async {
-    await _webViewController.runJavaScript('connectDevice()');
+  Future<void> connectEmailDevice() async {
+    await _webViewController.runJavaScript('connectEmailDevice()');
   }
 
-  Future<void> connectOtp({required String otp}) async {
+  Future<void> connectEmailOtp({required String otp}) async {
     processing.value = true;
-    await _webViewController.runJavaScript('connectOtp(\'$otp\')');
+    await _webViewController.runJavaScript('connectEmailOtp(\'$otp\')');
   }
 
   Future<void> connectUser() async {
     await _webViewController.runJavaScript('connect()');
+  }
+
+  Future<void> getUser() async {
+    await _webViewController.runJavaScript('getUser()');
   }
 
   void _onUserConnected({Map<String, dynamic>? payload}) {
@@ -149,14 +149,14 @@ class MagicService {
     await _webViewController.runJavaScript('getChainId()');
   }
 
-  Future<void> switchNetowrk({required String chainId}) async {
-    debugPrint('switchNetowrk($chainId)');
+  Future<void> switchNetwork({required String chainId}) async {
     final cid = int.parse(chainId);
-    await _webViewController.runJavaScript('switchNetowrk($cid)');
+    await _webViewController.runJavaScript('switchNetwork($cid)');
   }
 
-  Future<void> request({required Map<String, dynamic> body}) async {
-    await _webViewController.runJavaScript('request(\'${jsonEncode(body)}\')');
+  Future<void> rpcRequest({required Map<String, dynamic> body}) async {
+    await _webViewController
+        .runJavaScript('rpcRequest(\'${jsonEncode(body)}\')');
   }
 
   // Future<void> personalSign({required String message}) async {
@@ -167,8 +167,8 @@ class MagicService {
   //   return request(body: body);
   // }
 
-  Future<void> disconnectUser() async {
-    await _webViewController.runJavaScript('disconnect()');
+  Future<void> signOut() async {
+    await _webViewController.runJavaScript('signOut()');
   }
 
   Future<void> _runJavascript(String projectId) async {
@@ -176,10 +176,10 @@ class MagicService {
       let provider;
       import('$_packageUrl').then((package) => {
         provider = new package.W3mFrameProvider('$projectId')
-        // checkConnected()
+        // isConnected()
       });
 
-      const checkConnected = async () => {
+      const isConnected = async () => {
         // await provider.isConnected();
         window.w3mWebview.postMessage(JSON.stringify($_initialized))
       }
@@ -190,12 +190,14 @@ class MagicService {
       }
 
       const connectDevice = async () => {
-        console.log('connectDevice()')
+        console.log('connectEmailDevice()')
+        // await provider.connectEmailDevice()
         await provider.connectDevice()
       }
 
-      const connectOtp = async (otp) => {
-        console.log('connectOtp(' + otp + ')')
+      const connectEmailOtp = async (otp) => {
+        console.log('connectEmailOtp(' + otp + ')')
+        // await provider.connectEmailOtp({ otp })
         await provider.connectOtp({ otp })
       }
 
@@ -204,23 +206,30 @@ class MagicService {
         await provider.connect()
       }
 
+      const getUser = async () => {
+        console.log('getUser()')
+        await provider.getUser()
+      }
+
       const getChainId = async () => {
         console.log('getChainId()')
         await provider.getChainId()
       }
 
-      const switchNetowrk = async (chainId) => {
-        console.log('switchNetowrk(' + chainId + ')')
+      const switchNetwork = async (chainId) => {
+        console.log('switchNetwork(' + chainId + ')')
+        // await provider.switchNetwork({ chainId })
         await provider.switchNetowrk({ chainId })
       }
 
-      const request = async (req) => {
-        console.log('request(' + req + ')')
+      const rpcRequest = async (req) => {
+        console.log('rpcRequest(' + req + ')')
+        // await provider.rpcRequest({ req })
         await provider.request({ req })
       }
 
-      const disconnect = async () => {
-        console.log('disconnect()')
+      const signOut = async () => {
+        console.log('signOut()')
         await provider.signOut()
       }
 
@@ -244,15 +253,18 @@ class MagicService {
   }
 
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
-    debugPrint('[$runtimeType] Console ${message.message}');
+    // debugPrint('[$runtimeType] Console ${message.message}');
   }
 
   void _onMessageReceived(JavaScriptMessage message) async {
+    if (message.message == '"verify_ready"') {
+      return;
+    }
     try {
       final messageMap = MagicMessage.fromJson(jsonDecode(message.message));
-      debugPrint('[$runtimeType] Received ${messageMap.toJson()}');
+      debugPrint('[$runtimeType] JavaScriptMessage ${message.message}');
       if (messageMap.loaded) {
-        checkConnected();
+        isConnected();
       }
       if (messageMap.initialized) {
         // TODO this would have to be removed then IS_CONNECTED starts working

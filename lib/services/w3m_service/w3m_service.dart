@@ -235,6 +235,7 @@ class W3MService with ChangeNotifier implements IW3MService {
         _setSessionValues(magicSession: ms);
         _notify();
         if (_isOpen) {
+          await magicService.instance.getUser();
           closeModal();
         }
       }
@@ -618,7 +619,7 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     // If we don't have a session, disconnect automatically and notify listeners
     if (_currentSession?.magicSession != null) {
-      magicService.instance.disconnectUser();
+      magicService.instance.signOut();
     }
 
     // If we want to disconnect all sessions, loop through them and disconnect them
@@ -731,7 +732,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     required SessionRequestParams request,
   }) {
     if (connectionService == W3MConnectionService.magic) {
-      return magicService.instance.request(body: request.toJson());
+      return magicService.instance.rpcRequest(body: request.toJson());
     }
     if ((topic ?? '').isEmpty && (chainId ?? '').isEmpty) {
       return Future.value();
