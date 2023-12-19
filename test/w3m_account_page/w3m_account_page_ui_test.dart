@@ -75,7 +75,6 @@ void main() {
       when(service.isOpen).thenReturn(true);
       when(service.session?.address).thenReturn(address);
       when(service.chainBalance).thenReturn(null);
-      when(service.tokenImageUrl).thenReturn(null);
       when(service.selectedChain).thenReturn(null);
       when(service.avatarUrl).thenReturn(null);
     });

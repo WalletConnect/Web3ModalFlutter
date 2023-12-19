@@ -18,8 +18,6 @@ import 'package:web3modal_flutter/widgets/navigation/navbar_action_button.dart';
 import 'package:web3modal_flutter/widgets/value_listenable_builders/explorer_service_items_listener.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
-import 'package:web3modal_flutter/widgets/lists/list_items/coinbase_list_item.dart';
-
 class WalletsListShortPage extends StatefulWidget {
   const WalletsListShortPage()
       : super(key: Web3ModalKeyConstants.walletListShortPageKey);
@@ -62,8 +60,6 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
           if (itemsCount < kShortWalletListCount && isPortrait) {
             maxHeight = kListItemHeight * (itemsCount + 1);
           }
-          // if coinbaseEnabled
-          maxHeight += kListItemHeight;
           return ConstrainedBox(
             constraints: BoxConstraints(maxHeight: maxHeight),
             child: WalletsList(
@@ -75,11 +71,6 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
               bottomItems: (itemsCount < kShortWalletListCount)
                   ? []
                   : [
-                      CoinbaseListItem(
-                        onTap: () {
-                          service.connectCoinbaseWallet();
-                        },
-                      ),
                       AllWalletsItem(
                         trailing: ValueListenableBuilder<int>(
                           valueListenable:

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:web3dart/web3dart.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:walletconnect_flutter_dapp/models/eth/ethereum_transaction.dart';

@@ -15,3 +15,9 @@ class W3MWalletInfo with _$W3MWalletInfo {
   factory W3MWalletInfo.fromJson(Map<String, dynamic> json) =>
       _$W3MWalletInfoFromJson(json);
 }
+
+extension W3MWalletInfoExtension on W3MWalletInfo {
+  bool get isCoinbase =>
+      listing.id ==
+      'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa';
+}

@@ -266,7 +266,6 @@ void main() {
         expect(service.session == null, true);
         expect(service.selectedChain, null);
         expect(service.chainBalance, null);
-        expect(service.tokenImageUrl, null);
 
         expect(counter, 8); // setRequiredNamespaces, disconnect
       });

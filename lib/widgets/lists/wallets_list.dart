@@ -44,6 +44,7 @@ class WalletsList extends StatelessWidget {
         : itemList.map(
             (e) => WalletListItem(
               onTap: () => onTapWallet?.call(e.data),
+              showCheckmark: e.data.installed,
               imageUrl: e.image,
               title: e.title,
               trailing: e.data.recent

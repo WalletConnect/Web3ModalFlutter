@@ -3,26 +3,26 @@ import 'package:web3modal_flutter/theme/constants.dart';
 
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
+import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 import 'package:web3modal_flutter/widgets/lists/grid_items/base_grid_item.dart';
 
 class WalletGridItem extends StatelessWidget {
   const WalletGridItem({
     super.key,
     required this.title,
-    this.imageWidget,
     this.imageUrl,
     this.bottom,
     this.onTap,
     this.isSelected = false,
     this.isNetwork = false,
+    this.showCheckmark = false,
   });
 
-  final Widget? imageWidget;
   final String title;
   final String? imageUrl;
   final Widget? bottom;
   final VoidCallback? onTap;
-  final bool isSelected, isNetwork;
+  final bool isSelected, isNetwork, showCheckmark;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,8 @@ class WalletGridItem extends StatelessWidget {
           Expanded(
             child: Align(
               alignment: Alignment.topCenter,
-              child: imageWidget ??
+              child: Stack(
+                children: [
                   W3MListAvatar(
                     borderRadius: radiuses.radiusXS,
                     imageUrl: imageUrl,
@@ -45,6 +46,31 @@ class WalletGridItem extends StatelessWidget {
                     color: isSelected ? themeColors.accent100 : null,
                     disabled: isNetwork && onTap == null,
                   ),
+                  Visibility(
+                    visible: showCheckmark,
+                    child: Positioned(
+                      bottom: -2,
+                      right: -2,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: themeColors.background150,
+                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                        ),
+                        padding: const EdgeInsets.all(2.0),
+                        clipBehavior: Clip.antiAlias,
+                        child: RoundedIcon(
+                          assetPath: 'assets/icons/checkmark.svg',
+                          assetColor: themeColors.success100,
+                          circleColor: themeColors.success100.withOpacity(0.3),
+                          borderColor: themeColors.background150,
+                          padding: 2.0,
+                          size: 18.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 2.0),

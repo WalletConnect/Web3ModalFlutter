@@ -1086,7 +1086,7 @@ packages:
     source: hosted
     version: "0.0.12+1"
   walletconnect_flutter_v2:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: walletconnect_flutter_v2
       sha256: "60f56018f69401799dfcfdee2d5112132aa922eea613018155132b87849ea1b5"
@@ -1110,7 +1110,7 @@ packages:
     source: hosted
     version: "0.3.0"
   web3dart:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: web3dart
       sha256: "31f93cf84b8c874d7ffb363959249d7e479115fe12cf46f30b037dcad6750b22"

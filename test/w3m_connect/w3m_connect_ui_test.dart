@@ -19,12 +19,10 @@ void main() {
 
     setUp(() async {
       service = W3MServiceSpy();
-      when(service.initError).thenReturn(null);
       when(service.isConnected).thenReturn(false);
       when(service.isOpen).thenReturn(false);
       when(service.session?.address).thenReturn(address);
       when(service.chainBalance).thenReturn(null);
-      when(service.tokenImageUrl).thenReturn(null);
       when(service.selectedChain).thenReturn(null);
       when(service.avatarUrl).thenReturn(null);
     });

@@ -34,6 +34,7 @@ class WalletsGrid extends StatelessWidget {
               onTap: () => onTapWallet?.call(info.data),
               imageUrl: info.image,
               title: info.title,
+              showCheckmark: info.data.installed,
             ),
           ),
         )
