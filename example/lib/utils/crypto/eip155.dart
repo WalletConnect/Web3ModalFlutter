@@ -1,4 +1,6 @@
 import 'dart:convert';
+// ignore: depend_on_referenced_packages
+import 'package:http/http.dart' as http;
 
 import 'package:web3dart/web3dart.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -6,13 +8,11 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:walletconnect_flutter_dapp/models/eth/ethereum_transaction.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/contract.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/test_data.dart';
-import 'package:walletconnect_flutter_dapp/utils/crypto/web3dart_extension.dart';
 
 enum EIP155UIMethods {
   personalSign,
   ethSignTypedDataV4,
   ethSendTransaction,
-  testContractCall,
 }
 
 enum EIP155Events {
@@ -70,7 +70,6 @@ class EIP155 {
   static final Map<EIP155UIMethods, String> methods = {
     EIP155UIMethods.personalSign: 'personal_sign',
     EIP155UIMethods.ethSignTypedDataV4: 'eth_signTypedData_v4',
-    EIP155UIMethods.testContractCall: 'test_contractCall',
     EIP155UIMethods.ethSendTransaction: 'eth_sendTransaction',
   };
 
@@ -103,13 +102,6 @@ class EIP155 {
           chainId: chainId,
           address: address,
           data: typedData(id),
-        );
-      case EIP155UIMethods.testContractCall:
-        return testContractCall(
-          w3mService: w3mService,
-          topic: topic,
-          chainId: chainId,
-          address: address,
         );
 
       case EIP155UIMethods.ethSendTransaction:
@@ -161,40 +153,6 @@ class EIP155 {
     );
   }
 
-  static Future<dynamic> testContractCall({
-    required W3MService w3mService,
-    required String topic,
-    required String chainId,
-    required String address,
-  }) async {
-    final ethChain = W3MChainPresets.chains['1']!;
-    final contract = DeployedContract(
-      ContractAbi.fromJson(
-          jsonEncode(ContractDetails.readContractAbi), 'Tether (USDT)'),
-      EthereumAddress.fromHex(ContractDetails.contractAddress),
-    );
-
-    final balanceFunction = contract.function('balanceOf');
-
-    final transaction = Transaction.callContract(
-      contract: contract,
-      function: balanceFunction,
-      parameters: [EthereumAddress.fromHex(ContractDetails.balanceAddress)],
-    );
-
-    return await w3mService.web3App!.request(
-      topic: topic,
-      chainId: ethChain.namespace,
-      request: SessionRequestParams(
-        method: methods[EIP155UIMethods.ethSendTransaction]!,
-        // Check the `web3dart_extension` file for this function
-        params: [
-          transaction.toJson(fromAddress: ContractDetails.balanceAddress),
-        ],
-      ),
-    );
-  }
-
   static Future<dynamic> ethSendTransaction({
     required W3MService w3mService,
     required String topic,
@@ -209,5 +167,62 @@ class EIP155 {
         params: [transaction.toJson()],
       ),
     );
+  }
+
+  static Future<dynamic> testContractCall({
+    required W3MService w3mService,
+  }) async {
+    Map<String, dynamic> contractResult = {};
+
+    final ethChain = W3MChainPresets.chains['1']!;
+    final ethClient = Web3Client(ethChain.rpcUrl, http.Client());
+
+    final deployedContract = DeployedContract(
+      ContractAbi.fromJson(
+        jsonEncode(ContractDetails.readContractAbi),
+        'Tether (USDT)',
+      ),
+      EthereumAddress.fromHex(ContractDetails.contractAddress),
+    );
+
+    final nameFunction = deployedContract.function('name');
+    final totalSupplyFunction = deployedContract.function('totalSupply');
+    final decimalsFunction = deployedContract.function('decimals');
+    final balanceFunction = deployedContract.function('balanceOf');
+
+    final nameResult = await ethClient.call(
+      contract: deployedContract,
+      function: nameFunction,
+      params: [],
+    );
+    contractResult['Contract Name'] = nameResult.first;
+
+    final decimalsResult = await ethClient.call(
+      contract: deployedContract,
+      function: decimalsFunction,
+      params: [],
+    );
+    final decimals = (decimalsResult.first as BigInt).toInt() + 1;
+    final divider = int.parse('1'.padRight(decimals, '0'));
+
+    final totalSupply = await ethClient.call(
+      contract: deployedContract,
+      function: totalSupplyFunction,
+      params: [],
+    );
+    final total = totalSupply.first.toDouble() / divider.toDouble();
+    contractResult['Total Supply'] = total;
+
+    final balanceResult = await ethClient.call(
+      contract: deployedContract,
+      function: balanceFunction,
+      params: [
+        EthereumAddress.fromHex(w3mService.address!),
+      ],
+    );
+    final balance = balanceResult.first.toDouble() / divider.toDouble();
+    contractResult['Your balance'] = balance;
+
+    return contractResult;
   }
 }

@@ -212,6 +212,45 @@ class SessionWidgetState extends State<SessionWidget> {
       );
     }
 
+    if (chainMetadata.w3mChainInfo.chainId == '1') {
+      buttons.add(
+        Container(
+          height: StyleConstants.linear40,
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
+          child: ElevatedButton(
+            onPressed: () async {
+              final future = EIP155.testContractCall(
+                w3mService: widget.w3mService,
+              );
+              MethodDialog.show(context, 'testContractCall', future);
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                chainMetadata.color,
+              ),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    StyleConstants.linear8,
+                  ),
+                ),
+              ),
+            ),
+            child: Text(
+              'TetherToken Contract',
+              style: Web3ModalTheme.getDataOf(context)
+                  .textStyles
+                  .small600
+                  .copyWith(
+                    color: Web3ModalTheme.colorsOf(context).foreground100,
+                  ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return buttons;
   }
 
