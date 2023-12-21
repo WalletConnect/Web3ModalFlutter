@@ -24,4 +24,16 @@ class CoinbaseData {
       'networkId': chainId,
     };
   }
+
+  CoinbaseData copytWith({
+    String? address,
+    String? chainName,
+    int? chainId,
+  }) {
+    return CoinbaseData(
+      address: address ?? this.address,
+      chainName: chainName ?? this.chainName,
+      chainId: chainId ?? this.chainId,
+    );
+  }
 }

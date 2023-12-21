@@ -400,21 +400,21 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValue: false,
       ) as bool);
   @override
-  _i3.Event<_i15.CoinbaseConnectEvent> get onCoinbaseConnection =>
+  _i3.Event<_i15.CoinbaseConnectEvent> get onCoinbaseConnect =>
       (super.noSuchMethod(
-        Invocation.getter(#onCoinbaseConnection),
+        Invocation.getter(#onCoinbaseConnect),
         returnValue: _FakeEvent_1<_i15.CoinbaseConnectEvent>(
           this,
-          Invocation.getter(#onCoinbaseConnection),
+          Invocation.getter(#onCoinbaseConnect),
         ),
       ) as _i3.Event<_i15.CoinbaseConnectEvent>);
   @override
-  set onCoinbaseConnection(
-          _i3.Event<_i15.CoinbaseConnectEvent>? _onCoinbaseConnection) =>
+  set onCoinbaseConnect(
+          _i3.Event<_i15.CoinbaseConnectEvent>? _onCoinbaseConnect) =>
       super.noSuchMethod(
         Invocation.setter(
-          #onCoinbaseConnection,
-          _onCoinbaseConnection,
+          #onCoinbaseConnect,
+          _onCoinbaseConnect,
         ),
         returnValueForMissingStub: null,
       );
@@ -432,6 +432,25 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         Invocation.setter(
           #onCoinbaseError,
           _onCoinbaseError,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  _i3.Event<_i15.CoinbaseSessionEvent> get onCoinbaseSession =>
+      (super.noSuchMethod(
+        Invocation.getter(#onCoinbaseSession),
+        returnValue: _FakeEvent_1<_i15.CoinbaseSessionEvent>(
+          this,
+          Invocation.getter(#onCoinbaseSession),
+        ),
+      ) as _i3.Event<_i15.CoinbaseSessionEvent>);
+  @override
+  set onCoinbaseSession(
+          _i3.Event<_i15.CoinbaseSessionEvent>? _onCoinbaseSession) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #onCoinbaseSession,
+          _onCoinbaseSession,
         ),
         returnValueForMissingStub: null,
       );
@@ -552,7 +571,7 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
   @override
-  _i16.Future<String?> cbRequest({
+  _i16.Future<void> cbRequest({
     String? chainId,
     required _i4.SessionRequestParams? request,
   }) =>
@@ -565,8 +584,9 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
             #request: request,
           },
         ),
-        returnValue: _i16.Future<String?>.value(),
-      ) as _i16.Future<String?>);
+        returnValue: _i16.Future<void>.value(),
+        returnValueForMissingStub: _i16.Future<void>.value(),
+      ) as _i16.Future<void>);
   @override
   _i16.Future<void> cbResetSession() => (super.noSuchMethod(
         Invocation.method(
@@ -703,21 +723,21 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValue: false,
       ) as bool);
   @override
-  _i3.Event<_i15.CoinbaseConnectEvent> get onCoinbaseConnection =>
+  _i3.Event<_i15.CoinbaseConnectEvent> get onCoinbaseConnect =>
       (super.noSuchMethod(
-        Invocation.getter(#onCoinbaseConnection),
+        Invocation.getter(#onCoinbaseConnect),
         returnValue: _FakeEvent_1<_i15.CoinbaseConnectEvent>(
           this,
-          Invocation.getter(#onCoinbaseConnection),
+          Invocation.getter(#onCoinbaseConnect),
         ),
       ) as _i3.Event<_i15.CoinbaseConnectEvent>);
   @override
-  set onCoinbaseConnection(
-          _i3.Event<_i15.CoinbaseConnectEvent>? _onCoinbaseConnection) =>
+  set onCoinbaseConnect(
+          _i3.Event<_i15.CoinbaseConnectEvent>? _onCoinbaseConnect) =>
       super.noSuchMethod(
         Invocation.setter(
-          #onCoinbaseConnection,
-          _onCoinbaseConnection,
+          #onCoinbaseConnect,
+          _onCoinbaseConnect,
         ),
         returnValueForMissingStub: null,
       );
@@ -735,6 +755,25 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         Invocation.setter(
           #onCoinbaseError,
           _onCoinbaseError,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  _i3.Event<_i15.CoinbaseSessionEvent> get onCoinbaseSession =>
+      (super.noSuchMethod(
+        Invocation.getter(#onCoinbaseSession),
+        returnValue: _FakeEvent_1<_i15.CoinbaseSessionEvent>(
+          this,
+          Invocation.getter(#onCoinbaseSession),
+        ),
+      ) as _i3.Event<_i15.CoinbaseSessionEvent>);
+  @override
+  set onCoinbaseSession(
+          _i3.Event<_i15.CoinbaseSessionEvent>? _onCoinbaseSession) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #onCoinbaseSession,
+          _onCoinbaseSession,
         ),
         returnValueForMissingStub: null,
       );
@@ -957,7 +996,7 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
   @override
-  _i16.Future<String?> cbRequest({
+  _i16.Future<void> cbRequest({
     String? chainId,
     required _i4.SessionRequestParams? request,
   }) =>
@@ -970,8 +1009,9 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
             #request: request,
           },
         ),
-        returnValue: _i16.Future<String?>.value(),
-      ) as _i16.Future<String?>);
+        returnValue: _i16.Future<void>.value(),
+        returnValueForMissingStub: _i16.Future<void>.value(),
+      ) as _i16.Future<void>);
   @override
   _i16.Future<void> cbResetSession() => (super.noSuchMethod(
         Invocation.method(
@@ -2493,6 +2533,14 @@ class MockStorageService extends _i1.Mock implements _i35.StorageService {
             key,
             value,
           ],
+        ),
+        returnValue: _i16.Future<bool>.value(false),
+      ) as _i16.Future<bool>);
+  @override
+  _i16.Future<bool> clearAll() => (super.noSuchMethod(
+        Invocation.method(
+          #clearAll,
+          [],
         ),
         returnValue: _i16.Future<bool>.value(false),
       ) as _i16.Future<bool>);

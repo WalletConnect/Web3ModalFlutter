@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
+import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
@@ -56,6 +58,9 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final chainId = _service?.selectedChain?.chainId ?? '1';
+    final imageId = AssetUtil.getChainIconId(chainId);
+    final tokenImage = explorerService.instance.getAssetImageUrl(imageId);
 
     return SafeArea(
       child: Stack(
@@ -100,7 +105,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                   const SizedBox.square(dimension: 20.0),
                   AccountListItem(
                     iconWidget: RoundedIcon(
-                      imageUrl: _service?.tokenImageUrl,
+                      imageUrl: tokenImage,
                       assetColor: themeColors.background100,
                     ),
                     title: _service?.selectedChain?.chainName ?? '',

@@ -1,6 +1,5 @@
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/constants/eth_constants.dart';
-import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
 import 'package:web3modal_flutter/utils/w3m_chains_presets.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
@@ -8,14 +7,19 @@ import 'package:web3modal_flutter/utils/w3m_logger.dart';
 enum W3MSessionService {
   wc,
   coinbase,
-  magic,
-  none,
+  // magic,
+  none;
+
+  bool get isWC => this == W3MSessionService.wc;
+  bool get isCoinbase => this == W3MSessionService.coinbase;
+  // bool get isMagic => this == W3MSessionService.magic;
+  bool get noSession => this == W3MSessionService.none;
 }
 
 class W3MSession {
   SessionData? sessionData;
   CoinbaseData? coinbaseData;
-  // MagicData? magicData will be here
+  // MagicData? magicData;
 
   W3MSession({
     this.sessionData,
@@ -60,8 +64,6 @@ class W3MSession {
     //
     return W3MSessionService.none;
   }
-
-  bool get hasSession => sessionService != W3MSessionService.none;
 
   String? get address {
     if (sessionData != null) {
@@ -123,9 +125,13 @@ class W3MSession {
   }
 
   bool hasSwitchMethod() {
-    if (sessionData == null) {
+    if (sessionService.noSession) {
       return false;
     }
+    if (sessionService.isCoinbase) {
+      return true;
+    }
+
     final nsMethods = getApprovedMethods() ?? [];
     final supportsAddChain = nsMethods.contains(EthConstants.walletAddEthChain);
 
@@ -133,45 +139,48 @@ class W3MSession {
   }
 
   List<String>? getApprovedMethods() {
-    if (!hasSession) {
+    if (sessionService.noSession) {
       return null;
     }
-    if (sessionService == W3MSessionService.coinbase) {
-      return CoinbaseService.approvedMethods;
+    if (sessionService.isCoinbase) {
+      return EthConstants.coinbaseSupportedMethods;
     }
 
     final sessionNamespaces = sessionData!.namespaces;
     return sessionNamespaces[EthConstants.namespace]?.methods ?? [];
   }
 
-  // bool isChainApproved(String chainId) {
-  //   if (sessionData == null) {
-  //     // TODO check this if has to be true
-  //     return false;
-  //   }
-  //   return NamespaceUtils.getChainIdsFromNamespaces(
-  //     namespaces: sessionData!.namespaces,
-  //   ).contains(chainId);
-  // }
-
-  List<String>? getApprovedChains() {
-    if (!hasSession) {
+  List<String>? getApprovedEvents() {
+    if (sessionService.noSession) {
       return null;
     }
-    if (sessionService != W3MSessionService.wc) {
+    if (sessionService.isCoinbase) {
+      return [];
+    }
+
+    final sessionNamespaces = sessionData!.namespaces;
+    return sessionNamespaces[EthConstants.namespace]?.events ?? [];
+  }
+
+  List<String>? getApprovedChains() {
+    if (sessionService.noSession) {
+      return null;
+    }
+    // We can not know which chains are approved from Coinbase of magic,
+    // so we enable everyone by default
+    if (!sessionService.isWC) {
       return [chainId];
     }
     final accounts = getAccounts() ?? [];
     final approvedChains = NamespaceUtils.getChainsFromAccounts(accounts);
-
     return approvedChains;
   }
 
   List<String>? getAccounts() {
-    if (!hasSession) {
+    if (sessionService.noSession) {
       return null;
     }
-    if (sessionService == W3MSessionService.coinbase) {
+    if (sessionService.isCoinbase) {
       return ['${EthConstants.namespace}:$chainId:$address'];
     }
 
@@ -180,15 +189,15 @@ class W3MSession {
   }
 
   Redirect? getSessionRedirect() {
-    if (coinbaseData != null) {
+    if (sessionService.noSession) {
+      return null;
+    }
+    if (sessionService.isCoinbase) {
       return Redirect(native: 'cbwallet://wsegue');
     }
-    // if (magicData != null)
+    // if (sessionService.isMagic) {
     //
-    if (sessionData != null) {
-      final metadata = sessionData!.peer.metadata;
-      return metadata.redirect;
-    }
-    return null;
+
+    return sessionData?.peer.metadata.redirect;
   }
 }

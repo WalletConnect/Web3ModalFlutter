@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _w3mService.addListener(_serviceListener);
     _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
+    _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
     _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
     _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
   }
@@ -72,6 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     _w3mService.onSessionEventEvent.unsubscribe(_onSessionEvent);
+    _w3mService.onSessionUpdateEvent.unsubscribe(_onSessionUpdate);
     _w3mService.onSessionConnectEvent.unsubscribe(_onSessionConnect);
     _w3mService.onSessionDeleteEvent.unsubscribe(_onSessionDelete);
     super.dispose();
@@ -83,6 +85,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onSessionEvent(SessionEvent? args) {
     debugPrint('[$runtimeType] _onSessionEvent $args');
+  }
+
+  void _onSessionUpdate(SessionUpdate? args) {
+    debugPrint('[$runtimeType] _onSessionUpdate $args');
   }
 
   void _onSessionConnect(SessionConnect? args) {

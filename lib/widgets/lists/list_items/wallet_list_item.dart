@@ -28,7 +28,6 @@ class WalletListItem extends StatelessWidget {
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
-    debugPrint('[$runtimeType] $imageUrl');
     return BaseListItem(
       onTap: onTap,
       padding: const EdgeInsets.all(0.0),

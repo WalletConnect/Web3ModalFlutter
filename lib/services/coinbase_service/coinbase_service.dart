@@ -1,55 +1,35 @@
 import 'dart:convert';
 
-import 'package:coinbase_wallet_sdk/account.dart';
+import 'package:coinbase_wallet_sdk/currency.dart';
+import 'package:coinbase_wallet_sdk/return_value.dart';
+import 'package:flutter/foundation.dart';
+
+import 'package:event/event.dart';
+import 'package:web3modal_flutter/services/coinbase_service/i_coinbase_service.dart';
+import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
+
 import 'package:coinbase_wallet_sdk/action.dart';
 import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
 import 'package:coinbase_wallet_sdk/configuration.dart';
 import 'package:coinbase_wallet_sdk/eth_web3_rpc.dart';
 import 'package:coinbase_wallet_sdk/request.dart';
-import 'package:web3dart/web3dart.dart';
-import 'package:web3modal_flutter/utils/w3m_logger.dart';
-// import 'package:coinbase_wallet_sdk/request.dart';
 
-import 'package:web3modal_flutter/web3modal_flutter.dart';
-
-import 'package:flutter/foundation.dart';
-
-// final coinbaseService = CoinbaseServiceSingleton();
-
-// class CoinbaseServiceSingleton {
-//   late ICoinbaseService instance;
-// }
-
-class W3MCoinbaseException implements Exception {
-  final int code;
-  final String message;
-  final dynamic stackTrace;
-  W3MCoinbaseException(this.code, this.message, [this.stackTrace]) : super();
-}
-
-abstract class ICoinbaseService {
-  Future<void> cbInit({required PairingMetadata metadata});
-  Future<bool> cbIsConnected();
-  Future<Account?> cbGetAccount();
-  Future<dynamic> cbRequest({
-    String? topic,
-    required String chainId,
-    required SessionRequestParams request,
-  });
-  Future<void> cbResetSession();
-  Future<bool> cbCheckInstalled();
-}
+import 'models/coinbase_data.dart';
 
 class CoinbaseService implements ICoinbaseService {
-  // late final PairingMetadata _metadata;
-  // CoinbaseService({required PairingMetadata metadata}) : _metadata = metadata;
-  bool _initialized = false;
+  @override
+  Event<CoinbaseConnectEvent> onCoinbaseConnect = Event<CoinbaseConnectEvent>();
+
+  @override
+  Event<CoinbaseErrorEvent> onCoinbaseError = Event<CoinbaseErrorEvent>();
+
+  @override
+  Event<CoinbaseSessionEvent> onCoinbaseSession = Event<CoinbaseSessionEvent>();
 
   @protected
   @override
   Future<void> cbInit({required PairingMetadata metadata}) async {
-    // Reset previous session
-    // await CoinbaseWalletSDK.shared.resetSession();
     // Configure SDK for each platform
     final universal = metadata.redirect?.universal ?? metadata.url;
     final nativeLink = metadata.redirect?.native ?? '';
@@ -60,154 +40,160 @@ class CoinbaseService implements ICoinbaseService {
             host: Uri.parse('cbwallet://wsegue'),
             callback: Uri.parse(nativeLink),
           ),
-          android: AndroidConfiguration(
-            domain: Uri.parse(universal),
-          ),
+          android: AndroidConfiguration(domain: Uri.parse(universal)),
         );
         await CoinbaseWalletSDK.shared.configure(config);
-        _initialized = true;
-      } catch (e) {
-        debugPrint('initCoinbase: $e');
+      } catch (_) {
+        // Silent error
       }
     } else {
-      throw ArgumentError(
-          'metada.redirect must be set to properly integrate Coinbase Wallet');
+      throw W3MCoinbaseException(0, 'PairingMetadata error');
     }
   }
 
-  void _checkInitialized() {
-    if (!_initialized) {
-      throw W3MCoinbaseException(-1, 'Coinbase is not initialized');
-    }
+  @override
+  Future<bool> cbIsInstalled() async {
+    return await CoinbaseWalletSDK.shared.isAppInstalled();
   }
 
   @override
   Future<bool> cbIsConnected() async {
-    _checkInitialized();
     return await CoinbaseWalletSDK.shared.isConnected();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
   @protected
   @override
-  Future<Account?> cbGetAccount() async {
-    _checkInitialized();
+  Future<void> cbGetAccount() async {
     try {
       final results = await CoinbaseWalletSDK.shared.initiateHandshake([
         const RequestAccounts(),
       ]);
-      return results[0].account;
+      final data = CoinbaseData.fromJson(results.first.account!.toJson());
+      onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
     } catch (e, s) {
       W3MLoggerUtil.logger.e('[$runtimeType] getAccount(): $e, $s');
-      return null;
+      onCoinbaseError.broadcast(CoinbaseErrorEvent(e.toString()));
     }
   }
 
   @override
-  Future<dynamic> cbRequest({
-    String? topic,
+  Future<void> cbRequest({
     String? chainId,
     required SessionRequestParams request,
   }) async {
-    _checkInitialized();
-    debugPrint(
-        '[CoinbaseService] cbRequest: $topic, $chainId, ${request.toJson()}');
-    final req = Request(actions: [request.toCoinbaseRequest(chainId)]);
-    final results = await CoinbaseWalletSDK.shared.makeRequest(req);
-    if (results[0].error != null) {
-      final message = results[0].error!.message;
-      final code = results[0].error!.code;
-      throw W3MCoinbaseException(code, message);
+    // _checkInitialized();
+    try {
+      final req = Request(actions: [request.toCoinbaseRequest(chainId)]);
+      final results = await CoinbaseWalletSDK.shared.makeRequest(req);
+      final errors = _checkError(results);
+      if (errors != null) {
+        onCoinbaseError.broadcast(CoinbaseErrorEvent(errors.message));
+      } else {
+        W3MLoggerUtil.logger
+            .i('[$runtimeType] cbRequest: ${results.first.value}');
+        switch (req.actions.first.method) {
+          case 'wallet_switchEthereumChain':
+          case 'wallet_addEthereumChain':
+            onCoinbaseSession.broadcast(CoinbaseSessionEvent(chainId: chainId));
+            break;
+          case 'eth_requestAccounts':
+            final json = jsonDecode(results.first.value!);
+            final data = CoinbaseData.fromJson(json);
+            onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
+            break;
+          default:
+            onCoinbaseSession.broadcast();
+            break;
+        }
+      }
+    } on W3MCoinbaseException {
+      rethrow;
+    } catch (e, s) {
+      W3MLoggerUtil.logger.e('[$runtimeType] cbRequest: $e, $s');
+      throw W3MCoinbaseException(0, e.toString());
     }
-    return results[0].value;
   }
 
   @override
   Future<void> cbResetSession() async {
-    _checkInitialized();
     try {
-      return CoinbaseWalletSDK.shared.resetSession();
+      await CoinbaseWalletSDK.shared.resetSession();
+      // onCoinbaseDisconnect.broadcast(CoinbaseDisconnectEvent());
     } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+      throw W3MCoinbaseException(0, e.toString());
     }
   }
 
-  @override
-  Future<bool> cbCheckInstalled() async {
-    _checkInitialized();
-    return await CoinbaseWalletSDK.shared.isAppInstalled();
+  ReturnValueError? _checkError(List<ReturnValue> results) {
+    return results.first.error;
   }
-
-  static const List<String> approvedMethods = [
-    'eth_requestAccounts',
-    'eth_signTransaction',
-    'eth_sendTransaction',
-    'personal_sign',
-    'eth_signTypedData_v3',
-    'eth_signTypedData_v4',
-    'wallet_switchEthereumChain',
-    'wallet_addEthereumChain',
-    'wallet_watchAsset',
-  ];
 }
 
 extension on SessionRequestParams {
   Action toCoinbaseRequest(String? chainId) {
-    debugPrint('SessionRequestParams ${toJson()}');
     switch (method) {
       case 'personal_sign':
         final address = _getAddressFromParams(params);
         final message = _getDataFromParams(params);
-        return PersonalSign(
-          address: address,
-          message: message,
-        );
+        return PersonalSign(address: address, message: message);
       case 'eth_signTypedData_v3':
         final address = _getAddressFromParams(params);
         final jsonData = _getDataFromParams(params);
-        return SignTypedDataV3(
-          address: address,
-          typedDataJson: jsonData,
-        );
+        return SignTypedDataV3(address: address, typedDataJson: jsonData);
       case 'eth_signTypedData_v4':
         final address = _getAddressFromParams(params);
         final jsonData = _getDataFromParams(params);
-        return SignTypedDataV4(
-          address: address,
-          typedDataJson: jsonData,
+        return SignTypedDataV4(address: address, typedDataJson: jsonData);
+      case 'eth_requestAccounts':
+        return RequestAccounts();
+      case 'eth_signTransaction':
+        final jsonData = _getTransactionFromParams(params);
+        final hexValue = jsonData['value'].toString().replaceFirst('0x', '');
+        final value = int.parse(hexValue, radix: 16);
+        return SignTransaction(
+          fromAddress: jsonData['from'],
+          toAddress: jsonData['to'],
+          chainId: chainId!,
+          weiValue: BigInt.from(value),
+          data: jsonData['data'],
+        );
+      case 'eth_sendTransaction':
+        final jsonData = _getTransactionFromParams(params);
+        return SendTransaction(
+          fromAddress: jsonData['from'],
+          toAddress: jsonData['to'],
+          chainId: chainId!,
+          weiValue: jsonData['value'],
+          data: jsonData['data'],
         );
       case 'wallet_switchEthereumChain':
       case 'wallet_addEthereumChain':
         try {
           final chainInfo = W3MChainPresets.chains[chainId!]!;
+          final iconUrls =
+              chainInfo.chainIcon != null ? [chainInfo.chainIcon!] : null;
+          final explorerUrls = chainInfo.blockExplorer != null
+              ? [chainInfo.blockExplorer!.url]
+              : null;
           return AddEthereumChain(
-            chainInfo: chainInfo,
+            chainId: chainInfo.chainId,
+            rpcUrls: [chainInfo.rpcUrl],
+            chainName: chainInfo.chainName,
+            nativeCurrency: Currency(
+              name: chainInfo.tokenName,
+              symbol: chainInfo.tokenName,
+              decimals: 18,
+            ),
+            iconUrls: iconUrls,
+            blockExplorerUrls: explorerUrls,
           );
         } catch (_) {
-          throw Exception('Unrecognized chainId $chainId');
+          throw W3MCoinbaseException(0, 'Unrecognized chainId $chainId');
         }
-      case 'eth_requestAccounts':
-        throw Exception('Unsupported request method $method');
-      case 'eth_signTransaction':
-        throw Exception('Unsupported request method $method');
-      case 'eth_sendTransaction':
-        final jsonData = _getDataFromParams(params);
-
-        debugPrint('jsonData $jsonData');
-        throw Exception('Unsupported request method $method');
-      // return SendTransaction(
-      //   fromAddress: '',
-      //   toAddress: '',
-      //   weiValue: null,
-      //   data: '',
-      //   chainId: '',
-      // );
       case 'wallet_watchAsset':
-        throw Exception('Unsupported request method $method');
+        throw W3MCoinbaseException(0, 'Unsupported request method $method');
       default:
-        throw Exception('Unsupported request method $method');
+        throw W3MCoinbaseException(0, 'Unsupported request method $method');
     }
   }
 
@@ -228,29 +214,9 @@ extension on SessionRequestParams {
       return p != address;
     });
   }
-}
 
-class AddEthereumChain extends Action {
-  AddEthereumChain({required W3MChainInfo chainInfo})
-      : super(
-          method: 'wallet_switchEthereumChain',
-          paramsJson: jsonEncode({
-            'chainId': chainInfo.chainId,
-            'rpcUrls': [
-              chainInfo.rpcUrl,
-            ],
-            'chainName': chainInfo.chainName,
-            'nativeCurrency': {
-              'name': chainInfo.tokenName,
-              'symbol': chainInfo.tokenName,
-              'decimals': 18,
-            },
-            'blockExplorerUrls': [
-              chainInfo.blockExplorer?.url,
-            ],
-            'iconUrls': [
-              chainInfo.chainIcon,
-            ],
-          }),
-        );
+  Map<String, dynamic> _getTransactionFromParams(dynamic params) {
+    final param = (params as List<dynamic>).first;
+    return param as Map<String, dynamic>;
+  }
 }

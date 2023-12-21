@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:universal_io/io.dart';
+import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/utils/debouncer.dart';
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
@@ -14,14 +15,13 @@ import 'package:web3modal_flutter/services/explorer_service/i_explorer_service.d
 import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
-import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 const int _defaultEntriesCount = 48;
 
-class ExplorerService implements IExplorerService {
+class ExplorerService with CoinbaseService implements IExplorerService {
   static const _apiUrl = 'https://api.web3modal.com';
 
   final http.Client _client;
@@ -86,6 +86,22 @@ class ExplorerService implements IExplorerService {
         _client = http.Client();
 
   @override
+  bool get includeCoinbaseWallet {
+    final cbId = _coinbaseWallet.listing.id;
+    final included = (includedWalletIds ?? <String>{});
+    final excluded = (excludedWalletIds ?? <String>{});
+
+    if (included.isNotEmpty) {
+      return included.contains(cbId);
+    }
+    if (excluded.isNotEmpty) {
+      return !excluded.contains(cbId);
+    }
+
+    return true;
+  }
+
+  @override
   Future<void> init() async {
     if (initialized.value) {
       return;
@@ -113,6 +129,17 @@ class ExplorerService implements IExplorerService {
     ]);
 
     _listings = [...allListings.first, ...allListings.last];
+
+    // Include Coinbase Wallet if needed
+    if (includeCoinbaseWallet) {
+      final cbWallet = _coinbaseWallet.copyWith(
+        installed: await cbIsInstalled(),
+      );
+      final index = min(3, _listings.length);
+      _listings.insert(index, cbWallet);
+    }
+
+    _listings = _listings.sortByRecommended(featuredWalletIds);
     listings.value = _listings;
 
     if (_listings.length < _defaultEntriesCount) {
@@ -222,10 +249,7 @@ class ExplorerService implements IExplorerService {
         totalListings.value += apiResponse.count;
       }
       W3MLoggerUtil.logger.t('[$runtimeType] _fetchListings() $uri $p');
-      return apiResponse.data
-          .toList()
-          .sortByRecommended(featuredWalletIds)
-          .toW3MWalletInfo();
+      return apiResponse.data.toList().toW3MWalletInfo();
     } catch (error) {
       W3MLoggerUtil.logger
           .e('[$runtimeType] Error fetch wallets params: $p', error: error);
@@ -375,27 +399,6 @@ class ExplorerService implements IExplorerService {
 }
 
 extension on List<Listing> {
-  List<Listing> sortByRecommended(Set<String>? featuredWalletIds) {
-    List<Listing> sortedByRecommended = [];
-    Set<String> recommendedIds = featuredWalletIds ?? <String>{};
-    List<Listing> listToSort = this;
-
-    if (recommendedIds.isNotEmpty) {
-      for (var recommendedId in featuredWalletIds!) {
-        final rw = listToSort.firstWhereOrNull(
-          (element) => element.id == recommendedId,
-        );
-        if (rw != null) {
-          sortedByRecommended.add(rw);
-          listToSort.removeWhere((element) => element.id == recommendedId);
-        }
-      }
-      sortedByRecommended.addAll(listToSort);
-      return sortedByRecommended;
-    }
-    return listToSort;
-  }
-
   List<W3MWalletInfo> toW3MWalletInfo() {
     return map(
       (item) => W3MWalletInfo(
@@ -408,6 +411,29 @@ extension on List<Listing> {
 }
 
 extension on List<W3MWalletInfo> {
+  List<W3MWalletInfo> sortByRecommended(Set<String>? featuredWalletIds) {
+    List<W3MWalletInfo> sortedByRecommended = [];
+    Set<String> recommendedIds = featuredWalletIds ?? <String>{};
+    List<W3MWalletInfo> listToSort = this;
+
+    if (recommendedIds.isNotEmpty) {
+      for (var recommendedId in featuredWalletIds!) {
+        final rw = listToSort.firstWhereOrNull(
+          (element) => element.listing.id == recommendedId,
+        );
+        if (rw != null) {
+          sortedByRecommended.add(rw);
+          listToSort.removeWhere(
+            (element) => element.listing.id == recommendedId,
+          );
+        }
+      }
+      sortedByRecommended.addAll(listToSort);
+      return sortedByRecommended;
+    }
+    return listToSort;
+  }
+
   List<W3MWalletInfo> setInstalledFlag() {
     return map((e) => e.copyWith(installed: true)).toList();
   }
@@ -415,7 +441,7 @@ extension on List<W3MWalletInfo> {
 
 extension on List<NativeAppData> {
   Future<List<NativeAppData>> getInstalledApps() async {
-    final List<NativeAppData> installedApps = [];
+    final installedApps = <NativeAppData>[];
     for (var appData in this) {
       bool installed = await urlUtils.instance.isInstalled(appData.schema);
       if (installed) {
@@ -425,3 +451,23 @@ extension on List<NativeAppData> {
     return installedApps;
   }
 }
+
+final _coinbaseWallet = W3MWalletInfo(
+  listing: Listing.fromJson({
+    'id': _coinbaseWalletNativeData.id,
+    'name': 'Coinbase Wallet',
+    'homepage': 'https://www.coinbase.com/wallet/',
+    'image_id': 'a5ebc364-8f91-4200-fcc6-be81310a0000',
+    'order': 40,
+    'mobile_link': _coinbaseWalletNativeData.schema,
+    'app_store': 'https://apps.apple.com/app/apple-store/id1278383455',
+    'play_store': 'https://play.google.com/store/apps/details?id=org.toshi',
+  }),
+  installed: false,
+  recent: false,
+);
+
+final _coinbaseWalletNativeData = NativeAppData(
+  id: 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa',
+  schema: 'cbwallet://wsegue',
+);

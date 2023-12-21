@@ -1,82 +1,57 @@
 import 'dart:convert';
-
+// ignore: depend_on_referenced_packages
+import 'package:http/http.dart' as http;
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:walletconnect_flutter_dapp/models/eth/ethereum_transaction.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/contract.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/test_data.dart';
-import 'package:walletconnect_flutter_dapp/utils/crypto/web3dart_extension.dart';
 
 enum EIP155UIMethods {
   personalSign,
   ethSignTypedDataV4,
   ethSendTransaction,
-  testContractCall,
-}
+  requestAccounts,
+  ethSignTypedDataV3,
+  ethSignTransaction;
 
-enum EIP155Events {
-  chainChanged,
-  accountsChanged,
-}
-
-extension EIP155MethodsX on EIP155UIMethods {
-  String? get value => EIP155.methods[this];
-}
-
-extension EIP155MethodsStringX on String {
-  EIP155UIMethods? toEip155Method() {
-    final entries = EIP155.methods.entries.where(
-      (element) => element.value == this,
-    );
-    return (entries.isNotEmpty) ? entries.first.key : null;
-  }
-}
-
-extension EIP155EventsX on EIP155Events {
-  String? get value => EIP155.events[this];
-}
-
-extension EIP155EventsStringX on String {
-  EIP155Events? toEip155Event() {
-    final entries = EIP155.events.entries.where(
-      (element) => element.value == this,
-    );
-    return (entries.isNotEmpty) ? entries.first.key : null;
+  String get name {
+    switch (this) {
+      case personalSign:
+        return 'personal_sign';
+      case ethSignTypedDataV4:
+        return 'eth_signTypedData_v4';
+      case ethSendTransaction:
+        return 'eth_sendTransaction';
+      case requestAccounts:
+        return 'eth_requestAccounts';
+      case ethSignTypedDataV3:
+        return 'eth_signTypedData_v3';
+      case ethSignTransaction:
+        return 'eth_signTransaction';
+    }
   }
 }
 
 class EIP155 {
-  static const ethRequiredMethods = [
-    'personal_sign',
-    'eth_signTypedData',
-    'eth_sendTransaction',
-  ];
-  static const walletSwitchEthChain = 'wallet_switchEthereumChain';
-  static const walletAddEthChain = 'wallet_addEthereumChain';
-  static const ethOptionalMethods = [
-    walletSwitchEthChain,
-    walletAddEthChain,
-  ];
-  static const allMethods = [
-    ...ethRequiredMethods,
-    ...ethOptionalMethods,
-  ];
-  static const ethEvents = [
-    'chainChanged',
-    'accountsChanged',
-  ];
-
-  static final Map<EIP155UIMethods, String> methods = {
-    EIP155UIMethods.personalSign: 'personal_sign',
-    EIP155UIMethods.ethSignTypedDataV4: 'eth_signTypedData_v4',
-    EIP155UIMethods.testContractCall: 'test_contractCall',
-    EIP155UIMethods.ethSendTransaction: 'eth_sendTransaction',
-  };
-
-  static final Map<EIP155Events, String> events = {
-    EIP155Events.chainChanged: 'chainChanged',
-    EIP155Events.accountsChanged: 'accountsChanged',
-  };
+  static EIP155UIMethods methodFromName(String name) {
+    switch (name) {
+      case 'personal_sign':
+        return EIP155UIMethods.personalSign;
+      case 'eth_signTypedData_v4':
+        return EIP155UIMethods.ethSignTypedDataV4;
+      case 'eth_sendTransaction':
+        return EIP155UIMethods.ethSendTransaction;
+      case 'eth_requestAccounts':
+        return EIP155UIMethods.requestAccounts;
+      case 'eth_signTypedData_v3':
+        return EIP155UIMethods.ethSignTypedDataV3;
+      case 'eth_signTransaction':
+        return EIP155UIMethods.ethSignTransaction;
+      default:
+        throw Exception('Unrecognized method');
+    }
+  }
 
   static Future<dynamic> callMethod({
     required W3MService w3mService,
@@ -85,8 +60,26 @@ class EIP155 {
     required String chainId,
     required String address,
   }) {
-    final id = int.parse(chainId.split(':')[1]);
+    final cid = int.parse(chainId.split(':')[1]);
     switch (method) {
+      case EIP155UIMethods.requestAccounts:
+        return w3mService.request(
+          topic: topic,
+          chainId: chainId,
+          request: SessionRequestParams(
+            method: method.name,
+            params: [],
+          ),
+        );
+      case EIP155UIMethods.ethSignTypedDataV3:
+        return w3mService.request(
+          topic: topic,
+          chainId: chainId,
+          request: SessionRequestParams(
+            method: method.name,
+            params: [address, typeDataV3(cid)],
+          ),
+        );
       case EIP155UIMethods.personalSign:
         return personalSign(
           w3mService: w3mService,
@@ -101,21 +94,15 @@ class EIP155 {
           topic: topic,
           chainId: chainId,
           address: address,
-          data: typedData(id),
+          data: typeDataV4(cid),
         );
-      case EIP155UIMethods.testContractCall:
-        return testContractCall(
-          w3mService: w3mService,
-          topic: topic,
-          chainId: chainId,
-          address: address,
-        );
-
+      case EIP155UIMethods.ethSignTransaction:
       case EIP155UIMethods.ethSendTransaction:
         return ethSendTransaction(
           w3mService: w3mService,
           topic: topic,
           chainId: chainId,
+          method: method.name,
           transaction: EthereumTransaction(
             from: address,
             to: address,
@@ -137,7 +124,7 @@ class EIP155 {
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(
-        method: methods[EIP155UIMethods.personalSign]!,
+        method: EIP155UIMethods.personalSign.name,
         params: [data, address],
       ),
     );
@@ -154,42 +141,8 @@ class EIP155 {
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(
-        method: methods[EIP155UIMethods.ethSignTypedDataV4]!,
+        method: EIP155UIMethods.ethSignTypedDataV4.name,
         params: [address, data],
-      ),
-    );
-  }
-
-  static Future<dynamic> testContractCall({
-    required W3MService w3mService,
-    required String topic,
-    required String chainId,
-    required String address,
-  }) async {
-    final ethChain = W3MChainPresets.chains['1']!;
-    final contract = DeployedContract(
-      ContractAbi.fromJson(
-          jsonEncode(ContractDetails.readContractAbi), 'Tether (USDT)'),
-      EthereumAddress.fromHex(ContractDetails.contractAddress),
-    );
-
-    final balanceFunction = contract.function('balanceOf');
-
-    final transaction = Transaction.callContract(
-      contract: contract,
-      function: balanceFunction,
-      parameters: [EthereumAddress.fromHex(ContractDetails.balanceAddress)],
-    );
-
-    return await w3mService.request(
-      topic: topic,
-      chainId: ethChain.namespace,
-      request: SessionRequestParams(
-        method: methods[EIP155UIMethods.ethSendTransaction]!,
-        // Check the `web3dart_extension` file for this function
-        params: [
-          transaction.toJson(fromAddress: ContractDetails.balanceAddress),
-        ],
       ),
     );
   }
@@ -199,14 +152,63 @@ class EIP155 {
     required String topic,
     required String chainId,
     required EthereumTransaction transaction,
+    required String method,
   }) async {
     return await w3mService.request(
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(
-        method: methods[EIP155UIMethods.ethSendTransaction]!,
+        method: EIP155UIMethods.ethSendTransaction.name,
         params: [transaction.toJson()],
       ),
     );
+  }
+
+  static Future<dynamic> testContractCall({
+    required W3MService w3mService,
+  }) async {
+    // Create a Web3Client by passing a chain rpcUrl and an http client
+    final ethChain = W3MChainPresets.chains['1']!;
+    final ethClient = Web3Client(ethChain.rpcUrl, http.Client());
+
+    // Create DeployedContract object using contract's ABI and address
+    final deployedContract = DeployedContract(
+      ContractAbi.fromJson(
+        jsonEncode(ContractDetails.readContractAbi),
+        'TetherToken',
+      ),
+      EthereumAddress.fromHex(ContractDetails.contractAddress),
+    );
+
+    // Query contract's functions
+    final nameFunction = deployedContract.function('name');
+    final totalSupplyFunction = deployedContract.function('totalSupply');
+    final balanceFunction = deployedContract.function('balanceOf');
+
+    final nameResult = await ethClient.call(
+      contract: deployedContract,
+      function: nameFunction,
+      params: [],
+    );
+
+    final totalSupply = await ethClient.call(
+      contract: deployedContract,
+      function: totalSupplyFunction,
+      params: [],
+    );
+
+    final balanceOf = await ethClient.call(
+      contract: deployedContract,
+      function: balanceFunction,
+      params: [
+        EthereumAddress.fromHex(w3mService.session!.address!),
+      ],
+    );
+
+    return {
+      'name': '${nameResult.first}',
+      'totalSupply': '${totalSupply.first}',
+      'balance': '${balanceOf.first}',
+    };
   }
 }

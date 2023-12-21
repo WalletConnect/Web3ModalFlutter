@@ -32,10 +32,6 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// Whether or not this object has been initialized.
   W3MServiceStatus get status;
 
-  /// If the [web3App] fails to initialize and throws an exception, this will contain the caught exception.
-  /// Otherwise, it will be null.
-  dynamic get initError;
-
   bool get hasNamespaces;
 
   /// The object that manages sessions, authentication, events, and requests for WalletConnect.
@@ -54,10 +50,6 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// The current session's data.
   W3MSession? get session;
 
-  /// Returns the url of the token of the currently selected chain.
-  /// Pass this into a [Image.network] and it will load the token image.
-  String? get tokenImageUrl;
-
   /// The url to the account's avatar image.
   /// Pass this into a [Image.network] and it will load the avatar image.
   String? get avatarUrl;
@@ -70,13 +62,6 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
 
   /// The currently selected wallet.
   W3MWalletInfo? get selectedWallet;
-
-  /// Sets the [selectedChain] and gets the [chainBalance].
-  /// If the wallet is already connected, it will request the chain to be changed and will update the session with the new chain.
-  /// If [chainInfo] is null this will disconnect the wallet.
-  Future<void> selectChain(W3MChainInfo? chainInfo, {bool switchChain = false});
-
-  void launchBlockExplorer();
 
   /// Sets up the explorer and the web3App if they already been initialized.
   Future<void> init();
@@ -92,21 +77,21 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// Sets the [selectedWallet] to be connected
   void selectWallet(W3MWalletInfo walletInfo);
 
+  /// Sets the [selectedChain] and gets the [chainBalance].
+  /// If the wallet is already connected, it will request the chain to be changed and will update the session with the new chain.
+  /// If [chainInfo] is null this will disconnect the wallet.
+  Future<void> selectChain(W3MChainInfo? chainInfo, {bool switchChain = false});
+
+  /// Launch blockchain explorer for the current chain in external browser
+  void launchBlockExplorer();
+
   /// Used to expire and delete any inactive pairing
   Future<void> expirePreviousInactivePairings();
 
   /// This will do nothing if [isConnected] is true.
   Future<void> buildConnectionUri();
 
-  /// Subscribe to listen to pairing expirations
-  final Event<EventArgs> onPairingExpire = Event();
-
   WalletRedirect? get selectedWalletRedirect;
-
-  /// When users rejects connection or an error occurs this will event
-  final Event<WalletErrorEvent> onWalletConnectionError = Event();
-
-  Future<void> connectCoinbaseWallet();
 
   /// Connects the [selectedWallet] previously selected
   Future<void> connectSelectedWallet({bool inBrowser = false});
@@ -119,8 +104,11 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// List of approved chains by connected wallet
   List<String>? getApprovedChains();
 
-  /// Gets the name of the currently connected wallet.
-  String getReferer();
+  /// List of approved methods by connected wallet
+  List<String>? getApprovedMethods();
+
+  /// List of approved events by connected wallet
+  List<String>? getApprovedEvents();
 
   /// Closes the modal.
   void closeModal();
@@ -129,6 +117,7 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// If there is no session, this does nothing.
   Future<void> disconnect({bool disconnectAllSessions = true});
 
+  /// Make a request
   Future<dynamic> request({
     required String topic,
     required String chainId,
@@ -139,15 +128,17 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   @override
   void dispose();
 
+  /* EVENTS DECLARATIONS */
+
   abstract final Event<SessionConnect> onSessionConnectEvent;
   abstract final Event<SessionDelete> onSessionDeleteEvent;
   abstract final Event<SessionExpire> onSessionExpireEvent;
   abstract final Event<SessionPing> onSessionPingEvent;
-  abstract final Event<SessionProposalEvent> onProposalExpireEvent;
-
   abstract final Event<SessionUpdate> onSessionUpdateEvent;
   abstract final Event<SessionExtend> onSessionExtendEvent;
   abstract final Event<SessionEvent> onSessionEventEvent;
-
+  abstract final Event<SessionProposalEvent> onProposalExpireEvent;
   abstract final Event<AuthResponse> onAuthResponseEvent;
+  abstract final Event<EventArgs> onPairingExpire;
+  abstract final Event<WalletErrorEvent> onWalletConnectionError;
 }
