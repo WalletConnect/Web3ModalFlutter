@@ -806,6 +806,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   bool _isUserRejectedError(dynamic e) {
+    debugPrint(e.runtimeType.toString());
     if (e is JsonRpcError) {
       final stringError = e.toJson().toString().toLowerCase();
       final userRejected = stringError.contains('rejected');
