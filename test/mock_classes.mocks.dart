@@ -902,7 +902,7 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
   _i16.Future<dynamic> request({
     required String? topic,
     required String? chainId,
-    String? requestedChain,
+    String? switchToChainId,
     required _i4.SessionRequestParams? request,
   }) =>
       (super.noSuchMethod(
@@ -912,7 +912,7 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
           {
             #topic: topic,
             #chainId: chainId,
-            #requestedChain: requestedChain,
+            #switchToChainId: switchToChainId,
             #request: request,
           },
         ),

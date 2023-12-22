@@ -121,7 +121,7 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   Future<dynamic> request({
     required String topic,
     required String chainId,
-    String? requestedChain,
+    String? switchToChainId,
     required SessionRequestParams request,
   });
 

@@ -586,7 +586,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   Future<dynamic> request({
     required String topic,
     required String chainId,
-    String? requestedChain,
+    String? switchToChainId,
     required SessionRequestParams request,
   }) {
     if (_currentSession == null) {
@@ -595,7 +595,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     try {
       if (_currentSession!.sessionService.isCoinbase) {
         return cbRequest(
-          chainId: requestedChain ?? chainId.split(':').last,
+          chainId: switchToChainId ?? chainId.split(':').last,
           request: request,
         );
       }
@@ -702,13 +702,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       );
     } else {
       // Set the required namespaces to everything in our chain presets
-      _requiredNamespaces = {
-        EthConstants.namespace: RequiredNamespace(
-          methods: EthConstants.requiredMethods,
-          chains: [W3MChainPresets.chains['1']!.namespace],
-          events: EthConstants.requiredEvents,
-        ),
-      };
+      _requiredNamespaces = {};
     }
   }
 
@@ -730,10 +724,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       // Set the optional namespaces to everything in our chain presets
       _optionalNamespaces = {
         EthConstants.namespace: RequiredNamespace(
-          methods: EthConstants.optionalMethods,
           chains:
               W3MChainPresets.chains.values.map((e) => e.namespace).toList(),
-          events: EthConstants.optionalEvents,
+          methods: EthConstants.allMethods.toSet().toList(),
+          events: EthConstants.allEvents.toSet().toList(),
         ),
       };
     }
@@ -778,7 +772,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     return request(
       topic: topic,
       chainId: currentChainId,
-      requestedChain: newChain.chainId,
+      switchToChainId: newChain.chainId,
       request: SessionRequestParams(
         method: EthConstants.walletSwitchEthChain,
         params: [

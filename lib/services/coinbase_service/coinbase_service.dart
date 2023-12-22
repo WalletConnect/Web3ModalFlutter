@@ -133,16 +133,16 @@ extension on SessionRequestParams {
   Action toCoinbaseRequest(String? chainId) {
     switch (method) {
       case 'personal_sign':
-        final address = _getAddressFromParams(params);
-        final message = _getDataFromParams(params);
+        final address = _getAddressFromParamsList(params);
+        final message = _getDataFromParamsList(params);
         return PersonalSign(address: address, message: message);
       case 'eth_signTypedData_v3':
-        final address = _getAddressFromParams(params);
-        final jsonData = _getDataFromParams(params);
+        final address = _getAddressFromParamsList(params);
+        final jsonData = _getDataFromParamsList(params);
         return SignTypedDataV3(address: address, typedDataJson: jsonData);
       case 'eth_signTypedData_v4':
-        final address = _getAddressFromParams(params);
-        final jsonData = _getDataFromParams(params);
+        final address = _getAddressFromParamsList(params);
+        final jsonData = _getDataFromParamsList(params);
         return SignTypedDataV4(address: address, typedDataJson: jsonData);
       case 'eth_requestAccounts':
         return RequestAccounts();
@@ -191,13 +191,13 @@ extension on SessionRequestParams {
           throw W3MCoinbaseException(0, 'Unrecognized chainId $chainId');
         }
       case 'wallet_watchAsset':
-        throw W3MCoinbaseException(0, 'Unsupported request method $method');
+        return WatchAsset(params: params);
       default:
         throw W3MCoinbaseException(0, 'Unsupported request method $method');
     }
   }
 
-  String _getAddressFromParams(dynamic params) {
+  String _getAddressFromParamsList(dynamic params) {
     return (params as List).firstWhere((p) {
       try {
         EthereumAddress.fromHex(p);
@@ -208,9 +208,9 @@ extension on SessionRequestParams {
     });
   }
 
-  dynamic _getDataFromParams(dynamic params) {
+  dynamic _getDataFromParamsList(dynamic params) {
     return (params as List).firstWhere((p) {
-      final address = _getAddressFromParams(params);
+      final address = _getAddressFromParamsList(params);
       return p != address;
     });
   }
@@ -219,4 +219,12 @@ extension on SessionRequestParams {
     final param = (params as List<dynamic>).first;
     return param as Map<String, dynamic>;
   }
+}
+
+class WatchAsset extends Action {
+  WatchAsset({required dynamic params})
+      : super(
+          method: 'wallet_watchAsset',
+          paramsJson: jsonEncode(params),
+        );
 }

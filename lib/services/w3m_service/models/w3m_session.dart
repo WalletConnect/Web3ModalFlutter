@@ -134,7 +134,6 @@ class W3MSession {
 
     final nsMethods = getApprovedMethods() ?? [];
     final supportsAddChain = nsMethods.contains(EthConstants.walletAddEthChain);
-
     return supportsAddChain;
   }
 
@@ -147,7 +146,9 @@ class W3MSession {
     }
 
     final sessionNamespaces = sessionData!.namespaces;
-    return sessionNamespaces[EthConstants.namespace]?.methods ?? [];
+    final namespace = sessionNamespaces[EthConstants.namespace];
+    final methodsList = namespace?.methods.toSet().toList();
+    return methodsList ?? [];
   }
 
   List<String>? getApprovedEvents() {
@@ -159,7 +160,9 @@ class W3MSession {
     }
 
     final sessionNamespaces = sessionData!.namespaces;
-    return sessionNamespaces[EthConstants.namespace]?.events ?? [];
+    final namespace = sessionNamespaces[EthConstants.namespace];
+    final eventsList = namespace?.events.toSet().toList();
+    return eventsList ?? [];
   }
 
   List<String>? getApprovedChains() {

@@ -13,7 +13,8 @@ enum EIP155UIMethods {
   ethSendTransaction,
   requestAccounts,
   ethSignTypedDataV3,
-  ethSignTransaction;
+  ethSignTransaction,
+  walletWatchAsset;
 
   String get name {
     switch (this) {
@@ -29,6 +30,8 @@ enum EIP155UIMethods {
         return 'eth_signTypedData_v3';
       case ethSignTransaction:
         return 'eth_signTransaction';
+      case walletWatchAsset:
+        return 'wallet_watchAsset';
     }
   }
 }
@@ -48,6 +51,8 @@ class EIP155 {
         return EIP155UIMethods.ethSignTypedDataV3;
       case 'eth_signTransaction':
         return EIP155UIMethods.ethSignTransaction;
+      case 'wallet_watchAsset':
+        return EIP155UIMethods.walletWatchAsset;
       default:
         throw Exception('Unrecognized method');
     }
@@ -110,6 +115,13 @@ class EIP155 {
             data: '0x', // to make it work with some wallets
           ),
         );
+      case EIP155UIMethods.walletWatchAsset:
+        return walletWatchAsset(
+          w3mService: w3mService,
+          topic: topic,
+          chainId: chainId,
+          method: method.name,
+        );
     }
   }
 
@@ -160,6 +172,29 @@ class EIP155 {
       request: SessionRequestParams(
         method: EIP155UIMethods.ethSendTransaction.name,
         params: [transaction.toJson()],
+      ),
+    );
+  }
+
+  static Future<dynamic> walletWatchAsset({
+    required W3MService w3mService,
+    required String topic,
+    required String chainId,
+    required String method,
+  }) async {
+    return await w3mService.request(
+      topic: topic,
+      chainId: chainId,
+      request: SessionRequestParams(
+        method: method,
+        params: {
+          "type": "ERC20",
+          "options": {
+            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+            "symbol": "USDT",
+            "decimals": 18,
+          }
+        },
       ),
     );
   }
