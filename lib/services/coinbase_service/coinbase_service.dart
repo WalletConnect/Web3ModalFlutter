@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:coinbase_wallet_sdk/currency.dart';
-import 'package:coinbase_wallet_sdk/return_value.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:event/event.dart';
@@ -9,6 +7,7 @@ import 'package:web3modal_flutter/services/coinbase_service/i_coinbase_service.d
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
+import 'package:coinbase_wallet_sdk/currency.dart';
 import 'package:coinbase_wallet_sdk/action.dart';
 import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
 import 'package:coinbase_wallet_sdk/configuration.dart';
@@ -25,7 +24,12 @@ class CoinbaseService implements ICoinbaseService {
   Event<CoinbaseErrorEvent> onCoinbaseError = Event<CoinbaseErrorEvent>();
 
   @override
-  Event<CoinbaseSessionEvent> onCoinbaseSession = Event<CoinbaseSessionEvent>();
+  Event<CoinbaseSessionEvent> onCoinbaseUpdateSession =
+      Event<CoinbaseSessionEvent>();
+
+  @override
+  Event<CoinbaseResponseEvent> get onCoinbaseResponse =>
+      Event<CoinbaseResponseEvent>();
 
   @protected
   @override
@@ -47,7 +51,7 @@ class CoinbaseService implements ICoinbaseService {
         // Silent error
       }
     } else {
-      throw W3MCoinbaseException(0, 'PairingMetadata error');
+      throw W3MCoinbaseException('PairingMetadata error');
     }
   }
 
@@ -70,8 +74,7 @@ class CoinbaseService implements ICoinbaseService {
       ]);
       final data = CoinbaseData.fromJson(results.first.account!.toJson());
       onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
-    } catch (e, s) {
-      W3MLoggerUtil.logger.e('[$runtimeType] getAccount(): $e, $s');
+    } catch (e) {
       onCoinbaseError.broadcast(CoinbaseErrorEvent(e.toString()));
     }
   }
@@ -81,20 +84,18 @@ class CoinbaseService implements ICoinbaseService {
     String? chainId,
     required SessionRequestParams request,
   }) async {
-    // _checkInitialized();
     try {
       final req = Request(actions: [request.toCoinbaseRequest(chainId)]);
       final results = await CoinbaseWalletSDK.shared.makeRequest(req);
-      final errors = _checkError(results);
-      if (errors != null) {
-        onCoinbaseError.broadcast(CoinbaseErrorEvent(errors.message));
+      final error = results.first.error;
+      if (error != null) {
+        onCoinbaseError.broadcast(CoinbaseErrorEvent(error.message));
       } else {
-        W3MLoggerUtil.logger
-            .i('[$runtimeType] cbRequest: ${results.first.value}');
         switch (req.actions.first.method) {
           case 'wallet_switchEthereumChain':
           case 'wallet_addEthereumChain':
-            onCoinbaseSession.broadcast(CoinbaseSessionEvent(chainId: chainId));
+            final event = CoinbaseSessionEvent(chainId: chainId);
+            onCoinbaseUpdateSession.broadcast(event);
             break;
           case 'eth_requestAccounts':
             final json = jsonDecode(results.first.value!);
@@ -102,15 +103,15 @@ class CoinbaseService implements ICoinbaseService {
             onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
             break;
           default:
-            onCoinbaseSession.broadcast();
+            final data = results.first.value;
+            onCoinbaseResponse.broadcast(CoinbaseResponseEvent(data: data));
             break;
         }
       }
     } on W3MCoinbaseException {
       rethrow;
-    } catch (e, s) {
-      W3MLoggerUtil.logger.e('[$runtimeType] cbRequest: $e, $s');
-      throw W3MCoinbaseException(0, e.toString());
+    } catch (e) {
+      throw W3MCoinbaseException(e.toString());
     }
   }
 
@@ -118,14 +119,9 @@ class CoinbaseService implements ICoinbaseService {
   Future<void> cbResetSession() async {
     try {
       await CoinbaseWalletSDK.shared.resetSession();
-      // onCoinbaseDisconnect.broadcast(CoinbaseDisconnectEvent());
     } catch (e) {
-      throw W3MCoinbaseException(0, e.toString());
+      throw W3MCoinbaseException(e.toString());
     }
-  }
-
-  ReturnValueError? _checkError(List<ReturnValue> results) {
-    return results.first.error;
   }
 }
 
@@ -188,12 +184,12 @@ extension on SessionRequestParams {
             blockExplorerUrls: explorerUrls,
           );
         } catch (_) {
-          throw W3MCoinbaseException(0, 'Unrecognized chainId $chainId');
+          throw W3MCoinbaseException('Unrecognized chainId $chainId');
         }
       case 'wallet_watchAsset':
         return WatchAsset(params: params);
       default:
-        throw W3MCoinbaseException(0, 'Unsupported request method $method');
+        throw W3MCoinbaseException('Unsupported request method $method');
     }
   }
 

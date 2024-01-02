@@ -814,8 +814,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       return userRejected || userDisapproved;
     }
     if (e is W3MCoinbaseException) {
-      W3MLoggerUtil.logger
-          .e('[$runtimeType] Coinbase: ${e.code}, ${e.message}');
+      W3MLoggerUtil.logger.e('[$runtimeType] Coinbase error: ${e.message}');
       toastUtils.instance.show(
         ToastMessage(type: ToastType.error, text: e.message),
       );
@@ -866,7 +865,8 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     // Coinbase
     onCoinbaseConnect.subscribe(onCoinbaseConnectEvent);
     onCoinbaseError.subscribe(onCoinbaseErrorEvent);
-    onCoinbaseSession.subscribe(onCoinbaseSessionEvent);
+    onCoinbaseUpdateSession.subscribe(onCoinbaseSessionEvent);
+    onCoinbaseResponse.subscribe(onCoinbaseResponseEvent);
     //
     _web3App.onSessionConnect.subscribe(onSessionConnect);
     _web3App.onSessionDelete.subscribe(onSessionDelete);
@@ -888,7 +888,8 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     // Coinbase
     onCoinbaseConnect.unsubscribe(onCoinbaseConnectEvent);
     onCoinbaseError.unsubscribe(onCoinbaseErrorEvent);
-    onCoinbaseSession.unsubscribe(onCoinbaseSessionEvent);
+    onCoinbaseUpdateSession.unsubscribe(onCoinbaseSessionEvent);
+    onCoinbaseResponse.unsubscribe(onCoinbaseResponseEvent);
     //
     _web3App.onSessionConnect.unsubscribe(onSessionConnect);
     _web3App.onSessionDelete.unsubscribe(onSessionDelete);
@@ -954,6 +955,12 @@ extension _W3MServiceExtension on W3MService {
             .e('[$runtimeType] onCoinbaseChainChangedEvent: $e');
       }
     }
+  }
+
+  @protected
+  void onCoinbaseResponseEvent(CoinbaseResponseEvent? args) async {
+    W3MLoggerUtil.logger
+        .e('[$runtimeType] onCoinbaseResponseEvent: ${args?.data}');
   }
 
   @protected

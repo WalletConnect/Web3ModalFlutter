@@ -436,24 +436,33 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValueForMissingStub: null,
       );
   @override
-  _i3.Event<_i15.CoinbaseSessionEvent> get onCoinbaseSession =>
+  _i3.Event<_i15.CoinbaseSessionEvent> get onCoinbaseUpdateSession =>
       (super.noSuchMethod(
-        Invocation.getter(#onCoinbaseSession),
+        Invocation.getter(#onCoinbaseUpdateSession),
         returnValue: _FakeEvent_1<_i15.CoinbaseSessionEvent>(
           this,
-          Invocation.getter(#onCoinbaseSession),
+          Invocation.getter(#onCoinbaseUpdateSession),
         ),
       ) as _i3.Event<_i15.CoinbaseSessionEvent>);
   @override
-  set onCoinbaseSession(
-          _i3.Event<_i15.CoinbaseSessionEvent>? _onCoinbaseSession) =>
+  set onCoinbaseUpdateSession(
+          _i3.Event<_i15.CoinbaseSessionEvent>? _onCoinbaseUpdateSession) =>
       super.noSuchMethod(
         Invocation.setter(
-          #onCoinbaseSession,
-          _onCoinbaseSession,
+          #onCoinbaseUpdateSession,
+          _onCoinbaseUpdateSession,
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  _i3.Event<_i15.CoinbaseResponseEvent> get onCoinbaseResponse =>
+      (super.noSuchMethod(
+        Invocation.getter(#onCoinbaseResponse),
+        returnValue: _FakeEvent_1<_i15.CoinbaseResponseEvent>(
+          this,
+          Invocation.getter(#onCoinbaseResponse),
+        ),
+      ) as _i3.Event<_i15.CoinbaseResponseEvent>);
   @override
   _i16.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
@@ -759,24 +768,33 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  _i3.Event<_i15.CoinbaseSessionEvent> get onCoinbaseSession =>
+  _i3.Event<_i15.CoinbaseSessionEvent> get onCoinbaseUpdateSession =>
       (super.noSuchMethod(
-        Invocation.getter(#onCoinbaseSession),
+        Invocation.getter(#onCoinbaseUpdateSession),
         returnValue: _FakeEvent_1<_i15.CoinbaseSessionEvent>(
           this,
-          Invocation.getter(#onCoinbaseSession),
+          Invocation.getter(#onCoinbaseUpdateSession),
         ),
       ) as _i3.Event<_i15.CoinbaseSessionEvent>);
   @override
-  set onCoinbaseSession(
-          _i3.Event<_i15.CoinbaseSessionEvent>? _onCoinbaseSession) =>
+  set onCoinbaseUpdateSession(
+          _i3.Event<_i15.CoinbaseSessionEvent>? _onCoinbaseUpdateSession) =>
       super.noSuchMethod(
         Invocation.setter(
-          #onCoinbaseSession,
-          _onCoinbaseSession,
+          #onCoinbaseUpdateSession,
+          _onCoinbaseUpdateSession,
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  _i3.Event<_i15.CoinbaseResponseEvent> get onCoinbaseResponse =>
+      (super.noSuchMethod(
+        Invocation.getter(#onCoinbaseResponse),
+        returnValue: _FakeEvent_1<_i15.CoinbaseResponseEvent>(
+          this,
+          Invocation.getter(#onCoinbaseResponse),
+        ),
+      ) as _i3.Event<_i15.CoinbaseResponseEvent>);
   @override
   _i16.Future<void> init() => (super.noSuchMethod(
         Invocation.method(

@@ -3,11 +3,9 @@ import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_even
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class W3MCoinbaseException implements Exception {
-  final int code;
   final String message;
   final dynamic stackTrace;
   W3MCoinbaseException(
-    this.code,
     this.message, [
     this.stackTrace,
   ]) : super();
@@ -26,5 +24,6 @@ abstract class ICoinbaseService {
 
   abstract final Event<CoinbaseConnectEvent> onCoinbaseConnect;
   abstract final Event<CoinbaseErrorEvent> onCoinbaseError;
-  abstract final Event<CoinbaseSessionEvent> onCoinbaseSession;
+  abstract final Event<CoinbaseSessionEvent> onCoinbaseUpdateSession;
+  abstract final Event<CoinbaseResponseEvent> onCoinbaseResponse;
 }

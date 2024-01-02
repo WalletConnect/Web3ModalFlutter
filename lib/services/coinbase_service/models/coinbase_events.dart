@@ -22,3 +22,8 @@ class CoinbaseSessionEvent implements EventArgs {
     this.chainId,
   });
 }
+
+class CoinbaseResponseEvent implements EventArgs {
+  String? data;
+  CoinbaseResponseEvent({required this.data});
+}

@@ -22,10 +22,10 @@ class StorageService implements IStorageService {
 
   @override
   Future<bool> clearAll() async {
-    final walletId = getString(StringConstants.recentWalletId);
+    final walletData = getString(StringConstants.walletData, defaultValue: '');
     final result = await _prefs!.clear();
-    if (walletId != null) {
-      await setString(StringConstants.recentWalletId, walletId);
+    if (walletData!.isNotEmpty) {
+      await setString(StringConstants.walletData, walletData);
     }
     return result;
   }

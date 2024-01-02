@@ -128,6 +128,8 @@ class ExplorerService with CoinbaseService implements IExplorerService {
       _fetchOtherListings(),
     ]);
 
+    final countInstalled = allListings.first.length;
+
     _listings = [...allListings.first, ...allListings.last];
 
     // Include Coinbase Wallet if needed
@@ -135,8 +137,12 @@ class ExplorerService with CoinbaseService implements IExplorerService {
       final cbWallet = _coinbaseWallet.copyWith(
         installed: await cbIsInstalled(),
       );
-      final index = min(3, _listings.length);
-      _listings.insert(index, cbWallet);
+      int i = max(countInstalled, 3);
+      if (cbWallet.installed) {
+        i = 3;
+      }
+      final j = min(i, _listings.length);
+      _listings.insert(j, cbWallet);
     }
 
     _listings = _listings.sortByRecommended(featuredWalletIds);
@@ -153,14 +159,15 @@ class ExplorerService with CoinbaseService implements IExplorerService {
     W3MWalletInfo? walletInfo;
     final walletString = storageService.instance.getString(
       StringConstants.walletData,
+      defaultValue: '',
     );
-    final recentWalletId = storageService.instance.getString(
-      StringConstants.recentWalletId,
-    );
-    if ((walletString ?? '').isNotEmpty) {
-      walletInfo = W3MWalletInfo.fromJson(jsonDecode(walletString!));
+    if (walletString!.isNotEmpty) {
+      walletInfo = W3MWalletInfo.fromJson(jsonDecode(walletString));
+      if (!walletInfo.installed) {
+        walletInfo = null;
+      }
     }
-    await _updateRecentWalletId(walletInfo, walletId: recentWalletId);
+    await _updateRecentWalletId(walletInfo);
   }
 
   @override
@@ -268,16 +275,8 @@ class ExplorerService with CoinbaseService implements IExplorerService {
     await _updateRecentWalletId(walletInfo);
   }
 
-  Future<void> _updateRecentWalletId(
-    W3MWalletInfo? walletInfo, {
-    String? walletId,
-  }) async {
-    final recentId = walletInfo?.listing.id ?? walletId ?? '';
-    // Set the recent
-    await storageService.instance.setString(
-      StringConstants.recentWalletId,
-      recentId,
-    );
+  Future<void> _updateRecentWalletId(W3MWalletInfo? walletInfo) async {
+    final recentId = walletInfo?.listing.id ?? '';
     final currentListings = List<W3MWalletInfo>.from(
       _listings.map((e) => e.copyWith(recent: false)).toList(),
     );
