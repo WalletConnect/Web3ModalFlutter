@@ -81,10 +81,10 @@ jobs:
         APPLE_ISSUER_ID: ${{ secrets.APPLE_ISSUER_ID }}
       run: |
         # Get app version from file
-        FILE_VALUE=`cat $GITHUB_WORKSPACE/lib/version.dart`
-        VERSION=`echo $FILE_VALUE | sed "s/[^']*'\([^']*\)'.*/\1/"`
+        VERSION=$(echo | grep "^version: " pubspec.yaml)
 
         # Build ios app with flutter
+        echo "flutter build ios --build-name $VERSION --dart-define=\"PROJECT_ID=$PROJECT_ID\" --config-only --release"
         flutter build ios --build-name $VERSION --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
         
         cd ios
