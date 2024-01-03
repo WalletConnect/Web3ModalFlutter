@@ -23,7 +23,7 @@ class RoundedIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
-    final projectId = explorerService.instance?.projectId ?? '';
+    final projectId = explorerService.instance.projectId;
     return Container(
       width: size,
       height: size,

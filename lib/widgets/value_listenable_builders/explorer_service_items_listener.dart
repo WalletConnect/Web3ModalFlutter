@@ -30,19 +30,19 @@ class _ExplorerServiceItemsListenerState
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
-      valueListenable: explorerService.instance!.initialized,
+      valueListenable: explorerService.instance.initialized,
       builder: (context, initialised, _) {
         if (!initialised) {
           return widget.builder(context, initialised, [], false);
         }
         return ValueListenableBuilder<bool>(
-          valueListenable: explorerService.instance!.isSearching,
+          valueListenable: explorerService.instance.isSearching,
           builder: (context, searching, _) {
             if (searching) {
               return widget.builder(context, initialised, _items, searching);
             }
             return ValueListenableBuilder<List<W3MWalletInfo>>(
-              valueListenable: explorerService.instance!.listings,
+              valueListenable: explorerService.instance.listings,
               builder: (context, items, _) {
                 if (widget.listen) {
                   _items = items.toGridItems();
@@ -65,7 +65,7 @@ extension on List<W3MWalletInfo> {
         GridItem<W3MWalletInfo>(
           title: item.listing.name,
           id: item.listing.id,
-          image: explorerService.instance!.getWalletImageUrl(
+          image: explorerService.instance.getWalletImageUrl(
             item.listing.imageId,
           ),
           data: item,

@@ -19,12 +19,14 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.0.20</string>
+	<string>3.1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>com.web3modal.flutterExample</string>
 			<key>CFBundleURLSchemes</key>
@@ -34,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>20</string>
+	<string>23</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
@@ -64,7 +66,7 @@
 		<string>rainbow</string>
 		<string>obvious</string>
 		<string>robinhood-wallet</string>
-		<string>kriptomatapp</string>
+		<string>cbwallet</string>
 		<string>okto</string>
 		<string>bitkeep</string>
 		<string>hyperPay</string>

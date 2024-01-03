@@ -62,7 +62,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _setDecoration();
-      _controller.text = explorerService.instance!.searchValue;
+      _controller.text = explorerService.instance.searchValue;
       _controller.addListener(_updateState);
       _focusNode.addListener(_updateState);
     });

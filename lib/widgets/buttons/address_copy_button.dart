@@ -19,7 +19,7 @@ class W3MAddressWithCopyButton extends StatelessWidget {
     final themeColors = Web3ModalTheme.colorsOf(context);
     return GestureDetector(
       onTap: () async {
-        await Clipboard.setData(ClipboardData(text: service.address!));
+        await Clipboard.setData(ClipboardData(text: service.session!.address!));
         toastUtils.instance.show(
           ToastMessage(type: ToastType.success, text: 'Address copied'),
         );

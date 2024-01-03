@@ -38,7 +38,7 @@ class _AddressButtonState extends State<AddressButton> {
 
   void _w3mServiceUpdated() {
     setState(() {
-      _address = widget.service.address;
+      _address = widget.service.session?.address;
     });
   }
 

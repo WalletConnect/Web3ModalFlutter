@@ -28,9 +28,9 @@ class StringConstants {
   static const String noResults = 'No results found';
 
   // Storage
-  static const String recentWalletId = 'w3m_recentWallet';
   static const String walletData = 'w3m_walletData';
   static const String selectedChainId = 'w3m_selectedChainId';
+  static const String w3mSession = 'w3m_session';
 
   // Urls
   static const String exploreAllWallets =

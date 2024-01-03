@@ -68,20 +68,23 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
                 widgetStack.instance.push(const ConnectWalletPage());
               },
               itemList: itemsToShow.toList(),
-              lastItem: (itemsCount < kShortWalletListCount)
-                  ? null
-                  : AllWalletsItem(
-                      trailing: ValueListenableBuilder<int>(
-                        valueListenable:
-                            explorerService.instance!.totalListings,
-                        builder: (context, value, _) {
-                          return WalletItemChip(value: value.lazyCount);
+              bottomItems: (itemsCount < kShortWalletListCount)
+                  ? []
+                  : [
+                      AllWalletsItem(
+                        trailing: ValueListenableBuilder<int>(
+                          valueListenable:
+                              explorerService.instance.totalListings,
+                          builder: (context, value, _) {
+                            return WalletItemChip(value: value.lazyCount);
+                          },
+                        ),
+                        onTap: () {
+                          widgetStack.instance
+                              .push(const WalletsListLongPage());
                         },
                       ),
-                      onTap: () {
-                        widgetStack.instance.push(const WalletsListLongPage());
-                      },
-                    ),
+                    ],
             ),
           );
         },

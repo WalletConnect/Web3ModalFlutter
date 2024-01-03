@@ -65,7 +65,7 @@ class _W3MAccountAvatarState extends State<W3MAccountAvatar> {
   void _w3mServiceUpdated() {
     setState(() {
       _avatarUrl = widget.service.avatarUrl;
-      _address = widget.service.address;
+      _address = widget.service.session?.address;
     });
   }
 }

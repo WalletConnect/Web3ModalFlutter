@@ -48,7 +48,7 @@ class _W3MAddressState extends State<W3MAddress> {
 
   void _w3mServiceUpdated() {
     setState(() {
-      _address = widget.service.address;
+      _address = widget.service.session?.address;
     });
   }
 }

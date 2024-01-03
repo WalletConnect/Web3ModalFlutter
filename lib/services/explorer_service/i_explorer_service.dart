@@ -19,6 +19,8 @@ abstract class IExplorerService {
   /// If includedWalletIds is set only wallets from this list are going to be shown
   Set<String>? includedWalletIds;
 
+  bool get includeCoinbaseWallet;
+
   /// If excludedWalletIds is set wallets from this list are going to be excluded
   Set<String>? excludedWalletIds;
 

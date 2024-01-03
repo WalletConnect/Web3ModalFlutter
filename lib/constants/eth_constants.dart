@@ -3,27 +3,29 @@ class EthConstants {
   static const walletSwitchEthChain = 'wallet_switchEthereumChain';
   static const walletAddEthChain = 'wallet_addEthereumChain';
   static const requiredMethods = [
-    'eth_sendTransaction',
     'personal_sign',
+    'eth_sendTransaction',
+  ];
+  static const coinbaseSupportedMethods = [
+    ...requiredMethods,
+    'eth_requestAccounts',
+    'eth_signTypedData_v3',
+    'eth_signTypedData_v4',
+    'eth_signTransaction',
+    walletSwitchEthChain,
+    walletAddEthChain,
+    'wallet_watchAsset',
   ];
   static const optionalMethods = [
     'eth_accounts',
-    'eth_requestAccounts',
     'eth_sendRawTransaction',
     'eth_sign',
-    'eth_signTransaction',
     'eth_signTypedData',
-    'eth_signTypedData_v3',
-    'eth_signTypedData_v4',
-    'eth_sendTransaction',
-    'personal_sign',
-    walletSwitchEthChain,
-    walletAddEthChain,
     'wallet_getPermissions',
     'wallet_requestPermissions',
     'wallet_registerOnboarding',
-    'wallet_watchAsset',
     'wallet_scanQRCode',
+    ...coinbaseSupportedMethods,
   ];
   static const allMethods = [...requiredMethods, ...optionalMethods];
   //

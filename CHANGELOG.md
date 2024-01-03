@@ -1,3 +1,7 @@
+## 3.1.0-beta01
+
+- Coinbase Wallet integration
+
 ## 3.0.20
 
 - Minor improvements

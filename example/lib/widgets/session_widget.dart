@@ -26,69 +26,59 @@ class SessionWidget extends StatefulWidget {
 class SessionWidgetState extends State<SessionWidget> {
   @override
   Widget build(BuildContext context) {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
+    final session = widget.w3mService.session!;
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),
+      // WALLET NAME LABEL
       Text(
-        session.peer.metadata.name,
+        session.connectedWalletName ?? '',
         style: Web3ModalTheme.getDataOf(context).textStyles.title600.copyWith(
               color: Web3ModalTheme.colorsOf(context).foreground100,
             ),
         textAlign: TextAlign.center,
       ),
       const SizedBox(height: StyleConstants.linear8),
-      Text(
-        StringConstants.sessionTopic,
-        style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
-              color: Web3ModalTheme.colorsOf(context).foreground100,
+      // TOPIC LABEL
+      Visibility(
+        visible: session.topic != null,
+        child: Column(
+          children: [
+            Text(
+              StringConstants.sessionTopic,
+              style: Web3ModalTheme.getDataOf(context)
+                  .textStyles
+                  .small600
+                  .copyWith(
+                    color: Web3ModalTheme.colorsOf(context).foreground100,
+                  ),
             ),
-      ),
-      Text(
-        session.topic,
-        style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
-              color: Web3ModalTheme.colorsOf(context).foreground100,
+            Text(
+              '${session.topic}',
+              style: Web3ModalTheme.getDataOf(context)
+                  .textStyles
+                  .small400
+                  .copyWith(
+                    color: Web3ModalTheme.colorsOf(context).foreground100,
+                  ),
             ),
+          ],
+        ),
       ),
+      Column(
+        children: _buildSupportedChainsWidget(),
+      ),
+      const SizedBox(height: StyleConstants.linear8),
     ];
 
-    children.add(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              children: _buildChainApprovedMethodsTiles(),
-            ),
-          ),
-          const SizedBox.square(dimension: 8.0),
-          Expanded(
-            child: Column(
-              children: _buildApprovedChainsTiles(),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    // Get all of the accounts
-    final List<String> namespaceAccounts = [];
-
-    // Loop through the namespaces, and get the accounts
-    for (final namespace in session.namespaces.values) {
-      namespaceAccounts.addAll(namespace.accounts);
-    }
-
+    // Get current active account
+    final accounts = session.getAccounts() ?? [];
     try {
-      final selectedChain = widget.w3mService.selectedChain;
-      final containsChain = namespaceAccounts.indexWhere(
-        (nsa) => nsa.split(':')[1] == selectedChain?.chainId,
-      );
-      if (containsChain > -1) {
-        final namespace = namespaceAccounts.firstWhere(
-          (nsa) => nsa.split(':')[1] == selectedChain?.chainId,
-        );
-        children.add(_buildAccountWidget(namespace));
+      final currentNamespace = widget.w3mService.selectedChain!.namespace;
+      final chainsNamespaces = NamespaceUtils.getChainsFromAccounts(accounts);
+      if (chainsNamespaces.contains(currentNamespace)) {
+        final account = accounts
+            .firstWhere((account) => account.contains(currentNamespace));
+        children.add(_buildAccountWidget(account));
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -96,9 +86,7 @@ class SessionWidgetState extends State<SessionWidget> {
 
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -167,28 +155,50 @@ class SessionWidgetState extends State<SessionWidget> {
     ChainMetadata chainMetadata,
     String address,
   ) {
-    final List<Widget> buttons = [];
     // Add Methods
-    for (final String method in getChainMethods(chainMetadata.type)) {
-      buttons.add(
+    final approvedMethods =
+        widget.w3mService.getApprovedMethods() ?? <String>[];
+    if (approvedMethods.isEmpty) {
+      return [
+        Text(
+          'No methods approved',
+          style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
+                color: Web3ModalTheme.colorsOf(context).foreground100,
+              ),
+        )
+      ];
+    }
+    final usableMethods = EIP155UIMethods.values.map((e) => e.name).toList();
+    //
+    final List<Widget> children = [];
+    for (final method in approvedMethods) {
+      final implemented = usableMethods.contains(method);
+      children.add(
         Container(
           height: StyleConstants.linear40,
           width: double.infinity,
           margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
           child: ElevatedButton(
-            onPressed: () async {
-              final future = callChainMethod(
-                chainMetadata.type,
-                method,
-                chainMetadata,
-                address,
-              );
-              MethodDialog.show(context, method, future);
-              widget.launchRedirect();
-            },
+            onPressed: implemented
+                ? () async {
+                    final future = callChainMethod(
+                      chainMetadata.type,
+                      EIP155.methodFromName(method),
+                      chainMetadata,
+                      address,
+                    );
+                    MethodDialog.show(context, method, future);
+                    widget.launchRedirect();
+                  }
+                : null,
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
-                chainMetadata.color,
+              backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                (states) {
+                  if (states.contains(MaterialState.disabled)) {
+                    return Colors.grey;
+                  }
+                  return chainMetadata.color;
+                },
               ),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
@@ -213,7 +223,7 @@ class SessionWidgetState extends State<SessionWidget> {
     }
 
     if (chainMetadata.w3mChainInfo.chainId == '1') {
-      buttons.add(
+      children.add(
         Container(
           height: StyleConstants.linear40,
           width: double.infinity,
@@ -223,22 +233,18 @@ class SessionWidgetState extends State<SessionWidget> {
               final future = EIP155.testContractCall(
                 w3mService: widget.w3mService,
               );
-              MethodDialog.show(context, 'testContractCall', future);
+              MethodDialog.show(context, 'Test TetherToken Contract', future);
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
-                chainMetadata.color,
-              ),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.orange),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    StyleConstants.linear8,
-                  ),
+                  borderRadius: BorderRadius.circular(StyleConstants.linear8),
                 ),
               ),
             ),
             child: Text(
-              'TetherToken Contract',
+              'Test TetherToken Contract',
               style: Web3ModalTheme.getDataOf(context)
                   .textStyles
                   .small600
@@ -251,44 +257,22 @@ class SessionWidgetState extends State<SessionWidget> {
       );
     }
 
-    return buttons;
-  }
-
-  List<Widget> _buildChainApprovedMethodsTiles() {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
-    final approvedMethods = session.namespaces['eip155']?.methods ?? [];
-    List<Widget> children = [];
-
-    children.addAll([
-      const SizedBox(height: StyleConstants.linear8),
-      Text(
-        'Approved methods:',
-        style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
-              color: Web3ModalTheme.colorsOf(context).foreground100,
-            ),
-      ),
-    ]);
-
-    children.add(Text(
-      approvedMethods.join(', '),
-      style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
-            color: Web3ModalTheme.colorsOf(context).foreground100,
-          ),
-    ));
     return children;
   }
 
-  List<Widget> _buildApprovedChainsTiles() {
+  List<Widget> _buildSupportedChainsWidget() {
     List<Widget> children = [];
-    children.addAll([
-      const SizedBox(height: StyleConstants.linear8),
-      Text(
-        'Approved chains:',
-        style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
-              color: Web3ModalTheme.colorsOf(context).foreground100,
-            ),
-      ),
-    ]);
+    children.addAll(
+      [
+        const SizedBox(height: StyleConstants.linear8),
+        Text(
+          'Supported chains:',
+          style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+                color: Web3ModalTheme.colorsOf(context).foreground100,
+              ),
+        ),
+      ],
+    );
     final approvedChains = widget.w3mService.getApprovedChains() ?? <String>[];
     children.add(
       Text(
@@ -302,10 +286,19 @@ class SessionWidgetState extends State<SessionWidget> {
   }
 
   Widget _buildChainEventsTiles(ChainMetadata chainMetadata) {
-    final List<Widget> values = [];
-    // Add Methods
-    for (final String event in getChainEvents(chainMetadata.type)) {
-      values.add(
+    // Add Events
+    final approvedEvents = widget.w3mService.getApprovedEvents() ?? <String>[];
+    if (approvedEvents.isEmpty) {
+      return Text(
+        'No events approved',
+        style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
+              color: Web3ModalTheme.colorsOf(context).foreground100,
+            ),
+      );
+    }
+    final List<Widget> children = [];
+    for (final event in approvedEvents) {
+      children.add(
         Container(
           margin: const EdgeInsets.symmetric(
             vertical: StyleConstants.linear8,
@@ -331,25 +324,24 @@ class SessionWidgetState extends State<SessionWidget> {
       );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: values,
+    return Wrap(
+      children: children,
     );
   }
 
   Future<dynamic> callChainMethod(
     ChainType type,
-    String method,
+    EIP155UIMethods method,
     ChainMetadata chainMetadata,
     String address,
   ) {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
+    final session = widget.w3mService.session!;
     switch (type) {
       case ChainType.eip155:
         return EIP155.callMethod(
           w3mService: widget.w3mService,
-          topic: session.topic,
-          method: method.toEip155Method()!,
+          topic: session.topic ?? '',
+          method: method,
           chainId: chainMetadata.w3mChainInfo.namespace,
           address: address.toLowerCase(),
         );

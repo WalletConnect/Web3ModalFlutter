@@ -68,7 +68,7 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
       return;
     }
     // Case 0: init error
-    if (widget.service.initError != null) {
+    if (widget.service.status == W3MServiceStatus.error) {
       return setState(() => _state = ConnectButtonState.error);
     }
     // Case 1: Is connected

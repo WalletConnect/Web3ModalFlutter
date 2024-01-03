@@ -64,12 +64,16 @@ class W3MChainPresets {
       ),
     ),
     '10': W3MChainInfo(
-      chainName: 'Optimism',
+      chainName: 'OP Mainnet',
       namespace: 'eip155:10',
       chainId: '10',
       chainIcon: chainImagesId['10'],
-      tokenName: 'OP',
+      tokenName: 'ETH',
       rpcUrl: 'https://mainnet.optimism.io/',
+      blockExplorer: W3MBlockExplorer(
+        name: 'Optimism Explorer',
+        url: 'https://explorer.optimism.io',
+      ),
     ),
     '250': W3MChainInfo(
       chainName: 'Fantom',

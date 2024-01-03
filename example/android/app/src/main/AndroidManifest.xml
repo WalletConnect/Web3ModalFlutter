@@ -5,6 +5,7 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="https" />
         </intent>
+        <package android:name="org.toshi"/>
         <package android:name="io.metamask"/>
         <package android:name="com.wallet.crypto.trustapp"/>
         <package android:name="io.gnosis.safe"/>
@@ -78,9 +79,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
-                <data android:scheme="flutterdapp" />
+                <data android:scheme="web3modalflutter" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

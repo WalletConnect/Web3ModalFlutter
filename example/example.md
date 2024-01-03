@@ -35,11 +35,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       metadata: const PairingMetadata(
         name: 'Web3Modal Flutter Example',
         description: 'Web3Modal Flutter Example',
-        url: 'https://www.walletconnect.com/',
-        icons: ['https://walletconnect.com/walletconnect-logo.png'],
+        url: 'https://web3modal.com/',
+        icons: ['https://web3modal.com/images/rpc-illustration.png'],
         redirect: Redirect(
-          native: 'flutterdapp://',
-          universal: 'https://www.walletconnect.com',
+          native: 'web3modalflutter://',
+          universal: 'https://web3modal.com',
         ),
       ),
     );

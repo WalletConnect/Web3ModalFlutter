@@ -73,9 +73,8 @@ void main() {
       when(service.wcUri).thenReturn('test');
       when(service.status).thenReturn(W3MServiceStatus.initialized);
       when(service.isOpen).thenReturn(true);
-      when(service.address).thenReturn(address);
+      when(service.session?.address).thenReturn(address);
       when(service.chainBalance).thenReturn(null);
-      when(service.tokenImageUrl).thenReturn(null);
       when(service.selectedChain).thenReturn(null);
       when(service.avatarUrl).thenReturn(null);
     });

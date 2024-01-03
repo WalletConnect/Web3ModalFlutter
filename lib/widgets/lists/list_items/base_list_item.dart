@@ -7,11 +7,13 @@ class BaseListItem extends StatelessWidget {
     super.key,
     this.trailing,
     this.onTap,
+    this.padding,
     required this.child,
   });
   final Widget? trailing;
   final VoidCallback? onTap;
   final Widget child;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,7 @@ class BaseListItem extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: padding ?? const EdgeInsets.all(8.0),
         child: child,
       ),
     );

@@ -38,13 +38,25 @@ class _MyHomePageState extends State<MyHomePage> {
       metadata: const PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
-        url: 'https://www.walletconnect.com/',
+        url: 'https://web3modal.com/',
         icons: ['https://web3modal.com/images/rpc-illustration.png'],
         redirect: Redirect(
-          native: 'flutterdapp://',
-          universal: 'https://www.walletconnect.com',
+          native: 'web3modalflutter://',
+          universal: 'https://web3modal.com',
         ),
       ),
+      // excludedWalletIds: {
+      //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa',
+      // },
+      // includedWalletIds: {
+      //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+      //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa',
+      //   '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369',
+      // },
+      // featuredWalletIds: {
+      //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+      //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa',
+      // },
     );
     await _w3mService.init();
 
@@ -52,16 +64,18 @@ class _MyHomePageState extends State<MyHomePage> {
     // _w3mService.selectChain(W3MChainPresets.chains['137']);
 
     _w3mService.addListener(_serviceListener);
-    _w3mService.web3App?.onSessionEvent.subscribe(_onSessionEvent);
-    _w3mService.web3App?.onSessionConnect.subscribe(_onSessionConnect);
-    _w3mService.web3App?.onSessionDelete.subscribe(_onSessionDelete);
+    _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
+    _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
+    _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
+    _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
   }
 
   @override
   void dispose() {
-    _w3mService.web3App?.onSessionEvent.unsubscribe(_onSessionEvent);
-    _w3mService.web3App?.onSessionConnect.unsubscribe(_onSessionConnect);
-    _w3mService.web3App?.onSessionDelete.unsubscribe(_onSessionDelete);
+    _w3mService.onSessionEventEvent.unsubscribe(_onSessionEvent);
+    _w3mService.onSessionUpdateEvent.unsubscribe(_onSessionUpdate);
+    _w3mService.onSessionConnectEvent.unsubscribe(_onSessionConnect);
+    _w3mService.onSessionDeleteEvent.unsubscribe(_onSessionDelete);
     super.dispose();
   }
 
@@ -71,6 +85,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onSessionEvent(SessionEvent? args) {
     debugPrint('[$runtimeType] _onSessionEvent $args');
+  }
+
+  void _onSessionUpdate(SessionUpdate? args) {
+    debugPrint('[$runtimeType] _onSessionUpdate $args');
   }
 
   void _onSessionConnect(SessionConnect? args) {
@@ -110,7 +128,12 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Custom theme is: ${isCustom ? 'ON' : 'OFF'}'),
+            Text(
+              'Custom theme is: ${isCustom ? 'ON' : 'OFF'}',
+              style: TextStyle(
+                color: Web3ModalTheme.colorsOf(context).foreground100,
+              ),
+            ),
             _ButtonsView(w3mService: _w3mService),
             const Divider(height: 0.0),
             _ConnectedView(w3mService: _w3mService)
