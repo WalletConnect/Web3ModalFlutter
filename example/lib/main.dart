@@ -77,14 +77,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       _themeData = (_themeData == null)
           ? Web3ModalThemeData(
               lightColors: Web3ModalColors.lightMode.copyWith(
-                accent100: Colors.red,
-                background100: const Color.fromARGB(255, 187, 234, 255),
-                background125: const Color.fromARGB(255, 187, 234, 255),
+                accent100: const Color.fromARGB(255, 30, 59, 236),
+                background100: const Color.fromARGB(255, 161, 183, 231),
+                // background125 is main modal background color
+                background125: const Color.fromARGB(255, 206, 221, 255),
+                background175: const Color.fromARGB(255, 237, 241, 255),
               ),
               darkColors: Web3ModalColors.darkMode.copyWith(
-                accent100: Colors.orange,
-                background100: const Color.fromARGB(255, 36, 0, 120),
-                background125: const Color.fromARGB(255, 36, 0, 120),
+                accent100: const Color.fromARGB(255, 161, 183, 231),
+                background100: const Color.fromARGB(255, 30, 59, 236),
+                // background125 is main modal background color
+                background125: const Color.fromARGB(255, 12, 23, 99),
+                background175: const Color.fromARGB(255, 78, 103, 230),
               ),
               radiuses: Web3ModalRadiuses.circular,
             )

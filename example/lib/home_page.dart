@@ -103,11 +103,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final isCustom = Web3ModalTheme.isCustomTheme(context);
     return Scaffold(
-      backgroundColor: Web3ModalTheme.colorsOf(context).background300,
+      backgroundColor: Web3ModalTheme.colorsOf(context).background125,
       appBar: AppBar(
         elevation: 0.0,
         title: const Text(StringConstants.w3mPageTitleV3),
-        backgroundColor: Web3ModalTheme.colorsOf(context).background100,
+        backgroundColor: Web3ModalTheme.colorsOf(context).background175,
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
         actions: [
           IconButton(
@@ -128,6 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            const SizedBox.square(dimension: 4.0),
             Text(
               'Custom theme is: ${isCustom ? 'ON' : 'OFF'}',
               style: TextStyle(
@@ -135,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             _ButtonsView(w3mService: _w3mService),
-            const Divider(height: 0.0),
+            const Divider(height: 0.0, color: Colors.transparent),
             _ConnectedView(w3mService: _w3mService)
           ],
         ),
