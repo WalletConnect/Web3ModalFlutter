@@ -4,6 +4,9 @@ import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data
 class CoinbaseConnectEvent implements EventArgs {
   final CoinbaseData? data;
   CoinbaseConnectEvent(this.data);
+
+  @override
+  String toString() => data?.toJson().toString() ?? '';
 }
 
 class CoinbaseErrorEvent implements EventArgs {
@@ -21,6 +24,10 @@ class CoinbaseSessionEvent implements EventArgs {
     this.chainName,
     this.chainId,
   });
+
+  @override
+  String toString() =>
+      'address: $address, chainName: $chainName, chainId: $chainId';
 }
 
 class CoinbaseResponseEvent implements EventArgs {

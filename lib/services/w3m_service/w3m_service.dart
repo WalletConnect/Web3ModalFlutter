@@ -87,7 +87,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   W3MSession? get session => _currentSession;
 
   @override
-  final Event<EventArgs> onPairingExpire = Event();
+  final Event<PairingEvent> onPairingExpire = Event();
 
   @override
   final Event<WalletErrorEvent> onWalletConnectionError = Event();
@@ -290,7 +290,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   /// Will get the list of available chains to add
-  @protected
   @override
   List<String>? getAvailableChains() {
     // if there's no session or if supportsAddChain method then every chain can be used
@@ -456,7 +455,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       }
       onWalletConnectionError.broadcast(WalletErrorEvent('not installed'));
     } catch (e, s) {
-      W3MLoggerUtil.logger.e('[$runtimeType] error launching wallet. $e, $s');
+      if (_isUserRejectedError(e)) {
+        onWalletConnectionError.broadcast(WalletErrorEvent('rejected'));
+      } else {
+        W3MLoggerUtil.logger.e('[$runtimeType] error launching wallet. $e, $s');
+      }
     }
 
     _connectingWallet = false;
@@ -605,7 +608,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         request: request,
       );
     } catch (e, s) {
-      W3MLoggerUtil.logger.e('[$runtimeType] cbRequest: $e, $s');
+      W3MLoggerUtil.logger.e('[$runtimeType] request: $e, $s');
       rethrow;
     }
   }
@@ -656,13 +659,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   @override
-  Event<AuthResponse> get onAuthResponseEvent => _web3App.onAuthResponse;
-
-  @override
-  Event<SessionProposalEvent> get onProposalExpireEvent =>
-      _web3App.onProposalExpire;
-
-  @override
   Event<SessionConnect> get onSessionConnectEvent => _web3App.onSessionConnect;
 
   @override
@@ -673,12 +669,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   @override
   Event<SessionExpire> get onSessionExpireEvent => _web3App.onSessionExpire;
-
-  @override
-  Event<SessionExtend> get onSessionExtendEvent => _web3App.onSessionExtend;
-
-  @override
-  Event<SessionPing> get onSessionPingEvent => _web3App.onSessionPing;
 
   @override
   Event<SessionUpdate> get onSessionUpdateEvent => _web3App.onSessionUpdate;
@@ -806,18 +796,16 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   bool _isUserRejectedError(dynamic e) {
-    debugPrint(e.runtimeType.toString());
     if (e is JsonRpcError) {
       final stringError = e.toJson().toString().toLowerCase();
       final userRejected = stringError.contains('rejected');
       final userDisapproved = stringError.contains('user disapproved');
       return userRejected || userDisapproved;
     }
-    if (e is W3MCoinbaseException) {
-      W3MLoggerUtil.logger.e('[$runtimeType] Coinbase error: ${e.message}');
-      toastUtils.instance.show(
-        ToastMessage(type: ToastType.error, text: e.message),
-      );
+    if (e is CoinbaseRPCError) {
+      final stringError = e.toJson().toString().toLowerCase();
+      final userDenied = stringError.contains('user denied');
+      return userDenied;
     }
     return false;
   }
@@ -865,7 +853,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     // Coinbase
     onCoinbaseConnect.subscribe(onCoinbaseConnectEvent);
     onCoinbaseError.subscribe(onCoinbaseErrorEvent);
-    onCoinbaseUpdateSession.subscribe(onCoinbaseSessionEvent);
+    onCoinbaseSessionUpdate.subscribe(onCoinbaseSessionUpdateEvent);
     onCoinbaseResponse.subscribe(onCoinbaseResponseEvent);
     //
     _web3App.onSessionConnect.subscribe(onSessionConnect);
@@ -888,7 +876,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     // Coinbase
     onCoinbaseConnect.unsubscribe(onCoinbaseConnectEvent);
     onCoinbaseError.unsubscribe(onCoinbaseErrorEvent);
-    onCoinbaseUpdateSession.unsubscribe(onCoinbaseSessionEvent);
+    onCoinbaseSessionUpdate.unsubscribe(onCoinbaseSessionUpdateEvent);
     onCoinbaseResponse.unsubscribe(onCoinbaseResponseEvent);
     //
     _web3App.onSessionConnect.unsubscribe(onSessionConnect);
@@ -914,8 +902,11 @@ extension _W3MServiceExtension on W3MService {
     W3MLoggerUtil.logger
         .t('[$runtimeType] onCoinbaseConnect: ${args?.data?.toJson()}');
     if (args != null) {
+      final eChainId = args.data?.chainId ?? _currentSelectedChain!.chainId;
+      final chainInfo =
+          W3MChainPresets.chains[eChainId] ?? W3MChainPresets.chains['1']!;
+      await selectChain(chainInfo);
       await _storeSession(W3MSession(coinbaseData: args.data));
-      _selectChainFromStoredId();
       _loadAccountData();
       if (_isOpen) {
         closeModal();
@@ -932,24 +923,23 @@ extension _W3MServiceExtension on W3MService {
   }
 
   @protected
-  void onCoinbaseSessionEvent(CoinbaseSessionEvent? args) async {
-    W3MLoggerUtil.logger.e('[$runtimeType] onCoinbaseSessionEvent: $args');
+  void onCoinbaseSessionUpdateEvent(CoinbaseSessionEvent? args) async {
+    W3MLoggerUtil.logger
+        .t('[$runtimeType] onCoinbaseSessionEvent: ${args.toString()}');
     if (args != null) {
       final eChainId = args.chainId ?? _currentSelectedChain!.chainId;
-      final eChainName = args.chainName ?? _currentSelectedChain!.chainName;
       final eAddress = args.address ?? _currentSession!.address!;
       try {
-        _currentSession!.coinbaseData = CoinbaseData(
+        final chainInfo =
+            W3MChainPresets.chains[eChainId] ?? W3MChainPresets.chains['1']!;
+        await selectChain(chainInfo);
+        final cbData = CoinbaseData(
           address: eAddress,
-          chainName: eChainName,
-          chainId: int.parse(eChainId),
+          chainName: chainInfo.chainName,
+          chainId: int.parse(chainInfo.chainId),
         );
-        await _storeSession(_currentSession!);
-        if (W3MChainPresets.chains.containsKey(eChainId)) {
-          final chain = W3MChainPresets.chains[eChainId];
-          await selectChain(chain);
-        }
-        _notify();
+        await _storeSession(W3MSession(coinbaseData: cbData));
+        _loadAccountData();
       } catch (e) {
         W3MLoggerUtil.logger
             .e('[$runtimeType] onCoinbaseChainChangedEvent: $e');
@@ -960,7 +950,7 @@ extension _W3MServiceExtension on W3MService {
   @protected
   void onCoinbaseResponseEvent(CoinbaseResponseEvent? args) async {
     W3MLoggerUtil.logger
-        .e('[$runtimeType] onCoinbaseResponseEvent: ${args?.data}');
+        .t('[$runtimeType] onCoinbaseResponseEvent: ${args?.data}');
   }
 
   @protected

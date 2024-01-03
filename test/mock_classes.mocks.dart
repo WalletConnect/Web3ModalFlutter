@@ -436,21 +436,21 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValueForMissingStub: null,
       );
   @override
-  _i3.Event<_i15.CoinbaseSessionEvent> get onCoinbaseUpdateSession =>
+  _i3.Event<_i15.CoinbaseSessionEvent> get onCoinbaseSessionUpdate =>
       (super.noSuchMethod(
-        Invocation.getter(#onCoinbaseUpdateSession),
+        Invocation.getter(#onCoinbaseSessionUpdate),
         returnValue: _FakeEvent_1<_i15.CoinbaseSessionEvent>(
           this,
-          Invocation.getter(#onCoinbaseUpdateSession),
+          Invocation.getter(#onCoinbaseSessionUpdate),
         ),
       ) as _i3.Event<_i15.CoinbaseSessionEvent>);
   @override
-  set onCoinbaseUpdateSession(
-          _i3.Event<_i15.CoinbaseSessionEvent>? _onCoinbaseUpdateSession) =>
+  set onCoinbaseSessionUpdate(
+          _i3.Event<_i15.CoinbaseSessionEvent>? _onCoinbaseSessionUpdate) =>
       super.noSuchMethod(
         Invocation.setter(
-          #onCoinbaseUpdateSession,
-          _onCoinbaseUpdateSession,
+          #onCoinbaseSessionUpdate,
+          _onCoinbaseSessionUpdate,
         ),
         returnValueForMissingStub: null,
       );
@@ -555,6 +555,31 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
   @override
+  _i16.Future<void> cbGetAccount() => (super.noSuchMethod(
+        Invocation.method(
+          #cbGetAccount,
+          [],
+        ),
+        returnValue: _i16.Future<void>.value(),
+        returnValueForMissingStub: _i16.Future<void>.value(),
+      ) as _i16.Future<void>);
+  @override
+  _i16.Future<dynamic> cbRequest({
+    String? chainId,
+    required _i4.SessionRequestParams? request,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #cbRequest,
+          [],
+          {
+            #chainId: chainId,
+            #request: request,
+          },
+        ),
+        returnValue: _i16.Future<dynamic>.value(),
+      ) as _i16.Future<dynamic>);
+  @override
   _i16.Future<bool> cbIsInstalled() => (super.noSuchMethod(
         Invocation.method(
           #cbIsInstalled,
@@ -570,32 +595,6 @@ class MockExplorerService extends _i1.Mock implements _i13.ExplorerService {
         ),
         returnValue: _i16.Future<bool>.value(false),
       ) as _i16.Future<bool>);
-  @override
-  _i16.Future<void> cbGetAccount() => (super.noSuchMethod(
-        Invocation.method(
-          #cbGetAccount,
-          [],
-        ),
-        returnValue: _i16.Future<void>.value(),
-        returnValueForMissingStub: _i16.Future<void>.value(),
-      ) as _i16.Future<void>);
-  @override
-  _i16.Future<void> cbRequest({
-    String? chainId,
-    required _i4.SessionRequestParams? request,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #cbRequest,
-          [],
-          {
-            #chainId: chainId,
-            #request: request,
-          },
-        ),
-        returnValue: _i16.Future<void>.value(),
-        returnValueForMissingStub: _i16.Future<void>.value(),
-      ) as _i16.Future<void>);
   @override
   _i16.Future<void> cbResetSession() => (super.noSuchMethod(
         Invocation.method(
@@ -616,13 +615,13 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
   }
 
   @override
-  _i3.Event<_i3.EventArgs> get onPairingExpire => (super.noSuchMethod(
+  _i3.Event<_i4.PairingEvent> get onPairingExpire => (super.noSuchMethod(
         Invocation.getter(#onPairingExpire),
-        returnValue: _FakeEvent_1<_i3.EventArgs>(
+        returnValue: _FakeEvent_1<_i4.PairingEvent>(
           this,
           Invocation.getter(#onPairingExpire),
         ),
-      ) as _i3.Event<_i3.EventArgs>);
+      ) as _i3.Event<_i4.PairingEvent>);
   @override
   _i3.Event<_i19.WalletErrorEvent> get onWalletConnectionError =>
       (super.noSuchMethod(
@@ -652,23 +651,6 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         Invocation.getter(#isConnected),
         returnValue: false,
       ) as bool);
-  @override
-  _i3.Event<_i4.AuthResponse> get onAuthResponseEvent => (super.noSuchMethod(
-        Invocation.getter(#onAuthResponseEvent),
-        returnValue: _FakeEvent_1<_i4.AuthResponse>(
-          this,
-          Invocation.getter(#onAuthResponseEvent),
-        ),
-      ) as _i3.Event<_i4.AuthResponse>);
-  @override
-  _i3.Event<_i4.SessionProposalEvent> get onProposalExpireEvent =>
-      (super.noSuchMethod(
-        Invocation.getter(#onProposalExpireEvent),
-        returnValue: _FakeEvent_1<_i4.SessionProposalEvent>(
-          this,
-          Invocation.getter(#onProposalExpireEvent),
-        ),
-      ) as _i3.Event<_i4.SessionProposalEvent>);
   @override
   _i3.Event<_i4.SessionConnect> get onSessionConnectEvent =>
       (super.noSuchMethod(
@@ -702,22 +684,6 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
           Invocation.getter(#onSessionExpireEvent),
         ),
       ) as _i3.Event<_i4.SessionExpire>);
-  @override
-  _i3.Event<_i4.SessionExtend> get onSessionExtendEvent => (super.noSuchMethod(
-        Invocation.getter(#onSessionExtendEvent),
-        returnValue: _FakeEvent_1<_i4.SessionExtend>(
-          this,
-          Invocation.getter(#onSessionExtendEvent),
-        ),
-      ) as _i3.Event<_i4.SessionExtend>);
-  @override
-  _i3.Event<_i4.SessionPing> get onSessionPingEvent => (super.noSuchMethod(
-        Invocation.getter(#onSessionPingEvent),
-        returnValue: _FakeEvent_1<_i4.SessionPing>(
-          this,
-          Invocation.getter(#onSessionPingEvent),
-        ),
-      ) as _i3.Event<_i4.SessionPing>);
   @override
   _i3.Event<_i4.SessionUpdate> get onSessionUpdateEvent => (super.noSuchMethod(
         Invocation.getter(#onSessionUpdateEvent),
@@ -768,21 +734,21 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  _i3.Event<_i15.CoinbaseSessionEvent> get onCoinbaseUpdateSession =>
+  _i3.Event<_i15.CoinbaseSessionEvent> get onCoinbaseSessionUpdate =>
       (super.noSuchMethod(
-        Invocation.getter(#onCoinbaseUpdateSession),
+        Invocation.getter(#onCoinbaseSessionUpdate),
         returnValue: _FakeEvent_1<_i15.CoinbaseSessionEvent>(
           this,
-          Invocation.getter(#onCoinbaseUpdateSession),
+          Invocation.getter(#onCoinbaseSessionUpdate),
         ),
       ) as _i3.Event<_i15.CoinbaseSessionEvent>);
   @override
-  set onCoinbaseUpdateSession(
-          _i3.Event<_i15.CoinbaseSessionEvent>? _onCoinbaseUpdateSession) =>
+  set onCoinbaseSessionUpdate(
+          _i3.Event<_i15.CoinbaseSessionEvent>? _onCoinbaseSessionUpdate) =>
       super.noSuchMethod(
         Invocation.setter(
-          #onCoinbaseUpdateSession,
-          _onCoinbaseUpdateSession,
+          #onCoinbaseSessionUpdate,
+          _onCoinbaseSessionUpdate,
         ),
         returnValueForMissingStub: null,
       );
@@ -989,6 +955,31 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
   @override
+  _i16.Future<void> cbGetAccount() => (super.noSuchMethod(
+        Invocation.method(
+          #cbGetAccount,
+          [],
+        ),
+        returnValue: _i16.Future<void>.value(),
+        returnValueForMissingStub: _i16.Future<void>.value(),
+      ) as _i16.Future<void>);
+  @override
+  _i16.Future<dynamic> cbRequest({
+    String? chainId,
+    required _i4.SessionRequestParams? request,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #cbRequest,
+          [],
+          {
+            #chainId: chainId,
+            #request: request,
+          },
+        ),
+        returnValue: _i16.Future<dynamic>.value(),
+      ) as _i16.Future<dynamic>);
+  @override
   _i16.Future<bool> cbIsInstalled() => (super.noSuchMethod(
         Invocation.method(
           #cbIsInstalled,
@@ -1004,32 +995,6 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         ),
         returnValue: _i16.Future<bool>.value(false),
       ) as _i16.Future<bool>);
-  @override
-  _i16.Future<void> cbGetAccount() => (super.noSuchMethod(
-        Invocation.method(
-          #cbGetAccount,
-          [],
-        ),
-        returnValue: _i16.Future<void>.value(),
-        returnValueForMissingStub: _i16.Future<void>.value(),
-      ) as _i16.Future<void>);
-  @override
-  _i16.Future<void> cbRequest({
-    String? chainId,
-    required _i4.SessionRequestParams? request,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #cbRequest,
-          [],
-          {
-            #chainId: chainId,
-            #request: request,
-          },
-        ),
-        returnValue: _i16.Future<void>.value(),
-        returnValueForMissingStub: _i16.Future<void>.value(),
-      ) as _i16.Future<void>);
   @override
   _i16.Future<void> cbResetSession() => (super.noSuchMethod(
         Invocation.method(

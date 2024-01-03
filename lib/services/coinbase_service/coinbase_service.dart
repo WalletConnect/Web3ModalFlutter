@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import 'package:event/event.dart';
+import 'package:flutter/services.dart';
 import 'package:web3modal_flutter/services/coinbase_service/i_coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -24,7 +25,7 @@ class CoinbaseService implements ICoinbaseService {
   Event<CoinbaseErrorEvent> onCoinbaseError = Event<CoinbaseErrorEvent>();
 
   @override
-  Event<CoinbaseSessionEvent> onCoinbaseUpdateSession =
+  Event<CoinbaseSessionEvent> onCoinbaseSessionUpdate =
       Event<CoinbaseSessionEvent>();
 
   @override
@@ -55,72 +56,98 @@ class CoinbaseService implements ICoinbaseService {
     }
   }
 
-  @override
-  Future<bool> cbIsInstalled() async {
-    return await CoinbaseWalletSDK.shared.isAppInstalled();
-  }
-
-  @override
-  Future<bool> cbIsConnected() async {
-    return await CoinbaseWalletSDK.shared.isConnected();
-  }
-
   @protected
   @override
   Future<void> cbGetAccount() async {
     try {
-      final results = await CoinbaseWalletSDK.shared.initiateHandshake([
+      final result = (await CoinbaseWalletSDK.shared.initiateHandshake([
         const RequestAccounts(),
-      ]);
-      final data = CoinbaseData.fromJson(results.first.account!.toJson());
+      ]))
+          .first;
+      if (result.error != null) {
+        final errorCode = result.error?.code;
+        final errorMessage = result.error!.message;
+        onCoinbaseError.broadcast(CoinbaseErrorEvent(errorMessage));
+        throw CoinbaseRPCError(errorCode, errorMessage);
+      }
+      final data = CoinbaseData.fromJson(result.account!.toJson());
       onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
-    } catch (e) {
+    } on PlatformException catch (e, s) {
+      final message = (e.message ?? '').toLowerCase();
+      final error0 = message.contains('error 0');
+      final denied = message.contains('user denied');
+      if (error0 || denied) {
+        throw CoinbaseRPCError(0, 'User denied handshake');
+      }
+      throw W3MCoinbaseException(e, s);
+    } catch (e, s) {
       onCoinbaseError.broadcast(CoinbaseErrorEvent(e.toString()));
+      throw W3MCoinbaseException(e, s);
     }
   }
 
   @override
-  Future<void> cbRequest({
+  Future<dynamic> cbRequest({
     String? chainId,
     required SessionRequestParams request,
   }) async {
     try {
       final req = Request(actions: [request.toCoinbaseRequest(chainId)]);
-      final results = await CoinbaseWalletSDK.shared.makeRequest(req);
-      final error = results.first.error;
-      if (error != null) {
-        onCoinbaseError.broadcast(CoinbaseErrorEvent(error.message));
-      } else {
-        switch (req.actions.first.method) {
-          case 'wallet_switchEthereumChain':
-          case 'wallet_addEthereumChain':
-            final event = CoinbaseSessionEvent(chainId: chainId);
-            onCoinbaseUpdateSession.broadcast(event);
-            break;
-          case 'eth_requestAccounts':
-            final json = jsonDecode(results.first.value!);
-            final data = CoinbaseData.fromJson(json);
-            onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
-            break;
-          default:
-            final data = results.first.value;
-            onCoinbaseResponse.broadcast(CoinbaseResponseEvent(data: data));
-            break;
-        }
+      final result = (await CoinbaseWalletSDK.shared.makeRequest(req)).first;
+      if (result.error != null) {
+        final errorCode = result.error?.code;
+        final errorMessage = result.error!.message;
+        onCoinbaseError.broadcast(CoinbaseErrorEvent(errorMessage));
+        throw CoinbaseRPCError(errorCode, errorMessage);
       }
+      switch (req.actions.first.method) {
+        case 'wallet_switchEthereumChain':
+        case 'wallet_addEthereumChain':
+          final event = CoinbaseSessionEvent(chainId: chainId);
+          onCoinbaseSessionUpdate.broadcast(event);
+          break;
+        case 'eth_requestAccounts':
+          final json = jsonDecode(result.value!);
+          final data = CoinbaseData.fromJson(json);
+          onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
+          break;
+        default:
+          final data = result.value;
+          onCoinbaseResponse.broadcast(CoinbaseResponseEvent(data: data));
+          break;
+      }
+      return result.value;
     } on W3MCoinbaseException {
       rethrow;
-    } catch (e) {
-      throw W3MCoinbaseException(e.toString());
+    } catch (e, s) {
+      throw W3MCoinbaseException(e, s);
+    }
+  }
+
+  @override
+  Future<bool> cbIsInstalled() async {
+    try {
+      return await CoinbaseWalletSDK.shared.isAppInstalled();
+    } catch (e, s) {
+      throw W3MCoinbaseException(e, s);
+    }
+  }
+
+  @override
+  Future<bool> cbIsConnected() async {
+    try {
+      return await CoinbaseWalletSDK.shared.isConnected();
+    } catch (e, s) {
+      throw W3MCoinbaseException(e, s);
     }
   }
 
   @override
   Future<void> cbResetSession() async {
     try {
-      await CoinbaseWalletSDK.shared.resetSession();
-    } catch (e) {
-      throw W3MCoinbaseException(e.toString());
+      return CoinbaseWalletSDK.shared.resetSession();
+    } catch (e, s) {
+      throw W3MCoinbaseException(e, s);
     }
   }
 }
@@ -183,8 +210,8 @@ extension on SessionRequestParams {
             iconUrls: iconUrls,
             blockExplorerUrls: explorerUrls,
           );
-        } catch (_) {
-          throw W3MCoinbaseException('Unrecognized chainId $chainId');
+        } catch (_, s) {
+          throw W3MCoinbaseException('Unrecognized chainId $chainId', s);
         }
       case 'wallet_watchAsset':
         return WatchAsset(params: params);

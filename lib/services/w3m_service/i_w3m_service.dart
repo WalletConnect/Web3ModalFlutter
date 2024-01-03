@@ -99,6 +99,7 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// Opens the native wallet [selectedWallet] after connected
   Future<void> launchConnectedWallet();
 
+  /// List of available chains to be added in connected wallet
   List<String>? getAvailableChains();
 
   /// List of approved chains by connected wallet
@@ -133,12 +134,8 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   abstract final Event<SessionConnect> onSessionConnectEvent;
   abstract final Event<SessionDelete> onSessionDeleteEvent;
   abstract final Event<SessionExpire> onSessionExpireEvent;
-  abstract final Event<SessionPing> onSessionPingEvent;
   abstract final Event<SessionUpdate> onSessionUpdateEvent;
-  abstract final Event<SessionExtend> onSessionExtendEvent;
   abstract final Event<SessionEvent> onSessionEventEvent;
-  abstract final Event<SessionProposalEvent> onProposalExpireEvent;
-  abstract final Event<AuthResponse> onAuthResponseEvent;
-  abstract final Event<EventArgs> onPairingExpire;
+  abstract final Event<PairingEvent> onPairingExpire;
   abstract final Event<WalletErrorEvent> onWalletConnectionError;
 }

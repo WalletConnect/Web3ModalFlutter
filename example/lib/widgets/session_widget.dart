@@ -324,8 +324,7 @@ class SessionWidgetState extends State<SessionWidget> {
       );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
       children: children,
     );
   }

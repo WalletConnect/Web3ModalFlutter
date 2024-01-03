@@ -52,14 +52,14 @@ class WalletListItem extends StatelessWidget {
                 Visibility(
                   visible: showCheckmark,
                   child: Positioned(
-                    bottom: 4,
-                    right: 4,
+                    bottom: 6,
+                    right: 6,
                     child: Container(
                       decoration: BoxDecoration(
                         color: themeColors.background150,
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                       ),
-                      padding: const EdgeInsets.all(2.0),
+                      padding: const EdgeInsets.all(1.0),
                       clipBehavior: Clip.antiAlias,
                       child: RoundedIcon(
                         assetPath: 'assets/icons/checkmark.svg',
