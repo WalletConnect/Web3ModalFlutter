@@ -81,14 +81,17 @@ jobs:
         APPLE_ISSUER_ID: ${{ secrets.APPLE_ISSUER_ID }}
       run: |
         # Get app version from file
-        VERSION=$(echo | grep "^version: " pubspec.yaml)
+        FILE_VALUE=$(echo | grep "^version: " pubspec.yaml)
+        PARTS=(${FILE_VALUE//:/ })
+        FULL_VERSION=${PARTS[1]}
+        VERSION_NUMBER=(${FULL_VERSION//-/ })
 
         # Build ios app with flutter
-        echo "flutter build ios --build-name $VERSION --dart-define=\"PROJECT_ID=$PROJECT_ID\" --config-only --release"
-        flutter build ios --build-name $VERSION --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
+        # echo "flutter build ios --build-name $VERSION_NUMBER --dart-define=\"PROJECT_ID=$PROJECT_ID\" --config-only --release"
+        flutter build ios --build-name $VERSION_NUMBER --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
         
         cd ios
-        agvtool new-marketing-version $VERSION
+        agvtool new-marketing-version $VERSION_NUMBER
         agvtool next-version -all
 
         # Archive and export
