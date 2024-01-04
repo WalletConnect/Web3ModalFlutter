@@ -61,7 +61,7 @@ class UrlUtils extends IUrlUtils {
           return await canLaunchUrlFunc(Uri.parse(uri));
         }
       } catch (e) {
-        W3MLoggerUtil.logger.i('[$runtimeType] isInstalled $uri $e');
+        W3MLoggerUtil.logger.i('[$runtimeType] not installed/detected $uri');
       }
     }
 

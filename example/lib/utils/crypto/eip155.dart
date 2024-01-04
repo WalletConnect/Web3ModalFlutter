@@ -137,7 +137,7 @@ class EIP155 {
       chainId: chainId,
       request: SessionRequestParams(
         method: EIP155UIMethods.personalSign.name,
-        params: [data, address],
+        params: [address, data],
       ),
     );
   }
