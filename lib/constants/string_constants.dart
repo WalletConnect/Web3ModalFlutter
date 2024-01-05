@@ -29,7 +29,7 @@ class StringConstants {
 
   // Storage
   static const String recentWalletId = 'w3m_recentWallet';
-  static const String walletData = 'w3m_walletData';
+  static const String connectedWalletData = 'w3m_walletData';
   static const String selectedChainId = 'w3m_selectedChainId';
 
   // Urls

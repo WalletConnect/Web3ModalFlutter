@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:event/event.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
-import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/services/ledger_service/ledger_service_singleton.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
@@ -429,15 +427,16 @@ class W3MService with ChangeNotifier implements IW3MService {
   Future<void> connectSelectedWallet({bool inBrowser = false}) async {
     _checkInitialized();
 
+    final selectedWalletRedirect = explorerService.instance?.getWalletRedirect(
+      selectedWallet,
+    );
     if (selectedWalletRedirect == null) {
       throw W3MServiceException(
         'You didn\'t select a wallet or walletInfo argument is null',
       );
     }
 
-    if (_connectingWallet) {
-      return;
-    }
+    if (_connectingWallet) return;
     _connectingWallet = true;
 
     var pType = platformUtils.instance.getPlatformType();
@@ -447,14 +446,13 @@ class W3MService with ChangeNotifier implements IW3MService {
     try {
       await buildConnectionUri();
       await urlUtils.instance.openRedirect(
-        selectedWalletRedirect!,
+        selectedWalletRedirect,
         wcURI: wcUri!,
         pType: pType,
       );
     } on LaunchUrlException catch (e) {
       W3MLoggerUtil.logger.e(
-        '[$runtimeType] error launching wallet. '
-        '${selectedWalletRedirect?.toString()}',
+        '[$runtimeType] error launching wallet $selectedWalletRedirect',
       );
       if (e.message.toLowerCase() != 'app not installed') {
         toastUtils.instance.show(
@@ -513,7 +511,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     try {
       _currentSession = await connectResponse!.session.future;
       _setSessionValues(_currentSession!);
-      await explorerService.instance!.storeConnectedWalletData(_selectedWallet);
+      await explorerService.instance!.storeConnectedWallet(_selectedWallet);
     } on TimeoutException {
       W3MLoggerUtil.logger
           .i('[$runtimeType] Rebuilding session, ending future');
@@ -531,17 +529,21 @@ class W3MService with ChangeNotifier implements IW3MService {
   Future<void> launchConnectedWallet() async {
     _checkInitialized();
 
-    final sessionRedirect = await sessionWalletRedirect();
-    if (sessionRedirect == null) {
+    final walletInfo = explorerService.instance!.getConnectedWallet();
+    if (walletInfo == null) {
+      // if walletInfo is null could mean that either
+      // 1. There's no wallet connected (shouldn't happen)
+      // 2. Wallet is connected on another device through qr code
       return;
     }
 
-    W3MLoggerUtil.logger.t(
-      '[$runtimeType] Launching wallet: $sessionWalletRedirect, ${_currentSession?.peer.metadata}',
-    );
+    final redirect = explorerService.instance!.getWalletRedirect(walletInfo);
+    if (redirect == null) {
+      return;
+    }
 
     return await urlUtils.instance.openRedirect(
-      sessionRedirect,
+      redirect,
       pType: platformUtils.instance.getPlatformType(),
     );
   }
@@ -808,43 +810,12 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   void _cleanSession() {
+    explorerService.instance!.deleteConnectedWallet();
     _currentSelectedChain = null;
     _isConnected = false;
     _address = null;
     _currentSession = null;
     _notify();
-  }
-
-  @override
-  WalletRedirect? get selectedWalletRedirect {
-    final listing = _selectedWallet?.listing;
-    if (listing == null) return null;
-
-    return explorerService.instance?.getWalletRedirect(listing);
-  }
-
-  Future<WalletRedirect?> sessionWalletRedirect() async {
-    final metadata = _currentSession?.peer.metadata;
-    final sessionRedirect = metadata?.redirect;
-    if (sessionRedirect == null) {
-      final walletString = storageService.instance.getString(
-        StringConstants.walletData,
-      );
-      if ((walletString ?? '').isNotEmpty) {
-        final walletInfo = W3MWalletInfo.fromJson(jsonDecode(walletString!));
-        return explorerService.instance!.getWalletRedirect(walletInfo.listing);
-      }
-
-      return await explorerService.instance?.tryWalletRedirectByName(
-        metadata?.name,
-      );
-    }
-
-    return WalletRedirect(
-      mobile: sessionRedirect.native,
-      desktop: sessionRedirect.native,
-      web: sessionRedirect.universal,
-    );
   }
 
   void _checkInitialized() {
