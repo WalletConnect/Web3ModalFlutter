@@ -11,16 +11,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.2
+  fl_toast: ^3.1.0
+  shared_preferences: ^2.2.0
   web3modal_flutter:
     path: ../
-  cupertino_icons: ^1.0.2
-  get_it: ^7.6.0
-  logger: ^2.0.2+1
-  fl_toast: ^3.1.0
-  smooth_page_indicator: ^1.1.0
-  universal_io: ^2.2.2
-  json_annotation: ^4.8.1
-  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:

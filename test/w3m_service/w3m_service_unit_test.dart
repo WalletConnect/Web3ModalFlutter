@@ -1,6 +1,3 @@
-// ignore_for_file: depend_on_referenced_packages
-
-import 'package:event/event.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';

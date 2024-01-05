@@ -3,8 +3,6 @@ library web3modal_flutter;
 
 /// libraries
 export 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-export 'package:web3dart/web3dart.dart';
-export 'package:web3dart/crypto.dart';
 
 /// Models
 export 'models/w3m_chain_info.dart';

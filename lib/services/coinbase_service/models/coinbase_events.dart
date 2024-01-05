@@ -1,4 +1,4 @@
-import 'package:event/event.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
 
 class CoinbaseConnectEvent implements EventArgs {

@@ -1,6 +1,6 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/storage_service/i_storage_service.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class StorageService implements IStorageService {
   SharedPreferences? _prefs;

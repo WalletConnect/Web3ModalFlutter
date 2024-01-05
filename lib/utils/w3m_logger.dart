@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:logger/logger.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class W3MLoggerUtil {
