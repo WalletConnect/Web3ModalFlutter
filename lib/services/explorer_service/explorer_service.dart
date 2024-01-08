@@ -125,7 +125,7 @@ class ExplorerService implements IExplorerService {
   Future<void> _getRecentWalletAndOrder() async {
     W3MWalletInfo? walletInfo;
     final walletString = storageService.instance.getString(
-      StringConstants.walletData,
+      StringConstants.connectedWalletData,
     );
     final recentWalletId = storageService.instance.getString(
       StringConstants.recentWalletId,
@@ -234,14 +234,39 @@ class ExplorerService implements IExplorerService {
   }
 
   @override
-  Future<void> storeConnectedWalletData(W3MWalletInfo? walletInfo) async {
+  Future<void> storeConnectedWallet(W3MWalletInfo? walletInfo) async {
     if (walletInfo == null) return;
     final walletDataString = jsonEncode(walletInfo.toJson());
     await storageService.instance.setString(
-      StringConstants.walletData,
+      StringConstants.connectedWalletData,
       walletDataString,
     );
     await _updateRecentWalletId(walletInfo);
+  }
+
+  @override
+  W3MWalletInfo? getConnectedWallet() {
+    try {
+      final walletString = storageService.instance.getString(
+        StringConstants.connectedWalletData,
+        defaultValue: '',
+      );
+      if (walletString!.isNotEmpty) {
+        return W3MWalletInfo.fromJson(jsonDecode(walletString));
+      }
+    } catch (e, s) {
+      W3MLoggerUtil.logger.e(
+        '[$runtimeType] error getConnectedWallet:',
+        error: e,
+        stackTrace: s,
+      );
+    }
+    return null;
+  }
+
+  @override
+  Future<void> deleteConnectedWallet() async {
+    await storageService.instance.clearKey(StringConstants.connectedWalletData);
   }
 
   Future<void> _updateRecentWalletId(
@@ -322,29 +347,11 @@ class ExplorerService implements IExplorerService {
   }
 
   @override
-  WalletRedirect? getWalletRedirect(Listing listing) {
-    final wallet = listings.value.firstWhereOrNull(
-      (item) => listing.id == item.listing.id,
-    );
-    if (wallet == null) {
-      return null;
-    }
-    return WalletRedirect(
-      mobile: wallet.listing.mobileLink,
-      desktop: wallet.listing.desktopLink,
-      web: wallet.listing.webappLink,
-    );
-  }
+  WalletRedirect? getWalletRedirect(W3MWalletInfo? walletInfo) {
+    if (walletInfo == null) return null;
 
-  @override
-  Future<WalletRedirect?> tryWalletRedirectByName(String? name) async {
-    if (name == null) return null;
-    final results = await _fetchListings(
-      params: RequestParams(page: 1, entries: 100, search: name),
-      updateCount: false,
-    );
-    final wallet = results.firstWhereOrNull(
-      (item) => item.listing.name.toLowerCase() == name.toLowerCase(),
+    final wallet = listings.value.firstWhereOrNull(
+      (item) => walletInfo.listing.id == item.listing.id,
     );
     if (wallet == null) {
       return null;

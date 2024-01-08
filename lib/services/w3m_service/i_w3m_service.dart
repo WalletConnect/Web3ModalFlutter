@@ -1,6 +1,5 @@
 import 'package:event/event.dart';
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 enum W3MServiceStatus {
@@ -99,14 +98,6 @@ abstract class IW3MService with ChangeNotifier {
   /// This will do nothing if [isConnected] is true.
   Future<void> buildConnectionUri();
 
-  /// Subscribe to listen to pairing expirations
-  final Event<EventArgs> onPairingExpire = Event();
-
-  WalletRedirect? get selectedWalletRedirect;
-
-  /// When users rejects connection or an error occurs this will event
-  final Event<WalletErrorEvent> onWalletConnectionError = Event();
-
   /// Connects the [selectedWallet] previously selected
   Future<void> connectSelectedWallet({bool inBrowser = false});
 
@@ -121,13 +112,19 @@ abstract class IW3MService with ChangeNotifier {
   /// Gets the name of the currently connected wallet.
   String getReferer();
 
-  /// Closes the modal.
-  void closeModal();
-
   /// Disconnects the session and pairing, if any.
   /// If there is no session, this does nothing.
   Future<void> disconnect({bool disconnectAllSessions = true});
 
+  /// Closes the modal.
+  void closeModal();
+
   @override
   void dispose();
+
+  /// Subscribe to listen to pairing expirations
+  final Event<EventArgs> onPairingExpire = Event();
+
+  /// When users rejects connection or an error occurs this will event
+  final Event<WalletErrorEvent> onWalletConnectionError = Event();
 }
