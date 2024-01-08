@@ -1,7 +1,5 @@
+import 'package:event/event.dart';
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
-import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
-import 'package:web3modal_flutter/services/w3m_service/models/w3m_session.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 enum W3MServiceStatus {
@@ -27,9 +25,13 @@ class WalletErrorEvent implements EventArgs {
 
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
 /// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
-abstract class IW3MService with ChangeNotifier, CoinbaseService {
+abstract class IW3MService with ChangeNotifier {
   /// Whether or not this object has been initialized.
   W3MServiceStatus get status;
+
+  /// If the [web3App] fails to initialize and throws an exception, this will contain the caught exception.
+  /// Otherwise, it will be null.
+  dynamic get initError;
 
   bool get hasNamespaces;
 
@@ -47,20 +49,34 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   String? get wcUri;
 
   /// The current session's data.
-  W3MSession? get session;
+  SessionData? get session;
+
+  /// The address of the currently connected account.
+  String? get address;
+
+  /// Returns the url of the token of the currently selected chain.
+  /// Pass this into a [Image.network] and it will load the token image.
+  String? get tokenImageUrl;
 
   /// The url to the account's avatar image.
   /// Pass this into a [Image.network] and it will load the avatar image.
   String? get avatarUrl;
 
-  /// Returns the balance of the currently connected wallet on the selected chain.
-  double? get chainBalance;
-
   /// The currently selected chain.
   W3MChainInfo? get selectedChain;
 
+  /// Returns the balance of the currently connected wallet on the selected chain.
+  double? get chainBalance;
+
   /// The currently selected wallet.
   W3MWalletInfo? get selectedWallet;
+
+  /// Sets the [selectedChain] and gets the [chainBalance].
+  /// If the wallet is already connected, it will request the chain to be changed and will update the session with the new chain.
+  /// If [chainInfo] is null this will disconnect the wallet.
+  Future<void> selectChain(W3MChainInfo? chainInfo, {bool switchChain = false});
+
+  void launchBlockExplorer();
 
   /// Sets up the explorer and the web3App if they already been initialized.
   Future<void> init();
@@ -76,21 +92,11 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// Sets the [selectedWallet] to be connected
   void selectWallet(W3MWalletInfo walletInfo);
 
-  /// Sets the [selectedChain] and gets the [chainBalance].
-  /// If the wallet is already connected, it will request the chain to be changed and will update the session with the new chain.
-  /// If [chainInfo] is null this will disconnect the wallet.
-  Future<void> selectChain(W3MChainInfo? chainInfo, {bool switchChain = false});
-
-  /// Launch blockchain explorer for the current chain in external browser
-  void launchBlockExplorer();
-
   /// Used to expire and delete any inactive pairing
   Future<void> expirePreviousInactivePairings();
 
   /// This will do nothing if [isConnected] is true.
   Future<void> buildConnectionUri();
-
-  WalletRedirect? get selectedWalletRedirect;
 
   /// Connects the [selectedWallet] previously selected
   Future<void> connectSelectedWallet({bool inBrowser = false});
@@ -98,43 +104,27 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// Opens the native wallet [selectedWallet] after connected
   Future<void> launchConnectedWallet();
 
-  /// List of available chains to be added in connected wallet
   List<String>? getAvailableChains();
 
   /// List of approved chains by connected wallet
   List<String>? getApprovedChains();
 
-  /// List of approved methods by connected wallet
-  List<String>? getApprovedMethods();
-
-  /// List of approved events by connected wallet
-  List<String>? getApprovedEvents();
-
-  /// Closes the modal.
-  void closeModal();
+  /// Gets the name of the currently connected wallet.
+  String getReferer();
 
   /// Disconnects the session and pairing, if any.
   /// If there is no session, this does nothing.
   Future<void> disconnect({bool disconnectAllSessions = true});
 
-  /// Make a request
-  Future<dynamic> request({
-    required String topic,
-    required String chainId,
-    String? switchToChainId,
-    required SessionRequestParams request,
-  });
+  /// Closes the modal.
+  void closeModal();
 
   @override
   void dispose();
 
-  /* EVENTS DECLARATIONS */
+  /// Subscribe to listen to pairing expirations
+  final Event<EventArgs> onPairingExpire = Event();
 
-  abstract final Event<SessionConnect> onSessionConnectEvent;
-  abstract final Event<SessionDelete> onSessionDeleteEvent;
-  abstract final Event<SessionExpire> onSessionExpireEvent;
-  abstract final Event<SessionUpdate> onSessionUpdateEvent;
-  abstract final Event<SessionEvent> onSessionEventEvent;
-  abstract final Event<PairingEvent> onPairingExpire;
-  abstract final Event<WalletErrorEvent> onWalletConnectionError;
+  /// When users rejects connection or an error occurs this will event
+  final Event<WalletErrorEvent> onWalletConnectionError = Event();
 }

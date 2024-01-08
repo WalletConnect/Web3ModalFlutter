@@ -29,4 +29,9 @@ class StorageService implements IStorageService {
     }
     return result;
   }
+
+  @override
+  Future<bool> clearKey(String key) async {
+    return _prefs!.remove(key);
+  }
 }
