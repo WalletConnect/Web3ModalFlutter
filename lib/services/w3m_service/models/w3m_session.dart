@@ -195,11 +195,6 @@ class W3MSession {
     if (sessionService.noSession) {
       return null;
     }
-    if (sessionService.isCoinbase) {
-      return Redirect(native: 'cbwallet://wsegue');
-    }
-    // if (sessionService.isMagic) {
-    //
 
     return sessionData?.peer.metadata.redirect;
   }

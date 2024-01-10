@@ -1,4 +1,3 @@
-import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/storage_service/i_storage_service.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -22,12 +21,7 @@ class StorageService implements IStorageService {
 
   @override
   Future<bool> clearAll() async {
-    final walletData = getString(StringConstants.walletData, defaultValue: '');
-    final result = await _prefs!.clear();
-    if (walletData!.isNotEmpty) {
-      await setString(StringConstants.walletData, walletData);
-    }
-    return result;
+    return await _prefs!.clear();
   }
 
   @override

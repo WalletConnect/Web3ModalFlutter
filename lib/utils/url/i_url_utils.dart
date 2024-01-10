@@ -9,7 +9,7 @@ abstract class IUrlUtils {
 
   Future<bool> launchUrl(Uri url, {LaunchMode? mode});
 
-  Future<void> openRedirect(
+  Future<bool> openRedirect(
     WalletRedirect redirect, {
     String? wcURI,
     PlatformType? pType,

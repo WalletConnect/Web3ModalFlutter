@@ -95,7 +95,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
             kNavbarHeight -
             (kPadding16 * 2);
     //
-    final walletRedirect = explorerService.instance?.getWalletRedirect(
+    final walletRedirect = explorerService.instance.getWalletRedirect(
       _service!.selectedWallet,
     );
     final webOnlyWallet = walletRedirect?.webOnly == true;

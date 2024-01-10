@@ -17,6 +17,10 @@ import 'package:coinbase_wallet_sdk/request.dart';
 import 'models/coinbase_data.dart';
 
 class CoinbaseService implements ICoinbaseService {
+  static const coinbaseWalletId =
+      'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa';
+  static const coinbaseSchema = 'cbwallet://wsegue';
+
   @override
   Event<CoinbaseConnectEvent> onCoinbaseConnect = Event<CoinbaseConnectEvent>();
 
@@ -33,7 +37,10 @@ class CoinbaseService implements ICoinbaseService {
 
   @protected
   @override
-  Future<void> cbInit({required PairingMetadata metadata}) async {
+  Future<void> cbInit({
+    required PairingMetadata metadata,
+    W3MWalletInfo? cbWallet,
+  }) async {
     // Configure SDK for each platform
     final universal = metadata.redirect?.universal ?? metadata.url;
     final nativeLink = metadata.redirect?.native ?? '';
@@ -41,7 +48,7 @@ class CoinbaseService implements ICoinbaseService {
       try {
         final config = Configuration(
           ios: IOSConfiguration(
-            host: Uri.parse('cbwallet://wsegue'),
+            host: Uri.parse(cbWallet?.listing.mobileLink ?? coinbaseSchema),
             callback: Uri.parse(nativeLink),
           ),
           android: AndroidConfiguration(domain: Uri.parse(universal)),
@@ -51,37 +58,36 @@ class CoinbaseService implements ICoinbaseService {
         // Silent error
       }
     } else {
-      throw W3MCoinbaseException('PairingMetadata error');
+      throw W3MCoinbaseException('Initialization error');
     }
   }
 
   @protected
   @override
   Future<void> cbGetAccount() async {
+    await _checkInstalled();
     try {
-      final result = (await CoinbaseWalletSDK.shared.initiateHandshake([
+      final results = await CoinbaseWalletSDK.shared.initiateHandshake([
         const RequestAccounts(),
-      ]))
-          .first;
+      ]);
+      final result = results.first;
       if (result.error != null) {
         final errorCode = result.error?.code;
         final errorMessage = result.error!.message;
         onCoinbaseError.broadcast(CoinbaseErrorEvent(errorMessage));
-        throw CoinbaseRPCError(errorCode, errorMessage);
+        throw W3MCoinbaseException('$errorMessage ($errorCode)');
       }
+
       final data = CoinbaseData.fromJson(result.account!.toJson());
       onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
+      return;
     } on PlatformException catch (e, s) {
-      final message = (e.message ?? '').toLowerCase();
-      final error0 = message.contains('error 0');
-      final denied = message.contains('user denied');
-      if (error0 || denied) {
-        throw CoinbaseRPCError(0, 'User denied handshake');
-      }
-      throw W3MCoinbaseException(e, s);
+      final errorMessage = (e.message ?? '').toLowerCase();
+      onCoinbaseError.broadcast(CoinbaseErrorEvent(errorMessage));
+      throw W3MCoinbaseException(errorMessage, e, s);
     } catch (e, s) {
-      onCoinbaseError.broadcast(CoinbaseErrorEvent(e.toString()));
-      throw W3MCoinbaseException(e, s);
+      onCoinbaseError.broadcast(CoinbaseErrorEvent('Initial handshake error'));
+      throw W3MCoinbaseException('Initial handshake error', e, s);
     }
   }
 
@@ -90,6 +96,7 @@ class CoinbaseService implements ICoinbaseService {
     String? chainId,
     required SessionRequestParams request,
   }) async {
+    await _checkInstalled();
     try {
       final req = Request(actions: [request.toCoinbaseRequest(chainId)]);
       final result = (await CoinbaseWalletSDK.shared.makeRequest(req)).first;
@@ -97,7 +104,7 @@ class CoinbaseService implements ICoinbaseService {
         final errorCode = result.error?.code;
         final errorMessage = result.error!.message;
         onCoinbaseError.broadcast(CoinbaseErrorEvent(errorMessage));
-        throw CoinbaseRPCError(errorCode, errorMessage);
+        throw W3MCoinbaseException('$errorMessage ($errorCode)');
       }
       switch (req.actions.first.method) {
         case 'wallet_switchEthereumChain':
@@ -116,10 +123,12 @@ class CoinbaseService implements ICoinbaseService {
           break;
       }
       return result.value;
-    } on W3MCoinbaseException {
-      rethrow;
     } catch (e, s) {
-      throw W3MCoinbaseException(e, s);
+      if (e is W3MCoinbaseException) {
+        rethrow;
+      }
+      onCoinbaseError.broadcast(CoinbaseErrorEvent('Request error'));
+      throw W3MCoinbaseException('Request error', e, s);
     }
   }
 
@@ -128,7 +137,7 @@ class CoinbaseService implements ICoinbaseService {
     try {
       return await CoinbaseWalletSDK.shared.isAppInstalled();
     } catch (e, s) {
-      throw W3MCoinbaseException(e, s);
+      throw W3MCoinbaseException('Check is installed error', e, s);
     }
   }
 
@@ -137,7 +146,7 @@ class CoinbaseService implements ICoinbaseService {
     try {
       return await CoinbaseWalletSDK.shared.isConnected();
     } catch (e, s) {
-      throw W3MCoinbaseException(e, s);
+      throw W3MCoinbaseException('Check is connected error', e, s);
     }
   }
 
@@ -146,8 +155,16 @@ class CoinbaseService implements ICoinbaseService {
     try {
       return CoinbaseWalletSDK.shared.resetSession();
     } catch (e, s) {
-      throw W3MCoinbaseException(e, s);
+      throw W3MCoinbaseException('Reset session error', e, s);
     }
+  }
+
+  Future<bool> _checkInstalled() async {
+    final installed = await cbIsInstalled();
+    if (!installed) {
+      throw W3MCoinbaseException('App not installed');
+    }
+    return true;
   }
 }
 
@@ -209,8 +226,8 @@ extension on SessionRequestParams {
             iconUrls: iconUrls,
             blockExplorerUrls: explorerUrls,
           );
-        } catch (_, s) {
-          throw W3MCoinbaseException('Unrecognized chainId $chainId', s);
+        } catch (e, s) {
+          throw W3MCoinbaseException('Unrecognized chainId $chainId', e, s);
         }
       case 'wallet_watchAsset':
         return WatchAsset(params: params);

@@ -18,8 +18,6 @@ abstract class IExplorerService {
   /// If includedWalletIds is set only wallets from this list are going to be shown
   Set<String>? includedWalletIds;
 
-  bool get includeCoinbaseWallet;
-
   /// If excludedWalletIds is set wallets from this list are going to be excluded
   Set<String>? excludedWalletIds;
 
@@ -41,11 +39,10 @@ abstract class IExplorerService {
   /// update the recently used position to the top list
   Future<void> storeConnectedWallet(W3MWalletInfo? walletInfo);
 
+  Future<void> storeRecentWalletId(String? walletId);
+
   /// Get connected wallet data from local storage
   W3MWalletInfo? getConnectedWallet();
-
-  /// Removes connected wallet data from local storage
-  Future<void> deleteConnectedWallet();
 
   /// Gets the WalletRedirect object from a wallet info data
   WalletRedirect? getWalletRedirect(W3MWalletInfo? walletInfo);
@@ -55,4 +52,6 @@ abstract class IExplorerService {
 
   /// Given an imageId it return the chain icon from our services
   String getAssetImageUrl(String imageId);
+
+  Future<W3MWalletInfo?> getCoinbaseWalletObject();
 }
