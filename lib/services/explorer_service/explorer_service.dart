@@ -49,15 +49,6 @@ class ExplorerService implements IExplorerService {
   @override
   ValueNotifier<bool> isSearching = ValueNotifier(false);
 
-  Set<String> _installedWalletIds = <String>{};
-
-  @override
-  Set<String>? featuredWalletIds;
-  // String? get _featuredWalletsParam {
-  //   final featuredIds = (featuredWalletIds ?? <String>{});
-  //   return featuredIds.isNotEmpty ? featuredIds.join(',') : null;
-  // }
-
   @override
   Set<String>? includedWalletIds;
   String? get _includedWalletsParam {
@@ -69,8 +60,24 @@ class ExplorerService implements IExplorerService {
   Set<String>? excludedWalletIds;
   String? get _excludedWalletsParam {
     final excludedIds = (excludedWalletIds ?? <String>{})
-      ..addAll(_installedWalletIds);
+      ..addAll(_installedWalletIds)
+      ..addAll(featuredWalletIds ?? {});
     return excludedIds.isNotEmpty ? excludedIds.join(',') : null;
+  }
+
+  @override
+  Set<String>? featuredWalletIds;
+  String? get _featuredWalletsParam {
+    final featuredIds = Set.from(featuredWalletIds ?? {});
+    featuredIds.removeWhere((e) => _installedWalletIds.contains(e));
+    return featuredIds.isNotEmpty ? featuredIds.join(',') : null;
+  }
+
+  Set<String> _installedWalletIds = <String>{};
+  String? get _installedWalletsParam {
+    return _installedWalletIds.isNotEmpty
+        ? _installedWalletIds.join(',')
+        : null;
   }
 
   int _currentWalletsCount = 0;
@@ -95,14 +102,14 @@ class ExplorerService implements IExplorerService {
 
     W3MLoggerUtil.logger.t('[$runtimeType] init()');
 
-    await _getInstalledWalletIds();
+    await _setInstalledWalletIdsParam();
     await _fetchInitialWallets();
 
     initialized.value = true;
     W3MLoggerUtil.logger.t('[$runtimeType] init() done');
   }
 
-  Future<void> _getInstalledWalletIds() async {
+  Future<void> _setInstalledWalletIdsParam() async {
     final installed = await (await _fetchNativeAppData()).getInstalledApps();
     _installedWalletIds = Set<String>.from(installed.map((e) => e.id));
   }
@@ -111,13 +118,14 @@ class ExplorerService implements IExplorerService {
     totalListings.value = 0;
     final allListings = await Future.wait([
       _fetchInstalledListings(),
-      // _fetchFeaturedListings(),
+      _fetchFeaturedListings(),
       _fetchOtherListings(),
     ]);
 
     _listings = [
-      ...allListings[0].sortByRecommended(featuredWalletIds),
-      ...allListings[1].sortByRecommended(featuredWalletIds),
+      ...allListings[0].sortByFeaturedIds(featuredWalletIds),
+      ...allListings[1].sortByFeaturedIds(featuredWalletIds),
+      ...allListings[2].sortByFeaturedIds(featuredWalletIds),
     ];
     listings.value = _listings;
 
@@ -199,28 +207,25 @@ class ExplorerService implements IExplorerService {
     final params = RequestParams(
       page: 1,
       entries: _installedWalletIds.length,
-      include: _installedWalletIds.join(','),
+      include: _installedWalletsParam,
       platform: _getPlatformType(),
     );
     // this query gives me a count of installedWalletsParam.length
     return (await _fetchListings(params: params)).setInstalledFlag();
   }
 
-  // Future<List<W3MWalletInfo>> _fetchFeaturedListings() async {
-  //   // ..removeAll(_installedWalletIds)
-  //   final entries = (_featuredWalletsParam ?? '').split(',').length;
-  //   if (entries == 0) {
-  //     return [];
-  //   }
-  //   final params = RequestParams(
-  //     page: 1,
-  //     entries: entries,
-  //     include: _featuredWalletsParam,
-  //     platform: _getPlatformType(),
-  //   );
-  //   debugPrint('[$runtimeType] _featuredWalletsParam');
-  //   return await _fetchListings(params: params);
-  // }
+  Future<List<W3MWalletInfo>> _fetchFeaturedListings() async {
+    if ((_featuredWalletsParam ?? '').isEmpty) {
+      return [];
+    }
+    final params = RequestParams(
+      page: 1,
+      entries: _featuredWalletsParam!.split(',').length,
+      include: _featuredWalletsParam,
+      platform: _getPlatformType(),
+    );
+    return await _fetchListings(params: params);
+  }
 
   Future<List<W3MWalletInfo>> _fetchOtherListings() async {
     _requestParams = RequestParams(
@@ -445,7 +450,7 @@ extension on List<Listing> {
 }
 
 extension on List<W3MWalletInfo> {
-  List<W3MWalletInfo> sortByRecommended(Set<String>? featuredWalletIds) {
+  List<W3MWalletInfo> sortByFeaturedIds(Set<String>? featuredWalletIds) {
     Map<String, dynamic> sortedMap = {};
     final auxList = List<W3MWalletInfo>.from(this);
 

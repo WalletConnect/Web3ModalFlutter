@@ -355,14 +355,6 @@ class MockExplorerService extends _i1.Mock implements _i12.ExplorerService {
         returnValueForMissingStub: null,
       );
   @override
-  set featuredWalletIds(Set<String>? _featuredWalletIds) => super.noSuchMethod(
-        Invocation.setter(
-          #featuredWalletIds,
-          _featuredWalletIds,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
   set includedWalletIds(Set<String>? _includedWalletIds) => super.noSuchMethod(
         Invocation.setter(
           #includedWalletIds,
@@ -375,6 +367,14 @@ class MockExplorerService extends _i1.Mock implements _i12.ExplorerService {
         Invocation.setter(
           #excludedWalletIds,
           _excludedWalletIds,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  set featuredWalletIds(Set<String>? _featuredWalletIds) => super.noSuchMethod(
+        Invocation.setter(
+          #featuredWalletIds,
+          _featuredWalletIds,
         ),
         returnValueForMissingStub: null,
       );
