@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
-import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
-import 'package:web3modal_flutter/services/w3m_service/models/w3m_session.dart';
+
 import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:web3modal_flutter/services/w3m_service/models/w3m_session.dart';
 
 enum W3MServiceStatus {
   idle,
@@ -27,7 +26,7 @@ class WalletErrorEvent implements EventArgs {
 
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
 /// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
-abstract class IW3MService with ChangeNotifier, CoinbaseService {
+abstract class IW3MService with ChangeNotifier {
   /// Whether or not this object has been initialized.
   W3MServiceStatus get status;
 
@@ -90,8 +89,6 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// This will do nothing if [isConnected] is true.
   Future<void> buildConnectionUri();
 
-  WalletRedirect? get selectedWalletRedirect;
-
   /// Connects the [selectedWallet] previously selected
   Future<void> connectSelectedWallet({bool inBrowser = false});
 
@@ -110,9 +107,6 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
   /// List of approved events by connected wallet
   List<String>? getApprovedEvents();
 
-  /// Closes the modal.
-  void closeModal();
-
   /// Disconnects the session and pairing, if any.
   /// If there is no session, this does nothing.
   Future<void> disconnect({bool disconnectAllSessions = true});
@@ -124,6 +118,9 @@ abstract class IW3MService with ChangeNotifier, CoinbaseService {
     String? switchToChainId,
     required SessionRequestParams request,
   });
+
+  /// Closes the modal.
+  void closeModal();
 
   @override
   void dispose();

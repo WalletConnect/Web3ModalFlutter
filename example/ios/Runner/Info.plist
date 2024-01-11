@@ -36,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>24</string>
+	<string>26</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
@@ -77,7 +77,6 @@
 		<string>oasys-wallet</string>
 		<string>coinstats</string>
 		<string>ledgerlive</string>
-		<string>zerion</string>
 		<string>safe</string>
 		<string>okex</string>
 		<string>trust</string>

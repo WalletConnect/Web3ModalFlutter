@@ -190,9 +190,11 @@ class EIP155 {
         params: {
           "type": "ERC20",
           "options": {
-            "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-            "symbol": "USDT",
+            "address": "0xcf664087a5bb0237a0bad6742852ec6c8d69a27a",
+            "symbol": "WONE",
             "decimals": 18,
+            "image":
+                "https://s2.coinmarketcap.com/static/img/coins/64x64/11696.png"
           }
         },
       ),

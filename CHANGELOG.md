@@ -1,6 +1,14 @@
+## 3.1.0-beta02
+
+- Improvements and bug fixes
+
 ## 3.1.0-beta01
 
 - Coinbase Wallet integration
+
+## 3.0.21
+
+- Fix an Android bug happening when sending a request from a dApp in a different device than the paired wallet
 
 ## 3.0.20
 

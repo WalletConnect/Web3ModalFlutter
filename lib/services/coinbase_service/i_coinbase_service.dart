@@ -2,20 +2,14 @@ import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_even
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class W3MCoinbaseException implements Exception {
-  final dynamic message;
+  final String message;
+  final dynamic error;
   final dynamic stackTrace;
-  W3MCoinbaseException(this.message, [this.stackTrace]) : super();
-}
-
-class CoinbaseRPCError {
-  int? code;
-  String? message;
-  CoinbaseRPCError(
-    this.code,
-    this.message,
-  );
-
-  Map<String, dynamic> toJson() => {'code': code, 'message': message};
+  W3MCoinbaseException(
+    this.message, [
+    this.error,
+    this.stackTrace,
+  ]) : super();
 }
 
 abstract class ICoinbaseService {

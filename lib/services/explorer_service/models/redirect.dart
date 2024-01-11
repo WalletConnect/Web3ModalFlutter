@@ -18,5 +18,6 @@ class WalletRedirect {
   Uri? get desktopUri => desktop != null ? Uri.parse(desktop!) : null;
 
   @override
-  String toString() => 'mobile: $mobile, desktop: $desktop, web: $web';
+  String toString() =>
+      'mobile: $mobile (mobileOnly: $mobileOnly), desktop: $desktop (desktopOnly: $desktopOnly), web: $web (webOnly: $webOnly)';
 }

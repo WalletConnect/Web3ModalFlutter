@@ -5,7 +5,6 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/utils/debouncer.dart';
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
@@ -20,7 +19,7 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 const int _defaultEntriesCount = 48;
 
-class ExplorerService with CoinbaseService implements IExplorerService {
+class ExplorerService implements IExplorerService {
   static const _apiUrl = 'https://api.web3modal.com';
 
   final http.Client _client;
@@ -50,11 +49,6 @@ class ExplorerService with CoinbaseService implements IExplorerService {
   @override
   ValueNotifier<bool> isSearching = ValueNotifier(false);
 
-  Set<String> _installedWalletIds = <String>{};
-
-  @override
-  Set<String>? featuredWalletIds;
-
   @override
   Set<String>? includedWalletIds;
   String? get _includedWalletsParam {
@@ -66,8 +60,24 @@ class ExplorerService with CoinbaseService implements IExplorerService {
   Set<String>? excludedWalletIds;
   String? get _excludedWalletsParam {
     final excludedIds = (excludedWalletIds ?? <String>{})
-      ..addAll(_installedWalletIds);
+      ..addAll(_installedWalletIds)
+      ..addAll(featuredWalletIds ?? {});
     return excludedIds.isNotEmpty ? excludedIds.join(',') : null;
+  }
+
+  @override
+  Set<String>? featuredWalletIds;
+  String? get _featuredWalletsParam {
+    final featuredIds = Set.from(featuredWalletIds ?? {});
+    featuredIds.removeWhere((e) => _installedWalletIds.contains(e));
+    return featuredIds.isNotEmpty ? featuredIds.join(',') : null;
+  }
+
+  Set<String> _installedWalletIds = <String>{};
+  String? get _installedWalletsParam {
+    return _installedWalletIds.isNotEmpty
+        ? _installedWalletIds.join(',')
+        : null;
   }
 
   int _currentWalletsCount = 0;
@@ -85,22 +95,6 @@ class ExplorerService with CoinbaseService implements IExplorerService {
         _client = http.Client();
 
   @override
-  bool get includeCoinbaseWallet {
-    final cbId = _coinbaseWallet.listing.id;
-    final included = (includedWalletIds ?? <String>{});
-    final excluded = (excludedWalletIds ?? <String>{});
-
-    if (included.isNotEmpty) {
-      return included.contains(cbId);
-    }
-    if (excluded.isNotEmpty) {
-      return !excluded.contains(cbId);
-    }
-
-    return true;
-  }
-
-  @override
   Future<void> init() async {
     if (initialized.value) {
       return;
@@ -108,14 +102,14 @@ class ExplorerService with CoinbaseService implements IExplorerService {
 
     W3MLoggerUtil.logger.t('[$runtimeType] init()');
 
-    await _getInstalledWalletIds();
+    await _setInstalledWalletIdsParam();
     await _fetchInitialWallets();
 
     initialized.value = true;
     W3MLoggerUtil.logger.t('[$runtimeType] init() done');
   }
 
-  Future<void> _getInstalledWalletIds() async {
+  Future<void> _setInstalledWalletIdsParam() async {
     final installed = await (await _fetchNativeAppData()).getInstalledApps();
     _installedWalletIds = Set<String>.from(installed.map((e) => e.id));
   }
@@ -124,27 +118,15 @@ class ExplorerService with CoinbaseService implements IExplorerService {
     totalListings.value = 0;
     final allListings = await Future.wait([
       _fetchInstalledListings(),
+      _fetchFeaturedListings(),
       _fetchOtherListings(),
     ]);
 
-    final countInstalled = allListings.first.length;
-
-    _listings = [...allListings.first, ...allListings.last];
-
-    // Include Coinbase Wallet if needed
-    if (includeCoinbaseWallet) {
-      final cbWallet = _coinbaseWallet.copyWith(
-        installed: await cbIsInstalled(),
-      );
-      int i = max(countInstalled, 3);
-      if (cbWallet.installed) {
-        i = 3;
-      }
-      final j = min(i, _listings.length);
-      _listings.insert(j, cbWallet);
-    }
-
-    _listings = _listings.sortByRecommended(featuredWalletIds);
+    _listings = [
+      ...allListings[0].sortByFeaturedIds(featuredWalletIds),
+      ...allListings[1].sortByFeaturedIds(featuredWalletIds),
+      ...allListings[2].sortByFeaturedIds(featuredWalletIds),
+    ];
     listings.value = _listings;
 
     if (_listings.length < _defaultEntriesCount) {
@@ -157,7 +139,7 @@ class ExplorerService with CoinbaseService implements IExplorerService {
   Future<void> _getRecentWalletAndOrder() async {
     W3MWalletInfo? walletInfo;
     final walletString = storageService.instance.getString(
-      StringConstants.walletData,
+      StringConstants.connectedWalletData,
       defaultValue: '',
     );
     if (walletString!.isNotEmpty) {
@@ -166,7 +148,11 @@ class ExplorerService with CoinbaseService implements IExplorerService {
         walletInfo = null;
       }
     }
-    await _updateRecentWalletId(walletInfo);
+
+    final walletId = storageService.instance.getString(
+      StringConstants.recentWalletId,
+    );
+    await _updateRecentWalletId(walletInfo, walletId: walletId);
   }
 
   @override
@@ -221,10 +207,24 @@ class ExplorerService with CoinbaseService implements IExplorerService {
     final params = RequestParams(
       page: 1,
       entries: _installedWalletIds.length,
-      include: _installedWalletIds.join(','),
+      include: _installedWalletsParam,
+      platform: _getPlatformType(),
     );
     // this query gives me a count of installedWalletsParam.length
     return (await _fetchListings(params: params)).setInstalledFlag();
+  }
+
+  Future<List<W3MWalletInfo>> _fetchFeaturedListings() async {
+    if ((_featuredWalletsParam ?? '').isEmpty) {
+      return [];
+    }
+    final params = RequestParams(
+      page: 1,
+      entries: _featuredWalletsParam!.split(',').length,
+      include: _featuredWalletsParam,
+      platform: _getPlatformType(),
+    );
+    return await _fetchListings(params: params);
   }
 
   Future<List<W3MWalletInfo>> _fetchOtherListings() async {
@@ -264,18 +264,58 @@ class ExplorerService with CoinbaseService implements IExplorerService {
   }
 
   @override
-  Future<void> storeConnectedWalletData(W3MWalletInfo? walletInfo) async {
+  Future<void> storeConnectedWallet(W3MWalletInfo? walletInfo) async {
     if (walletInfo == null) return;
     final walletDataString = jsonEncode(walletInfo.toJson());
     await storageService.instance.setString(
-      StringConstants.walletData,
+      StringConstants.connectedWalletData,
       walletDataString,
     );
-    await _updateRecentWalletId(walletInfo);
+    await storeRecentWalletId(walletInfo.listing.id);
+    await _updateRecentWalletId(walletInfo, walletId: walletInfo.listing.id);
   }
 
-  Future<void> _updateRecentWalletId(W3MWalletInfo? walletInfo) async {
-    final recentId = walletInfo?.listing.id ?? '';
+  @override
+  Future<void> storeRecentWalletId(String? walletId) async {
+    if (walletId == null) return;
+    await storageService.instance.setString(
+      StringConstants.recentWalletId,
+      walletId,
+    );
+  }
+
+  @override
+  W3MWalletInfo? getConnectedWallet() {
+    try {
+      final walletString = storageService.instance.getString(
+        StringConstants.connectedWalletData,
+        defaultValue: '',
+      );
+      if (walletString!.isNotEmpty) {
+        return W3MWalletInfo.fromJson(jsonDecode(walletString));
+      }
+    } catch (e, s) {
+      W3MLoggerUtil.logger.e(
+        '[$runtimeType] error getConnectedWallet:',
+        error: e,
+        stackTrace: s,
+      );
+    }
+    return null;
+  }
+
+  Future<void> _updateRecentWalletId(
+    W3MWalletInfo? walletInfo, {
+    String? walletId,
+  }) async {
+    final recentId = walletInfo?.listing.id ?? walletId ?? '';
+    // Set the recent
+    if (recentId.isNotEmpty) {
+      await storageService.instance.setString(
+        StringConstants.recentWalletId,
+        recentId,
+      );
+    }
     final currentListings = List<W3MWalletInfo>.from(
       _listings.map((e) => e.copyWith(recent: false)).toList(),
     );
@@ -289,7 +329,8 @@ class ExplorerService with CoinbaseService implements IExplorerService {
     }
     _listings = currentListings;
     listings.value = _listings;
-    W3MLoggerUtil.logger.t('[$runtimeType] updateRecentPosition($recentId)');
+    W3MLoggerUtil.logger.t(
+        '[$runtimeType] _updateRecentWalletId $walletId ${walletInfo?.toJson()}');
   }
 
   @override
@@ -332,6 +373,24 @@ class ExplorerService with CoinbaseService implements IExplorerService {
   }
 
   @override
+  Future<W3MWalletInfo?> getCoinbaseWalletObject() async {
+    final results = await _fetchListings(
+      params: RequestParams(
+        page: 1,
+        entries: 1,
+        search: 'coinbase wallet',
+        platform: _getPlatformType(),
+      ),
+      updateCount: false,
+    );
+
+    if (results.isNotEmpty) {
+      return results.first;
+    }
+    return null;
+  }
+
+  @override
   String getWalletImageUrl(String imageId) =>
       '$_apiUrl/getWalletImage/$imageId';
 
@@ -344,29 +403,11 @@ class ExplorerService with CoinbaseService implements IExplorerService {
   }
 
   @override
-  WalletRedirect? getWalletRedirect(Listing listing) {
-    final wallet = listings.value.firstWhereOrNull(
-      (item) => listing.id == item.listing.id,
-    );
-    if (wallet == null) {
-      return null;
-    }
-    return WalletRedirect(
-      mobile: wallet.listing.mobileLink,
-      desktop: wallet.listing.desktopLink,
-      web: wallet.listing.webappLink,
-    );
-  }
+  WalletRedirect? getWalletRedirect(W3MWalletInfo? walletInfo) {
+    if (walletInfo == null) return null;
 
-  @override
-  Future<WalletRedirect?> tryWalletRedirectByName(String? name) async {
-    if (name == null) return null;
-    final results = await _fetchListings(
-      params: RequestParams(page: 1, entries: 100, search: name),
-      updateCount: false,
-    );
-    final wallet = results.firstWhereOrNull(
-      (item) => item.listing.name.toLowerCase() == name.toLowerCase(),
+    final wallet = listings.value.firstWhereOrNull(
+      (item) => walletInfo.listing.id == item.listing.id,
     );
     if (wallet == null) {
       return null;
@@ -409,27 +450,19 @@ extension on List<Listing> {
 }
 
 extension on List<W3MWalletInfo> {
-  List<W3MWalletInfo> sortByRecommended(Set<String>? featuredWalletIds) {
-    List<W3MWalletInfo> sortedByRecommended = [];
-    Set<String> recommendedIds = featuredWalletIds ?? <String>{};
-    List<W3MWalletInfo> listToSort = this;
+  List<W3MWalletInfo> sortByFeaturedIds(Set<String>? featuredWalletIds) {
+    Map<String, dynamic> sortedMap = {};
+    final auxList = List<W3MWalletInfo>.from(this);
 
-    if (recommendedIds.isNotEmpty) {
-      for (var recommendedId in featuredWalletIds!) {
-        final rw = listToSort.firstWhereOrNull(
-          (element) => element.listing.id == recommendedId,
-        );
-        if (rw != null) {
-          sortedByRecommended.add(rw);
-          listToSort.removeWhere(
-            (element) => element.listing.id == recommendedId,
-          );
-        }
+    for (var id in featuredWalletIds ?? <String>{}) {
+      final featured = auxList.firstWhereOrNull((e) => e.listing.id == id);
+      if (featured != null) {
+        auxList.removeWhere((e) => e.listing.id == id);
+        sortedMap[id] = featured;
       }
-      sortedByRecommended.addAll(listToSort);
-      return sortedByRecommended;
     }
-    return listToSort;
+
+    return [...sortedMap.values, ...auxList];
   }
 
   List<W3MWalletInfo> setInstalledFlag() {
@@ -449,23 +482,3 @@ extension on List<NativeAppData> {
     return installedApps;
   }
 }
-
-final _coinbaseWallet = W3MWalletInfo(
-  listing: Listing.fromJson({
-    'id': _coinbaseWalletNativeData.id,
-    'name': 'Coinbase Wallet',
-    'homepage': 'https://www.coinbase.com/wallet/',
-    'image_id': 'a5ebc364-8f91-4200-fcc6-be81310a0000',
-    'order': 40,
-    'mobile_link': _coinbaseWalletNativeData.schema,
-    'app_store': 'https://apps.apple.com/app/apple-store/id1278383455',
-    'play_store': 'https://play.google.com/store/apps/details?id=org.toshi',
-  }),
-  installed: false,
-  recent: false,
-);
-
-final _coinbaseWalletNativeData = NativeAppData(
-  id: 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa',
-  schema: 'cbwallet://wsegue',
-);
