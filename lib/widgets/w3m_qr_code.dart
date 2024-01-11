@@ -23,7 +23,7 @@ class QRCodeWidget extends StatelessWidget {
     final responsiveData = ResponsiveData.of(context);
     final isPortrait = ResponsiveData.isPortrait(context);
     final isDarkMode = Web3ModalTheme.maybeOf(context)?.isDarkMode ?? false;
-    final imageSize = isPortrait ? 90.0 : 60.0;
+    final imageSize = isPortrait ? 80.0 : 60.0;
     final maxRadius = min(radiuses.radiusL, 36.0);
     return Container(
       constraints: BoxConstraints(

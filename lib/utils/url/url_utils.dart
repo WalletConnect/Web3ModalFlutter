@@ -1,7 +1,6 @@
 import 'package:appcheck/appcheck.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' as launcher;
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
@@ -11,13 +10,18 @@ import 'package:web3modal_flutter/utils/url/launch_url_exception.dart';
 
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
 
-Future<bool> _launchUrl(Uri url, {LaunchMode? mode}) async {
+Future<bool> _launchUrl(Uri url, {launcher.LaunchMode? mode}) async {
   try {
-    debugPrint('[url_utils] _launchUrl $url');
-    return await launchUrl(
+    final success = await launcher.launchUrl(
       url,
-      mode: mode ?? LaunchMode.platformDefault,
+      mode: mode ?? launcher.LaunchMode.platformDefault,
     );
+    if (!success) {
+      throw LaunchUrlException('App not installed');
+    }
+    return true;
+  } on LaunchUrlException {
+    rethrow;
   } on PlatformException catch (e, s) {
     W3MLoggerUtil.logger.e(
       'Error launching URL $url',
@@ -43,11 +47,12 @@ class UrlUtils extends IUrlUtils {
   UrlUtils({
     this.androidAppCheck = _androidAppCheck,
     this.launchUrlFunc = _launchUrl,
-    this.canLaunchUrlFunc = canLaunchUrl,
+    this.canLaunchUrlFunc = launcher.canLaunchUrl,
   });
 
   final Future<bool> Function(String uri) androidAppCheck;
-  final Future<bool> Function(Uri url, {LaunchMode? mode}) launchUrlFunc;
+  final Future<bool> Function(Uri url, {launcher.LaunchMode? mode})
+      launchUrlFunc;
   final Future<bool> Function(Uri url) canLaunchUrlFunc;
 
   @override
@@ -78,8 +83,8 @@ class UrlUtils extends IUrlUtils {
   }
 
   @override
-  Future<bool> launchUrl(Uri url, {LaunchMode? mode}) async {
-    return launchUrlFunc(
+  Future<bool> launchUrl(Uri url, {launcher.LaunchMode? mode}) async {
+    return await launchUrlFunc(
       url,
       mode: mode,
     );
@@ -129,7 +134,7 @@ class UrlUtils extends IUrlUtils {
     }
     return await launchUrlFunc(
       uriToOpen!,
-      mode: LaunchMode.externalApplication,
+      mode: launcher.LaunchMode.externalApplication,
     );
   }
 }
