@@ -1049,10 +1049,10 @@ packages:
     dependency: "direct main"
     description:
       name: walletconnect_flutter_v2
-      sha256: a3654aa71221f15be6b20663759fad3eb3a37dc486f72860d7eb69c1e39d682b
+      sha256: e26ca98cfd6b8d5dc9c5f7e581999ab314d5134c0ffcddb73ef750f13b322d9c
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.12"
+    version: "2.1.13"
   watcher:
     dependency: transitive
     description:

@@ -512,6 +512,12 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       return false;
     }
 
+    if (walletInfo.isCoinbase) {
+      // Coinbase Wallet is getting launched at every request by it's own SDK
+      // SO no need to do it here.
+      return false;
+    }
+
     final redirect = explorerService.instance.getWalletRedirect(walletInfo);
     if (redirect == null) {
       return false;
@@ -956,6 +962,11 @@ extension _W3MServiceExtension on W3MService {
   void onSessionConnect(SessionConnect? args) async {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionConnect: $args');
     if (args != null) {
+      if (_selectedWallet == null) {
+        await storageService.instance.clearKey(StringConstants.recentWalletId);
+        await storageService.instance
+            .clearKey(StringConstants.connectedWalletData);
+      }
       await _storeSession(W3MSession(sessionData: args.session));
       await _selectChainFromStoredId();
       _loadAccountData();

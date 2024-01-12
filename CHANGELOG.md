@@ -1,3 +1,4 @@
+## 3.1.0-beta03
 ## 3.1.0-beta02
 
 - Improvements and bug fixes
