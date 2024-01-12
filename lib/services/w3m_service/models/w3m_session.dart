@@ -66,20 +66,19 @@ class W3MSession {
   }
 
   String? get address {
-    if (sessionData != null) {
-      if (sessionData!.namespaces.isNotEmpty) {
-        final accounts = sessionData!.namespaces.values.first.accounts;
-        if (accounts.isNotEmpty) {
-          return NamespaceUtils.getAccount(accounts.first);
-        }
-        W3MLoggerUtil.logger.e('[$runtimeType] empty accounts');
-      }
+    if (sessionService.noSession) {
+      return null;
     }
-    if (coinbaseData != null) {
+    if (sessionService.isCoinbase) {
       return coinbaseData!.address;
     }
-    // if (magicData != null)
+    // if (sessionService.isMagic) {
     //
+    final namespace = sessionData?.namespaces[EthConstants.namespace];
+    final accounts = namespace?.accounts ?? [];
+    if (accounts.isNotEmpty) {
+      return NamespaceUtils.getAccount(accounts.first);
+    }
     W3MLoggerUtil.logger.e('[$runtimeType] no address found');
     return null;
   }

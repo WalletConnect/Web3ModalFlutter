@@ -271,7 +271,6 @@ class ExplorerService implements IExplorerService {
       StringConstants.connectedWalletData,
       walletDataString,
     );
-    await storeRecentWalletId(walletInfo.listing.id);
     await _updateRecentWalletId(walletInfo, walletId: walletInfo.listing.id);
   }
 
@@ -308,29 +307,32 @@ class ExplorerService implements IExplorerService {
     W3MWalletInfo? walletInfo, {
     String? walletId,
   }) async {
-    final recentId = walletInfo?.listing.id ?? walletId ?? '';
-    // Set the recent
-    if (recentId.isNotEmpty) {
-      await storageService.instance.setString(
-        StringConstants.recentWalletId,
-        recentId,
+    try {
+      final recentId = walletInfo?.listing.id ?? walletId;
+      await storeRecentWalletId(recentId);
+
+      final currentListings = List<W3MWalletInfo>.from(
+        _listings.map((e) => e.copyWith(recent: false)).toList(),
+      );
+      final recentWallet = currentListings.firstWhereOrNull(
+        (e) => e.listing.id == recentId,
+      );
+      if (recentWallet != null) {
+        final rw = recentWallet.copyWith(recent: true);
+        currentListings.removeWhere((e) => e.listing.id == rw.listing.id);
+        currentListings.insert(0, rw);
+      }
+      _listings = currentListings;
+      listings.value = _listings;
+      W3MLoggerUtil.logger.t('[$runtimeType] _updateRecentWalletId $walletId '
+          '${walletInfo?.toJson()}');
+    } catch (e, s) {
+      W3MLoggerUtil.logger.e(
+        '[$runtimeType] _updateRecentWalletId',
+        error: e,
+        stackTrace: s,
       );
     }
-    final currentListings = List<W3MWalletInfo>.from(
-      _listings.map((e) => e.copyWith(recent: false)).toList(),
-    );
-    final recentWallet = currentListings.firstWhereOrNull(
-      (e) => e.listing.id == recentId,
-    );
-    if (recentWallet != null) {
-      final rw = recentWallet.copyWith(recent: true);
-      currentListings.removeWhere((e) => e.listing.id == rw.listing.id);
-      currentListings.insert(0, rw);
-    }
-    _listings = currentListings;
-    listings.value = _listings;
-    W3MLoggerUtil.logger.t(
-        '[$runtimeType] _updateRecentWalletId $walletId ${walletInfo?.toJson()}');
   }
 
   @override
@@ -406,16 +408,10 @@ class ExplorerService implements IExplorerService {
   WalletRedirect? getWalletRedirect(W3MWalletInfo? walletInfo) {
     if (walletInfo == null) return null;
 
-    final wallet = listings.value.firstWhereOrNull(
-      (item) => walletInfo.listing.id == item.listing.id,
-    );
-    if (wallet == null) {
-      return null;
-    }
     return WalletRedirect(
-      mobile: wallet.listing.mobileLink,
-      desktop: wallet.listing.desktopLink,
-      web: wallet.listing.webappLink,
+      mobile: walletInfo.listing.mobileLink,
+      desktop: walletInfo.listing.desktopLink,
+      web: walletInfo.listing.webappLink,
     );
   }
 

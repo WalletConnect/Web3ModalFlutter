@@ -76,12 +76,13 @@ class SessionWidgetState extends State<SessionWidget> {
       final currentNamespace = widget.w3mService.selectedChain!.namespace;
       final chainsNamespaces = NamespaceUtils.getChainsFromAccounts(accounts);
       if (chainsNamespaces.contains(currentNamespace)) {
-        final account = accounts
-            .firstWhere((account) => account.contains(currentNamespace));
+        final account = accounts.firstWhere(
+          (account) => account.contains('$currentNamespace:'),
+        );
         children.add(_buildAccountWidget(account));
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint('[$runtimeType] ${e.toString()}');
     }
 
     return Padding(
