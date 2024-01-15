@@ -36,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>27</string>
+	<string>28</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
@@ -89,7 +89,8 @@
 		<string>metamask</string>
 		<string>avacus</string>
 		<string>argent</string>
-		<string>bybitapp</string>
+		<string>walletapp</string>
+		<string>wcflutterwallet</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

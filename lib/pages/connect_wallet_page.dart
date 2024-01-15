@@ -34,8 +34,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     with WidgetsBindingObserver {
   IW3MService? _service;
   SegmentOption _selectedSegment = SegmentOption.mobile;
-  bool walletInstalled = true;
-  bool errorConnection = false;
+  WalletErrorEvent? errorEvent;
 
   @override
   void initState() {
@@ -63,16 +62,9 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     }
   }
 
-  void _errorListener(WalletErrorEvent? event) {
-    if (event != null) {
-      walletInstalled = event.message != 'not installed';
-      errorConnection = event.message != 'not installed';
-    } else {
-      walletInstalled = true;
-      errorConnection = false;
-    }
-    setState(() {});
-  }
+  void _errorListener(WalletErrorEvent? event) => setState(
+        () => errorEvent = event,
+      );
 
   @override
   void dispose() {
@@ -131,26 +123,32 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                   ),
                   const SizedBox.square(dimension: 20.0),
                   LoadingBorder(
-                    animate: walletInstalled && !errorConnection,
+                    // animate: walletInstalled && !errorConnection,
+                    animate: errorEvent == null,
                     borderRadius: themeData.radiuses.isSquare()
                         ? 0
                         : themeData.radiuses.radiusM + 4.0,
                     child: _WalletAvatar(
                       imageUrl: imageUrl,
-                      errorConnection: errorConnection,
+                      // errorConnection: errorConnection,
+                      errorConnection: errorEvent is ErrorOpeningWallet ||
+                          errorEvent is UserRejectedConnection,
                       themeColors: themeColors,
                     ),
                   ),
                   const SizedBox.square(dimension: 20.0),
-                  errorConnection
+                  errorEvent is ErrorOpeningWallet ||
+                          errorEvent is UserRejectedConnection
                       ? Text(
-                          'Connection declined',
+                          errorEvent is ErrorOpeningWallet
+                              ? 'Error opening wallet'
+                              : 'Connection declined',
                           textAlign: TextAlign.center,
                           style: themeData.textStyles.paragraph500.copyWith(
                             color: themeColors.error100,
                           ),
                         )
-                      : !walletInstalled &&
+                      : errorEvent is WalletNotInstalled &&
                               _selectedSegment == SegmentOption.mobile
                           ? Text(
                               'App not installed',
@@ -167,15 +165,18 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                               ),
                             ),
                   const SizedBox.square(dimension: 8.0),
-                  errorConnection
+                  errorEvent is ErrorOpeningWallet ||
+                          errorEvent is UserRejectedConnection
                       ? Text(
-                          'Connection can be declined if a previous request is still active',
+                          errorEvent is ErrorOpeningWallet
+                              ? 'Unable to connect with $walletName'
+                              : 'Connection can be declined if a previous request is still active',
                           textAlign: TextAlign.center,
                           style: themeData.textStyles.small500.copyWith(
                             color: themeColors.foreground200,
                           ),
                         )
-                      : !walletInstalled &&
+                      : errorEvent is WalletNotInstalled &&
                               _selectedSegment == SegmentOption.mobile
                           ? SizedBox.shrink()
                           : Text(
@@ -192,8 +193,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                   Visibility(
                     visible: isPortrait &&
                         _selectedSegment != SegmentOption.browser &&
-                        !errorConnection &&
-                        walletInstalled,
+                        errorEvent == null,
                     child: SimpleIconButton(
                       onTap: () => _service!.connectSelectedWallet(),
                       leftIcon: 'assets/icons/refresh_back.svg',
@@ -229,8 +229,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                   Visibility(
                     visible: !isPortrait &&
                         _selectedSegment != SegmentOption.browser &&
-                        !errorConnection &&
-                        walletInstalled,
+                        errorEvent == null,
                     child: SimpleIconButton(
                       onTap: () => _service!.connectSelectedWallet(),
                       leftIcon: 'assets/icons/refresh_back.svg',
@@ -268,7 +267,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                     withBorder: false,
                   ),
                   if (!isPortrait) const SizedBox.square(dimension: kPadding8),
-                  if (!walletInstalled &&
+                  if (errorEvent is WalletNotInstalled &&
                       _selectedSegment == SegmentOption.mobile)
                     Column(
                       children: [

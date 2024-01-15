@@ -12,6 +12,10 @@ class W3MCoinbaseException implements Exception {
   ]) : super();
 }
 
+class W3MCoinbaseNotInstalledException extends W3MCoinbaseException {
+  W3MCoinbaseNotInstalledException() : super('App not installed');
+}
+
 abstract class ICoinbaseService {
   Future<void> cbInit({required PairingMetadata metadata});
   Future<bool> cbIsConnected();

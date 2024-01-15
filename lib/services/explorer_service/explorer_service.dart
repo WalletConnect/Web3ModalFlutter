@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
+import 'package:web3modal_flutter/services/explorer_service/models/wc_sample_wallets.dart';
 import 'package:web3modal_flutter/utils/debouncer.dart';
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
@@ -117,15 +118,17 @@ class ExplorerService implements IExplorerService {
   Future<void> _fetchInitialWallets() async {
     totalListings.value = 0;
     final allListings = await Future.wait([
+      _loadWCSampleWallets(),
       _fetchInstalledListings(),
       _fetchFeaturedListings(),
       _fetchOtherListings(),
     ]);
 
     _listings = [
-      ...allListings[0].sortByFeaturedIds(featuredWalletIds),
+      ...allListings[0],
       ...allListings[1].sortByFeaturedIds(featuredWalletIds),
       ...allListings[2].sortByFeaturedIds(featuredWalletIds),
+      ...allListings[3].sortByFeaturedIds(featuredWalletIds),
     ];
     listings.value = _listings;
 
@@ -134,6 +137,22 @@ class ExplorerService implements IExplorerService {
     }
 
     await _getRecentWalletAndOrder();
+  }
+
+  Future<List<W3MWalletInfo>> _loadWCSampleWallets() async {
+    final platform = platformUtils.instance.getPlatformExact().name;
+    final platformName = platform.toString().toLowerCase();
+    List<W3MWalletInfo> sampleWallets = [];
+    for (var sampleWallet in WCSampleWallets.wallets.values) {
+      final data = WCSampleWallets.nativeData[sampleWallet.listing.id];
+      final schema = data?[platformName]?.schema ?? '';
+      final installed = await urlUtils.instance.isInstalled(schema);
+      if (installed) {
+        sampleWallet = sampleWallet.copyWith(installed: true);
+        sampleWallets.add(sampleWallet);
+      }
+    }
+    return sampleWallets;
   }
 
   Future<void> _getRecentWalletAndOrder() async {
@@ -393,12 +412,16 @@ class ExplorerService implements IExplorerService {
   }
 
   @override
-  String getWalletImageUrl(String imageId) =>
-      '$_apiUrl/getWalletImage/$imageId';
+  String getWalletImageUrl(String imageId) {
+    if (imageId.startsWith('http')) {
+      return imageId;
+    }
+    return '$_apiUrl/getWalletImage/$imageId';
+  }
 
   @override
   String getAssetImageUrl(String imageId) {
-    if (imageId.contains('http')) {
+    if (imageId.startsWith('http')) {
       return imageId;
     }
     return '$_apiUrl/public/getAssetImage/$imageId';
@@ -409,7 +432,7 @@ class ExplorerService implements IExplorerService {
     if (walletInfo == null) return null;
 
     return WalletRedirect(
-      mobile: walletInfo.listing.mobileLink,
+      mobile: walletInfo.listing.mobileLink?.trim(),
       desktop: walletInfo.listing.desktopLink,
       web: walletInfo.listing.webappLink,
     );

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
@@ -25,7 +26,6 @@ import 'package:web3modal_flutter/services/storage_service/storage_service_singl
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/widgets/web3modal.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
-import 'package:web3modal_flutter/utils/toast/toast_message.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
@@ -436,23 +436,40 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         );
       }
     } on LaunchUrlException catch (e) {
-      if (e.message.toLowerCase() != 'app not installed') {
-        toastUtils.instance.show(
-          ToastMessage(type: ToastType.error, text: e.message),
-        );
+      if (e is CanNotLaunchUrl) {
+        onWalletConnectionError.broadcast(WalletNotInstalled());
+      } else {
+        onWalletConnectionError.broadcast(ErrorOpeningWallet());
       }
-      onWalletConnectionError.broadcast(WalletErrorEvent('not installed'));
     } catch (e, s) {
-      if (e is W3MCoinbaseException && e.message == 'App not installed') {
-        onWalletConnectionError.broadcast(WalletErrorEvent('not installed'));
+      if (e is PlatformException) {
+        final installed = _selectedWallet?.installed ?? false;
+        if (!installed) {
+          onWalletConnectionError.broadcast(WalletNotInstalled());
+        } else {
+          onWalletConnectionError.broadcast(ErrorOpeningWallet());
+        }
+      } else if (e is W3MCoinbaseException) {
+        if (e is W3MCoinbaseNotInstalledException) {
+          onWalletConnectionError.broadcast(WalletNotInstalled());
+        } else {
+          if (_isUserRejectedError(e)) {
+            W3MLoggerUtil.logger.t('[$runtimeType] User declined connection');
+            onWalletConnectionError.broadcast(UserRejectedConnection());
+          } else {
+            onWalletConnectionError.broadcast(ErrorOpeningWallet());
+          }
+        }
       } else if (_isUserRejectedError(e)) {
-        onWalletConnectionError.broadcast(WalletErrorEvent('rejected'));
+        W3MLoggerUtil.logger.t('[$runtimeType] User declined connection');
+        onWalletConnectionError.broadcast(UserRejectedConnection());
       } else {
         W3MLoggerUtil.logger.e(
           '[$runtimeType] Error connecting wallet',
           error: e,
           stackTrace: s,
         );
+        onWalletConnectionError.broadcast(ErrorOpeningWallet());
       }
     }
   }
@@ -488,7 +505,8 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       return;
     } on JsonRpcError catch (e, s) {
       if (_isUserRejectedError(e)) {
-        onWalletConnectionError.broadcast(WalletErrorEvent('rejected'));
+        W3MLoggerUtil.logger.t('[$runtimeType] User declined connection');
+        onWalletConnectionError.broadcast(UserRejectedConnection());
       } else {
         W3MLoggerUtil.logger.e(
           '[$runtimeType] Error connecting to wallet',
@@ -614,7 +632,8 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       );
     } catch (e, s) {
       if (_isUserRejectedError(e)) {
-        onWalletConnectionError.broadcast(WalletErrorEvent('rejected'));
+        W3MLoggerUtil.logger.t('[$runtimeType] User declined connection');
+        onWalletConnectionError.broadcast(UserRejectedConnection());
         if (request.method == 'wallet_switchEthereumChain' ||
             request.method == 'wallet_addEthereumChain') {
           rethrow;
@@ -774,6 +793,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       (e, s) {
         // if request errors due to user rejection then set the previous chain
         if (_isUserRejectedError(e)) {
+          W3MLoggerUtil.logger.t('[$runtimeType] User declined connection');
           _setEthChain(_currentSelectedChain!);
         } else {
           // Otherwise it meas chain has to be added.

@@ -187,7 +187,7 @@ class NativeAppData {
     final j = json as Map<String, dynamic>? ?? {};
     return NativeAppData(
       id: j['id'],
-      schema: (j['ios_schema'] ?? j['android_app_id']) ?? '',
+      schema: (j['ios_schema'] ?? j['android_app_id'])?.toString().trim() ?? '',
     );
   }
 
