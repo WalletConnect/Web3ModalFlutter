@@ -1,5 +1,4 @@
 import 'package:appcheck/appcheck.dart';
-import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
@@ -10,43 +9,33 @@ import 'package:web3modal_flutter/utils/url/launch_url_exception.dart';
 
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
 
-Future<bool> _launchUrl(Uri url, {launcher.LaunchMode? mode}) async {
+Future<bool> _launchUrlFunc(Uri url, {launcher.LaunchMode? mode}) async {
   try {
     final success = await launcher.launchUrl(
       url,
       mode: mode ?? launcher.LaunchMode.platformDefault,
     );
     if (!success) {
-      throw LaunchUrlException('App not installed');
+      throw CanNotLaunchUrl();
     }
     return true;
-  } on LaunchUrlException {
+  } catch (e) {
     rethrow;
-  } on PlatformException catch (e, s) {
-    W3MLoggerUtil.logger.e(
-      'Error launching URL $url',
-      error: e,
-      stackTrace: s,
-    );
-    throw LaunchUrlException('App not installed');
-  } catch (e, s) {
-    W3MLoggerUtil.logger.e(
-      'Error launching URL $url',
-      error: e,
-      stackTrace: s,
-    );
-    throw LaunchUrlException('Error launching app');
   }
 }
 
 Future<bool> _androidAppCheck(String uri) async {
-  return await AppCheck.isAppEnabled(uri);
+  try {
+    return await AppCheck.isAppEnabled(uri);
+  } catch (e) {
+    return false;
+  }
 }
 
 class UrlUtils extends IUrlUtils {
   UrlUtils({
     this.androidAppCheck = _androidAppCheck,
-    this.launchUrlFunc = _launchUrl,
+    this.launchUrlFunc = _launchUrlFunc,
     this.canLaunchUrlFunc = launcher.canLaunchUrl,
   });
 
@@ -74,8 +63,10 @@ class UrlUtils extends IUrlUtils {
         } else if (p == PlatformExact.iOS) {
           return await canLaunchUrlFunc(Uri.parse(uri));
         }
+      } on FormatException catch (e) {
+        W3MLoggerUtil.logger.i('[$runtimeType] $e');
       } catch (e) {
-        W3MLoggerUtil.logger.i('[$runtimeType] not installed/detected $uri');
+        rethrow;
       }
     }
 

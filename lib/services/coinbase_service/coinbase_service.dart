@@ -82,6 +82,7 @@ class CoinbaseService implements ICoinbaseService {
       onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
       return;
     } on PlatformException catch (e, s) {
+      // Currently Coinbase SDK is not differentiate between User rejection or any other kind of error in iOS
       final errorMessage = (e.message ?? '').toLowerCase();
       onCoinbaseError.broadcast(CoinbaseErrorEvent(errorMessage));
       throw W3MCoinbaseException(errorMessage, e, s);
@@ -162,7 +163,7 @@ class CoinbaseService implements ICoinbaseService {
   Future<bool> _checkInstalled() async {
     final installed = await cbIsInstalled();
     if (!installed) {
-      throw W3MCoinbaseException('App not installed');
+      throw W3MCoinbaseNotInstalledException();
     }
     return true;
   }

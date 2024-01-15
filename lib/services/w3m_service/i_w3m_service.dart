@@ -24,6 +24,18 @@ class WalletErrorEvent implements EventArgs {
   WalletErrorEvent(this.message);
 }
 
+class WalletNotInstalled extends WalletErrorEvent {
+  WalletNotInstalled() : super('Wallet app not installed');
+}
+
+class ErrorOpeningWallet extends WalletErrorEvent {
+  ErrorOpeningWallet() : super('Unable to open Wallet app');
+}
+
+class UserRejectedConnection extends WalletErrorEvent {
+  UserRejectedConnection() : super('User rejected Wallet connection');
+}
+
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
 /// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
 abstract class IW3MService with ChangeNotifier {
