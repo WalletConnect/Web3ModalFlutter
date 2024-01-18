@@ -178,7 +178,7 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
     if (value.isEmpty || !coreUtils.instance.isValidEmail(value)) {
       return;
     }
-    magicService.instance.connectEmail();
+    magicService.instance.connectEmail(email: value);
     widgetStack.instance.push(ConfirmEmailPage());
   }
 

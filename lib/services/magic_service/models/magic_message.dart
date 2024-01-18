@@ -41,10 +41,36 @@ class MagicMessage {
     return params;
   }
 
-  bool get loaded => type == '@w3m-app/FRAME_LOADED';
-  bool get initialized => type == '@w3m-app/INITIALIZED';
-  bool get connected => type == '@w3m-frame/IS_CONNECTED_SUCCESS';
-  bool get error => type == '@w3m-frame/IS_CONNECTED_ERROR';
-  bool get otp => type == '@w3m-frame/CONNECT_OTP_SUCCESS';
-  bool get userData => type == '@w3m-frame/GET_USER_SUCCESS';
+  // @w3m-app events
+  bool get frameLoaded => type == '@w3m-app/FRAME_LOADED';
+  // bool get initialized => type == '@w3m-app/INITIALIZED';
+  //
+  bool get connectEmail => type == '@w3m-app/CONNECT_EMAIL';
+  bool get connectOtp => type == '@w3m-app/CONNECT_OTP';
+  bool get getUser => type == '@w3m-app/GET_USER';
+  bool get switchNetwork => type == '@w3m-app/SWITCH_NETWORK';
+
+  // @w3m-frame events
+  bool get emailSuccess => type == '@w3m-frame/CONNECT_EMAIL_SUCCESS';
+  bool get connectSuccess => type == '@w3m-frame/IS_CONNECTED_SUCCESS';
+  bool get connectError => type == '@w3m-frame/IS_CONNECTED_ERROR';
+  bool get otpSuccess => type == '@w3m-frame/CONNECT_OTP_SUCCESS';
+  bool get userSuccess => type == '@w3m-frame/GET_USER_SUCCESS';
+  bool get sessionUpdate => type == '@w3m-frame/SESSION_UPDATE';
+  bool get networkSuccess => type == '@w3m-frame/SWITCH_NETWORK_SUCCESS';
+  // VERIFY_DEVICE
+}
+
+class FrameLoaded extends MagicMessage {
+  FrameLoaded() : super(type: '@w3m-app/FRAME_LOADED');
+
+  @override
+  String toString() => '{type: "${super.type}"}';
+}
+
+class FrameError extends MagicMessage {
+  FrameError() : super(type: '@w3m-app/ERROR');
+
+  @override
+  String toString() => '{type: "${super.type}"}';
 }

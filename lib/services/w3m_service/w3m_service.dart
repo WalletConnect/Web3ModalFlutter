@@ -235,7 +235,6 @@ class W3MService with ChangeNotifier implements IW3MService {
         _setSessionValues(magicSession: ms);
         _notify();
         if (_isOpen) {
-          await magicService.instance.getUser();
           closeModal();
         }
       }
@@ -336,20 +335,28 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     _chainBalance = null;
 
-    final isSessionData = _isConnected && _currentSession?.sessionData != null;
-    if (switchChain && isSessionData && _currentSelectedChain != null) {
-      final hasChainAlready = _sessionHasApprovedChain(chainInfo.namespace);
-      if (!hasChainAlready) {
-        _switchToEthChain(chainInfo);
-        final hasSwitchMethod = _sessionHasSwitchMethod();
-        if (hasSwitchMethod) {
-          await launchConnectedWallet();
+    if (connectionService == W3MConnectionService.magic) {
+      magicService.instance.switchNetwork(chainId: chainInfo.chainId);
+      magicService.instance.onNetworkChange = ({String? chainId}) {
+        _setEthChain(chainInfo);
+      };
+    } else {
+      final isSessionData =
+          _isConnected && _currentSession?.sessionData != null;
+      if (switchChain && isSessionData && _currentSelectedChain != null) {
+        final hasChainAlready = _sessionHasApprovedChain(chainInfo.namespace);
+        if (!hasChainAlready) {
+          _switchToEthChainRequest(chainInfo);
+          final hasSwitchMethod = _sessionHasSwitchMethod();
+          if (hasSwitchMethod) {
+            await launchConnectedWallet();
+          }
+        } else {
+          _setEthChain(chainInfo);
         }
       } else {
         _setEthChain(chainInfo);
       }
-    } else {
-      _setEthChain(chainInfo);
     }
   }
 
@@ -619,7 +626,7 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     // If we don't have a session, disconnect automatically and notify listeners
     if (_currentSession?.magicSession != null) {
-      magicService.instance.signOut();
+      await magicService.instance.disconnect();
     }
 
     // If we want to disconnect all sessions, loop through them and disconnect them
@@ -732,7 +739,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     required SessionRequestParams request,
   }) {
     if (connectionService == W3MConnectionService.magic) {
-      return magicService.instance.rpcRequest(body: request.toJson());
+      return magicService.instance.request(parameters: request.toJson());
     }
     if ((topic ?? '').isEmpty && (chainId ?? '').isEmpty) {
       return Future.value();
@@ -838,7 +845,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _notify();
   }
 
-  Future<void> _switchToEthChain(W3MChainInfo newChain) async {
+  Future<void> _switchToEthChainRequest(W3MChainInfo newChain) async {
     final sessionData = _currentSession?.sessionData;
     if (sessionData == null) {
       return;

@@ -189,7 +189,8 @@ class _ConfirmEmailPageState extends State<ConfirmEmailPage> {
                     const SizedBox.square(dimension: kPadding6),
                     GestureDetector(
                       onTap: () {
-                        magicService.instance.connectEmail();
+                        final email = magicService.instance.email.value;
+                        magicService.instance.connectEmail(email: email);
                       },
                       child: Text(
                         'Resend code',
@@ -213,7 +214,7 @@ class _ConfirmEmailPageState extends State<ConfirmEmailPage> {
     if (_digit[index]!.isNotEmpty) {
       if (index == 5) {
         final code = _digit.values.join();
-        magicService.instance.connectEmailOtp(otp: code);
+        magicService.instance.connectOtp(otp: code);
       } else {
         node.nextFocus();
       }

@@ -49,11 +49,14 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: AlignmentDirectional.center,
       children: [
         SizedBox(
-          height: 1.0,
           width: 1.0,
-          child: WebViewWidget(controller: magicService.instance.controller),
+          height: 1.0,
+          child: WebViewWidget(
+            controller: magicService.instance.controller,
+          ),
         ),
         ConnectButton(
           serviceStatus: widget.service.status,
