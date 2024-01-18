@@ -41,14 +41,14 @@ class MagicMessage {
     return params;
   }
 
-  // @w3m-app events
   bool get frameLoaded => type == '@w3m-app/FRAME_LOADED';
-  // bool get initialized => type == '@w3m-app/INITIALIZED';
-  //
+
+  // @w3m-app events
   bool get connectEmail => type == '@w3m-app/CONNECT_EMAIL';
   bool get connectOtp => type == '@w3m-app/CONNECT_OTP';
   bool get getUser => type == '@w3m-app/GET_USER';
   bool get switchNetwork => type == '@w3m-app/SWITCH_NETWORK';
+  bool get rpcRequest => type == '@w3m-app/RPC_REQUEST';
 
   // @w3m-frame events
   bool get emailSuccess => type == '@w3m-frame/CONNECT_EMAIL_SUCCESS';

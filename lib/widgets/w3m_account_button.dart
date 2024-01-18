@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
+import 'package:web3modal_flutter/pages/approve_transaction_page.dart';
+import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
@@ -36,6 +38,10 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     super.initState();
     _w3mServiceUpdated();
     widget.service.addListener(_w3mServiceUpdated);
+    magicService.instance.onApproveTransaction = ({dynamic request}) {
+      debugPrint('[$runtimeType] onApproveTransaction $request');
+      _showApproveTransaction();
+    };
   }
 
   @override
@@ -55,7 +61,14 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     });
   }
 
-  void _onTap() => widget.service.openModal(context, const AccountPage());
+  void _showAccountPage() => widget.service.openModal(
+        context,
+        const AccountPage(),
+      );
+  void _showApproveTransaction() => widget.service.openModal(
+        context,
+        const ApproveTransactionPage(),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +80,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     // I should decouple an AccountButton from W3MAccountButton like on ConnectButton and NetworkButton
     return BaseButton(
       size: widget.size,
-      onTap: enabled ? _onTap : null,
+      onTap: enabled ? _showAccountPage : null,
       overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
         const EdgeInsets.only(left: 4.0, right: 4.0),
       ),
@@ -109,14 +122,14 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
             tokenImage: _tokenImage,
             iconSize: widget.size.iconSize + 4.0,
             buttonSize: widget.size,
-            onTap: enabled ? _onTap : null,
+            onTap: enabled ? _showAccountPage : null,
           ),
           const SizedBox.square(dimension: 4.0),
           _AddressButton(
             address: _address,
             buttonSize: widget.size,
             service: widget.service,
-            onTap: enabled ? _onTap : null,
+            onTap: enabled ? _showAccountPage : null,
           ),
         ],
       ),

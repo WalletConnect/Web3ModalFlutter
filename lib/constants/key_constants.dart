@@ -8,6 +8,7 @@ class Web3ModalKeyConstants {
   static const Key w3mAccountButton = Key('w3mAccountButton');
   static const Key chainSwapButton = Key('chainSwapButton');
   static const Key confirmEmailPage = Key('confirmEmailPage');
+  static const Key approveTransactionPage = Key('approveTransactionPage');
 
   static const Key helpPageKey = Key('helpPageKey');
   static const Key qrCodePageKey = Key('qrCodePageKey');

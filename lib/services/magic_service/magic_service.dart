@@ -1,11 +1,12 @@
-// ignore_for_file: depend_on_referenced_packages
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_message.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_user_data.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+// ignore: depend_on_referenced_packages
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+// ignore: depend_on_referenced_packages
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 final magicService = MagicServiceSingleton();
@@ -32,6 +33,7 @@ class MagicService {
   void Function({MagicUserData? userData})? onUserConnected;
   void Function({dynamic error})? onError;
   void Function({String? chainId})? onNetworkChange;
+  void Function({dynamic request})? onApproveTransaction;
 
   final email = ValueNotifier<String>('');
   final processing = ValueNotifier<bool>(false);
@@ -205,6 +207,12 @@ class MagicService {
         final chainId = messageMap.payload?['chainId'];
         onNetworkChange?.call(chainId: chainId.toString());
       }
+      if (messageMap.rpcRequest) {
+        // with messageMap.payload {"method":"personal_sign","params":["Test Web3Modal data","0x6c6df521e82f6fa82de2378cfa9eb97822f33c23"]}
+        // final method = messageMap.payload?['method'];
+        // final params = messageMap.payload?['params'];
+        onApproveTransaction?.call(request: messageMap.payload);
+      }
     } catch (e) {
       debugPrint('[$runtimeType] _onFrameMessage error $e');
     }
@@ -216,13 +224,9 @@ class MagicService {
       import('$_packageUrl').then((package) => {
         provider = new package.W3mFrameProvider('$projectId')
         provider.onRpcRequest((request) => {
-          console.log('onRpcRequest')
-          // console.log(request)
           window.w3mWebview.postMessage(JSON.stringify(request))
         })
         provider.onRpcResponse((response) => {
-          console.log('onRpcResponse')
-          // console.log(response)
           window.w3mWebview.postMessage(JSON.stringify(response))
         })
       });
