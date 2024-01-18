@@ -1099,7 +1099,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.1.0-beta04"
+    version: "3.1.0"
   web_socket_channel:
     dependency: transitive
     description:
