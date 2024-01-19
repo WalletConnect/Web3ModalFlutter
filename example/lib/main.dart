@@ -66,33 +66,41 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 
-  void _swapTheme() {
-    setState(() {
-      _isDarkMode = !_isDarkMode;
-    });
-  }
+  void _swapTheme() => setState(() {
+        _isDarkMode = !_isDarkMode;
+      });
 
-  void _changeTheme() {
-    setState(() {
-      _themeData = (_themeData == null)
-          ? Web3ModalThemeData(
-              lightColors: Web3ModalColors.lightMode.copyWith(
-                accent100: const Color.fromARGB(255, 30, 59, 236),
-                background100: const Color.fromARGB(255, 161, 183, 231),
-                // background125 is main modal background color
-                background125: const Color.fromARGB(255, 206, 221, 255),
-                background175: const Color.fromARGB(255, 237, 241, 255),
-              ),
-              darkColors: Web3ModalColors.darkMode.copyWith(
-                accent100: const Color.fromARGB(255, 161, 183, 231),
-                background100: const Color.fromARGB(255, 30, 59, 236),
-                // background125 is main modal background color
-                background125: const Color.fromARGB(255, 12, 23, 99),
-                background175: const Color.fromARGB(255, 78, 103, 230),
-              ),
-              radiuses: Web3ModalRadiuses.circular,
-            )
-          : null;
-    });
-  }
+  void _changeTheme() => setState(() {
+        _themeData = (_themeData == null) ? _customTheme : null;
+      });
+
+  Web3ModalThemeData get _customTheme => Web3ModalThemeData(
+        lightColors: Web3ModalColors.lightMode.copyWith(
+          accent100: const Color.fromARGB(255, 30, 59, 236),
+          background100: const Color.fromARGB(255, 161, 183, 231),
+          // Main Modal's background color
+          background125: const Color.fromARGB(255, 206, 221, 255),
+          background175: const Color.fromARGB(255, 237, 241, 255),
+          inverse100: const Color.fromARGB(255, 233, 237, 236),
+          inverse000: const Color.fromARGB(255, 22, 18, 19),
+          // Main Modal's text
+          foreground100: const Color.fromARGB(255, 22, 18, 19),
+          // Secondary Modal's text
+          foreground150: const Color.fromARGB(255, 22, 18, 19),
+        ),
+        darkColors: Web3ModalColors.darkMode.copyWith(
+          accent100: const Color.fromARGB(255, 161, 183, 231),
+          background100: const Color.fromARGB(255, 30, 59, 236),
+          // Main Modal's background color
+          background125: const Color.fromARGB(255, 12, 23, 99),
+          background175: const Color.fromARGB(255, 78, 103, 230),
+          inverse100: const Color.fromARGB(255, 22, 18, 19),
+          inverse000: const Color.fromARGB(255, 233, 237, 236),
+          // Main Modal's text
+          foreground100: const Color.fromARGB(255, 233, 237, 236),
+          // Secondary Modal's text
+          foreground150: const Color.fromARGB(255, 233, 237, 236),
+        ),
+        radiuses: Web3ModalRadiuses.circular,
+      );
 }
