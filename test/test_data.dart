@@ -155,8 +155,8 @@ final testSessionWalletSwap = SessionData(
       accounts: ['eip155:1:0x123'],
       methods: [
         'method1',
-        EthConstants.walletAddEthChain,
-        EthConstants.walletSwitchEthChain,
+        MethodsConstants.walletAddEthChain,
+        MethodsConstants.walletSwitchEthChain,
       ],
       events: [],
     ),

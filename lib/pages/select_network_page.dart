@@ -15,7 +15,7 @@ import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
 class SelectNetworkPage extends StatelessWidget {
   const SelectNetworkPage({required this.onTapNetwork})
-      : super(key: Web3ModalKeyConstants.selectNetworkPage);
+      : super(key: KeyConstants.selectNetworkPage);
   final Function(W3MChainInfo)? onTapNetwork;
 
   @override

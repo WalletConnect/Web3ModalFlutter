@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:web3modal_flutter/constants/eth_constants.dart';
+import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart';
 import 'package:web3modal_flutter/services/blockchain_api_service/i_blockchain_api_utils.dart';
 
@@ -19,7 +19,7 @@ class BlockchainApiUtils extends IBlockchainApiUtils {
 
   @override
   Future<BlockchainIdentity> getIdentity(String address, int chainId) async {
-    final scope = '${EthConstants.namespace}:$chainId';
+    final scope = '${StringConstants.namespace}:$chainId';
     final endpoint = '$blockchainApiUriRoot/v1/identity/$address'
         '?chainId=$scope&projectId=$projectId';
 

@@ -14,7 +14,7 @@ import 'package:web3modal_flutter/utils/toast/toast_message.dart';
 import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
 
 class QRCodePage extends StatefulWidget {
-  const QRCodePage() : super(key: Web3ModalKeyConstants.qrCodePageKey);
+  const QRCodePage() : super(key: KeyConstants.qrCodePageKey);
 
   @override
   State<QRCodePage> createState() => _QRCodePageState();

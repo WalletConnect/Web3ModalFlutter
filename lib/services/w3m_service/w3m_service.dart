@@ -174,7 +174,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     // Loop through all the chain data
     for (final chain in W3MChainPresets.chains.values) {
-      for (final event in EthConstants.allEvents) {
+      for (final event in EventsConstants.allEvents) {
         _web3App.registerEventHandler(
           chainId: chain.namespace,
           event: event,
@@ -731,11 +731,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     } else {
       // Set the optional namespaces to everything in our chain presets
       _optionalNamespaces = {
-        EthConstants.namespace: RequiredNamespace(
+        StringConstants.namespace: RequiredNamespace(
           chains:
               W3MChainPresets.chains.values.map((e) => e.namespace).toList(),
-          methods: EthConstants.allMethods.toSet().toList(),
-          events: EthConstants.allEvents.toSet().toList(),
+          methods: MethodsConstants.allMethods.toSet().toList(),
+          events: EventsConstants.allEvents.toSet().toList(),
         ),
       };
     }
@@ -776,13 +776,13 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   Future<void> _switchToEthChain(W3MChainInfo newChain) async {
     final topic = _currentSession?.sessionData?.topic ?? '';
     final currentChainId =
-        '${EthConstants.namespace}:${_currentSelectedChain?.chainId}';
+        '${StringConstants.namespace}:${_currentSelectedChain?.chainId}';
     return request(
       topic: topic,
       chainId: currentChainId,
       switchToChainId: newChain.chainId,
       request: SessionRequestParams(
-        method: EthConstants.walletSwitchEthChain,
+        method: MethodsConstants.walletSwitchEthChain,
         params: [
           {'chainId': newChain.chainHexId}
         ],
@@ -801,7 +801,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
             topic: topic,
             chainId: currentChainId,
             request: SessionRequestParams(
-              method: EthConstants.walletAddEthChain,
+              method: MethodsConstants.walletAddEthChain,
               params: [newChain.toJson()],
             ),
           ).then((_) {
@@ -999,7 +999,7 @@ extension _W3MServiceExtension on W3MService {
   @protected
   void onSessionEvent(SessionEvent? args) async {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionEvent $args');
-    if (args?.name == EthConstants.chainChanged) {
+    if (args?.name == EventsConstants.chainChanged) {
       final chainId = args?.data.toString() ?? '';
       if (W3MChainPresets.chains.containsKey(chainId)) {
         final chain = W3MChainPresets.chains[chainId];

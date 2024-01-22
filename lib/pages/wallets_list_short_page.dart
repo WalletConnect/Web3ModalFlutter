@@ -20,7 +20,7 @@ import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class WalletsListShortPage extends StatefulWidget {
   const WalletsListShortPage()
-      : super(key: Web3ModalKeyConstants.walletListShortPageKey);
+      : super(key: KeyConstants.walletListShortPageKey);
 
   @override
   State<WalletsListShortPage> createState() => _WalletsListShortPageState();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Web3ModalKeyConstants {
+class KeyConstants {
   static const Key selectNetworkPage = Key('selectNetworkPage');
   static const Key accountPage = Key('accountPage');
   static const Key addressCopyButton = Key('addressCopyButton');

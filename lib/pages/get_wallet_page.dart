@@ -18,7 +18,7 @@ import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dar
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 
 class GetWalletPage extends StatelessWidget {
-  const GetWalletPage() : super(key: Web3ModalKeyConstants.getAWalletPageKey);
+  const GetWalletPage() : super(key: KeyConstants.getAWalletPageKey);
 
   @override
   Widget build(BuildContext context) {

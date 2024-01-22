@@ -21,6 +21,18 @@ class CoinbaseService implements ICoinbaseService {
       'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa';
   static const coinbaseSchema = 'cbwallet://wsegue';
 
+  static const supportedMethods = [
+    'personal_sign',
+    'eth_sendTransaction',
+    'eth_requestAccounts',
+    'eth_signTypedData_v3',
+    'eth_signTypedData_v4',
+    'eth_signTransaction',
+    'wallet_switchEthereumChain',
+    'wallet_addEthereumChain',
+    'wallet_watchAsset',
+  ];
+
   @override
   Event<CoinbaseConnectEvent> onCoinbaseConnect = Event<CoinbaseConnectEvent>();
 

@@ -140,7 +140,7 @@ void main() {
           findsOneWidget,
         );
         await tester.tap(find.byKey(
-          Web3ModalKeyConstants.chainSwapButton,
+          KeyConstants.chainSwapButton,
         ));
 
         await tester.pump();
@@ -156,7 +156,7 @@ void main() {
           findsOneWidget,
         );
         await tester.tap(find.byKey(
-          Web3ModalKeyConstants.addressCopyButton,
+          KeyConstants.addressCopyButton,
         ));
 
         verify(mockToastUtils.show(any)).called(1);
@@ -170,7 +170,7 @@ void main() {
           findsOneWidget,
         );
         await tester.tap(find.byKey(
-          Web3ModalKeyConstants.disconnectButton,
+          KeyConstants.disconnectButton,
         ));
 
         verify(service.disconnect()).called(1);

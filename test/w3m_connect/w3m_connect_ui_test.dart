@@ -113,7 +113,7 @@ void main() {
       // Opens modal
       await tester.tap(
         find.byKey(
-          Web3ModalKeyConstants.w3mAccountButton,
+          KeyConstants.w3mAccountButton,
         ),
       );
 

@@ -9,7 +9,6 @@ export 'models/w3m_chain_info.dart';
 export 'models/w3m_wallet_info.dart';
 
 /// Utils
-export 'constants/eth_constants.dart';
 export 'utils/w3m_chains_presets.dart';
 export 'utils/w3m_logger.dart';
 

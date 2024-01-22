@@ -1,5 +1,6 @@
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
-import 'package:web3modal_flutter/constants/eth_constants.dart';
+import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
 import 'package:web3modal_flutter/utils/w3m_chains_presets.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
@@ -74,7 +75,7 @@ class W3MSession {
     }
     // if (sessionService.isMagic) {
     //
-    final namespace = sessionData?.namespaces[EthConstants.namespace];
+    final namespace = sessionData?.namespaces[StringConstants.namespace];
     final accounts = namespace?.accounts ?? [];
     if (accounts.isNotEmpty) {
       return NamespaceUtils.getAccount(accounts.first);
@@ -132,7 +133,9 @@ class W3MSession {
     }
 
     final nsMethods = getApprovedMethods() ?? [];
-    final supportsAddChain = nsMethods.contains(EthConstants.walletAddEthChain);
+    final supportsAddChain = nsMethods.contains(
+      MethodsConstants.walletAddEthChain,
+    );
     return supportsAddChain;
   }
 
@@ -141,11 +144,11 @@ class W3MSession {
       return null;
     }
     if (sessionService.isCoinbase) {
-      return EthConstants.coinbaseSupportedMethods;
+      return CoinbaseService.supportedMethods;
     }
 
     final sessionNamespaces = sessionData!.namespaces;
-    final namespace = sessionNamespaces[EthConstants.namespace];
+    final namespace = sessionNamespaces[StringConstants.namespace];
     final methodsList = namespace?.methods.toSet().toList();
     return methodsList ?? [];
   }
@@ -159,7 +162,7 @@ class W3MSession {
     }
 
     final sessionNamespaces = sessionData!.namespaces;
-    final namespace = sessionNamespaces[EthConstants.namespace];
+    final namespace = sessionNamespaces[StringConstants.namespace];
     final eventsList = namespace?.events.toSet().toList();
     return eventsList ?? [];
   }
@@ -183,11 +186,11 @@ class W3MSession {
       return null;
     }
     if (sessionService.isCoinbase) {
-      return ['${EthConstants.namespace}:$chainId:$address'];
+      return ['${StringConstants.namespace}:$chainId:$address'];
     }
 
     final sessionNamespaces = sessionData!.namespaces;
-    return sessionNamespaces[EthConstants.namespace]?.accounts ?? [];
+    return sessionNamespaces[StringConstants.namespace]?.accounts ?? [];
   }
 
   Redirect? getSessionRedirect() {

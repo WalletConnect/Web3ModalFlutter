@@ -15,8 +15,7 @@ import 'package:web3modal_flutter/widgets/miscellaneous/all_wallets_header.dart'
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class WalletsListLongPage extends StatefulWidget {
-  const WalletsListLongPage()
-      : super(key: Web3ModalKeyConstants.walletListLongPageKey);
+  const WalletsListLongPage() : super(key: KeyConstants.walletListLongPageKey);
 
   @override
   State<WalletsListLongPage> createState() => _WalletsListLongPageState();

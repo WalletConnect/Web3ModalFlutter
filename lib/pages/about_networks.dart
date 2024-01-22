@@ -9,7 +9,7 @@ import 'package:web3modal_flutter/widgets/help/help_section.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class AboutNetworks extends StatelessWidget {
-  const AboutNetworks() : super(key: Web3ModalKeyConstants.helpPageKey);
+  const AboutNetworks() : super(key: KeyConstants.helpPageKey);
 
   @override
   Widget build(BuildContext context) {

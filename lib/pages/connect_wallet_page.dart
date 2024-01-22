@@ -23,8 +23,7 @@ import 'package:web3modal_flutter/widgets/avatars/loading_border.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class ConnectWalletPage extends StatefulWidget {
-  const ConnectWalletPage()
-      : super(key: Web3ModalKeyConstants.connecWalletPageKey);
+  const ConnectWalletPage() : super(key: KeyConstants.connecWalletPageKey);
 
   @override
   State<ConnectWalletPage> createState() => _ConnectWalletPageState();

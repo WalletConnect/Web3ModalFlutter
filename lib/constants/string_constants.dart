@@ -26,6 +26,7 @@ class StringConstants {
 
   // Misc
   static const String noResults = 'No results found';
+  static const String namespace = 'eip155';
 
   // Storage
   static const String recentWalletId = 'w3m_recentWallet';

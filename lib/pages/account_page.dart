@@ -18,7 +18,7 @@ import 'package:web3modal_flutter/widgets/navigation/navbar_action_button.dart';
 import 'package:web3modal_flutter/widgets/text/w3m_balance.dart';
 
 class AccountPage extends StatefulWidget {
-  const AccountPage() : super(key: Web3ModalKeyConstants.accountPage);
+  const AccountPage() : super(key: KeyConstants.accountPage);
 
   @override
   State<AccountPage> createState() => _AccountPageState();

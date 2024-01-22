@@ -8,7 +8,7 @@ import 'package:web3modal_flutter/widgets/help/help_section.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class AboutWallets extends StatelessWidget {
-  const AboutWallets() : super(key: Web3ModalKeyConstants.helpPageKey);
+  const AboutWallets() : super(key: KeyConstants.helpPageKey);
 
   @override
   Widget build(BuildContext context) {
