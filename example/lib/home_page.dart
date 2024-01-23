@@ -39,7 +39,9 @@ class _MyHomePageState extends State<MyHomePage> {
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
         url: 'https://web3modal.com/',
-        icons: ['https://web3modal.com/images/rpc-illustration.png'],
+        icons: [
+          'https://raw.githubusercontent.com/WalletConnect/Web3ModalFlutter/master/assets/AppIcon.png'
+        ],
         redirect: Redirect(
           native: 'web3modalflutter://',
           universal: 'https://web3modal.com',
