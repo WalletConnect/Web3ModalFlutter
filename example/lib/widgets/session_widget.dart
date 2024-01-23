@@ -40,41 +40,54 @@ class SessionWidgetState extends State<SessionWidget> {
     if (magicSession != null) {
       final chainId = 'eip155:${magicSession.userData.chainId}';
       final chainMetadata = getChainMetadataFromChain(chainId);
-      return Container(
-        height: StyleConstants.linear40,
-        width: double.infinity,
-        margin: const EdgeInsets.all(StyleConstants.linear16),
-        child: ElevatedButton(
-          onPressed: () async {
-            final future = callChainMethod(
-              ChainType.eip155,
-              'personal_sign',
-              chainMetadata,
-              magicSession.userData.address,
-              '',
-            );
-            MethodDialog.show(context, 'personal_sign', future);
-          },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
-              chainMetadata.color,
-            ),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  StyleConstants.linear8,
+      return Column(
+        children: EIP155.methods.values
+            .map(
+              (method) => Container(
+                height: StyleConstants.linear40,
+                width: double.infinity,
+                margin: const EdgeInsets.only(
+                  top: StyleConstants.linear16,
+                  left: StyleConstants.linear16,
+                  right: StyleConstants.linear16,
+                ),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final future = callChainMethod(
+                      ChainType.eip155,
+                      method,
+                      chainMetadata,
+                      magicSession.userData.address,
+                      '',
+                    );
+                    MethodDialog.show(context, 'personal_sign', future);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      chainMetadata.color,
+                    ),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          StyleConstants.linear8,
+                        ),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    method,
+                    style: Web3ModalTheme.getDataOf(context)
+                        .textStyles
+                        .small600
+                        .copyWith(
+                          color: Web3ModalTheme.colorsOf(context).foreground100,
+                        ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          child: Text(
-            'personal_sign',
-            style:
-                Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
-                      color: Web3ModalTheme.colorsOf(context).foreground100,
-                    ),
-          ),
-        ),
+            )
+            .toList()
+          ..add(Container(height: 24.0)),
       );
     }
 

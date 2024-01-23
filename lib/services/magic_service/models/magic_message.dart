@@ -41,8 +41,6 @@ class MagicMessage {
     return params;
   }
 
-  bool get frameLoaded => type == '@w3m-app/FRAME_LOADED';
-
   // @w3m-app events
   bool get connectEmail => type == '@w3m-app/CONNECT_EMAIL';
   bool get connectOtp => type == '@w3m-app/CONNECT_OTP';
@@ -58,7 +56,6 @@ class MagicMessage {
   bool get userSuccess => type == '@w3m-frame/GET_USER_SUCCESS';
   bool get sessionUpdate => type == '@w3m-frame/SESSION_UPDATE';
   bool get networkSuccess => type == '@w3m-frame/SWITCH_NETWORK_SUCCESS';
-  // VERIFY_DEVICE
 }
 
 class FrameLoaded extends MagicMessage {

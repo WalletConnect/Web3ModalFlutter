@@ -52,8 +52,8 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
       alignment: AlignmentDirectional.center,
       children: [
         SizedBox(
-          width: 1.0,
-          height: 1.0,
+          width: 1.0, //MediaQuery.of(context).size.width,
+          height: 1.0, //MediaQuery.of(context).size.height * 0.7,
           child: WebViewWidget(
             controller: magicService.instance.controller,
           ),

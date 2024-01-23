@@ -40,6 +40,9 @@ class MagicService {
 
   void init({required String projectId}) {
     _webViewController = WebViewController()
+      // ..clearCache()
+      // ..clearLocalStorage()
+      // ..setUserAgent()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       // ..setBackgroundColor(Colors.transparent)
       ..setNavigationDelegate(
@@ -55,7 +58,7 @@ class MagicService {
       )
       ..addJavaScriptChannel('w3mWebview', onMessageReceived: _onFrameMessage)
       ..setOnConsoleMessage(_onDebugConsoleReceived)
-      ..loadRequest(Uri.parse('$_url/dashboard'));
+      ..loadRequest(Uri.parse(_url));
 
     try {
       // enable inspector for iOS
@@ -170,12 +173,16 @@ class MagicService {
   }
 
   void _onFrameMessage(JavaScriptMessage message) async {
+    if (message.message == 'verify_ready') {
+      return;
+    }
     try {
-      final messageMap = MagicMessage.fromJson(jsonDecode(message.message));
-      debugPrint('[$runtimeType] _onFrameMessage ${message.message}');
-      if (messageMap.frameLoaded) {
-        await isConnected();
+      final jsonMessage = jsonDecode(message.message) as Map<String, dynamic>;
+      if (jsonMessage.containsKey('msgType')) {
+        return;
       }
+      final messageMap = MagicMessage.fromJson(jsonMessage);
+      debugPrint('[$runtimeType] _onFrameMessage ${message.message}');
       if (messageMap.connectSuccess) {
         // with messageMap.payload {isConnected: "true/false"}
         _onInit(error: false);
@@ -211,10 +218,11 @@ class MagicService {
         // with messageMap.payload {"method":"personal_sign","params":["Test Web3Modal data","0x6c6df521e82f6fa82de2378cfa9eb97822f33c23"]}
         // final method = messageMap.payload?['method'];
         // final params = messageMap.payload?['params'];
-        onApproveTransaction?.call(request: messageMap.payload);
+        // onApproveTransaction?.call(request: messageMap.payload);
       }
     } catch (e) {
-      debugPrint('[$runtimeType] _onFrameMessage error $e');
+      debugPrint('[$runtimeType] message error $e');
+      debugPrint('[$runtimeType] ${message.message}');
     }
   }
 
@@ -224,9 +232,11 @@ class MagicService {
       import('$_packageUrl').then((package) => {
         provider = new package.W3mFrameProvider('$projectId')
         provider.onRpcRequest((request) => {
+          console.log('request ', request)
           window.w3mWebview.postMessage(JSON.stringify(request))
         })
         provider.onRpcResponse((response) => {
+          console.log('response ', response)
           window.w3mWebview.postMessage(JSON.stringify(response))
         })
       });
@@ -288,7 +298,6 @@ class MagicService {
       }
 
       const request = async (params) => {
-        console.log(params)
         await provider.request(params)
       }
 
@@ -304,8 +313,6 @@ class MagicService {
       document.body.appendChild(iframeO)
 
       iframeO.onload = () => {
-        window.w3mWebview.postMessage(JSON.stringify(${FrameLoaded().toString()}))
-
         window.addEventListener('message', ({ data }) => {
           window.w3mWebview.postMessage(JSON.stringify(data))
         })
