@@ -27,15 +27,30 @@ class SessionWidgetState extends State<SessionWidget> {
   @override
   Widget build(BuildContext context) {
     final session = widget.w3mService.session!;
+    final iconImage = session.sessionData?.peer.metadata.icons.first ?? '';
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),
       // WALLET NAME LABEL
-      Text(
-        session.connectedWalletName ?? '',
-        style: Web3ModalTheme.getDataOf(context).textStyles.title600.copyWith(
-              color: Web3ModalTheme.colorsOf(context).foreground100,
+      Row(
+        children: [
+          if (iconImage.isNotEmpty)
+            CircleAvatar(
+              radius: 50.0,
+              backgroundImage: NetworkImage(iconImage),
             ),
-        textAlign: TextAlign.center,
+          Expanded(
+            child: Text(
+              session.connectedWalletName ?? '',
+              style: Web3ModalTheme.getDataOf(context)
+                  .textStyles
+                  .large600
+                  .copyWith(
+                    color: Web3ModalTheme.colorsOf(context).foreground100,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
       ),
       const SizedBox(height: StyleConstants.linear8),
       // TOPIC LABEL
