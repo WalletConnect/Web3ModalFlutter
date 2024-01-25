@@ -29,15 +29,14 @@ class WCSampleWallets {
     'ios': W3MWalletInfo(
       listing: Listing.fromJson({
         'id': '123456789012345678901234567890',
-        'name': 'WC Wallet',
+        'name': 'Wallet (Swift)',
         'homepage': 'https://walletconnect.com',
-        'image_id':
-            'https://images.prismic.io/wallet-connect/65785a56531ac2845a260732_WalletConnect-App-Logo-1024X1024.png',
+        'image_id': _walletImage,
         'order': 30,
         'mobile_link': 'walletapp://',
         'app_store': 'https://apps.apple.com/app/apple-store/',
         'play_store':
-            'https://play.google.com/store/apps/details?id=com.walletconnect.sample.wallet',
+            '$_playstoreUrl${nativeData["123456789012345678901234567890"]?["android"]?.schema}',
       }),
       installed: false,
       recent: false,
@@ -45,18 +44,21 @@ class WCSampleWallets {
     'flutter': W3MWalletInfo(
       listing: Listing.fromJson({
         'id': '123456789012345678901234567891',
-        'name': 'WC Flutter Wallet',
+        'name': 'Wallet (Flutter)',
         'homepage': 'https://walletconnect.com',
-        'image_id':
-            'https://images.prismic.io/wallet-connect/65785a56531ac2845a260732_WalletConnect-App-Logo-1024X1024.png',
+        'image_id': _walletImage,
         'order': 30,
         'mobile_link': 'wcflutterwallet://',
         'app_store': 'https://apps.apple.com/app/apple-store/',
         'play_store':
-            'https://play.google.com/store/apps/details?id=com.walletconnect.flutterwallet',
+            '$_playstoreUrl${nativeData["123456789012345678901234567891"]?["android"]?.schema}',
       }),
       installed: false,
       recent: false,
     ),
   };
+
+  static const _playstoreUrl = 'https://play.google.com/store/apps/details?id=';
+  static const _walletImage =
+      'https://docs.walletconnect.com/assets/images/web3walletLogo-54d3b546146931ceaf47a3500868a73a.png';
 }

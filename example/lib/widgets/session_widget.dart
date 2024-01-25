@@ -27,32 +27,50 @@ class SessionWidgetState extends State<SessionWidget> {
   @override
   Widget build(BuildContext context) {
     final session = widget.w3mService.session!;
-    final iconImage = session.sessionData?.peer.metadata.icons.first ?? '';
+    String iconImage = '';
+    if ((session.sessionData?.peer.metadata.icons ?? []).isNotEmpty) {
+      iconImage = session.sessionData?.peer.metadata.icons.first ?? '';
+    }
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),
-      // WALLET NAME LABEL
       Row(
         children: [
           if (iconImage.isNotEmpty)
-            CircleAvatar(
-              radius: 50.0,
-              backgroundImage: NetworkImage(iconImage),
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 30.0,
+                  backgroundImage: NetworkImage(iconImage),
+                ),
+                const SizedBox(width: 10.0),
+              ],
             ),
           Expanded(
-            child: Text(
-              session.connectedWalletName ?? '',
-              style: Web3ModalTheme.getDataOf(context)
-                  .textStyles
-                  .large600
-                  .copyWith(
-                    color: Web3ModalTheme.colorsOf(context).foreground100,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    session.connectedWalletName ?? '',
+                    style: Web3ModalTheme.getDataOf(context)
+                        .textStyles
+                        .large600
+                        .copyWith(
+                          color: Web3ModalTheme.colorsOf(context).foreground100,
+                        ),
                   ),
-              textAlign: TextAlign.center,
+                ),
+                IconButton(
+                  onPressed: () {
+                    widget.w3mService.launchConnectedWallet();
+                  },
+                  icon: const Icon(Icons.open_in_new),
+                )
+              ],
             ),
           ),
         ],
       ),
-      const SizedBox(height: StyleConstants.linear8),
+      const SizedBox(height: StyleConstants.linear16),
       // TOPIC LABEL
       Visibility(
         visible: session.topic != null,
