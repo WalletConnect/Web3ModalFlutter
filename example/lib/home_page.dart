@@ -30,14 +30,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _initializeService() async {
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
-    W3MChainPresets.chains.putIfAbsent(
-      _exampleCustomChain.chainId,
-      () => _exampleCustomChain,
-    );
-    // W3MChainPresets.chains.putIfAbsent(
-    //   _arbitrumSepolia.chainId,
-    //   () => _arbitrumSepolia,
-    // );
+    W3MChainPresets.chains.putIfAbsent(_celo.chainId, () => _celo);
+    W3MChainPresets.chains.putIfAbsent(_sepolia.chainId, () => _sepolia);
 
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
@@ -203,7 +197,7 @@ class _ConnectedView extends StatelessWidget {
   }
 }
 
-final _exampleCustomChain = W3MChainInfo(
+final _celo = W3MChainInfo(
   chainName: 'Celo',
   namespace: 'eip155:42220',
   chainId: '42220',
@@ -215,14 +209,14 @@ final _exampleCustomChain = W3MChainInfo(
   ),
 );
 
-// final _arbitrumSepolia = W3MChainInfo(
-//   chainName: 'Arbitrum Sepolia Testnet',
-//   chainId: '421614',
-//   namespace: 'eip155:421614',
-//   tokenName: 'ETH',
-//   rpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc',
-//   blockExplorer: W3MBlockExplorer(
-//     name: 'Arbitrum Sepolia Testnet',
-//     url: 'https://sepolia.arbiscan.io/',
-//   ),
-// );
+final _sepolia = W3MChainInfo(
+  chainName: 'Sepolia Testnet',
+  chainId: '11155111',
+  namespace: 'eip155:11155111',
+  tokenName: 'ETH',
+  rpcUrl: 'https://rpc.sepolia.org',
+  blockExplorer: W3MBlockExplorer(
+    name: 'Arbitrum Sepolia Testnet',
+    url: 'https://sepolia.etherscan.io/',
+  ),
+);
