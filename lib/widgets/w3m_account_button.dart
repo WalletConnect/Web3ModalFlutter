@@ -40,7 +40,9 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     widget.service.addListener(_w3mServiceUpdated);
     magicService.instance.onApproveTransaction = ({dynamic request}) {
       debugPrint('[$runtimeType] onApproveTransaction $request');
-      // _showApproveTransaction();
+      if (request != null) {
+        _showApproveTransaction();
+      }
     };
   }
 

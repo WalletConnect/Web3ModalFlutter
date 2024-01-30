@@ -221,9 +221,9 @@ class W3MService with ChangeNotifier implements IW3MService {
       await _selectChainFromStoredId();
 
       _status = W3MServiceStatus.initialized;
-      if (error == true) {
-        _status = W3MServiceStatus.error;
-      }
+      // if (error == true) {
+      //   _status = W3MServiceStatus.error;
+      // }
       W3MLoggerUtil.logger.t('[$runtimeType] initialized');
       _notify();
     };
@@ -244,7 +244,10 @@ class W3MService with ChangeNotifier implements IW3MService {
         ToastMessage(type: ToastType.error, text: error),
       );
     };
-    magicService.instance.init(projectId: _projectId);
+    magicService.instance.init(
+      metadata: _web3App!.metadata,
+      projectId: _projectId,
+    );
   }
 
   void _setSessionValues({
@@ -739,7 +742,19 @@ class W3MService with ChangeNotifier implements IW3MService {
     required SessionRequestParams request,
   }) {
     if (connectionService == W3MConnectionService.magic) {
-      return magicService.instance.request(parameters: request.toJson());
+      final completer = Completer<String>();
+      magicService.instance.request(parameters: request.toJson());
+      magicService.instance.onTransactionApproved = ({dynamic response}) {
+        debugPrint('[$runtimeType] onTransactionApproved $response');
+        completer.complete(response);
+        closeModal();
+      };
+      magicService.instance.onTransactionError = ({String? error}) {
+        debugPrint('[$runtimeType] onTransactionError $error');
+        completer.complete(error);
+        closeModal();
+      };
+      return completer.future;
     }
     if ((topic ?? '').isEmpty && (chainId ?? '').isEmpty) {
       return Future.value();

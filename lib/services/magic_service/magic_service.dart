@@ -1,12 +1,13 @@
+// ignore_for_file: depend_on_referenced_packages
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_message.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_user_data.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-// ignore: depend_on_referenced_packages
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
-// ignore: depend_on_referenced_packages
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 final magicService = MagicServiceSingleton();
@@ -18,47 +19,63 @@ class MagicServiceSingleton {
 }
 
 class MagicService {
-  static const _url = 'https://secure.web3modal.com';
-  // static const _url = 'https://0a12-81-202-242-236.ngrok-free.app';
+  static const _url = 'https://secure.walletconnect.com';
+  // static const _url = 'https://da2a32fe218f.ngrok.app';
   //
-  static const _packageUrl = 'https://esm.sh/@web3modal/wallet@3.6.0-2c10ca76';
-  //
+  late String _projectId;
+  late PairingMetadata _metadata;
+
   bool _initialized = false;
-  MagicUserData? _currentUser;
+  bool get initialized => _initialized;
+
+  late WebViewWidget _webview;
+  WebViewWidget get webview => _webview;
 
   late WebViewController _webViewController;
-  WebViewController get controller => _webViewController;
 
   void Function({bool error})? onInit;
   void Function({MagicUserData? userData})? onUserConnected;
   void Function({dynamic error})? onError;
   void Function({String? chainId})? onNetworkChange;
   void Function({dynamic request})? onApproveTransaction;
+  void Function({String? response})? onTransactionApproved;
+  void Function({String? error})? onTransactionError;
 
   final email = ValueNotifier<String>('');
-  final processing = ValueNotifier<bool>(false);
+  final waitConfirmation = ValueNotifier<bool>(true);
 
-  void init({required String projectId}) {
+  void init({required String projectId, required PairingMetadata metadata}) {
+    _projectId = projectId;
+    _metadata = metadata;
+
     _webViewController = WebViewController()
-      // ..clearCache()
-      // ..clearLocalStorage()
-      // ..setUserAgent()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      // ..setBackgroundColor(Colors.transparent)
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (NavigationRequest request) {
+            debugPrint(
+                '[$runtimeType] navigation main: ${request.isMainFrame} ${request.url}');
             return NavigationDecision.navigate;
           },
           onWebResourceError: _onWebResourceError,
           onPageFinished: (String url) async {
             await _runJavascript(projectId);
+            Future.delayed(Duration(milliseconds: 500), () {
+              syncDappData();
+            });
+            Future.delayed(Duration(seconds: 10), () {
+              if (!_initialized) {
+                _onInit(error: true);
+              }
+            });
           },
         ),
       )
       ..addJavaScriptChannel('w3mWebview', onMessageReceived: _onFrameMessage)
       ..setOnConsoleMessage(_onDebugConsoleReceived)
-      ..loadRequest(Uri.parse(_url));
+      ..loadRequest(Uri.parse('$_url/sdk?projectId=$projectId'));
+
+    _webview = WebViewWidget(controller: _webViewController);
 
     try {
       // enable inspector for iOS
@@ -84,85 +101,98 @@ class MagicService {
 
   // ****** W3mFrameProvider public methods ******* //
 
-  Future<void> getLoginEmailUsed() async {
-    await _webViewController.runJavaScript('getLoginEmailUsed()');
-  }
+  // Future<void> getLoginEmailUsed() async {
+  //   await _webViewController.runJavaScript('provider.getLoginEmailUsed()');
+  // }
 
-  Future<void> getEmail() async {
-    await _webViewController.runJavaScript('getEmail()');
-  }
+  // Future<void> getEmail() async {
+  //   await _webViewController.runJavaScript('provider.getEmail()');
+  // }
 
   Future<void> connectEmail({required String email}) async {
-    await _webViewController.runJavaScript('connectEmail(\'$email\')');
+    final message = ConnectEmail(email: email).toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   Future<void> connectDevice() async {
-    await _webViewController.runJavaScript('connectDevice()');
+    final message = ConnectDevice().toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   Future<void> connectOtp({required String otp}) async {
-    processing.value = true;
-    await _webViewController.runJavaScript('connectOtp(\'$otp\')');
+    // waitConfirmation.value = true;
+    final message = ConnectOtp(otp: otp).toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   Future<void> isConnected() async {
-    await _webViewController.runJavaScript('isConnected()');
+    final message = IsConnected().toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   Future<void> getChainId() async {
-    await _webViewController.runJavaScript('getChainId()');
+    final message = GetChainId().toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
   }
 
-  Future<void> updateEmail({required String email}) async {
-    await _webViewController.runJavaScript('updateEmail(\'$email\')');
+  // Future<void> updateEmail({required String email}) async {
+  //   await _webViewController.runJavaScript('provider.updateEmail(\'$email\')');
+  // }
+
+  // bool _preventFetch = false;
+  Future<void> syncTheme({required Web3ModalTheme? theme}) async {
+    // _preventFetch = preventFetch;
+    if (!_initialized) return;
+    final mode = theme?.isDarkMode == true ? 'dark' : 'light';
+    final message = SyncTheme(mode: mode).toString();
+    debugPrint('syncTheme $message');
+    await _webViewController.runJavaScript('sendMessage($message)');
   }
 
-  Future<void> awaitUpdateEmail({required String email}) async {
-    await _webViewController.runJavaScript('awaitUpdateEmail()');
+  Future<void> syncDappData() async {
+    final message = SyncAppData(
+      metadata: _metadata,
+      sdkVersion: 'flutter-${StringConstants.X_SDK_VERSION}',
+      projectId: _projectId,
+    ).toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
   }
 
-  Future<void> syncTheme({required dynamic theme}) async {
-    await _webViewController.runJavaScript('syncTheme(\'$theme\')');
-  }
-
-  Future<void> syncDappData({required dynamic appData}) async {
-    await _webViewController.runJavaScript('syncDappData(\'$appData\')');
-  }
-
-  Future<void> connect({Map<String, dynamic>? params}) async {
-    await _webViewController.runJavaScript('connect(\'$params\')');
+  Future<void> getUser({String? chainId}) async {
+    final message = GetUser(chainId: chainId).toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   Future<void> switchNetwork({required String chainId}) async {
-    await _webViewController.runJavaScript('switchNetwork($chainId)');
+    final message = SwitchNetwork(chainId: chainId).toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   Future<void> disconnect() async {
-    await _webViewController.runJavaScript('disconnect()');
+    final message = SignOut().toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   Future<void> request({required Map<String, dynamic> parameters}) async {
-    // final parameters = jsonEncode(params);
-    // print(parameters);
-    // provider.request({method:"personal_sign",params:["Test Web3Modal data","0x6c6DF521E82F6FA82dE2378cfA9eB97822f33c23"]})
     final method = parameters['method'];
     final params = parameters['params'] as List;
-    final p = '{method:"$method",params:["${params.first}","${params.last}"]}';
-    await _webViewController.runJavaScript('request($p)');
+    final message = RpcRequest(method: method, params: params).toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
+    onApproveTransaction?.call(request: parameters);
   }
 
   // ****** Private Methods ******* //
 
   void _onInit({required bool error}) {
     if (_initialized) return;
-    _initialized = true;
+    _initialized = !error;
     onInit?.call(error: error);
   }
 
   void _onUserConnected({Map<String, dynamic>? payload}) {
     try {
-      _currentUser = MagicUserData.fromJson(payload ?? {});
-      onUserConnected?.call(userData: _currentUser);
+      final userData = MagicUserData.fromJson(payload!);
+      onUserConnected?.call(userData: userData);
     } catch (e) {
       onError?.call(error: e);
     }
@@ -183,42 +213,58 @@ class MagicService {
       }
       final messageMap = MagicMessage.fromJson(jsonMessage);
       debugPrint('[$runtimeType] _onFrameMessage ${message.message}');
-      if (messageMap.connectSuccess) {
-        // with messageMap.payload {isConnected: "true/false"}
+      if (messageMap.syncDataSuccess) {
+        await isConnected();
+      }
+      if (messageMap.isConnectSuccess) {
+        final isConnected = messageMap.payload?['isConnected'] as bool;
+        if (isConnected) {
+          await getUser();
+        }
         _onInit(error: false);
       }
-      if (messageMap.connectError) {
+      if (messageMap.isConnectError) {
         _onInit(error: true);
       }
-      if (messageMap.emailSuccess) {
-        // with messageMap.payload {action: "VERIFY_OTP"} it means the otp code has been sent
+      if (messageMap.connectEmailSuccess) {
+        // {action: "VERIFY_DEVICE"} it means the device verication email has been sent
+        // {action: "VERIFY_OTP"} it means the otp code has been sent
+        final action = messageMap.payload?['action'] ?? '';
+        waitConfirmation.value = (action == 'VERIFY_DEVICE');
       }
-      if (messageMap.connectOtp) {
-        // with messageMap.payload {otp: "123456"} when the otp code is entered
+      if (messageMap.connectEmailError) {
+        //
       }
-      if (messageMap.otpSuccess) {
-        await connect();
+      if (messageMap.connectOtpSuccess) {
+        await getUser();
+      }
+      if (messageMap.connectOtpError) {
+        //
       }
       if (messageMap.sessionUpdate) {
-        // with messageMap.payload {token: "asa8df67g5f6d7asf7d5gs6"}
+        // {token: "asa8df67g5f6d7asf7d5gs6"}
       }
-      if (messageMap.userSuccess) {
-        // with messageMap.payload {email: "alfredo@walletconnect.com", address: "0x6c6DF521E82F6FA82dE2378cfA9eB97822f33c23", chainId: 1}
+      if (messageMap.getUserSuccess) {
+        // {email: "alfredo@walletconnect.com", address: "0x6c6DF521E82F6FA82dE2378cfA9eB97822f33c23", chainId: 1}
         _onUserConnected(payload: messageMap.payload);
       }
-      if (messageMap.switchNetwork) {
-        // with messageMap.payload {chainId: 123}
+      if (messageMap.getUserError) {
+        //
       }
-      if (messageMap.networkSuccess) {
-        // with messageMap.payload {chainId: 123}
-        final chainId = messageMap.payload?['chainId'];
-        onNetworkChange?.call(chainId: chainId.toString());
+      if (messageMap.switchNetworkSuccess) {
+        final chainId = messageMap.payload?['chainId'] as int?;
+        onNetworkChange?.call(chainId: chainId?.toString());
       }
-      if (messageMap.rpcRequest) {
-        // with messageMap.payload {"method":"personal_sign","params":["Test Web3Modal data","0x6c6df521e82f6fa82de2378cfa9eb97822f33c23"]}
-        // final method = messageMap.payload?['method'];
-        // final params = messageMap.payload?['params'];
-        // onApproveTransaction?.call(request: messageMap.payload);
+      if (messageMap.switchNetworkError) {
+        //
+      }
+      if (messageMap.rpcRequestSuccess) {
+        final hash = messageMap.payload as String?;
+        onTransactionApproved?.call(response: hash);
+      }
+      if (messageMap.rpcRequestError) {
+        final message = messageMap.payload?['message'] as String?;
+        onTransactionError?.call(error: message);
       }
     } catch (e) {
       debugPrint('[$runtimeType] message error $e');
@@ -228,98 +274,12 @@ class MagicService {
 
   Future<void> _runJavascript(String projectId) async {
     await _webViewController.runJavaScript('''
-      let provider;
-      import('$_packageUrl').then((package) => {
-        provider = new package.W3mFrameProvider('$projectId')
-        provider.onRpcRequest((request) => {
-          console.log('request ', request)
-          window.w3mWebview.postMessage(JSON.stringify(request))
-        })
-        provider.onRpcResponse((response) => {
-          console.log('response ', response)
-          window.w3mWebview.postMessage(JSON.stringify(response))
-        })
-      });
+      window.addEventListener('message', ({ data }) => {
+        window.w3mWebview.postMessage(JSON.stringify(data))
+      })
 
-      const getLoginEmailUsed = async () => {
-        await provider.getLoginEmailUsed();
-      }
-
-      const getEmail = async () => {
-        await provider.getEmail();
-      }
-
-      const connectEmail = async (email) => {
-        await provider.connectEmail({ email })
-      }
-
-      const connectDevice = async () => {
-        await provider.connectDevice()
-      }
-
-      const connectOtp = async (otp) => {
-        await provider.connectOtp({ otp })
-      }
-
-      const isConnected = async () => {
-        await provider.isConnected();
-      }
-
-      const getChainId = async () => {
-        await provider.getChainId()
-      }
-
-      const updateEmail = async (email) => {
-        await provider.updateEmail({ email })
-      }
-
-      const awaitUpdateEmail = async () => {
-        await provider.awaitUpdateEmail()
-      }
-
-      const syncTheme = async (theme) => {
-        await provider.syncTheme({ theme })
-      }
-
-      const syncDappData = async (appData) => {
-        await provider.syncDappData({ appData })
-      }
-
-      const connect = async (params) => {
-        await provider.connect({ params })
-      }
-
-      const switchNetwork = async (chainId) => {
-        await provider.switchNetwork(chainId)
-      }
-
-      const disconnect = async () => {
-        await provider.disconnect()
-      }
-
-      const request = async (params) => {
-        await provider.request(params)
-      }
-
-      const iframeO = document.createElement('iframe')
-      iframeO.id = 'w3m-iframe'
-      iframeO.src = '$_url/sdk?projectId=$projectId'
-      iframeO.style.position = 'fixed'
-      iframeO.style.zIndex = '999999'
-      iframeO.style.display = 'none'
-      iframeO.style.opacity = '0'
-      iframeO.style.borderRadius = `clamp(0px, var(--wui-border-radius-l), 44px)`
-
-      document.body.appendChild(iframeO)
-
-      iframeO.onload = () => {
-        window.addEventListener('message', ({ data }) => {
-          window.w3mWebview.postMessage(JSON.stringify(data))
-        })
-      }
-
-      iframeO.onerror = () => {
-        window.w3mWebview.postMessage(JSON.stringify(${FrameError().toString()}))
+      const sendMessage = async (message) => {
+        postMessage(message, '*')
       }
     ''');
   }

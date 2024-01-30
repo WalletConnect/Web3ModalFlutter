@@ -129,6 +129,7 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
     final themeColors = Web3ModalTheme.colorsOf(context);
     return Web3ModalSearchBar(
       controller: _controller,
+      enabled: magicService.instance.initialized,
       hint: 'Email',
       iconPath: 'assets/icons/mail.svg',
       textInputType: TextInputType.emailAddress,

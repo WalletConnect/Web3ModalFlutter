@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
 import 'package:web3modal_flutter/theme/w3m_colors.dart';
 import 'package:web3modal_flutter/theme/w3m_radiuses.dart';
 import 'package:web3modal_flutter/theme/w3m_theme_data.dart';
@@ -49,6 +50,8 @@ class Web3ModalTheme extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    // TODO check this
+    magicService.instance.syncTheme(theme: this);
     return true;
   }
 }

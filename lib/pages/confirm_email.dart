@@ -128,9 +128,9 @@ class _ConfirmEmailPageState extends State<ConfirmEmailPage> {
                 ),
                 const SizedBox.square(dimension: kPadding16),
                 ValueListenableBuilder<bool>(
-                  valueListenable: magicService.instance.processing,
-                  builder: (context, processing, _) {
-                    if (processing) {
+                  valueListenable: magicService.instance.waitConfirmation,
+                  builder: (context, waiting, _) {
+                    if (waiting) {
                       return SizedBox(
                         width: kSearchFieldHeight + 8.0,
                         height: kSearchFieldHeight + 8.0,

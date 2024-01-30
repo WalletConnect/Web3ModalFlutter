@@ -29,6 +29,7 @@ class Web3ModalSearchBar extends StatefulWidget {
     this.debounce = true,
     this.focusNode,
     this.width,
+    this.enabled = true,
     this.inputFormatters,
   });
   final Function(String) onTextChanged;
@@ -51,6 +52,7 @@ class Web3ModalSearchBar extends StatefulWidget {
   final bool debounce;
   final FocusNode? focusNode;
   final double? width;
+  final bool enabled;
   final List<TextInputFormatter>? inputFormatters;
 
   @override
@@ -178,6 +180,9 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
     final focusedBorder = unfocusedBorder.copyWith(
       borderSide: BorderSide(color: themeColors.accent100, width: 1.0),
     );
+    final disabledBorder = unfocusedBorder.copyWith(
+      borderSide: BorderSide(color: themeColors.background100, width: 1.0),
+    );
 
     return DecoratedBoxTransition(
       decoration: _decorationTween.animate(_animationController),
@@ -202,6 +207,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
               _debouncer.run(() => widget.onTextChanged(value));
             }
           },
+          enabled: widget.enabled,
           onTapOutside: (_) => widget.onDismissKeyboard?.call(false),
           textAlignVertical: TextAlignVertical.center,
           textAlign: widget.textAlign ?? TextAlign.left,
@@ -294,7 +300,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
             border: unfocusedBorder,
             errorBorder: unfocusedBorder,
             enabledBorder: unfocusedBorder,
-            disabledBorder: unfocusedBorder,
+            disabledBorder: disabledBorder,
             focusedBorder: focusedBorder,
             filled: true,
             fillColor: themeColors.grayGlass005,

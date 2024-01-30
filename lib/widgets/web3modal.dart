@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
-
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/toast/walletconnect_modal_toast_manager.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/transition_container.dart';
@@ -10,7 +8,6 @@ import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.da
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class Web3Modal extends StatefulWidget {
   const Web3Modal({super.key, this.startWidget});
@@ -83,13 +80,6 @@ class _Web3ModalState extends State<Web3Modal> {
         ),
         child: Stack(
           children: [
-            SizedBox(
-              width: 1.0,
-              height: 1.0,
-              child: WebViewWidget(
-                controller: magicService.instance.controller,
-              ),
-            ),
             TransitionContainer(
               child: _isLoading ? const ContentLoading() : _currentScreen!,
             ),

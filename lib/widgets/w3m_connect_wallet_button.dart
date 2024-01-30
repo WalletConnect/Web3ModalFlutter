@@ -4,7 +4,6 @@ import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/connect_button.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class W3MConnectWalletButton extends StatefulWidget {
   const W3MConnectWalletButton({
@@ -52,11 +51,9 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
       alignment: AlignmentDirectional.center,
       children: [
         SizedBox(
-          width: 1.0, //MediaQuery.of(context).size.width,
-          height: 1.0, //MediaQuery.of(context).size.height * 0.7,
-          child: WebViewWidget(
-            controller: magicService.instance.controller,
-          ),
+          width: 1.0,
+          height: 1.0,
+          child: magicService.instance.webview,
         ),
         ConnectButton(
           serviceStatus: widget.service.status,
