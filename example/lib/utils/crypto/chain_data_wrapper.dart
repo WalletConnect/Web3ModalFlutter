@@ -54,6 +54,11 @@ class ChainDataWrapper {
       color: Colors.purple.shade700,
       w3mChainInfo: W3MChainPresets.chains['1088']!,
     ),
+    ChainMetadata(
+      type: ChainType.eip155,
+      color: Colors.blue.shade200,
+      w3mChainInfo: W3MChainPresets.chains['11155111']!,
+    ),
     // const ChainMetadata(
     //   type: ChainType.solana,
     //   chainId: 'solana:4sGjMW1sUnHzSxGspuhpqLDx6wiyjNtZ',

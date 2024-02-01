@@ -614,6 +614,52 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   @override
+  Future<dynamic> requestReadContract({
+    required DeployedContract deployedContract,
+    required String functionName,
+    required String rpcUrl,
+    List parameters = const [],
+  }) async {
+    try {
+      return await _web3App.requestReadContract(
+        deployedContract: deployedContract,
+        functionName: functionName,
+        rpcUrl: rpcUrl,
+        parameters: parameters,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<dynamic> requestWriteContract({
+    required String topic,
+    required String chainId,
+    required String rpcUrl,
+    required DeployedContract deployedContract,
+    required String functionName,
+    required Transaction transaction,
+    String? method,
+    List parameters = const [],
+  }) async {
+    try {
+      return await _web3App.requestWriteContract(
+        topic: topic,
+        chainId: chainId,
+        rpcUrl: rpcUrl,
+        deployedContract: deployedContract,
+        functionName: functionName,
+        transaction: transaction,
+        method: method,
+        parameters: parameters,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
   Future<dynamic> request({
     required String topic,
     required String chainId,

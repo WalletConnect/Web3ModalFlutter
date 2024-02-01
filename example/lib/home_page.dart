@@ -214,7 +214,7 @@ final _sepolia = W3MChainInfo(
   chainId: '11155111',
   namespace: 'eip155:11155111',
   tokenName: 'ETH',
-  rpcUrl: 'https://rpc.sepolia.org',
+  rpcUrl: 'https://ethereum-sepolia.publicnode.com',
   blockExplorer: W3MBlockExplorer(
     name: 'Arbitrum Sepolia Testnet',
     url: 'https://sepolia.etherscan.io/',

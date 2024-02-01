@@ -1,6 +1,5 @@
 import 'dart:convert';
-// ignore: depend_on_referenced_packages
-import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:walletconnect_flutter_dapp/models/eth/ethereum_transaction.dart';
@@ -201,51 +200,105 @@ class EIP155 {
     );
   }
 
-  static Future<dynamic> testContractCall({
+  static Future<dynamic> callSmartContract({
     required W3MService w3mService,
-  }) async {
-    // Create a Web3Client by passing a chain rpcUrl and an http client
-    final ethChain = W3MChainPresets.chains['1']!;
-    final ethClient = Web3Client(ethChain.rpcUrl, http.Client());
-
+    required String action,
+  }) {
     // Create DeployedContract object using contract's ABI and address
     final deployedContract = DeployedContract(
       ContractAbi.fromJson(
-        jsonEncode(ContractDetails.readContractAbi),
-        'TetherToken',
+        jsonEncode(SepoliaTestContract.readContractAbi),
+        'Alfreedoms',
       ),
-      EthereumAddress.fromHex(ContractDetails.contractAddress),
+      EthereumAddress.fromHex(SepoliaTestContract.contractAddress),
     );
 
-    // Query contract's functions
-    final nameFunction = deployedContract.function('name');
-    final totalSupplyFunction = deployedContract.function('totalSupply');
-    final balanceFunction = deployedContract.function('balanceOf');
+    switch (action) {
+      case 'read':
+        return _readSmartContract(
+          w3mService: w3mService,
+          rpcUrl: 'https://ethereum-sepolia.publicnode.com',
+          contract: deployedContract,
+          address: w3mService.session!.address!,
+        );
+      case 'write':
+        return _writeToSmartContract(
+          w3mService: w3mService,
+          rpcUrl: 'https://ethereum-sepolia.publicnode.com',
+          address: w3mService.session!.address!,
+          topic: w3mService.session!.topic!,
+          chainId: 'eip155:11155111',
+          contract: deployedContract,
+          transaction: Transaction(
+            from: EthereumAddress.fromHex(w3mService.session!.address!),
+            to: EthereumAddress.fromHex(
+                '0x59e2f66C0E96803206B6486cDb39029abAE834c0'),
+            value: EtherAmount.fromInt(EtherUnit.finney, 10), // == 0.010
+          ),
+        );
+      default:
+        return Future.value();
+    }
+  }
 
-    final nameResult = await ethClient.call(
-      contract: deployedContract,
-      function: nameFunction,
-      params: [],
-    );
+  static Future<dynamic> _readSmartContract({
+    required W3MService w3mService,
+    required String rpcUrl,
+    required String address,
+    required DeployedContract contract,
+  }) async {
+    final results = await Future.wait([
+      // results[0]
+      w3mService.requestReadContract(
+        deployedContract: contract,
+        functionName: 'name',
+        rpcUrl: rpcUrl,
+      ),
+      // results[1]
+      w3mService.requestReadContract(
+        deployedContract: contract,
+        functionName: 'totalSupply',
+        rpcUrl: rpcUrl,
+      ),
+      // results[2]
+      w3mService.requestReadContract(
+        deployedContract: contract,
+        functionName: 'balanceOf',
+        rpcUrl: rpcUrl,
+        parameters: [
+          EthereumAddress.fromHex(address),
+        ],
+      ),
+    ]);
 
-    final totalSupply = await ethClient.call(
-      contract: deployedContract,
-      function: totalSupplyFunction,
-      params: [],
-    );
-
-    final balanceOf = await ethClient.call(
-      contract: deployedContract,
-      function: balanceFunction,
-      params: [
-        EthereumAddress.fromHex(w3mService.session!.address!),
-      ],
-    );
+    final oCcy = NumberFormat("#,##0.00", "en_US");
+    final name = results[0].toString();
+    final total = results[1] / BigInt.from(1000000000000000000);
+    final balance = results[2] / BigInt.from(1000000000000000000);
 
     return {
-      'name': '${nameResult.first}',
-      'totalSupply': '${totalSupply.first}',
-      'balance': '${balanceOf.first}',
+      'name': name,
+      'totalSupply': oCcy.format(total),
+      'balance': oCcy.format(balance),
     };
+  }
+
+  static Future<dynamic> _writeToSmartContract({
+    required W3MService w3mService,
+    required String rpcUrl,
+    required String topic,
+    required String chainId,
+    required String address,
+    required DeployedContract contract,
+    required Transaction transaction,
+  }) async {
+    return await w3mService.requestWriteContract(
+      topic: topic,
+      chainId: chainId,
+      rpcUrl: rpcUrl,
+      deployedContract: contract,
+      functionName: 'transfer',
+      transaction: transaction,
+    );
   }
 }

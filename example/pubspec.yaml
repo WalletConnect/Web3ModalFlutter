@@ -14,6 +14,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   fl_toast: ^3.1.0
   shared_preferences: ^2.2.0
+  intl: ^0.19.0
   web3modal_flutter:
     path: ../
 
