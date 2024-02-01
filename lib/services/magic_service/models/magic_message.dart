@@ -59,6 +59,7 @@ class MagicMessage {
   bool get switchNetworkError => type == '@w3m-frame/SWITCH_NETWORK_ERROR';
   bool get rpcRequestSuccess => type == '@w3m-frame/RPC_REQUEST_SUCCESS';
   bool get rpcRequestError => type == '@w3m-frame/RPC_REQUEST_ERROR';
+  bool get signOutSuccess => type == '@w3m-frame/SIGN_OUT_SUCCESS';
 }
 
 // @w3m-app events

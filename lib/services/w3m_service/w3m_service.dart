@@ -166,7 +166,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   ////////* PUBLIC METHODS */////////
 
   @override
-  Future<void> init() async {
+  Future<void> init(BuildContext context) async {
     if (!coreUtils.instance.isValidProjectID(_projectId)) {
       W3MLoggerUtil.logger.e(
           '[$runtimeType] projectId $_projectId is invalid. Please provide a valid projectId. '
@@ -177,6 +177,7 @@ class W3MService with ChangeNotifier implements IW3MService {
         _status == W3MServiceStatus.initialized) {
       return;
     }
+    _context = context;
     _status = W3MServiceStatus.initializing;
     _initError = null;
     _notify();
@@ -247,6 +248,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     magicService.instance.init(
       metadata: _web3App!.metadata,
       projectId: _projectId,
+      context: _context!,
     );
   }
 
@@ -415,7 +417,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   @override
-  Future<void> openModal(BuildContext context, [Widget? startWidget]) async {
+  Future<void> openModal([Widget? startWidget]) async {
     _checkInitialized();
 
     if (_isOpen) {
@@ -428,7 +430,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     explorerService.instance!.search(query: null);
     widgetStack.instance.clear();
 
-    _context = context;
+    // _context = context;
 
     final isBottomSheet = platformUtils.instance.isBottomSheet();
 
@@ -744,15 +746,12 @@ class W3MService with ChangeNotifier implements IW3MService {
     if (connectionService == W3MConnectionService.magic) {
       final completer = Completer<String>();
       magicService.instance.request(parameters: request.toJson());
-      magicService.instance.onTransactionApproved = ({dynamic response}) {
-        debugPrint('[$runtimeType] onTransactionApproved $response');
-        completer.complete(response);
+      magicService.instance.onRequestResponse = ({
+        String? response,
+        String? error,
+      }) {
         closeModal();
-      };
-      magicService.instance.onTransactionError = ({String? error}) {
-        debugPrint('[$runtimeType] onTransactionError $error');
-        completer.complete(error);
-        closeModal();
+        completer.complete(response ?? error);
       };
       return completer.future;
     }

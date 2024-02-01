@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //   'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a', // Uniswap
       // },
     );
-    await _w3mService.init();
+    await _w3mService.init(context);
 
     // If you want to support just one chain uncomment this line and avoid using W3MNetworkSelectButton()
     // _w3mService.selectChain(W3MChainPresets.chains['137']);

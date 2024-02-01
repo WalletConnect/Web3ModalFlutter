@@ -88,11 +88,11 @@ abstract class IW3MService with ChangeNotifier {
   void launchBlockExplorer();
 
   /// Sets up the explorer and the web3App if they already been initialized.
-  Future<void> init();
+  Future<void> init(BuildContext context);
 
   /// Opens the modal with the provided [startWidget] (if any).
   /// If none is provided, the default state will be used based on platform.
-  Future<void> openModal(BuildContext context, [Widget? startWidget]);
+  Future<void> openModal([Widget? startWidget]);
 
   /// Connects to the relay if not already connected.
   /// If the relay is already connected, this does nothing.

@@ -1,10 +1,12 @@
 // ignore_for_file: depend_on_referenced_packages
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_message.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_user_data.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -22,8 +24,10 @@ class MagicService {
   static const _url = 'https://secure.walletconnect.com';
   // static const _url = 'https://da2a32fe218f.ngrok.app';
   //
-  late String _projectId;
-  late PairingMetadata _metadata;
+  late final String _projectId;
+  late final PairingMetadata _metadata;
+  late final BuildContext _context;
+  Timer? _signOutTimer;
 
   bool _initialized = false;
   bool get initialized => _initialized;
@@ -37,16 +41,32 @@ class MagicService {
   void Function({MagicUserData? userData})? onUserConnected;
   void Function({dynamic error})? onError;
   void Function({String? chainId})? onNetworkChange;
-  void Function({dynamic request})? onApproveTransaction;
-  void Function({String? response})? onTransactionApproved;
-  void Function({String? error})? onTransactionError;
+  void Function({dynamic request})? onRpcRequest;
+  void Function({String? response, String? error})? onRequestResponse;
+  // void Function({String? error})? onRequestError;
 
   final email = ValueNotifier<String>('');
-  final waitConfirmation = ValueNotifier<bool>(true);
+  final mailAction = ValueNotifier<String>('');
+  // final isLoading = ValueNotifier<bool>(false);
 
-  void init({required String projectId, required PairingMetadata metadata}) {
+  void init({
+    required String projectId,
+    required PairingMetadata metadata,
+    // Web3ModalTheme? theme,
+    required BuildContext context,
+  }) {
     _projectId = projectId;
     _metadata = metadata;
+    _context = context;
+
+    final headers = {
+      ...coreUtils.instance.getAPIHeaders(
+        _projectId,
+        'Web3ModalV3Example',
+      ),
+      'origin': 'com.web3modal.flutterExample'
+    };
+    debugPrint(headers.toString());
 
     _webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -62,6 +82,8 @@ class MagicService {
             await _runJavascript(projectId);
             Future.delayed(Duration(milliseconds: 500), () {
               syncDappData();
+              _syncTheme();
+              isConnected();
             });
             Future.delayed(Duration(seconds: 10), () {
               if (!_initialized) {
@@ -73,7 +95,10 @@ class MagicService {
       )
       ..addJavaScriptChannel('w3mWebview', onMessageReceived: _onFrameMessage)
       ..setOnConsoleMessage(_onDebugConsoleReceived)
-      ..loadRequest(Uri.parse('$_url/sdk?projectId=$projectId'));
+      ..loadRequest(
+        Uri.parse('$_url/sdk?projectId=$projectId'),
+        headers: headers,
+      );
 
     _webview = WebViewWidget(controller: _webViewController);
 
@@ -120,7 +145,7 @@ class MagicService {
   }
 
   Future<void> connectOtp({required String otp}) async {
-    // waitConfirmation.value = true;
+    mailAction.value = 'LOADING';
     final message = ConnectOtp(otp: otp).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
@@ -139,13 +164,15 @@ class MagicService {
   //   await _webViewController.runJavaScript('provider.updateEmail(\'$email\')');
   // }
 
-  // bool _preventFetch = false;
-  Future<void> syncTheme({required Web3ModalTheme? theme}) async {
-    // _preventFetch = preventFetch;
+  Future<void> syncTheme() async {
     if (!_initialized) return;
+    await _syncTheme();
+  }
+
+  Future<void> _syncTheme() async {
+    final theme = Web3ModalTheme.maybeOf(_context);
     final mode = theme?.isDarkMode == true ? 'dark' : 'light';
     final message = SyncTheme(mode: mode).toString();
-    debugPrint('syncTheme $message');
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
@@ -171,6 +198,11 @@ class MagicService {
   Future<void> disconnect() async {
     final message = SignOut().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
+    _signOutTimer ??= Timer.periodic(Duration(seconds: 2), _diconnectCallback);
+  }
+
+  void _diconnectCallback(Timer timer) async {
+    disconnect();
   }
 
   Future<void> request({required Map<String, dynamic> parameters}) async {
@@ -178,7 +210,7 @@ class MagicService {
     final params = parameters['params'] as List;
     final message = RpcRequest(method: method, params: params).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
-    onApproveTransaction?.call(request: parameters);
+    onRpcRequest?.call(request: parameters);
   }
 
   // ****** Private Methods ******* //
@@ -213,9 +245,12 @@ class MagicService {
       }
       final messageMap = MagicMessage.fromJson(jsonMessage);
       debugPrint('[$runtimeType] _onFrameMessage ${message.message}');
-      if (messageMap.syncDataSuccess) {
-        await isConnected();
-      }
+      // if (messageMap.syncDataSuccess) {
+      //   await isConnected();
+      // }
+      // if (messageMap.syncThemeSuccess) {
+      //   mailAction.value = 'VERIFY_OTP'.toLowerCase();
+      // }
       if (messageMap.isConnectSuccess) {
         final isConnected = messageMap.payload?['isConnected'] as bool;
         if (isConnected) {
@@ -229,8 +264,10 @@ class MagicService {
       if (messageMap.connectEmailSuccess) {
         // {action: "VERIFY_DEVICE"} it means the device verication email has been sent
         // {action: "VERIFY_OTP"} it means the otp code has been sent
-        final action = messageMap.payload?['action'] ?? '';
-        waitConfirmation.value = (action == 'VERIFY_DEVICE');
+        if (mailAction.value != 'LOADING') {
+          final action = messageMap.payload?['action'] ?? '';
+          mailAction.value = action.toString().toLowerCase();
+        }
       }
       if (messageMap.connectEmailError) {
         //
@@ -260,11 +297,16 @@ class MagicService {
       }
       if (messageMap.rpcRequestSuccess) {
         final hash = messageMap.payload as String?;
-        onTransactionApproved?.call(response: hash);
+        onRequestResponse?.call(response: hash, error: null);
       }
       if (messageMap.rpcRequestError) {
         final message = messageMap.payload?['message'] as String?;
-        onTransactionError?.call(error: message);
+        onRequestResponse?.call(error: message);
+      }
+      if (messageMap.signOutSuccess) {
+        //
+        _signOutTimer?.cancel();
+        _signOutTimer = null;
       }
     } catch (e) {
       debugPrint('[$runtimeType] message error $e');

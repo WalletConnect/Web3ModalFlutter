@@ -38,8 +38,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     super.initState();
     _w3mServiceUpdated();
     widget.service.addListener(_w3mServiceUpdated);
-    magicService.instance.onApproveTransaction = ({dynamic request}) {
-      debugPrint('[$runtimeType] onApproveTransaction $request');
+    magicService.instance.onRpcRequest = ({dynamic request}) {
       if (request != null) {
         _showApproveTransaction();
       }
@@ -64,12 +63,12 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
   }
 
   void _showAccountPage() => widget.service.openModal(
-        context,
+        // context,
         const AccountPage(),
       );
   void _showApproveTransaction() => widget.service.openModal(
-        context,
-        const ApproveTransactionPage(),
+        // context,
+        ApproveTransactionPage(),
       );
 
   @override

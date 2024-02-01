@@ -49,7 +49,7 @@ class _W3MNetworkSelectButtonState extends State<W3MNetworkSelectButton> {
 
   void _onConnectPressed(BuildContext context) {
     widget.service.openModal(
-      context,
+      // context,
       SelectNetworkPage(
         onTapNetwork: (info) {
           widget.service.selectChain(info);

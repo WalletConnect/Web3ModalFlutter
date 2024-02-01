@@ -69,7 +69,8 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
     if (widget.service.isConnected) {
       widget.service.disconnect();
     } else {
-      widget.service.openModal(context);
+      // widget.service.openModal(context);
+      widget.service.openModal();
     }
   }
 

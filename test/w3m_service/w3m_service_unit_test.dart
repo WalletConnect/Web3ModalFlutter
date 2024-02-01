@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:event/event.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
@@ -16,6 +17,8 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import '../mock_classes.mocks.dart';
 import '../test_data.dart';
+
+class MockBuildContext extends Mock implements BuildContext {}
 
 void main() {
   group('WalletConnectModalService', () {
@@ -153,7 +156,7 @@ void main() {
 
         service.addListener(f);
 
-        await service.init();
+        await service.init(MockBuildContext());
 
         verify(mockNetworkService.init()).called(1);
         verify(mockStorageService.init()).called(1);
@@ -161,7 +164,7 @@ void main() {
         expect(service.status, W3MServiceStatus.initialized);
         expect(counter, 2);
 
-        await service.init();
+        await service.init(MockBuildContext());
 
         verifyNever(mockNetworkService.init());
         verifyNever(mockStorageService.init());
@@ -186,7 +189,7 @@ void main() {
 
         service.addListener(f);
 
-        await service.init();
+        await service.init(MockBuildContext());
 
         verify(
           mockStorageService.getString(StringConstants.selectedChainId),
@@ -225,7 +228,7 @@ void main() {
         service.addListener(f);
 
         // Init the service will use the test session properly
-        await service.init();
+        await service.init(MockBuildContext());
         // WalletConnectModal, setOptionalNamespaces, setSelectedChain (calls it twice)
         expect(counter, 4);
         verify(
@@ -275,7 +278,7 @@ void main() {
           [testSessionWalletSwap],
         );
 
-        await service.init();
+        await service.init(MockBuildContext());
 
         await service.selectChain(W3MChainPresets.chains['1']!);
         await service.selectChain(W3MChainPresets.chains['137']!);

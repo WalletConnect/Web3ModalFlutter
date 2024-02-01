@@ -539,10 +539,10 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValue: false,
       ) as bool);
   @override
-  _i15.Future<void> init() => (super.noSuchMethod(
+  _i15.Future<void> init(_i12.BuildContext? context) => (super.noSuchMethod(
         Invocation.method(
           #init,
-          [],
+          [context],
         ),
         returnValue: _i15.Future<void>.value(),
         returnValueForMissingStub: _i15.Future<void>.value(),
@@ -562,17 +562,11 @@ class MockW3MService extends _i1.Mock implements _i4.W3MService {
         returnValueForMissingStub: _i15.Future<void>.value(),
       ) as _i15.Future<void>);
   @override
-  _i15.Future<void> openModal(
-    _i12.BuildContext? context, [
-    _i12.Widget? startWidget,
-  ]) =>
+  _i15.Future<void> openModal([_i12.Widget? startWidget]) =>
       (super.noSuchMethod(
         Invocation.method(
           #openModal,
-          [
-            context,
-            startWidget,
-          ],
+          [startWidget],
         ),
         returnValue: _i15.Future<void>.value(),
         returnValueForMissingStub: _i15.Future<void>.value(),
