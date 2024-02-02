@@ -27,7 +27,7 @@ class MagicService {
   late final String _projectId;
   late final PairingMetadata _metadata;
   late final BuildContext _context;
-  Timer? _signOutTimer;
+  // Timer? _signOutTimer;
 
   bool _initialized = false;
   bool get initialized => _initialized;
@@ -43,16 +43,13 @@ class MagicService {
   void Function({String? chainId})? onNetworkChange;
   void Function({dynamic request})? onRpcRequest;
   void Function({String? response, String? error})? onRequestResponse;
-  // void Function({String? error})? onRequestError;
 
   final email = ValueNotifier<String>('');
   final mailAction = ValueNotifier<String>('');
-  // final isLoading = ValueNotifier<bool>(false);
 
   void init({
     required String projectId,
     required PairingMetadata metadata,
-    // Web3ModalTheme? theme,
     required BuildContext context,
   }) {
     _projectId = projectId;
@@ -66,7 +63,6 @@ class MagicService {
       ),
       'origin': 'com.web3modal.flutterExample'
     };
-    debugPrint(headers.toString());
 
     _webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -125,14 +121,6 @@ class MagicService {
   void setEmail(String value) => email.value = value;
 
   // ****** W3mFrameProvider public methods ******* //
-
-  // Future<void> getLoginEmailUsed() async {
-  //   await _webViewController.runJavaScript('provider.getLoginEmailUsed()');
-  // }
-
-  // Future<void> getEmail() async {
-  //   await _webViewController.runJavaScript('provider.getEmail()');
-  // }
 
   Future<void> connectEmail({required String email}) async {
     final message = ConnectEmail(email: email).toString();
@@ -198,12 +186,12 @@ class MagicService {
   Future<void> disconnect() async {
     final message = SignOut().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
-    _signOutTimer ??= Timer.periodic(Duration(seconds: 2), _diconnectCallback);
+    // _signOutTimer ??= Timer.periodic(Duration(seconds: 2), _diconnectCallback);
   }
 
-  void _diconnectCallback(Timer timer) async {
-    disconnect();
-  }
+  // void _diconnectCallback(Timer timer) async {
+  //   disconnect();
+  // }
 
   Future<void> request({required Map<String, dynamic> parameters}) async {
     final method = parameters['method'];
@@ -245,12 +233,7 @@ class MagicService {
       }
       final messageMap = MagicMessage.fromJson(jsonMessage);
       debugPrint('[$runtimeType] _onFrameMessage ${message.message}');
-      // if (messageMap.syncDataSuccess) {
-      //   await isConnected();
-      // }
-      // if (messageMap.syncThemeSuccess) {
-      //   mailAction.value = 'VERIFY_OTP'.toLowerCase();
-      // }
+
       if (messageMap.isConnectSuccess) {
         final isConnected = messageMap.payload?['isConnected'] as bool;
         if (isConnected) {
@@ -258,6 +241,7 @@ class MagicService {
         }
         _onInit(error: false);
       }
+
       if (messageMap.isConnectError) {
         _onInit(error: true);
       }
@@ -303,11 +287,11 @@ class MagicService {
         final message = messageMap.payload?['message'] as String?;
         onRequestResponse?.call(error: message);
       }
-      if (messageMap.signOutSuccess) {
-        //
-        _signOutTimer?.cancel();
-        _signOutTimer = null;
-      }
+      // if (messageMap.signOutSuccess) {
+      //   //
+      //   _signOutTimer?.cancel();
+      //   _signOutTimer = null;
+      // }
     } catch (e) {
       debugPrint('[$runtimeType] message error $e');
       debugPrint('[$runtimeType] ${message.message}');
