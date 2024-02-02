@@ -753,6 +753,54 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: null,
       );
   @override
+  _i14.Future<dynamic> requestReadContract({
+    required _i3.DeployedContract? deployedContract,
+    required String? functionName,
+    required String? rpcUrl,
+    List<dynamic>? parameters = const [],
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #requestReadContract,
+          [],
+          {
+            #deployedContract: deployedContract,
+            #functionName: functionName,
+            #rpcUrl: rpcUrl,
+            #parameters: parameters,
+          },
+        ),
+        returnValue: _i14.Future<dynamic>.value(),
+      ) as _i14.Future<dynamic>);
+  @override
+  _i14.Future<dynamic> requestWriteContract({
+    required String? topic,
+    required String? chainId,
+    required String? rpcUrl,
+    required _i3.DeployedContract? deployedContract,
+    required String? functionName,
+    required _i3.Transaction? transaction,
+    String? method,
+    List<dynamic>? parameters = const [],
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #requestWriteContract,
+          [],
+          {
+            #topic: topic,
+            #chainId: chainId,
+            #rpcUrl: rpcUrl,
+            #deployedContract: deployedContract,
+            #functionName: functionName,
+            #transaction: transaction,
+            #method: method,
+            #parameters: parameters,
+          },
+        ),
+        returnValue: _i14.Future<dynamic>.value(),
+      ) as _i14.Future<dynamic>);
+  @override
   _i14.Future<dynamic> request({
     required String? topic,
     required String? chainId,
@@ -1303,6 +1351,54 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
             #topic: topic,
             #chainId: chainId,
             #request: request,
+          },
+        ),
+        returnValue: _i14.Future<dynamic>.value(),
+      ) as _i14.Future<dynamic>);
+  @override
+  _i14.Future<dynamic> requestReadContract({
+    required _i3.DeployedContract? deployedContract,
+    required String? functionName,
+    required String? rpcUrl,
+    List<dynamic>? parameters = const [],
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #requestReadContract,
+          [],
+          {
+            #deployedContract: deployedContract,
+            #functionName: functionName,
+            #rpcUrl: rpcUrl,
+            #parameters: parameters,
+          },
+        ),
+        returnValue: _i14.Future<dynamic>.value(),
+      ) as _i14.Future<dynamic>);
+  @override
+  _i14.Future<dynamic> requestWriteContract({
+    required String? topic,
+    required String? chainId,
+    required String? rpcUrl,
+    required _i3.DeployedContract? deployedContract,
+    required String? functionName,
+    required _i3.Transaction? transaction,
+    String? method,
+    List<dynamic>? parameters = const [],
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #requestWriteContract,
+          [],
+          {
+            #topic: topic,
+            #chainId: chainId,
+            #rpcUrl: rpcUrl,
+            #deployedContract: deployedContract,
+            #functionName: functionName,
+            #transaction: transaction,
+            #method: method,
+            #parameters: parameters,
           },
         ),
         returnValue: _i14.Future<dynamic>.value(),

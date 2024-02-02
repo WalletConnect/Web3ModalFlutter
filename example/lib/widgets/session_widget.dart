@@ -27,32 +27,50 @@ class SessionWidgetState extends State<SessionWidget> {
   @override
   Widget build(BuildContext context) {
     final session = widget.w3mService.session!;
-    final iconImage = session.sessionData?.peer.metadata.icons.first ?? '';
+    String iconImage = '';
+    if ((session.sessionData?.peer.metadata.icons ?? []).isNotEmpty) {
+      iconImage = session.sessionData?.peer.metadata.icons.first ?? '';
+    }
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),
-      // WALLET NAME LABEL
       Row(
         children: [
           if (iconImage.isNotEmpty)
-            CircleAvatar(
-              radius: 50.0,
-              backgroundImage: NetworkImage(iconImage),
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 30.0,
+                  backgroundImage: NetworkImage(iconImage),
+                ),
+                const SizedBox(width: 10.0),
+              ],
             ),
           Expanded(
-            child: Text(
-              session.connectedWalletName ?? '',
-              style: Web3ModalTheme.getDataOf(context)
-                  .textStyles
-                  .large600
-                  .copyWith(
-                    color: Web3ModalTheme.colorsOf(context).foreground100,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    session.connectedWalletName ?? '',
+                    style: Web3ModalTheme.getDataOf(context)
+                        .textStyles
+                        .large600
+                        .copyWith(
+                          color: Web3ModalTheme.colorsOf(context).foreground100,
+                        ),
                   ),
-              textAlign: TextAlign.center,
+                ),
+                IconButton(
+                  onPressed: () {
+                    widget.w3mService.launchConnectedWallet();
+                  },
+                  icon: const Icon(Icons.open_in_new),
+                )
+              ],
             ),
           ),
         ],
       ),
-      const SizedBox(height: StyleConstants.linear8),
+      const SizedBox(height: StyleConstants.linear16),
       // TOPIC LABEL
       Visibility(
         visible: session.topic != null,
@@ -238,40 +256,87 @@ class SessionWidgetState extends State<SessionWidget> {
       );
     }
 
-    if (chainMetadata.w3mChainInfo.chainId == '1') {
-      children.add(
-        Container(
-          height: StyleConstants.linear40,
-          width: double.infinity,
-          margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
-          child: ElevatedButton(
-            onPressed: () async {
-              final future = EIP155.testContractCall(
-                w3mService: widget.w3mService,
-              );
-              MethodDialog.show(context, 'Test TetherToken Contract', future);
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.orange),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(StyleConstants.linear8),
-                ),
+    children.add(const Divider());
+    final onSepolia = chainMetadata.w3mChainInfo.chainId == '11155111';
+    if (!onSepolia) {
+      children.add(const Text('Connect to Sepolia to Test'));
+    }
+
+    children.addAll([
+      Container(
+        height: StyleConstants.linear40,
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
+        child: ElevatedButton(
+          onPressed: onSepolia
+              ? () async {
+                  final future = EIP155.callSmartContract(
+                    w3mService: widget.w3mService,
+                    action: 'read',
+                  );
+                  MethodDialog.show(context, 'Test Contract (Read)', future);
+                }
+              : null,
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+              if (states.contains(MaterialState.disabled)) {
+                return Colors.grey;
+              }
+              return Colors.orange;
+            }),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(StyleConstants.linear8),
               ),
             ),
-            child: Text(
-              'Test TetherToken Contract',
-              style: Web3ModalTheme.getDataOf(context)
-                  .textStyles
-                  .small600
-                  .copyWith(
-                    color: Web3ModalTheme.colorsOf(context).foreground100,
-                  ),
-            ),
+          ),
+          child: Text(
+            'Test Contract (Read)',
+            style:
+                Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+                      color: Web3ModalTheme.colorsOf(context).foreground100,
+                    ),
           ),
         ),
-      );
-    }
+      ),
+      Container(
+        height: StyleConstants.linear40,
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
+        child: ElevatedButton(
+          onPressed: onSepolia
+              ? () async {
+                  final future = EIP155.callSmartContract(
+                    w3mService: widget.w3mService,
+                    action: 'write',
+                  );
+                  MethodDialog.show(context, 'Test Contract (Write)', future);
+                  widget.launchRedirect();
+                }
+              : null,
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+              if (states.contains(MaterialState.disabled)) {
+                return Colors.grey;
+              }
+              return Colors.orange;
+            }),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(StyleConstants.linear8),
+              ),
+            ),
+          ),
+          child: Text(
+            'Test Contract (Write)',
+            style:
+                Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+                      color: Web3ModalTheme.colorsOf(context).foreground100,
+                    ),
+          ),
+        ),
+      ),
+    ]);
 
     return children;
   }

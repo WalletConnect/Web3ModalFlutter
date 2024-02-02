@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/i_coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
@@ -348,18 +349,22 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     // Reset the explorer
     explorerService.instance.search(query: null);
     widgetStack.instance.clear();
-
     _context = context;
 
     final isBottomSheet = platformUtils.instance.isBottomSheet();
-
     final theme = Web3ModalTheme.maybeOf(_context!);
+
+    Widget? showWidget = startWidget;
+    if (_isConnected) {
+      showWidget = const AccountPage();
+    }
+
     final childWidget = theme == null
         ? Web3ModalTheme(
             themeData: const Web3ModalThemeData(),
-            child: Web3Modal(startWidget: startWidget),
+            child: Web3Modal(startWidget: showWidget),
           )
-        : Web3Modal(startWidget: startWidget);
+        : Web3Modal(startWidget: showWidget);
 
     final rootWidget = Web3ModalProvider(
       service: this,
@@ -605,6 +610,52 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         Uri.parse(explorerUrl),
         mode: LaunchMode.externalApplication,
       );
+    }
+  }
+
+  @override
+  Future<dynamic> requestReadContract({
+    required DeployedContract deployedContract,
+    required String functionName,
+    required String rpcUrl,
+    List parameters = const [],
+  }) async {
+    try {
+      return await _web3App.requestReadContract(
+        deployedContract: deployedContract,
+        functionName: functionName,
+        rpcUrl: rpcUrl,
+        parameters: parameters,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<dynamic> requestWriteContract({
+    required String topic,
+    required String chainId,
+    required String rpcUrl,
+    required DeployedContract deployedContract,
+    required String functionName,
+    required Transaction transaction,
+    String? method,
+    List parameters = const [],
+  }) async {
+    try {
+      return await _web3App.requestWriteContract(
+        topic: topic,
+        chainId: chainId,
+        rpcUrl: rpcUrl,
+        deployedContract: deployedContract,
+        functionName: functionName,
+        transaction: transaction,
+        method: method,
+        parameters: parameters,
+      );
+    } catch (e) {
+      rethrow;
     }
   }
 

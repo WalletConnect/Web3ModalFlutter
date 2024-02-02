@@ -1,3 +1,7 @@
+## 3.1.1-beta01
+
+- Better Smart Contract interactions
+
 ## 3.1.0
 
 - Coinbase Wallet integration

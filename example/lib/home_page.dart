@@ -30,7 +30,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _initializeService() async {
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
-    W3MChainPresets.chains.putIfAbsent('42220', () => _exampleCustomChain);
+    W3MChainPresets.chains.putIfAbsent(_celo.chainId, () => _celo);
+    W3MChainPresets.chains.putIfAbsent(_sepolia.chainId, () => _sepolia);
 
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
@@ -40,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
         description: StringConstants.w3mPageTitleV3,
         url: 'https://web3modal.com/',
         icons: [
-          'https://raw.githubusercontent.com/WalletConnect/Web3ModalFlutter/master/assets/AppIcon.png'
+          'https://docs.walletconnect.com/assets/images/web3modalLogo-2cee77e07851ba0a710b56d03d4d09dd.png'
         ],
         redirect: Redirect(
           native: 'web3modalflutter://',
@@ -196,7 +197,7 @@ class _ConnectedView extends StatelessWidget {
   }
 }
 
-final _exampleCustomChain = W3MChainInfo(
+final _celo = W3MChainInfo(
   chainName: 'Celo',
   namespace: 'eip155:42220',
   chainId: '42220',
@@ -205,5 +206,17 @@ final _exampleCustomChain = W3MChainInfo(
   blockExplorer: W3MBlockExplorer(
     name: 'Celo Explorer',
     url: 'https://explorer.celo.org/mainnet',
+  ),
+);
+
+final _sepolia = W3MChainInfo(
+  chainName: 'Sepolia Testnet',
+  chainId: '11155111',
+  namespace: 'eip155:11155111',
+  tokenName: 'ETH',
+  rpcUrl: 'https://ethereum-sepolia.publicnode.com',
+  blockExplorer: W3MBlockExplorer(
+    name: 'Sepolia Etherscan',
+    url: 'https://sepolia.etherscan.io/',
   ),
 );
