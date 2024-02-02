@@ -3,7 +3,7 @@ description: A dApp showing how to use WalletConnect v2 with Flutter
 
 publish_to: "none"
 
-version: 3.1.0
+version: 3.1.1
 
 environment:
   sdk: ">=3.0.1 <4.0.0"
