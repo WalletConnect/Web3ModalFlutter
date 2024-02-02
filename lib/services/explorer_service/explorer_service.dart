@@ -143,9 +143,9 @@ class ExplorerService implements IExplorerService {
     final platform = platformUtils.instance.getPlatformExact().name;
     final platformName = platform.toString().toLowerCase();
     List<W3MWalletInfo> sampleWallets = [];
-    for (var sampleWallet in WCSampleWallets.wallets.values) {
+    for (var sampleWallet in WCSampleWallets.getSampleWallets(platformName)) {
       final data = WCSampleWallets.nativeData[sampleWallet.listing.id];
-      final schema = data?[platformName]?.schema ?? '';
+      final schema = (data?[platformName]! as NativeAppData).schema ?? '';
       final installed = await urlUtils.instance.isInstalled(schema);
       if (installed) {
         sampleWallet = sampleWallet.copyWith(installed: true);
