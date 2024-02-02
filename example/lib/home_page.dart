@@ -216,7 +216,7 @@ final _sepolia = W3MChainInfo(
   tokenName: 'ETH',
   rpcUrl: 'https://ethereum-sepolia.publicnode.com',
   blockExplorer: W3MBlockExplorer(
-    name: 'Arbitrum Sepolia Testnet',
+    name: 'Sepolia Etherscan',
     url: 'https://sepolia.etherscan.io/',
   ),
 );
