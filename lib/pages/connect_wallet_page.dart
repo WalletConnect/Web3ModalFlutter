@@ -99,7 +99,10 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     //
     return Web3ModalNavbar(
       title: walletName,
-      onBack: () => widgetStack.instance.pop(),
+      onBack: () {
+        _service?.selectWallet(null);
+        widgetStack.instance.pop();
+      },
       body: SingleChildScrollView(
         scrollDirection: isPortrait ? Axis.vertical : Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: kPadding16),

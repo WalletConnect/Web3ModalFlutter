@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onSessionConnect(SessionConnect? args) {
-    debugPrint('[$runtimeType] _onSessionConnect $args');
+    debugPrint('[$runtimeType] _onSessionConnect ${args?.session}');
   }
 
   void _onSessionDelete(SessionDelete? args) {

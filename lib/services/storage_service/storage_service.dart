@@ -20,8 +20,13 @@ class StorageService implements IStorageService {
   }
 
   @override
-  Future<bool> clearAll() async {
-    return await _prefs!.clear();
+  Future<void> clearAll() async {
+    final keys = _prefs!.getKeys();
+    for (var key in keys) {
+      if (key.startsWith('w3m_')) {
+        await _prefs!.remove(key);
+      }
+    }
   }
 
   @override

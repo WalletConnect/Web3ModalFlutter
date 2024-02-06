@@ -85,7 +85,7 @@ abstract class IW3MService with ChangeNotifier {
   Future<void> reconnectRelay();
 
   /// Sets the [selectedWallet] to be connected
-  void selectWallet(W3MWalletInfo walletInfo);
+  void selectWallet(W3MWalletInfo? walletInfo);
 
   /// Sets the [selectedChain] and gets the [chainBalance].
   /// If the wallet is already connected, it will request the chain to be changed and will update the session with the new chain.

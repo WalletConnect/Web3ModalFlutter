@@ -17,6 +17,7 @@ class Web3ModalNavbar extends StatelessWidget {
     this.safeAreaLeft = false,
     this.safeAreaRight = false,
     this.safeAreaBottom = true,
+    this.noClose = false,
   });
 
   final VoidCallback? onBack;
@@ -24,7 +25,7 @@ class Web3ModalNavbar extends StatelessWidget {
   final Widget body;
   final String title;
   final NavbarActionButton? leftAction;
-  final bool safeAreaLeft, safeAreaRight, safeAreaBottom;
+  final bool safeAreaLeft, safeAreaRight, safeAreaBottom, noClose;
 
   @override
   Widget build(BuildContext context) {
@@ -67,12 +68,16 @@ class Web3ModalNavbar extends StatelessWidget {
                         ),
                       ),
                     ),
-                    NavbarActionButton(
-                      asset: 'assets/icons/close.svg',
-                      action: () {
-                        Web3ModalProvider.of(context).service.closeModal();
-                      },
-                    ),
+                    noClose
+                        ? const SizedBox.square(dimension: kNavbarHeight)
+                        : NavbarActionButton(
+                            asset: 'assets/icons/close.svg',
+                            action: () {
+                              Web3ModalProvider.of(context)
+                                  .service
+                                  .closeModal();
+                            },
+                          ),
                   ],
                 );
               },

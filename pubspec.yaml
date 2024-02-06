@@ -21,9 +21,11 @@ dependencies:
   json_annotation: ^4.8.1
   qr_flutter_wc: ^0.0.3
   shimmer: ^3.0.0
+  tuple: ^2.0.2
   url_launcher: ^6.2.3
   # walletconnect_flutter_v2: ^2.1.14
   walletconnect_flutter_v2: ^2.2.0-beta01
+  webview_flutter: ^4.5.0
 
 dev_dependencies:
   build_runner: ^2.4.7

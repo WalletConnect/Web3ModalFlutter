@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
+import 'package:web3modal_flutter/pages/approve_magic_request_page.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
+import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
@@ -38,11 +41,13 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     super.initState();
     _w3mServiceUpdated();
     widget.service.addListener(_w3mServiceUpdated);
+    magicService.instance.onMagicRequest.subscribe(_approveSign);
   }
 
   @override
   void dispose() {
     widget.service.removeListener(_w3mServiceUpdated);
+    magicService.instance.onMagicRequest.unsubscribe(_approveSign);
     super.dispose();
   }
 
@@ -60,6 +65,12 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
   }
 
   void _onTap() => widget.service.openModal(context, const AccountPage());
+
+  void _approveSign(MagicRequestEvent? args) {
+    if (args?.request != null) {
+      widget.service.openModal(context, ApproveTransactionPage());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -39,7 +39,7 @@ class SessionWidgetState extends State<SessionWidget> {
             Row(
               children: [
                 CircleAvatar(
-                  radius: 30.0,
+                  radius: 25.0,
                   backgroundImage: NetworkImage(iconImage),
                 ),
                 const SizedBox(width: 10.0),

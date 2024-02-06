@@ -75,15 +75,6 @@ class EIP155 {
             params: [],
           ),
         );
-      case EIP155UIMethods.ethSignTypedDataV3:
-        return w3mService.request(
-          topic: topic,
-          chainId: chainId,
-          request: SessionRequestParams(
-            method: method.name,
-            params: [address, typeDataV3(cid)],
-          ),
-        );
       case EIP155UIMethods.personalSign:
         return personalSign(
           w3mService: w3mService,
@@ -92,13 +83,21 @@ class EIP155 {
           address: address,
           data: testSignData,
         );
+      case EIP155UIMethods.ethSignTypedDataV3:
+        return ethSignTypedDataV3(
+          w3mService: w3mService,
+          topic: topic,
+          chainId: chainId,
+          address: address,
+          data: jsonEncode(typeDataV3(cid)),
+        );
       case EIP155UIMethods.ethSignTypedDataV4:
         return ethSignTypedDataV4(
           w3mService: w3mService,
           topic: topic,
           chainId: chainId,
           address: address,
-          data: typeDataV4(cid),
+          data: jsonEncode(typeDataV4(cid)),
         );
       case EIP155UIMethods.ethSignTransaction:
       case EIP155UIMethods.ethSendTransaction:
@@ -136,7 +135,24 @@ class EIP155 {
       chainId: chainId,
       request: SessionRequestParams(
         method: EIP155UIMethods.personalSign.name,
-        params: [address, data],
+        params: [data, address],
+      ),
+    );
+  }
+
+  static Future<dynamic> ethSignTypedDataV3({
+    required W3MService w3mService,
+    required String topic,
+    required String chainId,
+    required String address,
+    required String data,
+  }) async {
+    return await w3mService.request(
+      topic: topic,
+      chainId: chainId,
+      request: SessionRequestParams(
+        method: EIP155UIMethods.ethSignTypedDataV3.name,
+        params: [data, address],
       ),
     );
   }
@@ -153,7 +169,7 @@ class EIP155 {
       chainId: chainId,
       request: SessionRequestParams(
         method: EIP155UIMethods.ethSignTypedDataV4.name,
-        params: [address, data],
+        params: [data, address],
       ),
     );
   }
