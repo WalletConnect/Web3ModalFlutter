@@ -22,8 +22,6 @@ class MagicServiceSingleton {
 final magicService = MagicServiceSingleton();
 
 class MagicService implements IMagicService {
-  // static const _url =
-  //     'https://secure-web3modal-git-feat-update-frame-re-d8effb-walletconnect1.vercel.app';
   static const _url = 'https://secure.walletconnect.com';
   static const supportedMethods = [
     'personal_sign',
@@ -37,6 +35,7 @@ class MagicService implements IMagicService {
   late final String _projectId;
   late final PairingMetadata _metadata;
 
+  // late final PlatformWebViewControllerCreationParams params;
   late WebViewController _webViewController;
   late WebViewWidget _webview;
   WebViewWidget get webview => _webview;
@@ -81,16 +80,25 @@ class MagicService implements IMagicService {
   void init() {
     _initialized = Completer<bool>();
 
-    final headers = {
-      // ...coreUtils.instance.getAPIHeaders(
-      //   _projectId,
-      //   _metadata.name,
-      // ),
-      'origin': _metadata.url,
-      'sec-fetch-dest': 'iframe',
-      'sec-fetch-mode': 'navigate',
-      'sec-fetch-site': 'cross-site',
-    };
+    // final headers = {
+    //   // ...coreUtils.instance.getAPIHeaders(
+    //   //   _projectId,
+    //   //   _metadata.name,
+    //   // ),
+    //   'origin': _metadata.url,
+    //   'sec-fetch-dest': 'iframe',
+    //   'sec-fetch-mode': 'navigate',
+    //   'sec-fetch-site': 'cross-site',
+    // };
+
+    // if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+    //   params = WebKitWebViewControllerCreationParams(
+    //     allowsInlineMediaPlayback: true,
+    //     mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+    //   );
+    // } else {
+    //   params = const PlatformWebViewControllerCreationParams();
+    // }
 
     _webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -118,7 +126,7 @@ class MagicService implements IMagicService {
       ..setOnConsoleMessage(_onDebugConsoleReceived)
       ..loadRequest(
         Uri.parse('$_url/sdk?projectId=$_projectId'),
-        headers: headers,
+        // headers: headers,
       );
 
     _webview = WebViewWidget(controller: _webViewController);

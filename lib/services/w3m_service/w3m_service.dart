@@ -254,10 +254,14 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   Future<void> _storeSession(W3MSession w3mSession) async {
     _currentSession = w3mSession;
-    await storageService.instance.setString(
-      StringConstants.w3mSession,
-      jsonEncode(_currentSession!.toJson()),
-    );
+    try {
+      await storageService.instance.setString(
+        StringConstants.w3mSession,
+        jsonEncode(_currentSession!.toJson()),
+      );
+    } catch (e) {
+      W3MLoggerUtil.logger.e('[$runtimeType] store session $e');
+    }
     _isConnected = true;
   }
 
