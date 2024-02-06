@@ -7,7 +7,6 @@ import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_message.dart';
-// import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -25,7 +24,7 @@ final magicService = MagicServiceSingleton();
 class MagicService implements IMagicService {
   // static const _url =
   //     'https://secure-web3modal-git-feat-update-frame-re-d8effb-walletconnect1.vercel.app';
-  static const _url = 'https://cc2ca0ac61c4.ngrok.app';
+  static const _url = 'https://secure.walletconnect.com';
   static const supportedMethods = [
     'personal_sign',
     'eth_sendTransaction',
@@ -82,13 +81,16 @@ class MagicService implements IMagicService {
   void init() {
     _initialized = Completer<bool>();
 
-    // final headers = {
-    //   ...coreUtils.instance.getAPIHeaders(
-    //     _projectId,
-    //     'Web3ModalV3Example',
-    //   ),
-    //   'origin': 'com.web3modal.flutterExample',
-    // };
+    final headers = {
+      // ...coreUtils.instance.getAPIHeaders(
+      //   _projectId,
+      //   _metadata.name,
+      // ),
+      'origin': _metadata.url,
+      'sec-fetch-dest': 'iframe',
+      'sec-fetch-mode': 'navigate',
+      'sec-fetch-site': 'cross-site',
+    };
 
     _webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -103,7 +105,9 @@ class MagicService implements IMagicService {
             await Future.delayed(Duration(milliseconds: 100));
             await _syncDappData();
             await _isConnected();
-            _initialized.complete(true);
+            if (!_initialized.isCompleted) {
+              _initialized.complete(true);
+            }
           },
         ),
       )
@@ -114,7 +118,7 @@ class MagicService implements IMagicService {
       ..setOnConsoleMessage(_onDebugConsoleReceived)
       ..loadRequest(
         Uri.parse('$_url/sdk?projectId=$_projectId'),
-        // headers: headers,
+        headers: headers,
       );
 
     _webview = WebViewWidget(controller: _webViewController);
@@ -122,24 +126,33 @@ class MagicService implements IMagicService {
     if (kDebugMode) {
       try {
         // enable inspector for iOS
-        final webKitCtlr =
-            _webViewController.platform as WebKitWebViewController;
-        webKitCtlr.setInspectable(true);
+        if (Platform.isIOS) {
+          final webKitCtlr =
+              _webViewController.platform as WebKitWebViewController;
+          webKitCtlr.setInspectable(true);
+        }
       } catch (_) {}
       try {
         // enable inspector for Android
-        if (_webViewController.platform is AndroidWebViewController) {
-          AndroidWebViewController.enableDebugging(true);
-          (_webViewController.platform as AndroidWebViewController)
-              .setMediaPlaybackRequiresUserGesture(false);
+        if (Platform.isAndroid) {
+          if (_webViewController.platform is AndroidWebViewController) {
+            AndroidWebViewController.enableDebugging(true);
+            (_webViewController.platform as AndroidWebViewController)
+                .setMediaPlaybackRequiresUserGesture(false);
 
-          final cookieManager =
-              WebViewCookieManager().platform as AndroidWebViewCookieManager;
-          cookieManager.setAcceptThirdPartyCookies(
-              _webViewController.platform as AndroidWebViewController, true);
+            final cookieManager =
+                WebViewCookieManager().platform as AndroidWebViewCookieManager;
+            cookieManager.setAcceptThirdPartyCookies(
+                _webViewController.platform as AndroidWebViewController, true);
+          }
         }
       } catch (_) {}
     }
+  }
+
+  @override
+  void reload() {
+    _webViewController.reload();
   }
 
   @override

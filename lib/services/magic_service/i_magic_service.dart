@@ -17,6 +17,7 @@ enum EmailLoginStep {
 
 abstract class IMagicService {
   void init();
+  void reload();
   void setEmail(String value);
 
   // ****** W3mFrameProvider public methods ******* //
