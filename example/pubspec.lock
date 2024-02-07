@@ -1073,10 +1073,10 @@ packages:
     dependency: transitive
     description:
       name: walletconnect_flutter_v2
-      sha256: f3c90f6eceb130fefcc6b6e22a28ecc971612c90e91fbfaaafbd73c2178db8c1
+      sha256: "1e4d437baac68519fc1fb8eca17075673ee55c8aad1ed1d8cec95f60dcf6b512"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.0-beta01"
+    version: "2.2.0-beta02"
   watcher:
     dependency: transitive
     description:
@@ -1107,7 +1107,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.1.1-beta01"
+    version: "3.1.1-beta02"
   web_socket_channel:
     dependency: transitive
     description:

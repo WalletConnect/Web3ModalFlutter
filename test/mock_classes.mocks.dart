@@ -2482,13 +2482,14 @@ class MockStorageService extends _i1.Mock implements _i33.StorageService {
         returnValue: _i14.Future<bool>.value(false),
       ) as _i14.Future<bool>);
   @override
-  _i14.Future<bool> clearAll() => (super.noSuchMethod(
+  _i14.Future<void> clearAll() => (super.noSuchMethod(
         Invocation.method(
           #clearAll,
           [],
         ),
-        returnValue: _i14.Future<bool>.value(false),
-      ) as _i14.Future<bool>);
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
   @override
   _i14.Future<bool> clearKey(String? key) => (super.noSuchMethod(
         Invocation.method(
