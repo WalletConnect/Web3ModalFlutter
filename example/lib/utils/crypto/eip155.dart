@@ -185,7 +185,7 @@ class EIP155 {
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(
-        method: EIP155UIMethods.ethSendTransaction.name,
+        method: method,
         params: [transaction.toJson()],
       ),
     );

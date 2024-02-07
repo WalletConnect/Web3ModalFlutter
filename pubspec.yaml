@@ -24,7 +24,7 @@ dependencies:
   tuple: ^2.0.2
   url_launcher: ^6.2.3
   # walletconnect_flutter_v2: ^2.1.14
-  walletconnect_flutter_v2: ^2.2.0-beta01
+  walletconnect_flutter_v2: ^2.2.0-beta02
   webview_flutter: ^4.5.0
 
 dev_dependencies:
