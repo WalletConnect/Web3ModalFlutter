@@ -249,6 +249,7 @@ extension on SessionRequestParams {
     }
   }
 
+  // TODO this should be an utils on WCFV2
   String _getAddressFromParamsList(dynamic params) {
     return (params as List).firstWhere((p) {
       try {
@@ -273,6 +274,7 @@ extension on SessionRequestParams {
   }
 }
 
+// TODO this should be included in Coinbase SDK
 class WatchAsset extends Action {
   WatchAsset({required dynamic params})
       : super(

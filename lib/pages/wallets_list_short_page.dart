@@ -51,65 +51,59 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
       ),
       safeAreaLeft: true,
       safeAreaRight: true,
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: kPadding12,
-              top: kPadding8,
-              bottom: kPadding8,
-              right: kPadding12,
+      body: ExplorerServiceItemsListener(
+        builder: (context, initialised, items, _) {
+          if (!initialised || items.isEmpty) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: maxHeight),
+              child: const WalletsList(
+                isLoading: true,
+                itemList: [],
+              ),
+            );
+          }
+          final itemsCount = min(kShortWalletListCount, items.length);
+          final itemsToShow = items.getRange(0, itemsCount);
+          if (itemsCount < kShortWalletListCount && isPortrait) {
+            maxHeight = kListItemHeight * (itemsCount + 1);
+          }
+          // if firstItem
+          maxHeight += (kSearchFieldHeight * 2);
+          return ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxHeight),
+            child: WalletsList(
+              onTapWallet: (data) {
+                service.selectWallet(data);
+                widgetStack.instance.push(const ConnectWalletPage());
+              },
+              firstItem: Column(
+                children: [
+                  InputEmailWidget(),
+                  const SizedBox.square(dimension: 4.0),
+                  _LoginDivider(),
+                ],
+              ),
+              itemList: itemsToShow.toList(),
+              bottomItems: (itemsCount < kShortWalletListCount)
+                  ? []
+                  : [
+                      AllWalletsItem(
+                        trailing: ValueListenableBuilder<int>(
+                          valueListenable:
+                              explorerService.instance.totalListings,
+                          builder: (context, value, _) {
+                            return WalletItemChip(value: value.lazyCount);
+                          },
+                        ),
+                        onTap: () {
+                          widgetStack.instance
+                              .push(const WalletsListLongPage());
+                        },
+                      ),
+                    ],
             ),
-            child: InputEmailWidget(),
-          ),
-          _LoginDivider(),
-          ExplorerServiceItemsListener(
-            builder: (context, initialised, items, _) {
-              if (!initialised || items.isEmpty) {
-                return ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: maxHeight),
-                  child: const WalletsList(
-                    isLoading: true,
-                    itemList: [],
-                  ),
-                );
-              }
-              final itemsCount = min(kShortWalletListCount, items.length);
-              final itemsToShow = items.getRange(0, itemsCount);
-              if (itemsCount < kShortWalletListCount && isPortrait) {
-                maxHeight = kListItemHeight * (itemsCount + 1);
-              }
-              return ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: maxHeight),
-                child: WalletsList(
-                  onTapWallet: (data) {
-                    service.selectWallet(data);
-                    widgetStack.instance.push(const ConnectWalletPage());
-                  },
-                  itemList: itemsToShow.toList(),
-                  bottomItems: (itemsCount < kShortWalletListCount)
-                      ? []
-                      : [
-                          AllWalletsItem(
-                            trailing: ValueListenableBuilder<int>(
-                              valueListenable:
-                                  explorerService.instance.totalListings,
-                              builder: (context, value, _) {
-                                return WalletItemChip(value: value.lazyCount);
-                              },
-                            ),
-                            onTap: () {
-                              widgetStack.instance
-                                  .push(const WalletsListLongPage());
-                            },
-                          ),
-                        ],
-                ),
-              );
-            },
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -181,7 +175,7 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
     if (value.isEmpty || !coreUtils.instance.isValidEmail(value)) {
       return;
     }
-    magicService.instance.connectEmail(email: value);
+    magicService.instance.connectEmail(value: value);
     widgetStack.instance.push(ConfirmEmailPage());
   }
 

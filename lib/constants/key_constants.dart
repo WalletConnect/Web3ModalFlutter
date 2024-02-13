@@ -16,6 +16,8 @@ class KeyConstants {
   static const Key qrCodeAndWalletListPageKey =
       Key('qrCodeAndWalletListFullPageKey');
   static const Key getAWalletPageKey = Key('getAWalletPageKey');
+  static const Key approveTransactionPage = Key('approveTransactionPage');
+  static const Key confirmEmailPage = Key('confirmEmailPage');
 
   // Buttons
   static const Key helpButtonKey = Key('helpButtonKey');

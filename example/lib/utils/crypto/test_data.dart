@@ -2,6 +2,9 @@
 
 const String testSignData = 'Test Web3Modal data';
 
+Map<String, dynamic> typedData() =>
+    {"type": "string", "name": "Key", "value": "Value"};
+
 Map<String, dynamic> typeDataV3(int chainId) => {
       "types": {
         "EIP712Domain": [

@@ -67,7 +67,6 @@ class WalletsList extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         return SizedBox(
-          // height: kListItemHeight,
           width: 1000.0,
           child: items[index],
         );

@@ -55,6 +55,12 @@ class WidgetStack extends IWidgetStack {
   }
 
   @override
+  void popAllAndPush(Widget widget, {bool renderScreen = false}) {
+    _stack.clear();
+    push(widget, renderScreen: renderScreen);
+  }
+
+  @override
   bool containsKey(Key key) {
     return _stack.any((element) => element.key == key);
   }

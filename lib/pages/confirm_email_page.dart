@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
 
@@ -9,12 +10,11 @@ import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/searchbar.dart';
-// import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 
 class ConfirmEmailPage extends StatefulWidget {
-  // const ConfirmEmailPage() : super(key: Web3ModalKeyConstants.confirmEmailPage);
+  const ConfirmEmailPage() : super(key: KeyConstants.confirmEmailPage);
 
   @override
   State<ConfirmEmailPage> createState() => _ConfirmEmailPageState();
@@ -23,26 +23,34 @@ class ConfirmEmailPage extends StatefulWidget {
 class _ConfirmEmailPageState extends State<ConfirmEmailPage> {
   @override
   Widget build(BuildContext context) {
-    return Web3ModalNavbar(
-      title: 'Confirm Email',
-      safeAreaLeft: true,
-      safeAreaRight: true,
-      onBack: () {
-        FocusManager.instance.primaryFocus?.unfocus();
-        magicService.instance.setEmail('');
-        widgetStack.instance.pop();
+    return ValueListenableBuilder<EmailLoginStep>(
+      valueListenable: magicService.instance.step,
+      builder: (context, action, _) {
+        final title = (action == EmailLoginStep.verifyDevice)
+            ? 'Register device'
+            : 'Confirm Email';
+        return Web3ModalNavbar(
+          title: title,
+          safeAreaLeft: true,
+          safeAreaRight: true,
+          onBack: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+            magicService.instance.setEmail('');
+            widgetStack.instance.pop();
+          },
+          body: Builder(
+            builder: (_) {
+              if (action == EmailLoginStep.verifyDevice) {
+                return _VerifyDeviceView();
+              }
+              if (action == EmailLoginStep.verifyOtp) {
+                return _VerifyOtpView();
+              }
+              return ContentLoading(viewHeight: 200.0);
+            },
+          ),
+        );
       },
-      body: ValueListenableBuilder<EmailLoginStep>(
-          valueListenable: magicService.instance.step,
-          builder: (context, action, _) {
-            if (action == EmailLoginStep.verifyDevice) {
-              return _VerifyDeviceView();
-            }
-            if (action == EmailLoginStep.verifyOtp) {
-              return _VerifyOtpView();
-            }
-            return ContentLoading(viewHeight: 200.0);
-          }),
     );
   }
 }
@@ -196,7 +204,7 @@ class __VerifyOtpViewState extends State<_VerifyOtpView> {
                   GestureDetector(
                     onTap: () {
                       final email = magicService.instance.email.value;
-                      magicService.instance.connectEmail(email: email);
+                      magicService.instance.connectEmail(value: email);
                     },
                     child: Text(
                       'Resend code',
@@ -206,7 +214,8 @@ class __VerifyOtpViewState extends State<_VerifyOtpView> {
                     ),
                   ),
                 ],
-              )
+              ),
+              const SizedBox.square(dimension: kPadding16),
             ],
           ),
         ),
@@ -256,7 +265,7 @@ class __VerifyDeviceViewState extends State<_VerifyDeviceView> {
             children: [
               const SizedBox.square(dimension: kPadding16),
               RoundedIcon(
-                assetPath: 'assets/icons/warning.svg',
+                assetPath: 'assets/icons/verif.svg',
                 assetColor: themeColors.accent100,
                 circleColor: themeColors.accent100.withOpacity(0.15),
                 borderColor: Colors.transparent,
@@ -265,7 +274,7 @@ class __VerifyDeviceViewState extends State<_VerifyDeviceView> {
               ),
               const SizedBox.square(dimension: kPadding16),
               Text(
-                'Approve the login link we sent to ',
+                'Approve login with the link we sent to ',
                 textAlign: TextAlign.center,
                 style: textStyles.paragraph400.copyWith(
                   color: themeColors.foreground100,
@@ -280,7 +289,7 @@ class __VerifyDeviceViewState extends State<_VerifyDeviceView> {
               ),
               const SizedBox.square(dimension: kPadding12),
               Text(
-                'The code expires in 10 minutes',
+                'The code expires in 20 minutes',
                 style: textStyles.small400.copyWith(
                   color: themeColors.foreground200,
                 ),
@@ -299,7 +308,7 @@ class __VerifyDeviceViewState extends State<_VerifyDeviceView> {
                   GestureDetector(
                     onTap: () {
                       final email = magicService.instance.email.value;
-                      magicService.instance.connectEmail(email: email);
+                      magicService.instance.connectEmail(value: email);
                     },
                     child: Text(
                       'Resend code',
@@ -309,7 +318,8 @@ class __VerifyDeviceViewState extends State<_VerifyDeviceView> {
                     ),
                   ),
                 ],
-              )
+              ),
+              const SizedBox.square(dimension: kPadding16),
             ],
           ),
         ),

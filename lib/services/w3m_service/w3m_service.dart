@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/i_coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
@@ -151,8 +153,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   Future<void> init() async {
     if (!coreUtils.instance.isValidProjectID(_projectId)) {
       W3MLoggerUtil.logger.e(
-          '[$runtimeType] projectId $_projectId is invalid. Please provide a valid projectId. '
-          'See https://docs.walletconnect.com/web3modal/flutter/options for details.');
+        '[$runtimeType] projectId $_projectId is invalid. '
+        'Please provide a valid projectId. '
+        'https://docs.walletconnect.com/web3modal/flutter/options for details.',
+      );
       return;
     }
     if (_status == W3MServiceStatus.initializing ||
@@ -163,8 +167,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     _notify();
 
-    await (magicService.instance..init()).initialized();
-    final mgcIsConnected = await magicService.instance.connected();
+    await Future.wait([
+      magicService.instance.init(),
+      magicService.instance.initialized(),
+    ]);
+    await magicService.instance.isConnected();
     await _web3App.init();
     await storageService.instance.init();
     await networkService.instance.init();
@@ -202,28 +209,28 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       // Check for other type of sessions stored
       final storedSession = await _getStoredSession();
       if (storedSession != null) {
+        W3MLoggerUtil.logger.i(
+          '[$runtimeType] Stored Session ${storedSession.sessionService}',
+        );
         if (storedSession.sessionService.isCoinbase) {
-          W3MLoggerUtil.logger
-              .i('[$runtimeType] Coinbase Session ${storedSession.toJson()}');
           final isCbConnected = await cbIsConnected();
           if (isCbConnected) {
             await _storeSession(storedSession);
           } else {
             await _cleanSession();
           }
-        }
-        if (storedSession.sessionService.isMagic) {
-          W3MLoggerUtil.logger
-              .i('[$runtimeType] Magic Session ${storedSession.toJson()}');
-          if (mgcIsConnected) {
-            await magicService.instance.getUser();
-            await _storeSession(storedSession);
-          } else {
-            await _cleanSession();
-          }
+        } else if (storedSession.sessionService.isMagic) {
+          // Every time the app gets killed MAgic service will treat the user as disconnected
+          // So we will need to treat magic session differently
+          await _storeSession(storedSession);
+          final email = storedSession.magicData!.email;
+          magicService.instance.setEmail(email);
+        } else {
+          await _cleanSession();
         }
       } else {
-        if (mgcIsConnected) {
+        final connected = await magicService.instance.connected();
+        if (connected) {
           await magicService.instance.disconnect();
         }
       }
@@ -388,16 +395,17 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     final isBottomSheet = platformUtils.instance.isBottomSheet();
     final theme = Web3ModalTheme.maybeOf(_context!);
+    final themeData = theme?.themeData ?? const Web3ModalThemeData();
     await magicService.instance.syncTheme(theme);
 
     Widget? showWidget = startWidget;
-    // if (_isConnected) {
-    //   showWidget = const AccountPage();
-    // }
+    if (_isConnected && showWidget == null) {
+      showWidget = const AccountPage();
+    }
 
     final childWidget = theme == null
         ? Web3ModalTheme(
-            themeData: const Web3ModalThemeData(),
+            themeData: themeData,
             child: Web3Modal(startWidget: showWidget),
           )
         : Web3Modal(startWidget: showWidget);
@@ -407,10 +415,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       child: childWidget,
     );
 
-    final data = MediaQueryData.fromView(View.of(_context!));
-    final isTabletSize = data.size.shortestSide < 600 ? false : true;
-
-    if (isBottomSheet) {
+    final isTabletSize = platformUtils.instance.isTablet(_context!);
+    if (isBottomSheet && !isTabletSize) {
+      final mqData = MediaQueryData.fromView(View.of(_context!));
+      final safeGap = mqData.viewPadding.bottom;
+      final maxHeight = mqData.size.height - safeGap - 20.0;
       await showModalBottomSheet(
         backgroundColor: Colors.transparent,
         isDismissible: true,
@@ -418,20 +427,36 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         enableDrag: true,
         elevation: 0.0,
         useRootNavigator: true,
-        constraints: isTabletSize
-            ? const BoxConstraints(
-                maxWidth: 360.0,
-                maxHeight: 600.0,
-              )
-            : null,
+        constraints: BoxConstraints(
+          maxHeight: maxHeight,
+        ),
         context: _context!,
         builder: (_) => rootWidget,
       );
     } else {
       await showDialog(
+        barrierDismissible: false,
+        useSafeArea: true,
         useRootNavigator: true,
+        anchorPoint: Offset(0, 0),
         context: _context!,
-        builder: (_) => rootWidget,
+        builder: (context) {
+          final radiuses = Web3ModalTheme.radiusesOf(context);
+          final maxRadius = min(radiuses.radiusM, 36.0);
+          final borderRadius = BorderRadius.all(Radius.circular(maxRadius));
+          return Dialog(
+            backgroundColor: Web3ModalTheme.colorsOf(context).background125,
+            shape: RoundedRectangleBorder(borderRadius: borderRadius),
+            clipBehavior: Clip.hardEdge,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: 360.0,
+                maxHeight: 600.0,
+              ),
+              child: rootWidget,
+            ),
+          );
+        },
       );
     }
 
@@ -657,6 +682,14 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     List parameters = const [],
   }) async {
     try {
+      // TODO
+      if (_currentSession!.sessionService.isMagic) {
+        throw 'Smart Contract interactions is currently not supported with Email Login';
+      }
+      // TODO
+      if (_currentSession!.sessionService.isCoinbase) {
+        throw 'Smart Contract interactions is currently not supported with Coinbase Wallet';
+      }
       return await _web3App.requestReadContract(
         deployedContract: deployedContract,
         functionName: functionName,
@@ -680,6 +713,14 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     List parameters = const [],
   }) async {
     try {
+      // TODO
+      if (_currentSession!.sessionService.isMagic) {
+        throw 'Smart Contract interactions is currently not supported with Email Login';
+      }
+      // TODO
+      if (_currentSession!.sessionService.isCoinbase) {
+        throw 'Smart Contract interactions is currently not supported with Coinbase Wallet';
+      }
       return await _web3App.requestWriteContract(
         topic: topic,
         chainId: chainId,
@@ -707,9 +748,8 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     }
     try {
       if (_currentSession!.sessionService.isMagic) {
-        return await (magicService.instance
-              ..request(parameters: request.toJson()))
-            .response();
+        magicService.instance.request(parameters: request.toJson());
+        return await magicService.instance.response();
       }
       if (_currentSession!.sessionService.isCoinbase) {
         return await cbRequest(
@@ -969,10 +1009,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   void _registerListeners() {
     // Magic
-    magicService.instance.onMagicLogin.subscribe(onMagicLoginEvent);
+    magicService.instance.onMagicLoginSuccess.subscribe(onMagicLoginEvent);
     magicService.instance.onMagicError.subscribe(onMagicErrorEvent);
     magicService.instance.onMagicUpdate.subscribe(onMagicSessionEvent);
-    magicService.instance.onMagicRequest.subscribe(onMagicRequest);
+    magicService.instance.onMagicRpcRequest.subscribe(onMagicRequest);
     //
     // Coinbase
     onCoinbaseConnect.subscribe(onCoinbaseConnectEvent);
@@ -998,10 +1038,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   void _unregisterListeners() {
     // Magic
-    magicService.instance.onMagicLogin.unsubscribe(onMagicLoginEvent);
+    magicService.instance.onMagicLoginSuccess.unsubscribe(onMagicLoginEvent);
     magicService.instance.onMagicError.unsubscribe(onMagicErrorEvent);
     magicService.instance.onMagicUpdate.unsubscribe(onMagicSessionEvent);
-    magicService.instance.onMagicRequest.unsubscribe(onMagicRequest);
+    magicService.instance.onMagicRpcRequest.unsubscribe(onMagicRequest);
     //
     // Coinbase
     onCoinbaseConnect.unsubscribe(onCoinbaseConnectEvent);

@@ -8,24 +8,15 @@ import 'package:convert/convert.dart';
 class MagicMessage {
   String type;
   dynamic payload;
-  String? rt;
-  String? jwt;
-  String? action;
 
   MagicMessage({
     required this.type,
     this.payload,
-    this.rt,
-    this.jwt,
-    this.action,
   });
 
   factory MagicMessage.fromJson(Map<String, dynamic> json) {
     return MagicMessage(
       type: json['type'],
-      rt: json['rt'],
-      jwt: json['jwt'],
-      action: json['action'],
       payload: json['payload'],
     );
   }
@@ -34,15 +25,6 @@ class MagicMessage {
     Map<String, dynamic> params = {'type': type};
     if ((payload ?? '').isNotEmpty) {
       params['payload'] = payload;
-    }
-    if ((rt ?? '').isNotEmpty) {
-      params['rt'] = rt;
-    }
-    if ((jwt ?? '').isNotEmpty) {
-      params['jwt'] = jwt;
-    }
-    if ((action ?? '').isNotEmpty) {
-      params['action'] = action;
     }
 
     return params;
@@ -65,6 +47,7 @@ class MagicMessage {
   bool get rpcRequestSuccess => type == '@w3m-frame/RPC_REQUEST_SUCCESS';
   bool get rpcRequestError => type == '@w3m-frame/RPC_REQUEST_ERROR';
   bool get signOutSuccess => type == '@w3m-frame/SIGN_OUT_SUCCESS';
+  bool get signOutError => type == '@w3m-frame/SIGN_OUT_ERROR';
 }
 
 // @w3m-app events
@@ -157,7 +140,9 @@ class RpcRequest extends MagicMessage {
       final address = p.last;
       return '{$t,payload:{$m,params:[\'0x$data\',\'$address\']}}';
     }
-    if (method == 'eth_signTypedData_v4' || method == 'eth_signTypedData_v3') {
+    if (method == 'eth_signTypedData_v4' ||
+        method == 'eth_signTypedData_v3' ||
+        method == 'eth_signTypedData') {
       // final data = jsonEncode(jsonDecode(p.first) as Map<String, dynamic>);
       final data = p.first;
       final address = p.last;

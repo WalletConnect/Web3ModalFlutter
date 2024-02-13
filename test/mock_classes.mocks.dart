@@ -1050,6 +1050,14 @@ class MockPlatformUtils extends _i1.Mock implements _i22.PlatformUtils {
         ),
         returnValue: false,
       ) as bool);
+  @override
+  bool isTablet(_i11.BuildContext? context) => (super.noSuchMethod(
+        Invocation.method(
+          #isTablet,
+          [context],
+        ),
+        returnValue: false,
+      ) as bool);
 }
 
 /// A class which mocks [ToastUtils].
@@ -2569,6 +2577,19 @@ class MockWidgetStack extends _i1.Mock implements _i34.WidgetStack {
         Invocation.method(
           #popUntil,
           [key],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void popAllAndPush(
+    _i11.Widget? widget, {
+    bool? renderScreen = false,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #popAllAndPush,
+          [widget],
+          {#renderScreen: renderScreen},
         ),
         returnValueForMissingStub: null,
       );

@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_message.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -25,17 +28,17 @@ class MagicService implements IMagicService {
   static const _url = 'https://secure.walletconnect.com';
   static const supportedMethods = [
     'personal_sign',
+    'eth_sign',
     'eth_sendTransaction',
     'eth_signTypedData_v4',
-    'eth_signTransaction',
     'wallet_switchEthereumChain',
     'wallet_addEthereumChain',
   ];
   //
   late final String _projectId;
   late final PairingMetadata _metadata;
+  Web3ModalTheme? _currentTheme;
 
-  // late final PlatformWebViewControllerCreationParams params;
   late WebViewController _webViewController;
   late WebViewWidget _webview;
   WebViewWidget get webview => _webview;
@@ -43,17 +46,18 @@ class MagicService implements IMagicService {
   late Completer<bool> _initialized;
   Future<bool> initialized() => _initialized.future;
 
+  bool _authenticated = false;
   late Completer<bool> _connected;
   Future<bool> connected() => _connected.future;
-
-  // late Completer<MagicData?> _userLogged;
-  // Future<MagicData?> userLogged() => _userLogged.future;
 
   late Completer<dynamic> _response;
   Future<dynamic> response() => _response.future;
 
   @override
-  Event<MagicConnectEvent> onMagicLogin = Event<MagicConnectEvent>();
+  Event<MagicSessionEvent> onMagicLoginRequest = Event<MagicSessionEvent>();
+
+  @override
+  Event<MagicConnectEvent> onMagicLoginSuccess = Event<MagicConnectEvent>();
 
   @override
   Event<MagicErrorEvent> onMagicError = Event<MagicErrorEvent>();
@@ -62,10 +66,7 @@ class MagicService implements IMagicService {
   Event<MagicSessionEvent> onMagicUpdate = Event<MagicSessionEvent>();
 
   @override
-  Event<MagicRequestEvent> onMagicRequest = Event<MagicRequestEvent>();
-
-  // void Function({dynamic request})? onRpcRequest;
-  // void Function({String? response, String? error})? onRequestResponse;
+  Event<MagicRequestEvent> onMagicRpcRequest = Event<MagicRequestEvent>();
 
   final email = ValueNotifier<String>('');
   final step = ValueNotifier<EmailLoginStep>(EmailLoginStep.idle);
@@ -76,43 +77,38 @@ class MagicService implements IMagicService {
   })  : _projectId = projectId,
         _metadata = metadata;
 
+  static final _safeDomains = [
+    'walletconnect.com',
+    'magic.link',
+    'ngrok.app',
+  ];
+
+  bool _isAllowedDomain(String domain) {
+    final domains = _safeDomains.join('|');
+    return RegExp(r'' + domains).hasMatch(domain);
+  }
+
   @override
-  void init() {
+  Future<void> init() async {
     _initialized = Completer<bool>();
 
-    // final headers = {
-    //   // ...coreUtils.instance.getAPIHeaders(
-    //   //   _projectId,
-    //   //   _metadata.name,
-    //   // ),
-    //   'origin': _metadata.url,
-    //   'sec-fetch-dest': 'iframe',
-    //   'sec-fetch-mode': 'navigate',
-    //   'sec-fetch-site': 'cross-site',
-    // };
-
-    // if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-    //   params = WebKitWebViewControllerCreationParams(
-    //     allowsInlineMediaPlayback: true,
-    //     mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-    //   );
-    // } else {
-    //   params = const PlatformWebViewControllerCreationParams();
-    // }
-
     _webViewController = WebViewController()
+      ..setBackgroundColor(Colors.transparent)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (NavigationRequest request) {
-            return NavigationDecision.navigate;
+            if (_isAllowedDomain(request.url)) {
+              return NavigationDecision.navigate;
+            }
+            launchUrlString(request.url, mode: LaunchMode.externalApplication);
+            return NavigationDecision.prevent;
           },
           onWebResourceError: _onWebResourceError,
           onPageFinished: (String url) async {
             await _runJavascript(_projectId);
             await Future.delayed(Duration(milliseconds: 100));
             await _syncDappData();
-            await _isConnected();
             if (!_initialized.isCompleted) {
               _initialized.complete(true);
             }
@@ -123,13 +119,16 @@ class MagicService implements IMagicService {
         'w3mWebview',
         onMessageReceived: _onFrameMessage,
       )
-      ..setOnConsoleMessage(_onDebugConsoleReceived)
-      ..loadRequest(
-        Uri.parse('$_url/sdk?projectId=$_projectId'),
-        // headers: headers,
-      );
+      ..setOnConsoleMessage(_onDebugConsoleReceived);
 
     _webview = WebViewWidget(controller: _webViewController);
+
+    final packageName = await coreUtils.instance.getPackageName();
+    final headers = {'origin': packageName};
+    _webViewController.loadRequest(
+      Uri.parse('$_url/sdk?projectId=$_projectId'),
+      headers: headers,
+    );
 
     if (kDebugMode) {
       try {
@@ -169,8 +168,8 @@ class MagicService implements IMagicService {
   // ****** W3mFrameProvider public methods ******* //
 
   @override
-  Future<void> connectEmail({required String email}) async {
-    final message = ConnectEmail(email: email).toString();
+  Future<void> connectEmail({required String value}) async {
+    final message = ConnectEmail(email: value).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
@@ -187,8 +186,8 @@ class MagicService implements IMagicService {
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
-  // @override
-  Future<void> _isConnected() async {
+  @override
+  Future<void> isConnected() async {
     _connected = Completer<bool>();
     final message = IsConnected().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
@@ -206,7 +205,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> syncTheme(Web3ModalTheme? theme) async {
-    final mode = theme?.isDarkMode == true ? 'dark' : 'light';
+    final mode = _currentTheme?.isDarkMode == true ? 'dark' : 'light';
     final message = SyncTheme(mode: mode).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
@@ -237,11 +236,20 @@ class MagicService implements IMagicService {
   @override
   Future<void> request({required Map<String, dynamic> parameters}) async {
     _response = Completer<dynamic>();
-    onMagicRequest.broadcast(MagicRequestEvent(request: parameters));
+    if (!_authenticated) {
+      onMagicLoginRequest.broadcast(MagicSessionEvent(email: email.value));
+      _connected = Completer<bool>();
+      await connectEmail(value: email.value);
+      final success = await _connected.future;
+      if (!success) return;
+    }
+    onMagicRpcRequest.broadcast(MagicRequestEvent(request: parameters));
     final method = parameters['method'];
     final params = parameters['params'] as List;
     final message = RpcRequest(method: method, params: params).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
+    // TODO THIS HAS TO BE REPLACED IN FAVOR OF PROER syncTheme() IMPLEMENTATION
+    _setModalColor();
   }
 
   @override
@@ -254,29 +262,31 @@ class MagicService implements IMagicService {
   // ****** Private Methods ******* //
 
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
-    debugPrint('[$runtimeType] Console ${message.message}');
+    W3MLoggerUtil.logger.i('[$runtimeType] JS Console ${message.message}');
   }
 
   void _onFrameMessage(JavaScriptMessage message) async {
-    if (message.message == 'verify_ready') {
-      return;
-    }
+    if (message.message == 'verify_ready') return;
     try {
       final jsonMessage = jsonDecode(message.message) as Map<String, dynamic>;
-      if (jsonMessage.containsKey('msgType')) {
-        return;
-      }
-      final messageMap = MagicMessage.fromJson(jsonMessage);
-      debugPrint('[$runtimeType] _onFrameMessage ${message.message}');
+      if (jsonMessage.containsKey('msgType')) return;
 
+      final messageMap = MagicMessage.fromJson(jsonMessage);
+      W3MLoggerUtil.logger.i('[$runtimeType] JS message ${message.message}');
+      // ****** IS_CONNECTED
       if (messageMap.isConnectSuccess) {
-        final isConnected = messageMap.payload?['isConnected'] as bool;
-        _connected.complete(isConnected);
+        _authenticated = messageMap.payload?['isConnected'] as bool;
+        if (!_connected.isCompleted) {
+          _connected.complete(_authenticated);
+        }
+        if (_authenticated) {
+          await getUser();
+        }
       }
       if (messageMap.isConnectError) {
-        _connected.complete(false);
-        onMagicError.broadcast(MagicErrorEvent('Error checking isConnected'));
+        _error('Error checking isConnected');
       }
+      // ****** CONNECT_EMAIL
       if (messageMap.connectEmailSuccess) {
         if (step.value != EmailLoginStep.loading) {
           final action = messageMap.payload?['action'] ?? '';
@@ -285,60 +295,91 @@ class MagicService implements IMagicService {
         }
       }
       if (messageMap.connectEmailError) {
-        onMagicError.broadcast(MagicErrorEvent('Error connecting email'));
+        _error('Error connecting email');
       }
+      // ****** CONNECT_OTP
       if (messageMap.connectOtpSuccess) {
         await getUser();
       }
       if (messageMap.connectOtpError) {
-        onMagicError.broadcast(MagicErrorEvent('Error connecting OTP'));
+        _error('Error connecting OTP');
       }
-      if (messageMap.sessionUpdate) {
-        // onMagicUpdate.broadcast(MagicSessionEvent(...));
-      }
+      // ****** GET_USER
       if (messageMap.getUserSuccess) {
+        _authenticated = true;
         final data = MagicData.fromJson(messageMap.payload!);
-        // _userLogged.complete(data);
-        onMagicLogin.broadcast(MagicConnectEvent(data));
+        if (!_connected.isCompleted) {
+          final event = MagicSessionEvent(
+            email: data.email,
+            address: data.address,
+            chainId: data.chainId,
+          );
+          onMagicUpdate.broadcast(event);
+          _connected.complete(_authenticated);
+        } else {
+          onMagicLoginSuccess.broadcast(MagicConnectEvent(data));
+        }
       }
       if (messageMap.getUserError) {
-        // _userLogged.complete(null);
-        onMagicError.broadcast(MagicErrorEvent('Error getting user'));
+        _error('Error getting user');
       }
+      // ****** SWITCH_NETWORK
       if (messageMap.switchNetworkSuccess) {
         final chainId = messageMap.payload?['chainId'] as int?;
         onMagicUpdate.broadcast(MagicSessionEvent(chainId: chainId));
       }
       if (messageMap.switchNetworkError) {
-        onMagicError.broadcast(MagicErrorEvent('Error switching network'));
+        _error('Error switching network');
       }
+      // ****** RPC_REQUEST
       if (messageMap.rpcRequestSuccess) {
         final hash = messageMap.payload as String?;
         _response.complete(hash);
-        onMagicRequest.broadcast(MagicRequestEvent(
-          request: null,
-          result: hash,
-          success: true,
-        ));
+        onMagicRpcRequest.broadcast(
+          MagicRequestEvent(
+            request: null,
+            result: hash,
+            success: true,
+          ),
+        );
       }
       if (messageMap.rpcRequestError) {
         final message = messageMap.payload?['message'] as String?;
         _response.complete(JsonRpcError(code: 0, message: message));
-        onMagicRequest.broadcast(MagicRequestEvent(
-          request: null,
-          result: JsonRpcError(code: 0, message: message),
-          success: false,
-        ));
+        onMagicRpcRequest.broadcast(
+          MagicRequestEvent(
+            request: null,
+            result: JsonRpcError(code: 0, message: message),
+            success: false,
+          ),
+        );
       }
-      // if (messageMap.signOutSuccess) {
-      //   //
-      //   _signOutTimer?.cancel();
-      //   _signOutTimer = null;
-      // }
-    } catch (e) {
-      debugPrint('[$runtimeType] message error $e');
-      debugPrint('[$runtimeType] ${message.message}');
+      // ****** SIGN_OUT
+      if (messageMap.signOutSuccess) {
+        //
+      }
+      if (messageMap.signOutError) {
+        //
+      }
+      if (messageMap.sessionUpdate) {
+        // onMagicUpdate.broadcast(MagicSessionEvent(...));
+      }
+    } catch (e, s) {
+      W3MLoggerUtil.logger.e(
+        '[MagicService] error ${message.message}',
+        error: e,
+        stackTrace: s,
+      );
     }
+  }
+
+  void _error(String errorMessage) {
+    _authenticated = false;
+    if (!_connected.isCompleted) {
+      _connected.complete(_authenticated);
+    }
+    onMagicError.broadcast(MagicErrorEvent(errorMessage));
+    W3MLoggerUtil.logger.e('[MagicService] error $errorMessage');
   }
 
   Future<void> _runJavascript(String projectId) async {
@@ -349,6 +390,13 @@ class MagicService implements IMagicService {
 
       const sendMessage = async (message) => {
         postMessage(message, '*')
+      }
+
+      // TODO this would have to be removed after proper implementation of syncTheme()
+      const setBGColor = (color) => {
+        document.body.style.backgroundColor = color
+        const buttons = document.getElementsByClassName("signWrapper")
+        buttons[0].style.backgroundColor = color
       }
     ''');
   }
@@ -362,5 +410,24 @@ class MagicService implements IMagicService {
               isForMainFrame: ${error.isForMainFrame}
               url: ${error.url}
             ''');
+  }
+
+  void _setModalColor() {
+    Future.delayed(Duration(milliseconds: 50), () {
+      final isDarkMode = _currentTheme?.isDarkMode ?? false;
+      final rbgColor = isDarkMode
+          ? _currentTheme?.themeData?.darkColors.background125
+          : _currentTheme?.themeData?.lightColors.background125;
+      final jsColor = _dartColorToJS(rbgColor ?? Colors.transparent);
+      _webViewController.runJavaScript('setBGColor("$jsColor")');
+    });
+  }
+
+  String _dartColorToJS(Color color) {
+    final r = color.red;
+    final g = color.green;
+    final b = color.blue;
+    final a = color.opacity;
+    return 'rgba($r, $g, $b, $a)';
   }
 }

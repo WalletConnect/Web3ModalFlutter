@@ -27,4 +27,6 @@ abstract class ICoreUtils {
   String getUserAgent();
 
   Map<String, String> getAPIHeaders(String projectId, [String? referer]);
+
+  Future<String> getPackageName();
 }

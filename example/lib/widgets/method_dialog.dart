@@ -60,7 +60,9 @@ class MethodDialogState extends State<MethodDialog> {
             return const SizedBox(
               width: StyleConstants.linear48,
               height: StyleConstants.linear48,
-              child: CircularProgressIndicator(),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           }
         },

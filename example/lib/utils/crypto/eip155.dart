@@ -8,10 +8,11 @@ import 'package:walletconnect_flutter_dapp/utils/crypto/test_data.dart';
 
 enum EIP155UIMethods {
   personalSign,
-  ethSignTypedDataV4,
   ethSendTransaction,
   requestAccounts,
+  ethSignTypedData,
   ethSignTypedDataV3,
+  ethSignTypedDataV4,
   ethSignTransaction,
   walletWatchAsset;
 
@@ -27,6 +28,8 @@ enum EIP155UIMethods {
         return 'eth_requestAccounts';
       case ethSignTypedDataV3:
         return 'eth_signTypedData_v3';
+      case ethSignTypedData:
+        return 'eth_signTypedData';
       case ethSignTransaction:
         return 'eth_signTransaction';
       case walletWatchAsset:
@@ -48,6 +51,8 @@ class EIP155 {
         return EIP155UIMethods.requestAccounts;
       case 'eth_signTypedData_v3':
         return EIP155UIMethods.ethSignTypedDataV3;
+      case 'eth_signTypedData':
+        return EIP155UIMethods.ethSignTypedData;
       case 'eth_signTransaction':
         return EIP155UIMethods.ethSignTransaction;
       case 'wallet_watchAsset':
@@ -90,6 +95,14 @@ class EIP155 {
           chainId: chainId,
           address: address,
           data: jsonEncode(typeDataV3(cid)),
+        );
+      case EIP155UIMethods.ethSignTypedData:
+        return ethSignTypedData(
+          w3mService: w3mService,
+          topic: topic,
+          chainId: chainId,
+          address: address,
+          data: jsonEncode(typedData()),
         );
       case EIP155UIMethods.ethSignTypedDataV4:
         return ethSignTypedDataV4(
@@ -135,6 +148,23 @@ class EIP155 {
       chainId: chainId,
       request: SessionRequestParams(
         method: EIP155UIMethods.personalSign.name,
+        params: [data, address],
+      ),
+    );
+  }
+
+  static Future<dynamic> ethSignTypedData({
+    required W3MService w3mService,
+    required String topic,
+    required String chainId,
+    required String address,
+    required String data,
+  }) async {
+    return await w3mService.request(
+      topic: topic,
+      chainId: chainId,
+      request: SessionRequestParams(
+        method: EIP155UIMethods.ethSignTypedData.name,
         params: [data, address],
       ),
     );
@@ -242,7 +272,7 @@ class EIP155 {
           w3mService: w3mService,
           rpcUrl: 'https://ethereum-sepolia.publicnode.com',
           address: w3mService.session!.address!,
-          topic: w3mService.session!.topic!,
+          topic: w3mService.session?.topic ?? '',
           chainId: 'eip155:11155111',
           contract: deployedContract,
           transaction: Transaction(
