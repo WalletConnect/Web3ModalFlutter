@@ -205,6 +205,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> syncTheme(Web3ModalTheme? theme) async {
+    _currentTheme = theme;
     final mode = _currentTheme?.isDarkMode == true ? 'dark' : 'light';
     final message = SyncTheme(mode: mode).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
