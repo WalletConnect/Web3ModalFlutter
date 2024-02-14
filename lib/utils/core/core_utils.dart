@@ -2,8 +2,6 @@ import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/utils/core/i_core_utils.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
-// ignore: depend_on_referenced_packages
-import 'package:package_info_plus/package_info_plus.dart';
 
 class CoreUtils extends ICoreUtils {
   @override
@@ -110,11 +108,5 @@ class CoreUtils extends ICoreUtils {
       'user-agent': getUserAgent(),
       'referer': referer ?? '',
     };
-  }
-
-  @override
-  Future<String> getPackageName() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    return packageInfo.packageName;
   }
 }

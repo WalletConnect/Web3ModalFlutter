@@ -33,16 +33,20 @@ class CoinbaseService implements ICoinbaseService {
     'wallet_watchAsset',
   ];
 
+  @protected
   @override
   Event<CoinbaseConnectEvent> onCoinbaseConnect = Event<CoinbaseConnectEvent>();
 
+  @protected
   @override
   Event<CoinbaseErrorEvent> onCoinbaseError = Event<CoinbaseErrorEvent>();
 
+  @protected
   @override
   Event<CoinbaseSessionEvent> onCoinbaseSessionUpdate =
       Event<CoinbaseSessionEvent>();
 
+  @protected
   @override
   Event<CoinbaseResponseEvent> get onCoinbaseResponse =>
       Event<CoinbaseResponseEvent>();
@@ -104,6 +108,7 @@ class CoinbaseService implements ICoinbaseService {
     }
   }
 
+  @protected
   @override
   Future<dynamic> cbRequest({
     String? chainId,
@@ -145,6 +150,7 @@ class CoinbaseService implements ICoinbaseService {
     }
   }
 
+  @protected
   @override
   Future<bool> cbIsInstalled() async {
     try {
@@ -154,6 +160,7 @@ class CoinbaseService implements ICoinbaseService {
     }
   }
 
+  @protected
   @override
   Future<bool> cbIsConnected() async {
     try {
@@ -163,6 +170,7 @@ class CoinbaseService implements ICoinbaseService {
     }
   }
 
+  @protected
   @override
   Future<void> cbResetSession() async {
     try {

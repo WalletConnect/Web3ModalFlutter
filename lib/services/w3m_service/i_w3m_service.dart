@@ -80,6 +80,8 @@ abstract class IW3MService with ChangeNotifier {
   /// If none is provided, the default state will be used based on platform.
   Future<void> openModal(BuildContext context, [Widget? startWidget]);
 
+  Future<void> openNetworks(BuildContext context);
+
   /// Connects to the relay if not already connected.
   /// If the relay is already connected, this does nothing.
   Future<void> reconnectRelay();

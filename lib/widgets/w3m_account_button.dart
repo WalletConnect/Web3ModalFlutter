@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/pages/approve_magic_request_page.dart';
 import 'package:web3modal_flutter/pages/confirm_email_page.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
@@ -69,7 +68,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     });
   }
 
-  void _onTap() => widget.service.openModal(context, const AccountPage());
+  void _onTap() => widget.service.openModal(context);
 
   void _approveSign(MagicRequestEvent? args) async {
     if (args?.request != null) {

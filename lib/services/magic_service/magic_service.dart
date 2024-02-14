@@ -9,7 +9,6 @@ import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_message.dart';
-import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -123,8 +122,11 @@ class MagicService implements IMagicService {
 
     _webview = WebViewWidget(controller: _webViewController);
 
-    final packageName = await coreUtils.instance.getPackageName();
-    final headers = {'origin': packageName};
+    final packageName = await WalletConnectUtils.getPackageName();
+    final headers = {
+      'origin': packageName,
+      'referer': _metadata.url,
+    };
     _webViewController.loadRequest(
       Uri.parse('$_url/sdk?projectId=$_projectId'),
       headers: headers,

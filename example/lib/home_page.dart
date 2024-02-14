@@ -64,7 +64,6 @@ class _MyHomePageState extends State<MyHomePage> {
       //   '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', // Bitget
       // },
     );
-    await _w3mService.init();
 
     // If you want to support just one chain uncomment this line and avoid using W3MNetworkSelectButton()
     // _w3mService.selectChain(W3MChainPresets.chains['137']);
@@ -74,6 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
     _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
     _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
+
+    await _w3mService.init();
   }
 
   @override
@@ -142,6 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             _ButtonsView(w3mService: _w3mService),
+            // _CustomButtonsView(w3mService: _w3mService),
             const Divider(height: 0.0, color: Colors.transparent),
             _ConnectedView(w3mService: _w3mService)
           ],
@@ -165,6 +167,45 @@ class _ButtonsView extends StatelessWidget {
           child: W3MNetworkSelectButton(service: w3mService),
         ),
         W3MConnectWalletButton(service: w3mService),
+        // W3MAccountButton(service: w3mService),
+        const SizedBox.square(dimension: 8.0),
+      ],
+    );
+  }
+}
+
+// ignore: unused_element
+class _CustomButtonsView extends StatelessWidget {
+  const _CustomButtonsView({required this.w3mService});
+  final W3MService w3mService;
+
+  @override
+  Widget build(BuildContext context) {
+    if (w3mService.status.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return Column(
+      children: [
+        const SizedBox.square(dimension: 8.0),
+        Visibility(
+          visible: !w3mService.isConnected,
+          child: TextButton(
+            onPressed: () {
+              w3mService.openNetworks(context);
+            },
+            child: const Text('OPEN CHAINS'),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            w3mService.openModal(context);
+          },
+          child: w3mService.isConnected
+              ? Text(w3mService.session!.address!)
+              : const Text('CONNECT WALLET'),
+        ),
         const SizedBox.square(dimension: 8.0),
       ],
     );

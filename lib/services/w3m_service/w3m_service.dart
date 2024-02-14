@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
+import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/i_coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
@@ -380,10 +381,33 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   @override
+  Future<void> openNetworks(BuildContext context) async {
+    return _showModalView(
+      context,
+      SelectNetworkPage(
+        onTapNetwork: (info) {
+          selectChain(info);
+          widgetStack.instance.addDefault();
+        },
+      ),
+    );
+  }
+
+  // TODO [Widget? startWidget] parameter should be removed
+  @override
   Future<void> openModal(BuildContext context, [Widget? startWidget]) async {
+    // , [Widget? startWidget]
+    return _showModalView(context, startWidget);
+  }
+
+  Future<void> _showModalView(
+    BuildContext context, [
+    Widget? startWidget,
+  ]) async {
     _checkInitialized();
 
     if (_isOpen) {
+      closeModal();
       return;
     }
     _isOpen = true;
@@ -645,6 +669,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     if (!_isOpen) {
       return;
     }
+    _isOpen = false;
 
     toastUtils.instance.clear();
     if (_context != null) {
