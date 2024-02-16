@@ -1,9 +1,6 @@
-## 3.1.1-beta02
+## 3.1.1
 
 - Minor bug fix during preferences clearing
-
-## 3.1.1-beta01
-
 - Better Smart Contract interactions
 
 ## 3.1.0
