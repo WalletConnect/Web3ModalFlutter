@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
+import 'package:web3modal_flutter/pages/approve_magic_request_page.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/i_coinbase_service.dart';
@@ -439,20 +440,22 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       child: childWidget,
     );
 
+    final isApprovePage = startWidget is ApproveTransactionPage;
     final isTabletSize = platformUtils.instance.isTablet(_context!);
+
     if (isBottomSheet && !isTabletSize) {
       final mqData = MediaQueryData.fromView(View.of(_context!));
       final safeGap = mqData.viewPadding.bottom;
       final maxHeight = mqData.size.height - safeGap - 20.0;
       await showModalBottomSheet(
         backgroundColor: Colors.transparent,
-        isDismissible: true,
+        isDismissible: !isApprovePage,
         isScrollControlled: true,
-        enableDrag: true,
+        enableDrag: false,
         elevation: 0.0,
         useRootNavigator: true,
         constraints: BoxConstraints(
-          maxHeight: maxHeight,
+          maxHeight: isApprovePage ? 600.0 : maxHeight,
         ),
         context: _context!,
         builder: (_) => rootWidget,

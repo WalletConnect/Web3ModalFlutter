@@ -9,6 +9,8 @@ import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_message.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -24,7 +26,9 @@ class MagicServiceSingleton {
 final magicService = MagicServiceSingleton();
 
 class MagicService implements IMagicService {
-  static const _url = 'https://secure.walletconnect.com';
+  static const _url =
+      'https://secure-web3modal-git-chore-filtervalidmob-afe597-walletconnect1.vercel.app';
+  // static const _url = 'https://100c55b2ceb7.ngrok.app';
   static const supportedMethods = [
     'personal_sign',
     'eth_sign',
@@ -37,6 +41,7 @@ class MagicService implements IMagicService {
   late final String _projectId;
   late final PairingMetadata _metadata;
   Web3ModalTheme? _currentTheme;
+  Timer? _timeOutTimer;
 
   late WebViewController _webViewController;
   late WebViewWidget _webview;
@@ -76,16 +81,7 @@ class MagicService implements IMagicService {
   })  : _projectId = projectId,
         _metadata = metadata;
 
-  static final _safeDomains = [
-    'walletconnect.com',
-    'magic.link',
-    'ngrok.app',
-  ];
-
-  bool _isAllowedDomain(String domain) {
-    final domains = _safeDomains.join('|');
-    return RegExp(r'' + domains).hasMatch(domain);
-  }
+  final _key = UniqueKey();
 
   @override
   Future<void> init() async {
@@ -114,23 +110,12 @@ class MagicService implements IMagicService {
           },
         ),
       )
-      ..addJavaScriptChannel(
-        'w3mWebview',
-        onMessageReceived: _onFrameMessage,
-      )
-      ..setOnConsoleMessage(_onDebugConsoleReceived);
+      ..addJavaScriptChannel('w3mWebview', onMessageReceived: _onFrameMessage)
+      ..setOnConsoleMessage(_onDebugConsoleReceived)
+      ..setUserAgent(coreUtils.instance.getUserAgent());
 
-    _webview = WebViewWidget(controller: _webViewController);
-
-    final packageName = await WalletConnectUtils.getPackageName();
-    final headers = {
-      'origin': packageName,
-      'referer': _metadata.url,
-    };
-    _webViewController.loadRequest(
-      Uri.parse('$_url/sdk?projectId=$_projectId'),
-      headers: headers,
-    );
+    _webview = WebViewWidget(key: _key, controller: _webViewController);
+    await reload();
 
     if (kDebugMode) {
       try {
@@ -160,8 +145,12 @@ class MagicService implements IMagicService {
   }
 
   @override
-  void reload() {
-    _webViewController.reload();
+  Future<void> reload() async {
+    final initialUrl = Uri.parse('$_url/sdk?projectId=$_projectId');
+    final packageName = await WalletConnectUtils.getPackageName();
+    final headers = {'origin': packageName, 'referer': _metadata.url};
+    await _webViewController.loadRequest(initialUrl, headers: headers);
+    _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _checkTimeOut);
   }
 
   @override
@@ -208,8 +197,7 @@ class MagicService implements IMagicService {
   @override
   Future<void> syncTheme(Web3ModalTheme? theme) async {
     _currentTheme = theme;
-    final mode = _currentTheme?.isDarkMode == true ? 'dark' : 'light';
-    final message = SyncTheme(mode: mode).toString();
+    final message = SyncTheme(theme: theme).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
@@ -276,6 +264,9 @@ class MagicService implements IMagicService {
 
       final messageMap = MagicMessage.fromJson(jsonMessage);
       W3MLoggerUtil.logger.i('[$runtimeType] JS message ${message.message}');
+      if (messageMap.syncDataSuccess) {
+        _resetTimeOut();
+      }
       // ****** IS_CONNECTED
       if (messageMap.isConnectSuccess) {
         _authenticated = messageMap.payload?['isConnected'] as bool;
@@ -397,6 +388,7 @@ class MagicService implements IMagicService {
 
       // TODO this would have to be removed after proper implementation of syncTheme()
       const setBGColor = (color) => {
+        console.log('color', color)
         document.body.style.backgroundColor = color
         const buttons = document.getElementsByClassName("signWrapper")
         buttons[0].style.backgroundColor = color
@@ -418,19 +410,37 @@ class MagicService implements IMagicService {
   void _setModalColor() {
     Future.delayed(Duration(milliseconds: 50), () {
       final isDarkMode = _currentTheme?.isDarkMode ?? false;
+      final themeData = _currentTheme?.themeData ?? Web3ModalThemeData();
       final rbgColor = isDarkMode
-          ? _currentTheme?.themeData?.darkColors.background125
-          : _currentTheme?.themeData?.lightColors.background125;
-      final jsColor = _dartColorToJS(rbgColor ?? Colors.transparent);
+          ? themeData.darkColors.background125
+          : themeData.lightColors.background125;
+      final jsColor = Util.colorToRGBA(rbgColor);
       _webViewController.runJavaScript('setBGColor("$jsColor")');
     });
   }
 
-  String _dartColorToJS(Color color) {
-    final r = color.red;
-    final g = color.green;
-    final b = color.blue;
-    final a = color.opacity;
-    return 'rgba($r, $g, $b, $a)';
+  bool _isAllowedDomain(String domain) {
+    final domains = _safeDomains.join('|');
+    return RegExp(r'' + domains).hasMatch(domain);
   }
+
+  void _checkTimeOut(Timer time) {
+    debugPrint(time.tick.toString());
+    if (time.tick > 15) {
+      _resetTimeOut();
+      _error('Error checking isConnected');
+    }
+  }
+
+  void _resetTimeOut() {
+    _timeOutTimer?.cancel();
+    _timeOutTimer = null;
+  }
+
+  static final _safeDomains = [
+    'walletconnect.com',
+    'magic.link',
+    'ngrok.app',
+    'walletconnect1.vercel.app',
+  ];
 }

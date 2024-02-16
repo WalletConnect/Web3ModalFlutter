@@ -17,7 +17,7 @@ enum EmailLoginStep {
 
 abstract class IMagicService {
   Future<void> init();
-  void reload(); // TODO check if this is needed
+  Future<void> reload();
   void setEmail(String value);
 
   // ****** W3mFrameProvider public methods ******* //

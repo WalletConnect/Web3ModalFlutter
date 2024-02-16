@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/utils/util.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -191,19 +192,19 @@ class _CustomButtonsView extends StatelessWidget {
         const SizedBox.square(dimension: 8.0),
         Visibility(
           visible: !w3mService.isConnected,
-          child: TextButton(
+          child: ElevatedButton(
             onPressed: () {
               w3mService.openNetworks(context);
             },
             child: const Text('OPEN CHAINS'),
           ),
         ),
-        TextButton(
+        ElevatedButton(
           onPressed: () {
             w3mService.openModal(context);
           },
           child: w3mService.isConnected
-              ? Text(w3mService.session!.address!)
+              ? Text(Util.truncate(w3mService.session!.address!))
               : const Text('CONNECT WALLET'),
         ),
         const SizedBox.square(dimension: 8.0),

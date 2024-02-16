@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:convert/convert.dart';
@@ -167,13 +169,37 @@ class UpdateEmail extends MagicMessage {
 // readonly APP_AWAIT_UPDATE_EMAIL: "@w3m-app/AWAIT_UPDATE_EMAIL";
 
 class SyncTheme extends MagicMessage {
-  final String mode;
-  SyncTheme({this.mode = 'light'}) : super(type: '@w3m-app/SYNC_THEME');
+  final Web3ModalTheme? theme;
+  SyncTheme({required this.theme}) : super(type: '@w3m-app/SYNC_THEME');
 
   @override
   String toString() {
+    final mode = theme?.isDarkMode == true ? 'dark' : 'light';
     final tm = 'themeMode:\'$mode\'';
-    return '{type:\'${super.type}\',payload:{$tm}}';
+    final themeData = theme?.themeData ?? Web3ModalThemeData();
+    late Web3ModalColors colors;
+    if (mode == 'dark') {
+      colors = themeData.darkColors;
+    } else {
+      colors = themeData.lightColors;
+    }
+
+    // Available keys:
+    // '--w3m-accent'?: string
+    // '--w3m-color-mix'?: string
+    // '--w3m-color-mix-strength'?: number
+    // '--w3m-font-family'?: string
+    // '--w3m-font-size-master'?: string
+    // '--w3m-border-radius-master'?: string
+    // '--w3m-z-index'?: number
+
+    final c1 = '\'--w3m-accent\':\'${Util.colorToRGBA(colors.accent100)}\'';
+    // final c2 = '\'--w3m-color-mix\':\'${Util.colorToRGBA(colors.background125)}\'';
+    // final c3 = '\'--w3m-color-mix-strength\':100';
+    // final c4 = '\'--w3m-z-index\':100000000';
+    final tv = 'themeVariables:{$c1}';
+
+    return '{type:\'${super.type}\',payload:{$tm,$tv}}';
   }
 }
 

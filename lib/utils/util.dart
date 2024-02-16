@@ -3,6 +3,19 @@ import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 
 class Util {
+  static Set<String> getChainsFromNamespace(Map<String, RequiredNamespace> ns) {
+    return ns[StringConstants.namespace]?.chains?.toSet() ?? {};
+  }
+
+  static Set<String> getMethodsFromNamespace(
+      Map<String, RequiredNamespace> ns) {
+    return ns[StringConstants.namespace]?.methods.toSet() ?? {};
+  }
+
+  static Set<String> getEventsFromNamespace(Map<String, RequiredNamespace> ns) {
+    return ns[StringConstants.namespace]?.events.toSet() ?? {};
+  }
+
   static String shorten(String value, {bool short = false}) {
     return short && value.length > 8 ? '${value.substring(0, 8)}..' : value;
   }
@@ -71,16 +84,18 @@ class Util {
     return [tintedR, tintedG, tintedB];
   }
 
-  static Set<String> getChainsFromNamespace(Map<String, RequiredNamespace> ns) {
-    return ns[StringConstants.namespace]?.chains?.toSet() ?? {};
+  static String colorToRGBA(Color color) {
+    final r = color.red;
+    final g = color.green;
+    final b = color.blue;
+    final a = color.opacity;
+    return 'rgba($r, $g, $b, $a)';
   }
 
-  static Set<String> getMethodsFromNamespace(
-      Map<String, RequiredNamespace> ns) {
-    return ns[StringConstants.namespace]?.methods.toSet() ?? {};
-  }
-
-  static Set<String> getEventsFromNamespace(Map<String, RequiredNamespace> ns) {
-    return ns[StringConstants.namespace]?.events.toSet() ?? {};
+  static String colorToHex(Color color) {
+    return '${color.alpha.toRadixString(16).padLeft(2, '0')}'
+        '${color.red.toRadixString(16).padLeft(2, '0')}'
+        '${color.green.toRadixString(16).padLeft(2, '0')}'
+        '${color.blue.toRadixString(16).padLeft(2, '0')}';
   }
 }
