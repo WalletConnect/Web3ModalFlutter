@@ -589,7 +589,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     if (_context != null) {
       // _isOpen and notify() are handled when we call Navigator.pop()
       // by the open() method
-      Navigator.pop(_context!);
+      Navigator.of(_context!, rootNavigator: true).pop();
     } else {
       _notify();
     }
