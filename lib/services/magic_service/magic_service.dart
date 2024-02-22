@@ -9,7 +9,6 @@ import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_message.dart';
-import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -26,9 +25,14 @@ class MagicServiceSingleton {
 final magicService = MagicServiceSingleton();
 
 class MagicService implements IMagicService {
-  static const _url =
-      'https://secure-web3modal-git-chore-filtervalidmob-afe597-walletconnect1.vercel.app';
-  // static const _url = 'https://100c55b2ceb7.ngrok.app';
+  static const _origin = 'secure.walletconnect.com';
+  static const _url = 'https://$_origin/mobile-sdk';
+  static const _safeDomains = [
+    'walletconnect.com',
+    'magic.link',
+    'ngrok.app',
+    'walletconnect1.vercel.app',
+  ];
   static const supportedMethods = [
     'personal_sign',
     'eth_sign',
@@ -38,12 +42,11 @@ class MagicService implements IMagicService {
     'wallet_addEthereumChain',
   ];
   //
-  late final String _projectId;
-  late final PairingMetadata _metadata;
+  late final IWeb3App _web3app;
   Web3ModalTheme? _currentTheme;
   Timer? _timeOutTimer;
 
-  late WebViewController _webViewController;
+  final _webViewController = WebViewController();
   late WebViewWidget _webview;
   WebViewWidget get webview => _webview;
 
@@ -75,19 +78,17 @@ class MagicService implements IMagicService {
   final email = ValueNotifier<String>('');
   final step = ValueNotifier<EmailLoginStep>(EmailLoginStep.idle);
 
-  MagicService({
-    required String projectId,
-    required PairingMetadata metadata,
-  })  : _projectId = projectId,
-        _metadata = metadata;
-
-  final _key = UniqueKey();
+  MagicService({required IWeb3App web3app}) : _web3app = web3app {
+    _webview = WebViewWidget(
+      controller: _webViewController,
+    );
+  }
 
   @override
   Future<void> init() async {
     _initialized = Completer<bool>();
 
-    _webViewController = WebViewController()
+    _webViewController
       ..setBackgroundColor(Colors.transparent)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -101,9 +102,8 @@ class MagicService implements IMagicService {
           },
           onWebResourceError: _onWebResourceError,
           onPageFinished: (String url) async {
-            await _runJavascript(_projectId);
+            await _runJavascript(_web3app.core.projectId);
             await Future.delayed(Duration(milliseconds: 100));
-            await _syncDappData();
             if (!_initialized.isCompleted) {
               _initialized.complete(true);
             }
@@ -111,11 +111,9 @@ class MagicService implements IMagicService {
         ),
       )
       ..addJavaScriptChannel('w3mWebview', onMessageReceived: _onFrameMessage)
-      ..setOnConsoleMessage(_onDebugConsoleReceived)
-      ..setUserAgent(coreUtils.instance.getUserAgent());
+      ..setOnConsoleMessage(_onDebugConsoleReceived);
 
-    _webview = WebViewWidget(key: _key, controller: _webViewController);
-    await reload();
+    await loadRequest();
 
     if (kDebugMode) {
       try {
@@ -145,12 +143,22 @@ class MagicService implements IMagicService {
   }
 
   @override
-  Future<void> reload() async {
-    final initialUrl = Uri.parse('$_url/sdk?projectId=$_projectId');
-    final packageName = await WalletConnectUtils.getPackageName();
-    final headers = {'origin': packageName, 'referer': _metadata.url};
-    await _webViewController.loadRequest(initialUrl, headers: headers);
-    _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _checkTimeOut);
+  Future<void> loadRequest() async {
+    try {
+      final packageName = await WalletConnectUtils.getPackageName();
+      final headers = {
+        // secure-site's middleware requires a referer otherwise it throws `400: Missing projectId or referer`
+        // TODO check if sending _web3app.metadata.url is OK
+        'referer': _web3app.metadata.url,
+        'X-Bundle-Id': packageName,
+      };
+      await _webViewController.loadRequest(_requestUri, headers: headers);
+      // in case connection message or even the request itself hangs there's no other way to continue the flow than timing it out.
+      _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _checkTimeOut);
+    } catch (e) {
+      debugPrint('reload $e');
+      _initialized.complete(false);
+    }
   }
 
   @override
@@ -160,18 +168,21 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> connectEmail({required String value}) async {
+    if (!_initialized.isCompleted || !(await _initialized.future)) return;
     final message = ConnectEmail(email: value).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   @override
   Future<void> connectDevice() async {
+    if (!_initialized.isCompleted || !(await _initialized.future)) return;
     final message = ConnectDevice().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   @override
   Future<void> connectOtp({required String otp}) async {
+    if (!_initialized.isCompleted || !(await _initialized.future)) return;
     step.value = EmailLoginStep.loading;
     final message = ConnectOtp(otp: otp).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
@@ -179,6 +190,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> isConnected() async {
+    if (!_initialized.isCompleted || !(await _initialized.future)) return;
     _connected = Completer<bool>();
     final message = IsConnected().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
@@ -186,6 +198,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> getChainId() async {
+    if (!_initialized.isCompleted || !(await _initialized.future)) return;
     final message = GetChainId().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
@@ -196,30 +209,33 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> syncTheme(Web3ModalTheme? theme) async {
+    if (!_initialized.isCompleted || !(await _initialized.future)) return;
     _currentTheme = theme;
     final message = SyncTheme(theme: theme).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
-  // @override
-  Future<void> _syncDappData() async {
+  @override
+  Future<void> syncDappData() async {
+    if (!_initialized.isCompleted || !(await _initialized.future)) return;
     final message = SyncAppData(
-      metadata: _metadata,
+      metadata: _web3app.metadata,
+      projectId: _web3app.core.projectId,
       sdkVersion: 'flutter-${StringConstants.X_SDK_VERSION}',
-      projectId: _projectId,
     ).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   @override
   Future<void> getUser({String? chainId}) async {
-    // _userLogged = Completer<MagicData?>();
+    if (!_initialized.isCompleted || !(await _initialized.future)) return;
     final message = GetUser(chainId: chainId).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   @override
   Future<void> switchNetwork({required String chainId}) async {
+    if (!_initialized.isCompleted || !(await _initialized.future)) return;
     final message = SwitchNetwork(chainId: chainId).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
@@ -227,6 +243,7 @@ class MagicService implements IMagicService {
   @override
   Future<void> request({required Map<String, dynamic> parameters}) async {
     _response = Completer<dynamic>();
+    if (!_initialized.isCompleted || !(await _initialized.future)) return;
     if (!_authenticated) {
       onMagicLoginRequest.broadcast(MagicSessionEvent(email: email.value));
       _connected = Completer<bool>();
@@ -240,30 +257,33 @@ class MagicService implements IMagicService {
     final message = RpcRequest(method: method, params: params).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
     // TODO THIS HAS TO BE REPLACED IN FAVOR OF PROER syncTheme() IMPLEMENTATION
-    _setModalColor();
+    // _setModalColor();
   }
 
   @override
   Future<void> disconnect() async {
+    if (!_initialized.isCompleted || !(await _initialized.future)) return;
     final message = SignOut().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
-    // _signOutTimer ??= Timer.periodic(Duration(seconds: 2), _diconnectCallback);
   }
 
   // ****** Private Methods ******* //
 
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
-    W3MLoggerUtil.logger.i('[$runtimeType] JS Console ${message.message}');
+    if (kDebugMode) {
+      W3MLoggerUtil.logger.i('[$runtimeType] JS Console ${message.message}');
+    }
   }
 
   void _onFrameMessage(JavaScriptMessage message) async {
-    if (message.message == 'verify_ready') return;
     try {
-      final jsonMessage = jsonDecode(message.message) as Map<String, dynamic>;
-      if (jsonMessage.containsKey('msgType')) return;
-
-      final messageMap = MagicMessage.fromJson(jsonMessage);
-      W3MLoggerUtil.logger.i('[$runtimeType] JS message ${message.message}');
+      final decodeMessage = jsonDecode(message.message) as Map<String, dynamic>;
+      final messageOrigin = decodeMessage['origin'] as String;
+      final messageData = decodeMessage['data'] as Map<String, dynamic>;
+      final messageMap = MagicMessage.fromJson(messageData);
+      if (!_isAllowedOrigin(messageOrigin)) {
+        return;
+      }
       if (messageMap.syncDataSuccess) {
         _resetTimeOut();
       }
@@ -378,21 +398,25 @@ class MagicService implements IMagicService {
 
   Future<void> _runJavascript(String projectId) async {
     await _webViewController.runJavaScript('''
-      window.addEventListener('message', ({ data }) => {
-        window.w3mWebview.postMessage(JSON.stringify(data))
+      const iframeFL = document.getElementById('frame-mobile-sdk')
+      
+      window.addEventListener('message', ({ data, origin }) => {
+        console.log('message received <===== ' + JSON.stringify({data,origin}))
+        window.w3mWebview.postMessage(JSON.stringify({data,origin}))
       })
 
       const sendMessage = async (message) => {
-        postMessage(message, '*')
+        console.log('message posted =====> ' + JSON.stringify(message))
+        iframeFL.contentWindow.postMessage(message, '*')
       }
 
       // TODO this would have to be removed after proper implementation of syncTheme()
-      const setBGColor = (color) => {
-        console.log('color', color)
-        document.body.style.backgroundColor = color
-        const buttons = document.getElementsByClassName("signWrapper")
-        buttons[0].style.backgroundColor = color
-      }
+      // const setBGColor = (color) => {
+      //   console.log('setBGColor =====> ' + color)
+      //   document.body.style.backgroundColor = color
+      //   const buttons = document.getElementsByClassName("signWrapper")
+      //   buttons[0].style.backgroundColor = color
+      // }
     ''');
   }
 
@@ -407,6 +431,7 @@ class MagicService implements IMagicService {
             ''');
   }
 
+  // ignore: unused_element
   void _setModalColor() {
     Future.delayed(Duration(milliseconds: 50), () {
       final isDarkMode = _currentTheme?.isDarkMode ?? false;
@@ -424,6 +449,10 @@ class MagicService implements IMagicService {
     return RegExp(r'' + domains).hasMatch(domain);
   }
 
+  bool _isAllowedOrigin(String origin) {
+    return Uri.parse(origin).authority == _origin;
+  }
+
   void _checkTimeOut(Timer time) {
     debugPrint(time.tick.toString());
     if (time.tick > 15) {
@@ -432,15 +461,16 @@ class MagicService implements IMagicService {
     }
   }
 
+  Uri get _requestUri {
+    final uri = Uri.parse(_url);
+    final queryParams = {
+      'projectId': _web3app.core.projectId,
+    };
+    return uri.replace(queryParameters: queryParams);
+  }
+
   void _resetTimeOut() {
     _timeOutTimer?.cancel();
     _timeOutTimer = null;
   }
-
-  static final _safeDomains = [
-    'walletconnect.com',
-    'magic.link',
-    'ngrok.app',
-    'walletconnect1.vercel.app',
-  ];
 }

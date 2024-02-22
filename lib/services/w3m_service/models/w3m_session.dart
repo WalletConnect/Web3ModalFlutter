@@ -19,6 +19,7 @@ enum W3MSessionService {
   bool get noSession => this == W3MSessionService.none;
 }
 
+// TODO W3MSession shouldn't be public
 class W3MSession {
   SessionData? sessionData;
   CoinbaseData? coinbaseData;
@@ -88,7 +89,13 @@ class W3MSession {
   }
 
   String get chainId {
-    if (sessionData != null) {
+    if (sessionService.isCoinbase) {
+      return coinbaseData!.chainId.toString();
+    }
+    if (sessionService.isMagic) {
+      return magicData!.chainId.toString();
+    }
+    if (sessionService.isWC) {
       final chainIds = NamespaceUtils.getChainIdsFromNamespaces(
         namespaces: sessionData!.namespaces,
       );
@@ -100,24 +107,18 @@ class W3MSession {
         }
       }
     }
-    if (coinbaseData != null) {
-      return coinbaseData!.chainId.toString();
-    }
-    if (magicData != null) {
-      return magicData!.chainId.toString();
-    }
 
     return '1';
   }
 
   String? get connectedWalletName {
-    if (coinbaseData != null) {
+    if (sessionService.isCoinbase) {
       return 'Coinbase Wallet';
     }
-    if (magicData != null) {
+    if (sessionService.isMagic) {
       return 'Email Login';
     }
-    if (sessionData != null) {
+    if (sessionService.isWC) {
       return sessionData!.peer.metadata.name;
     }
     return null;

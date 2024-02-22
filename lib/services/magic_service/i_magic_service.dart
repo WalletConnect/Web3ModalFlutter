@@ -17,7 +17,7 @@ enum EmailLoginStep {
 
 abstract class IMagicService {
   Future<void> init();
-  Future<void> reload();
+  Future<void> loadRequest();
   void setEmail(String value);
 
   // ****** W3mFrameProvider public methods ******* //
@@ -28,7 +28,7 @@ abstract class IMagicService {
   Future<void> getChainId();
   // Future<void> updateEmail({required String email});
   Future<void> syncTheme(Web3ModalTheme? theme);
-  // Future<void> syncDappData();
+  Future<void> syncDappData();
   Future<void> getUser({String? chainId});
   Future<void> switchNetwork({required String chainId});
   Future<void> request({required Map<String, dynamic> parameters});

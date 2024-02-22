@@ -142,8 +142,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     );
 
     magicService.instance = MagicService(
-      projectId: _projectId,
-      metadata: _web3App.metadata,
+      web3app: _web3App,
     );
 
     W3MLoggerUtil.setLogLevel(logLevel, debugMode: true);
@@ -169,12 +168,13 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     _notify();
 
+    await _web3App.init();
     await Future.wait([
       magicService.instance.init(),
       magicService.instance.initialized(),
     ]);
+    await magicService.instance.syncDappData();
     await magicService.instance.isConnected();
-    await _web3App.init();
     await storageService.instance.init();
     await networkService.instance.init();
     await explorerService.instance.init();
@@ -309,7 +309,8 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     _chainBalance = null;
 
     if (_currentSession?.sessionService.isMagic == true) {
-      magicService.instance.switchNetwork(chainId: chainInfo.chainId);
+      await magicService.instance.switchNetwork(chainId: chainInfo.chainId);
+      // TODO this should be handled in an event
       _setEthChain(chainInfo);
     } else {
       final hasValidSession = _isConnected && _currentSession != null;
