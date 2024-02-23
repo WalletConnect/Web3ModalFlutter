@@ -1,4 +1,4 @@
-name: Build iOS App Release
+name: Build iOS App Debug
 
 on:
   workflow_dispatch:
@@ -18,12 +18,12 @@ jobs:
       env:
         BUILD_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERT }}
         P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-        BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+        BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_DEBUG_BASE64 }}
         KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       run: |
         # create variables
         BUILD_CERT_PATH=$RUNNER_TEMP/build_certificate.p12        
-        PP_PATH=$RUNNER_TEMP/FlutterAppStoreProfileWithPush.mobileprovision
+        PP_PATH=$RUNNER_TEMP/FlutterAppStoreProfileDebug.mobileprovision
         KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
         # import certificate and provisioning profile from secrets
@@ -87,7 +87,6 @@ jobs:
         VERSION_NUMBER=(${FULL_VERSION//-/ })
 
         # Build ios app with flutter
-        # echo "flutter build ios --build-name $VERSION_NUMBER --dart-define=\"PROJECT_ID=$PROJECT_ID\" --config-only --release"
         flutter build ios --build-name $VERSION_NUMBER --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
         
         cd ios
@@ -96,7 +95,7 @@ jobs:
 
         # Archive and export
         xcodebuild -workspace "$GITHUB_WORKSPACE/example/ios/Runner.xcworkspace" -scheme Runner -sdk iphoneos -destination generic/platform=iOS -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" archive
-        xcodebuild -exportArchive -allowProvisioningUpdates -sdk iphoneos -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" -exportOptionsPlist "$GITHUB_WORKSPACE/example/ios/Runner/ExportOptionsRelease.plist" -exportPath "$GITHUB_WORKSPACE/example/build/ios/ipa" -authenticationKeyIssuerID $APPLE_ISSUER_ID -authenticationKeyID $APP_STORE_KEY_ID -authenticationKeyPath "$GITHUB_WORKSPACE/example/build/ios/ipa/private_keys/AuthKey_$APP_STORE_KEY_ID.p8"
+        xcodebuild -exportArchive -allowProvisioningUpdates -sdk iphoneos -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" -exportOptionsPlist "$GITHUB_WORKSPACE/example/ios/Runner/ExportOptionsDebug.plist" -exportPath "$GITHUB_WORKSPACE/example/build/ios/ipa" -authenticationKeyIssuerID $APPLE_ISSUER_ID -authenticationKeyID $APP_STORE_KEY_ID -authenticationKeyPath "$GITHUB_WORKSPACE/example/build/ios/ipa/private_keys/AuthKey_$APP_STORE_KEY_ID.p8"
     # Upload IPA to Testflight
     - name: Upload IPA to Testflight
       working-directory: example/build/ios/ipa
@@ -112,7 +111,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"New iOS Example app for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
+            "text":"New iOS ALPHA VERSION for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
           }
     # Clean up
     - name: Clean up
