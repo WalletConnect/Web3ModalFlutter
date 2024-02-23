@@ -26,12 +26,11 @@ final magicService = MagicServiceSingleton();
 
 class MagicService implements IMagicService {
   static const _origin = 'secure.walletconnect.com';
-  static const _url = 'https://$_origin/mobile-sdk';
+  static const _url = 'secure-mobile.walletconnect.com/mobile-sdk';
   static const _safeDomains = [
     'walletconnect.com',
     'magic.link',
-    'ngrok.app',
-    'walletconnect1.vercel.app',
+    if (kDebugMode) 'ngrok.app',
   ];
   static const supportedMethods = [
     'personal_sign',
@@ -462,10 +461,8 @@ class MagicService implements IMagicService {
   }
 
   Uri get _requestUri {
-    final uri = Uri.parse(_url);
-    final queryParams = {
-      'projectId': _web3app.core.projectId,
-    };
+    final uri = Uri.parse('https://$_url');
+    final queryParams = {'projectId': _web3app.core.projectId};
     return uri.replace(queryParameters: queryParams);
   }
 
