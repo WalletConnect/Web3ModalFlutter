@@ -1,7 +1,6 @@
 name: Build iOS App Internal
 
-on:
-  workflow_dispatch:
+on: workflow_dispatch
   # release:
   #   types: [ published ]
 
