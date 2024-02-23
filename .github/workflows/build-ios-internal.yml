@@ -2,8 +2,8 @@ name: Build iOS App Internal
 
 on:
   workflow_dispatch:
-  release:
-    types: [ published ]
+  # release:
+  #   types: [ published ]
 
 jobs:
   build_with_signing:
