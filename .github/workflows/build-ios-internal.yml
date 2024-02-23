@@ -85,6 +85,12 @@ jobs:
         FULL_VERSION=${PARTS[1]}
         VERSION_NUMBER=(${FULL_VERSION//-/ })
 
+        # Change bundleId in project.pbxproj
+        sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.debug/g' ios/Runner.xcodeproj/project.pbxproj
+
+        # Change provisioning prfile in project.pbxproj
+        sed -i '' 's/FlutterAppStoreProfileWithPush/FlutterAppStoreProfileDebug/g' ios/Runner.xcodeproj/project.pbxproj
+
         # Build ios app with flutter
         flutter build ios --build-name $VERSION_NUMBER --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
         
@@ -117,7 +123,7 @@ jobs:
       if: ${{ always() }}
       run: |
         security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
-        rm ~/Library/MobileDevice/Provisioning\ Profiles/FlutterAppStoreProfileWithPush.mobileprovision
+        rm ~/Library/MobileDevice/Provisioning\ Profiles/FlutterAppStoreProfileDebug.mobileprovision
         flutter clean
         cd example
         flutter clean
