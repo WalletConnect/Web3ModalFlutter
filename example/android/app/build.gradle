@@ -44,7 +44,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.web3modal.flutterExample"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
@@ -52,6 +52,26 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+    }
+
+    // Specifies one flavor dimension.
+    flavorDimensions = ["version"]
+
+    productFlavors {
+        alpha {
+            // Assigns this product flavor to the "version" flavor dimension.
+            // If you are using only one dimension, this property is optional,
+            // and the plugin automatically assigns all the module's flavors to
+            // that dimension.
+            dimension "version"
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-alpha"
+        }
+        beta {
+            dimension "version"
+            applicationIdSuffix ".internal"
+            versionNameSuffix "-beta"
+        }
     }
 
     buildTypes {

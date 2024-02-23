@@ -1,9 +1,8 @@
-name: Build Android App Release
+name: Build Android App Debug (alpha)
 
-on:
-  workflow_dispatch:
-  release:
-    types: [ published ]
+on: workflow_dispatch
+  # release:
+  #   types: [ published ]
 
 jobs:
   build_with_signing:
@@ -78,7 +77,7 @@ jobs:
         NEXT_BUILD=$(grep 'versionCode' $GRADLE_FILE | cut -d'=' -f2)
 
         # Build Android app with flutter
-        flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release
+        flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release --flavor alpha
         
     # Setup Node
     - name: Setup Node
