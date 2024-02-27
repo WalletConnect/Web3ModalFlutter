@@ -124,6 +124,7 @@ class CoinbaseService implements ICoinbaseService {
         onCoinbaseError.broadcast(CoinbaseErrorEvent(errorMessage));
         throw W3MCoinbaseException('$errorMessage ($errorCode)');
       }
+      final value = result.value?.replaceAll('"', '');
       switch (req.actions.first.method) {
         case 'wallet_switchEthereumChain':
         case 'wallet_addEthereumChain':
@@ -131,16 +132,15 @@ class CoinbaseService implements ICoinbaseService {
           onCoinbaseSessionUpdate.broadcast(event);
           break;
         case 'eth_requestAccounts':
-          final json = jsonDecode(result.value!);
+          final json = jsonDecode(value!);
           final data = CoinbaseData.fromJson(json);
           onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
           break;
         default:
-          final data = result.value;
-          onCoinbaseResponse.broadcast(CoinbaseResponseEvent(data: data));
+          onCoinbaseResponse.broadcast(CoinbaseResponseEvent(data: value));
           break;
       }
-      return result.value;
+      return value;
     } catch (e, s) {
       if (e is W3MCoinbaseException) {
         rethrow;

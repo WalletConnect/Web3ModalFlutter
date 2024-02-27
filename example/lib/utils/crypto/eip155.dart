@@ -86,7 +86,7 @@ class EIP155 {
           topic: topic,
           chainId: chainId,
           address: address,
-          data: testSignData,
+          message: testSignData,
         );
       case EIP155UIMethods.ethSignTypedDataV3:
         return ethSignTypedDataV3(
@@ -141,7 +141,7 @@ class EIP155 {
     required String topic,
     required String chainId,
     required String address,
-    required String data,
+    required String message,
   }) async {
     return await w3mService.request(
       topic: topic,
@@ -183,6 +183,7 @@ class EIP155 {
       request: SessionRequestParams(
         method: EIP155UIMethods.ethSignTypedDataV3.name,
         params: [data, address],
+        params: [message, address],
       ),
     );
   }
