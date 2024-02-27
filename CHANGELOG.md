@@ -1,3 +1,7 @@
+## 3.2.1-alpha01
+
+- Email Login support
+
 ## 3.1.1
 
 - Minor bug fix during preferences clearing
