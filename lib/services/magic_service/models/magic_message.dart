@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
-// ignore: depend_on_referenced_packages
+
 import 'package:convert/convert.dart';
 
 class MagicMessage {

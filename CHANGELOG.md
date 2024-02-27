@@ -1,4 +1,4 @@
-## 3.2.1-alpha01
+## 3.2.0-alpha01
 
 - Email Login support
 

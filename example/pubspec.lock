@@ -1115,7 +1115,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.2.1-alpha01"
+    version: "3.2.0-alpha01"
   web_socket_channel:
     dependency: transitive
     description:
@@ -1136,10 +1136,10 @@ packages:
     dependency: transitive
     description:
       name: webview_flutter_android
-      sha256: "4ea3c4e1b8ed590162b15b8a61b41b1ef3ff179a314627c16ce40c086d94b8af"
+      sha256: "3e5f4e9d818086b0d01a66fb1ff9cc72ab0cc58c71980e3d3661c5685ea0efb0"
       url: "https://pub.dev"
     source: hosted
-    version: "3.14.0"
+    version: "3.15.0"
   webview_flutter_platform_interface:
     dependency: transitive
     description:
