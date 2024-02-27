@@ -87,6 +87,7 @@ jobs:
 
         # Change bundleId in project.pbxproj
         sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.debug/g' ios/Runner.xcodeproj/project.pbxproj
+        sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.debug/g' ios/Runner/Info.plist
 
         # Change provisioning prfile in project.pbxproj
         sed -i '' 's/FlutterAppStoreProfileWithPush/FlutterAppStoreProfileDebug/g' ios/Runner.xcodeproj/project.pbxproj
