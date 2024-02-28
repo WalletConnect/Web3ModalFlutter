@@ -65,12 +65,12 @@ android {
             // that dimension.
             dimension "version"
             applicationIdSuffix ".debug"
-            versionNameSuffix "-alpha"
+            // versionNameSuffix "-alpha"
         }
         beta {
             dimension "version"
             applicationIdSuffix ".internal"
-            versionNameSuffix "-beta"
+            // versionNameSuffix "-beta"
         }
     }
 
