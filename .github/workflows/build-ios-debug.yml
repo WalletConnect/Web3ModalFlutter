@@ -85,7 +85,7 @@ jobs:
         FULL_VERSION=${PARTS[1]}
         VERSION_NUMBER=(${FULL_VERSION//-/ })
 
-        # Change bundleId in project.pbxproj
+        # Change bundleId in Runner scheme
         sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.debug/g' ios/Runner.xcodeproj/project.pbxproj
         sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.debug/g' ios/Runner/Info.plist
 
