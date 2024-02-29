@@ -1,5 +1,6 @@
 import 'package:http/http.dart';
 import 'package:web3modal_flutter/services/ledger_service/i_ledger_service.dart';
+import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class LedgerService extends ILedgerService {

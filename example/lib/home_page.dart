@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:walletconnect_flutter_dapp/widgets/logger_widget.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -20,13 +21,27 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final CustomAnimatedOverlay overlay = CustomAnimatedOverlay(
+    const Duration(milliseconds: 200),
+  );
+
   late W3MService _w3mService;
 
   @override
   void initState() {
     super.initState();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _addOverlay();
+    // });
     _initializeService();
   }
+
+  // void _addOverlay() {
+  //   overlay.insert(
+  //     context,
+  //     child: DraggableCard(overlayController: overlay),
+  //   );
+  // }
 
   void _initializeService() async {
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
@@ -36,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
+      enableAnalytics: true,
       metadata: const PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,

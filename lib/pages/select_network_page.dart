@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/pages/about_networks.dart';
+import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
@@ -13,10 +15,21 @@ import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
-class SelectNetworkPage extends StatelessWidget {
+class SelectNetworkPage extends StatefulWidget {
   const SelectNetworkPage({required this.onTapNetwork})
       : super(key: KeyConstants.selectNetworkPage);
   final Function(W3MChainInfo)? onTapNetwork;
+
+  @override
+  State<SelectNetworkPage> createState() => _SelectNetworkPageState();
+}
+
+class _SelectNetworkPageState extends State<SelectNetworkPage> {
+  @override
+  void initState() {
+    super.initState();
+    analyticsService.instance.sendEvent(ClickNetworksEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +58,7 @@ class SelectNetworkPage extends StatelessWidget {
                     return const ContentLoading();
                   }
                   return NetworksGrid(
-                    onTapNetwork: onTapNetwork,
+                    onTapNetwork: widget.onTapNetwork,
                     itemList: items,
                   );
                 },

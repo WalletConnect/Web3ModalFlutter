@@ -8,6 +8,7 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 
+// TODO This file should be called qr_code_view.dart
 class QRCodeWidget extends StatelessWidget {
   const QRCodeWidget({
     super.key,

@@ -2324,14 +2324,6 @@ class MockBlockchainApiUtils extends _i1.Mock
   }
 
   @override
-  String get blockchainApiUriRoot => (super.noSuchMethod(
-        Invocation.getter(#blockchainApiUriRoot),
-        returnValue: _i13.dummyValue<String>(
-          this,
-          Invocation.getter(#blockchainApiUriRoot),
-        ),
-      ) as String);
-  @override
   String get projectId => (super.noSuchMethod(
         Invocation.getter(#projectId),
         returnValue: _i13.dummyValue<String>(

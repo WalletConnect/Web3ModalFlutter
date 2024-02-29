@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/pages/about_wallets.dart';
 import 'package:web3modal_flutter/pages/connect_wallet_page.dart';
+import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
@@ -80,8 +82,12 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
                           },
                         ),
                         onTap: () {
-                          widgetStack.instance
-                              .push(const WalletsListLongPage());
+                          analyticsService.instance.sendEvent(
+                            ClickAllWalletsEvent(),
+                          );
+                          widgetStack.instance.push(
+                            const WalletsListLongPage(),
+                          );
                         },
                       ),
                     ],

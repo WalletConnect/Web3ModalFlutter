@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/models/grid_item.dart';
+import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/lists/list_items/all_wallets_item.dart';
@@ -17,8 +19,19 @@ import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 
-class GetWalletPage extends StatelessWidget {
+class GetWalletPage extends StatefulWidget {
   const GetWalletPage() : super(key: KeyConstants.getAWalletPageKey);
+
+  @override
+  State<GetWalletPage> createState() => _GetWalletPageState();
+}
+
+class _GetWalletPageState extends State<GetWalletPage> {
+  @override
+  void initState() {
+    super.initState();
+    analyticsService.instance.sendEvent(ClickGetWalletEvent());
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -16,12 +16,14 @@ import 'package:web3modal_flutter/services/storage_service/storage_service_singl
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 const int _defaultEntriesCount = 48;
 
 class ExplorerService implements IExplorerService {
-  static const _apiUrl = 'https://api.web3modal.com';
+  // TODO fix this with coreUtils.instance.getApiUrl()
+  String _apiUrl = 'https://api.web3modal.com';
 
   final http.Client _client;
   final String _referer;
@@ -102,6 +104,7 @@ class ExplorerService implements IExplorerService {
     }
 
     W3MLoggerUtil.logger.t('[$runtimeType] init()');
+    _apiUrl = await coreUtils.instance.getApiUrl();
 
     await _setInstalledWalletIdsParam();
     await _fetchInitialWallets();

@@ -3,13 +3,26 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
 import 'package:web3modal_flutter/widgets/help/help_section.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
-class AboutNetworks extends StatelessWidget {
+class AboutNetworks extends StatefulWidget {
   const AboutNetworks() : super(key: KeyConstants.helpPageKey);
+
+  @override
+  State<AboutNetworks> createState() => _AboutNetworksState();
+}
+
+class _AboutNetworksState extends State<AboutNetworks> {
+  @override
+  void initState() {
+    super.initState();
+    analyticsService.instance.sendEvent(ClickNetworkHelpEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
