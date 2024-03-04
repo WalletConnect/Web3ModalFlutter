@@ -10,6 +10,7 @@ import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class AboutNetworks extends StatelessWidget {
   const AboutNetworks() : super(key: KeyConstants.helpPageKey);
+
   @override
   Widget build(BuildContext context) {
     return Web3ModalNavbar(
