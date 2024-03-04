@@ -166,9 +166,9 @@ class SelectWalletEvent implements AnalyticsEvent {
   final String? _platform;
   SelectWalletEvent({
     required String name,
-    String? platform,
+    AnalyticsPlatform? platform,
   })  : _name = name,
-        _platform = platform;
+        _platform = platform?.name;
 
   @override
   String get type => 'track';
@@ -195,9 +195,9 @@ class ConnectSuccessEvent implements AnalyticsEvent {
   final String? _method;
   ConnectSuccessEvent({
     required String name,
-    String? method,
+    AnalyticsPlatform? method,
   })  : _name = name,
-        _method = method;
+        _method = method?.name;
 
   @override
   String get type => 'track';

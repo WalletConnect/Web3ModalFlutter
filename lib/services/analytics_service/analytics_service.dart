@@ -35,7 +35,6 @@ class AnalyticsService implements IAnalyticsService {
         _isEnabled = enableAnalytics!;
       }
       loggerService.instance.i('[$runtimeType] init enabled: $_isEnabled');
-      sendEvent(ModalLoadedEvent());
     } catch (e, s) {
       loggerService.instance.e(
         '[$runtimeType] init error',
@@ -94,6 +93,9 @@ class AnalyticsService implements IAnalyticsService {
       );
       final code = response.statusCode;
       loggerService.instance.i('[$runtimeType] sendEvent ::$body:: $code');
+      if (!kDebugMode) {
+        loggerService.instance.sink(LogEvent(Level.all, 'sendEvent ::$body::'));
+      }
     } catch (e, s) {
       loggerService.instance.e(
         '[$runtimeType] sendEvent error',

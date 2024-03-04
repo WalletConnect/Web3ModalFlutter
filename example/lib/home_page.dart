@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_dapp/widgets/logger_widget.dart';
+import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -21,27 +22,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final CustomAnimatedOverlay overlay = CustomAnimatedOverlay(
-    const Duration(milliseconds: 200),
-  );
+  final overlay = OverlayController(const Duration(milliseconds: 200));
 
   late W3MService _w3mService;
 
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _addOverlay();
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showOverlay();
+    });
     _initializeService();
   }
 
-  // void _addOverlay() {
-  //   overlay.insert(
-  //     context,
-  //     child: DraggableCard(overlayController: overlay),
-  //   );
-  // }
+  void _showOverlay() {
+    overlay.insert(context);
+  }
 
   void _initializeService() async {
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
@@ -80,7 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
       //   '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', // Bitget
       // },
     );
-    await _w3mService.init();
 
     // If you want to support just one chain uncomment this line and avoid using W3MNetworkSelectButton()
     // _w3mService.selectChain(W3MChainPresets.chains['137']);
@@ -90,6 +85,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
     _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
     _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
+    _w3mService.onCoinbaseConnect.subscribe(_onCoinbaseConnect);
+    await _w3mService.init();
   }
 
   @override
@@ -98,7 +95,12 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onSessionUpdateEvent.unsubscribe(_onSessionUpdate);
     _w3mService.onSessionConnectEvent.unsubscribe(_onSessionConnect);
     _w3mService.onSessionDeleteEvent.unsubscribe(_onSessionDelete);
+    _w3mService.onCoinbaseConnect.unsubscribe(_onCoinbaseConnect);
     super.dispose();
+  }
+
+  void _onCoinbaseConnect(CoinbaseConnectEvent? event) {
+    debugPrint('[$runtimeType] coinbase connect ${event?.data}');
   }
 
   void _serviceListener() {
@@ -115,6 +117,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onSessionConnect(SessionConnect? args) {
     debugPrint('[$runtimeType] _onSessionConnect $args');
+    debugPrint(
+        '[$runtimeType] _onSessionConnect ${_w3mService.session?.toJson()}');
   }
 
   void _onSessionDelete(SessionDelete? args) {
@@ -132,6 +136,12 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Web3ModalTheme.colorsOf(context).background175,
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.logo_dev_sharp),
+            onPressed: () {
+              overlay.toggle(context);
+            },
+          ),
           IconButton(
             icon: isCustom
                 ? const Icon(Icons.yard)

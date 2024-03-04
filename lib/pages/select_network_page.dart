@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/pages/about_networks.dart';
-import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
@@ -15,21 +14,12 @@ import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
-class SelectNetworkPage extends StatefulWidget {
-  const SelectNetworkPage({required this.onTapNetwork})
-      : super(key: KeyConstants.selectNetworkPage);
+class SelectNetworkPage extends StatelessWidget {
+  const SelectNetworkPage({
+    required this.onTapNetwork,
+  }) : super(key: KeyConstants.selectNetworkPage);
+
   final Function(W3MChainInfo)? onTapNetwork;
-
-  @override
-  State<SelectNetworkPage> createState() => _SelectNetworkPageState();
-}
-
-class _SelectNetworkPageState extends State<SelectNetworkPage> {
-  @override
-  void initState() {
-    super.initState();
-    analyticsService.instance.sendEvent(ClickNetworksEvent());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +48,7 @@ class _SelectNetworkPageState extends State<SelectNetworkPage> {
                     return const ContentLoading();
                   }
                   return NetworksGrid(
-                    onTapNetwork: widget.onTapNetwork,
+                    onTapNetwork: onTapNetwork,
                     itemList: items,
                   );
                 },
@@ -76,7 +66,10 @@ class _SelectNetworkPageState extends State<SelectNetworkPage> {
           ),
           SimpleIconButton(
             onTap: () {
-              widgetStack.instance.push(const AboutNetworks());
+              widgetStack.instance.push(
+                const AboutNetworks(),
+                event: ClickNetworkHelpEvent(),
+              );
             },
             size: BaseButtonSize.small,
             leftIcon: 'assets/icons/help.svg',

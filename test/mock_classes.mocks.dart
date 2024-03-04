@@ -27,6 +27,8 @@ import 'package:walletconnect_flutter_v2/apis/core/store/i_generic_store.dart'
 import 'package:walletconnect_flutter_v2/apis/core/store/i_store.dart' as _i6;
 import 'package:walletconnect_flutter_v2/apis/sign_api/i_sessions.dart' as _i5;
 import 'package:web3modal_flutter/models/grid_item.dart' as _i30;
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart'
+    as _i35;
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart'
     as _i31;
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart'
@@ -645,12 +647,16 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
   _i14.Future<void> selectChain(
     _i3.W3MChainInfo? chainInfo, {
     bool? switchChain = false,
+    bool? event = true,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #selectChain,
           [chainInfo],
-          {#switchChain: switchChain},
+          {
+            #switchChain: switchChain,
+            #event: event,
+          },
         ),
         returnValue: _i14.Future<void>.value(),
         returnValueForMissingStub: _i14.Future<void>.value(),
@@ -2531,12 +2537,16 @@ class MockWidgetStack extends _i1.Mock implements _i34.WidgetStack {
   void push(
     _i11.Widget? widget, {
     bool? renderScreen = false,
+    _i35.AnalyticsEvent? event,
   }) =>
       super.noSuchMethod(
         Invocation.method(
           #push,
           [widget],
-          {#renderScreen: renderScreen},
+          {
+            #renderScreen: renderScreen,
+            #event: event,
+          },
         ),
         returnValueForMissingStub: null,
       );

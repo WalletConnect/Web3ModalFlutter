@@ -121,10 +121,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       }
     }
 
-    loggerService.instance = LoggerService(level: logLevel, debugMode: false);
-    // loggerService.instance.logEvents.listen((event) {
-    //   debugPrint('[LoggerService] ${event.message}');
-    // });
+    loggerService.instance = LoggerService(level: logLevel, debugMode: true);
 
     W3MLoggerUtil.setLogLevel(logLevel, debugMode: true);
 
@@ -142,7 +139,9 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     analyticsService.instance = AnalyticsService(
       projectId: _projectId,
       enableAnalytics: enableAnalytics,
-    )..init();
+    )..init().then((_) {
+        analyticsService.instance.sendEvent(ModalLoadedEvent());
+      });
 
     explorerService.instance = ExplorerService(
       projectId: _projectId,
@@ -261,10 +260,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         defaultValue: '',
       )!;
       if (chainId.isNotEmpty && W3MChainPresets.chains.containsKey(chainId)) {
-        await selectChain(W3MChainPresets.chains[chainId]!);
+        await selectChain(W3MChainPresets.chains[chainId]!, event: false);
       } else {
         final chainId = _currentSession!.chainId;
-        await selectChain(W3MChainPresets.chains[chainId]!);
+        await selectChain(W3MChainPresets.chains[chainId]!, event: false);
       }
     }
   }
@@ -273,6 +272,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   Future<void> selectChain(
     W3MChainInfo? chainInfo, {
     bool switchChain = false,
+    bool event = true,
   }) async {
     _checkInitialized();
 
@@ -299,10 +299,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
           await launchConnectedWallet();
         }
       } else {
-        _setEthChain(chainInfo);
+        _setEthChain(chainInfo, event: event);
       }
     } else {
-      _setEthChain(chainInfo);
+      _setEthChain(chainInfo, event: event);
     }
   }
 
@@ -341,7 +341,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     return _currentSession!.getApprovedEvents();
   }
 
-  void _setEthChain(W3MChainInfo chainInfo) async {
+  void _setEthChain(W3MChainInfo chainInfo, {bool event = false}) async {
     W3MLoggerUtil.logger.t('[$runtimeType] set chain ${chainInfo.namespace}');
     _currentSelectedChain = chainInfo;
 
@@ -351,6 +351,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       StringConstants.selectedChainId,
       _currentSelectedChain!.chainId,
     );
+    if (event) {
+      final network = chainInfo.chainId;
+      analyticsService.instance.sendEvent(SwitchNetworkEvent(network: network));
+    }
 
     _notify();
     _loadAccountData();
@@ -364,6 +368,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       return;
     }
     _isOpen = true;
+
+    analyticsService.instance.sendEvent(ModalOpenEvent(
+      connected: _isConnected,
+    ));
 
     // Reset the explorer
     explorerService.instance.search(query: null);
@@ -392,10 +400,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     final data = MediaQueryData.fromView(View.of(_context!));
     final isTabletSize = data.size.shortestSide < 600 ? false : true;
-
-    analyticsService.instance.sendEvent(
-      ModalOpenEvent(connected: _isConnected),
-    );
 
     if (isBottomSheet) {
       await showModalBottomSheet(
@@ -442,11 +446,9 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     bool inBrowser = false,
   }) {
     final walletName = _selectedWallet!.listing.name;
-    var event = SelectWalletEvent(
+    final event = SelectWalletEvent(
       name: walletName,
-      platform: inBrowser
-          ? AnalyticsPlatform.web.name
-          : AnalyticsPlatform.mobile.name,
+      platform: inBrowser ? AnalyticsPlatform.web : AnalyticsPlatform.mobile,
     );
     // if (walletRedirect?.mobileOnly == true) {
     //   event = SelectWalletEvent(
@@ -514,13 +516,22 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
           if (_isUserRejectedError(e)) {
             W3MLoggerUtil.logger.t('[$runtimeType] User declined connection');
             onWalletConnectionError.broadcast(UserRejectedConnection());
+            analyticsService.instance.sendEvent(ConnectErrorEvent(
+              message: 'User declined connection',
+            ));
           } else {
             onWalletConnectionError.broadcast(ErrorOpeningWallet());
+            analyticsService.instance.sendEvent(ConnectErrorEvent(
+              message: e.message,
+            ));
           }
         }
       } else if (_isUserRejectedError(e)) {
         W3MLoggerUtil.logger.t('[$runtimeType] User declined connection');
         onWalletConnectionError.broadcast(UserRejectedConnection());
+        analyticsService.instance.sendEvent(ConnectErrorEvent(
+          message: 'User declined connection',
+        ));
       } else {
         W3MLoggerUtil.logger.e(
           '[$runtimeType] Error connecting wallet',
@@ -565,12 +576,19 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       if (_isUserRejectedError(e)) {
         W3MLoggerUtil.logger.t('[$runtimeType] User declined connection');
         onWalletConnectionError.broadcast(UserRejectedConnection());
+        analyticsService.instance.sendEvent(ConnectErrorEvent(
+          message: 'User declined connection',
+        ));
       } else {
+        final message = e.message ?? 'Error connecting to wallet';
         W3MLoggerUtil.logger.e(
-          '[$runtimeType] Error connecting to wallet',
+          '[$runtimeType] $message',
           error: e,
           stackTrace: s,
         );
+        analyticsService.instance.sendEvent(ConnectErrorEvent(
+          message: message,
+        ));
       }
       return await expirePreviousInactivePairings();
     }
@@ -616,43 +634,53 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   Future<void> disconnect({bool disconnectAllSessions = true}) async {
     _checkInitialized();
 
-    // If we want to disconnect all sessions, loop through them and disconnect them
-    if (disconnectAllSessions) {
-      for (final SessionData session in _web3App.sessions.getAll()) {
-        await _disconnectSession(session);
+    try {
+      // If we want to disconnect all sessions, loop through them and disconnect them
+      if (disconnectAllSessions) {
+        for (final session in _web3App.sessions.getAll()) {
+          await _disconnectSession(session);
+        }
+      } else {
+        // Disconnect the session
+        if (_currentSession?.sessionData != null) {
+          await _disconnectSession(_currentSession!.sessionData!);
+        }
       }
-    } else {
-      // Disconnect the session
-      if (_currentSession?.sessionData != null) {
-        await _disconnectSession(_currentSession!.sessionData!);
-      }
-    }
 
-    return await _cleanSession();
+      analyticsService.instance.sendEvent(DisconnectSuccessEvent());
+      return await _cleanSession();
+    } catch (e) {
+      analyticsService.instance.sendEvent(DisconnectErrorEvent());
+    }
   }
 
   @override
   void closeModal() {
     // If we aren't open, then we can't and shouldn't close
-    _close();
+    _close(event: false);
     if (_context != null) {
       // _isOpen and notify() are handled when we call Navigator.pop()
       // by the open() method
       Navigator.of(_context!, rootNavigator: true).pop();
+      analyticsService.instance.sendEvent(ModalCloseEvent(
+        connected: _isConnected,
+      ));
     } else {
       _notify();
     }
   }
 
-  void _close() {
+  void _close({bool event = true}) {
     if (!_isOpen) {
       return;
     }
     _isOpen = false;
     toastUtils.instance.clear();
-    analyticsService.instance.sendEvent(
-      ModalCloseEvent(connected: _isConnected),
-    );
+    if (event) {
+      analyticsService.instance.sendEvent(ModalCloseEvent(
+        connected: _isConnected,
+      ));
+    }
   }
 
   @override
@@ -743,7 +771,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       );
     } catch (e, s) {
       if (_isUserRejectedError(e)) {
-        W3MLoggerUtil.logger.t('[$runtimeType] User declined connection');
+        W3MLoggerUtil.logger.t('[$runtimeType] User declined request');
         onWalletConnectionError.broadcast(UserRejectedConnection());
         if (request.method == 'wallet_switchEthereumChain' ||
             request.method == 'wallet_addEthereumChain') {
@@ -899,7 +927,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         ],
       ),
     ).then((_) {
-      _setEthChain(newChain);
+      _setEthChain(newChain, event: true);
     }).catchError(
       (e, s) {
         // if request errors due to user rejection then set the previous chain
@@ -916,7 +944,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
               params: [newChain.toJson()],
             ),
           ).then((_) {
-            _setEthChain(newChain);
+            _setEthChain(newChain, event: true);
           }).catchError((_) {
             _setEthChain(_currentSelectedChain!);
           });
@@ -1089,28 +1117,31 @@ extension _W3MServiceExtension on W3MService {
         .t('[$runtimeType] onCoinbaseResponseEvent: ${args?.data}');
   }
 
+  // TODO this should be converted to void onSessionConnect(W3MSession? session) async {}
+  // or having an onModalConnect(W3MSession? session) event
   @protected
   void onSessionConnect(SessionConnect? args) async {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionConnect: $args');
     if (args != null) {
       if (_selectedWallet == null) {
-        analyticsService.instance.sendEvent(
-          // TODO check method options
-          ConnectSuccessEvent(name: 'Unknown', method: 'qrcode'),
+        final walletName = args.session.peer.metadata.name;
+        analyticsService.instance.sendEvent(ConnectSuccessEvent(
+          name: walletName,
+          method: AnalyticsPlatform.qrcode,
+        ));
+        await storageService.instance.clearKey(
+          StringConstants.recentWalletId,
         );
-        await storageService.instance.clearKey(StringConstants.recentWalletId);
-        await storageService.instance
-            .clearKey(StringConstants.connectedWalletData);
+        await storageService.instance.clearKey(
+          StringConstants.connectedWalletData,
+        );
       } else {
         // TODO check this logic
-        var pType = platformUtils.instance.getPlatformType();
-        // if (inBrowser) {
-        //   pType = PlatformType.web;
-        // }
         final walletName = _selectedWallet!.listing.name;
-        analyticsService.instance.sendEvent(
-          ConnectSuccessEvent(name: walletName, method: pType.name),
-        );
+        analyticsService.instance.sendEvent(ConnectSuccessEvent(
+          name: walletName,
+          method: AnalyticsPlatform.mobile,
+        ));
       }
       await _storeSession(W3MSession(sessionData: args.session));
       await _selectChainFromStoredId();

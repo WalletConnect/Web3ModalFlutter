@@ -10,6 +10,9 @@ class LoggerService implements ILoggerService {
   @override
   final Stream<LogEvent> logEvents = _loggerController.stream;
 
+  @override
+  void sink(LogEvent event) => _loggerController.sink.add(event);
+
   late Logger _logger;
 
   LoggerService({required LogLevel level, bool debugMode = true}) {
@@ -23,7 +26,7 @@ class LoggerService implements ILoggerService {
   }
 
   void _logListener(LogEvent event) {
-    _loggerController.sink.add(event);
+    sink(event);
   }
 
   @override

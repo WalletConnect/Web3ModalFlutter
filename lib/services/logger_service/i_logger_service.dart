@@ -4,6 +4,7 @@ abstract class ILoggerService {
   //
   Stream<LogEvent> get logEvents;
   //
+  void sink(LogEvent event);
   // Logger get logger;
 
   /// Log a message at level [Level.trace].

@@ -6,7 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
 
 class DraggableCard extends StatefulWidget {
-  final CustomAnimatedOverlay overlayController;
+  final OverlayController overlayController;
   const DraggableCard({
     super.key,
     required this.overlayController,
@@ -42,6 +42,12 @@ class _DraggableCardState extends State<DraggableCard> {
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    widget.overlayController.remove();
+    super.dispose();
   }
 
   @override
@@ -95,8 +101,8 @@ class _DraggableCardState extends State<DraggableCard> {
   }
 }
 
-class CustomAnimatedOverlay extends AnimatedOverlay {
-  CustomAnimatedOverlay(super.duration);
+class OverlayController extends AnimatedOverlay {
+  OverlayController(super.duration);
 
   OverlayEntry? _entry;
 
@@ -104,27 +110,35 @@ class CustomAnimatedOverlay extends AnimatedOverlay {
 
   Animation<Alignment>? alignAnimation;
 
-  OverlayEntry createAlignOverlay({Widget? child}) {
+  OverlayEntry createAlignOverlay(Widget child) {
     return OverlayEntry(
+      maintainState: true,
       builder: (_) {
         return CustomAlign(
           animation: alignAnimation ?? AlwaysStoppedAnimation(align),
-          child: child ??
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: Colors.red,
-                ),
-                child: const Text('Align Overlay'),
-              ),
+          child: child,
         );
       },
     );
   }
 
-  void insert(BuildContext context, {Widget? child}) {
-    _entry = createAlignOverlay(child: child);
+  void insert(BuildContext context) {
+    _entry = createAlignOverlay(DraggableCard(overlayController: this));
     Overlay.of(context).insert(_entry!);
+  }
+
+  void toggle(BuildContext context) {
+    if (_entry != null) {
+      remove();
+    } else {
+      insert(context);
+    }
+  }
+
+  void remove() {
+    _entry?.remove();
+    _entry?.dispose();
+    _entry = null;
   }
 
   void alignChildTo(Offset globalPosition, Size size) {
@@ -141,16 +155,6 @@ class CustomAnimatedOverlay extends AnimatedOverlay {
     alignAnimation = createAnimation(begin: align, end: newAlign);
 
     align = newAlign;
-
-    controller.forward();
-    _entry?.markNeedsBuild();
-  }
-
-  void alignToScreenEdge() {
-    alignAnimation =
-        createAnimation<Alignment>(begin: align, end: Alignment.centerRight);
-
-    align = Alignment.centerRight;
 
     controller.forward();
     _entry?.markNeedsBuild();
@@ -187,16 +191,6 @@ abstract class AnimatedOverlay extends TickerProvider {
       );
     }
   }
-}
-
-abstract class CustomAnimatedWidget<T> extends AnimatedWidget {
-  final Widget child;
-  final Animation<T> animation;
-  const CustomAnimatedWidget({
-    super.key,
-    required this.child,
-    required this.animation,
-  }) : super(listenable: animation);
 }
 
 class CustomAlign extends AnimatedWidget {
