@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/wc_sample_wallets.dart';
 import 'package:web3modal_flutter/utils/debouncer.dart';
@@ -431,7 +432,13 @@ class ExplorerService implements IExplorerService {
   @override
   WalletRedirect? getWalletRedirect(W3MWalletInfo? walletInfo) {
     if (walletInfo == null) return null;
-
+    if (walletInfo.listing.id == CoinbaseService.coinbaseWalletId) {
+      return WalletRedirect(
+        mobile: CoinbaseService.coinbaseSchema,
+        desktop: null,
+        web: null,
+      );
+    }
     return WalletRedirect(
       mobile: walletInfo.listing.mobileLink?.trim(),
       desktop: walletInfo.listing.desktopLink,
