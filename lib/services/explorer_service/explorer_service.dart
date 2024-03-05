@@ -111,7 +111,8 @@ class ExplorerService implements IExplorerService {
   }
 
   Future<void> _setInstalledWalletIdsParam() async {
-    final installed = await (await _fetchNativeAppData()).getInstalledApps();
+    final nativeData = await _fetchNativeAppData();
+    final installed = await nativeData.getInstalledApps();
     _installedWalletIds = Set<String>.from(installed.map((e) => e.id));
   }
 

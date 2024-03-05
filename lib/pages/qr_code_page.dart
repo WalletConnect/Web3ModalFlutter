@@ -31,8 +31,10 @@ class _QRCodePageState extends State<QRCodePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _service = Web3ModalProvider.of(context).service;
       _service!.addListener(_buildWidget);
-      _service!.onPairingExpire.subscribe(_onPairingExpire);
-      _service?.onWalletConnectionError.subscribe(_onError);
+      _service!.web3App!.core.pairing.onPairingExpire.subscribe(
+        _onPairingExpire,
+      );
+      _service?.onModalError.subscribe(_onError);
       await _service!.buildConnectionUri();
     });
   }
@@ -55,8 +57,10 @@ class _QRCodePageState extends State<QRCodePage> {
 
   @override
   void dispose() async {
-    _service?.onWalletConnectionError.unsubscribe(_onError);
-    _service!.onPairingExpire.unsubscribe(_onPairingExpire);
+    _service?.onModalError.unsubscribe(_onError);
+    _service!.web3App!.core.pairing.onPairingExpire.unsubscribe(
+      _onPairingExpire,
+    );
     _service!.removeListener(_buildWidget);
     _service!.expirePreviousInactivePairings();
     super.dispose();

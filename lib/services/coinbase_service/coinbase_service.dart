@@ -20,6 +20,8 @@ class CoinbaseService implements ICoinbaseService {
   static const coinbaseWalletId =
       'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa';
   static const coinbaseSchema = 'cbwallet://wsegue';
+  static const coinbasePackageName = 'org.toshi';
+  static const coinbaseWalletName = 'Coinbase Wallet';
 
   static const supportedMethods = [
     'personal_sign',
@@ -33,16 +35,20 @@ class CoinbaseService implements ICoinbaseService {
     'wallet_watchAsset',
   ];
 
+  @Deprecated('Use onModalConnect')
   @override
   Event<CoinbaseConnectEvent> onCoinbaseConnect = Event<CoinbaseConnectEvent>();
 
+  @Deprecated('Use onModalError')
   @override
   Event<CoinbaseErrorEvent> onCoinbaseError = Event<CoinbaseErrorEvent>();
 
+  @Deprecated('Use onModalSessionUpdate')
   @override
   Event<CoinbaseSessionEvent> onCoinbaseSessionUpdate =
       Event<CoinbaseSessionEvent>();
 
+  @Deprecated('Do no use')
   @override
   Event<CoinbaseResponseEvent> get onCoinbaseResponse =>
       Event<CoinbaseResponseEvent>();
