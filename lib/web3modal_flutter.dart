@@ -19,6 +19,7 @@ export 'theme/w3m_theme.dart';
 export 'services/w3m_service/w3m_service.dart';
 export 'services/w3m_service/models/w3m_session.dart';
 export 'services/w3m_service/events/w3m_events.dart';
+export 'services/w3m_service/models/w3m_exceptions.dart';
 
 /// Widgets
 export 'widgets/w3m_connect_wallet_button.dart';

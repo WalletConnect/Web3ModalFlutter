@@ -402,13 +402,22 @@ class ExplorerService implements IExplorerService {
         page: 1,
         entries: 1,
         search: 'coinbase wallet',
-        platform: _getPlatformType(),
+        // platform: _getPlatformType(),
       ),
       updateCount: false,
     );
 
     if (results.isNotEmpty) {
-      return results.first;
+      final wallet = W3MWalletInfo.fromJson(results.first.toJson());
+      bool installed = await urlUtils.instance.isInstalled(
+        CoinbaseService.coinbaseSchema,
+      );
+      return wallet.copyWith(
+        listing: wallet.listing.copyWith(
+          mobileLink: CoinbaseService.coinbaseSchema,
+        ),
+        installed: installed,
+      );
     }
     return null;
   }

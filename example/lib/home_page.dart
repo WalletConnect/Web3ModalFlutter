@@ -123,6 +123,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onModalError(ModalError? event) {
     debugPrint('[$runtimeType] _onModalError ${event?.toString()}');
+    // When user connected to Coinbase Wallet but Coinbase Wallet does not have a session anymore
+    // (for instance if user disconnected the dapp directly within Coinbase Wallet)
+    // Then Coinbase Wallet won't emit any event
+    if ((event?.message ?? '').contains('Coinbase Wallet Error')) {
+      _w3mService.disconnect();
+    }
   }
 
   void _onSessionExpired(SessionExpire? event) {

@@ -14,7 +14,6 @@ import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_even
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/ledger_service/ledger_service_singleton.dart';
-import 'package:web3modal_flutter/services/w3m_service/models/w3m_exceptions.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/url/launch_url_exception.dart';
@@ -680,19 +679,18 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       );
     } catch (e) {
       if (_isUserRejectedError(e)) {
-        W3MLoggerUtil.logger.t('[$runtimeType] User declined connection');
         onWalletConnectionError.broadcast(UserRejectedConnection());
-        if (request.method == 'wallet_switchEthereumChain' ||
-            request.method == 'wallet_addEthereumChain') {
+        if (request.method == MethodsConstants.walletSwitchEthChain ||
+            request.method == MethodsConstants.walletAddEthChain) {
           rethrow;
         }
         return 'User rejected';
       } else {
-        W3MLoggerUtil.logger.e('[$runtimeType] request error', error: e);
         if (e is W3MCoinbaseException) {
           // If the error is due to no session on Coinbase Wallet we disconnnect the session on Modal.
           // This is the only way to detect a missing session since Coinbase Wallet is not sending any event.
-          disconnect();
+          // disconnect();
+          throw W3MServiceException('Coinbase Wallet Error');
         }
         rethrow;
       }
@@ -999,9 +997,7 @@ extension _W3MCoinbaseExtension on W3MService {
   void _onCoinbaseErrorEvent(CoinbaseErrorEvent? args) async {
     final errorMessage = args?.error ?? 'Something went wrong';
     if (!errorMessage.toLowerCase().contains('user denied')) {
-      W3MLoggerUtil.logger
-          .e('[$runtimeType] onCoinbaseErrorEvent: $errorMessage');
-      onWalletConnectionError.broadcast(ModalError(errorMessage));
+      onModalError.broadcast(ModalError(errorMessage));
     }
   }
 
