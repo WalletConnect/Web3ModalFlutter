@@ -22,8 +22,7 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 const int _defaultEntriesCount = 48;
 
 class ExplorerService implements IExplorerService {
-  // TODO fix this with coreUtils.instance.getApiUrl()
-  String _apiUrl = 'https://api.web3modal.com';
+  String? _apiUrl;
 
   final http.Client _client;
   final String _referer;
@@ -196,10 +195,11 @@ class ExplorerService implements IExplorerService {
 
   Future<List<NativeAppData>> _fetchNativeAppData() async {
     try {
+      final apiUrl = await coreUtils.instance.getApiUrl();
       final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
       final uri = Platform.isIOS
-          ? Uri.parse('$_apiUrl/getIosData')
-          : Uri.parse('$_apiUrl/getAndroidData');
+          ? Uri.parse('$apiUrl/getIosData')
+          : Uri.parse('$apiUrl/getAndroidData');
       final response = await _client.get(uri, headers: headers);
       final apiResponse = ApiResponse<NativeAppData>.fromJson(
         jsonDecode(response.body),
@@ -266,8 +266,9 @@ class ExplorerService implements IExplorerService {
   }) async {
     final p = params?.toJson() ?? {};
     try {
+      final apiUrl = await coreUtils.instance.getApiUrl();
       final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
-      final uri = Uri.parse('$_apiUrl/getWallets').replace(queryParameters: p);
+      final uri = Uri.parse('$apiUrl/getWallets').replace(queryParameters: p);
       final response = await _client.get(uri, headers: headers);
       final apiResponse = ApiResponse<Listing>.fromJson(
         jsonDecode(response.body),
@@ -419,7 +420,8 @@ class ExplorerService implements IExplorerService {
     if (imageId.startsWith('http')) {
       return imageId;
     }
-    return '$_apiUrl/getWalletImage/$imageId';
+    final apiUrl = _apiUrl ?? 'https://api.web3modal.com';
+    return '$apiUrl/getWalletImage/$imageId';
   }
 
   @override
@@ -427,7 +429,8 @@ class ExplorerService implements IExplorerService {
     if (imageId.startsWith('http')) {
       return imageId;
     }
-    return '$_apiUrl/public/getAssetImage/$imageId';
+    final apiUrl = _apiUrl ?? 'https://api.web3modal.com';
+    return '$apiUrl/public/getAssetImage/$imageId';
   }
 
   @override
