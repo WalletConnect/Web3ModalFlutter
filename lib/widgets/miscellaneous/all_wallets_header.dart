@@ -39,7 +39,7 @@ class AllWalletsHeader extends StatelessWidget {
               widgetStack.instance.push(
                 const QRCodePage(),
                 event: SelectWalletEvent(
-                  name: 'Unknown',
+                  name: 'WalletConnect',
                   platform: AnalyticsPlatform.qrcode,
                 ),
               );

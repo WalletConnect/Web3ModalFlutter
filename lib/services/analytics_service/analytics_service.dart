@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -10,10 +11,14 @@ import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class AnalyticsService implements IAnalyticsService {
+  static final _eventsController = StreamController<dynamic>.broadcast();
   static const _debugApiEndpoint =
       'https://analytics-api-cf-workers-staging.walletconnect-v1-bridge.workers.dev';
   static const _debugProjectId = 'e087b4b0503b860119be49d906717c12';
   bool _isEnabled = false;
+
+  @override
+  final Stream<dynamic> events = _eventsController.stream;
 
   @override
   final String projectId;
@@ -93,9 +98,7 @@ class AnalyticsService implements IAnalyticsService {
       );
       final code = response.statusCode;
       loggerService.instance.i('[$runtimeType] sendEvent ::$body:: $code');
-      if (!kDebugMode) {
-        loggerService.instance.sink(LogEvent(Level.all, 'sendEvent ::$body::'));
-      }
+      _eventsController.sink.add(analyticsEvent.toMap());
     } catch (e, s) {
       loggerService.instance.e(
         '[$runtimeType] sendEvent error',

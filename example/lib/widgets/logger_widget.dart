@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-
-import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
+import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 
 class DraggableCard extends StatefulWidget {
   final OverlayController overlayController;
@@ -22,25 +19,14 @@ class _DraggableCardState extends State<DraggableCard> {
   @override
   void initState() {
     super.initState();
-    loggerService.instance.logEvents.listen((event) {
-      final message = '${event.message}';
-      if (message.contains('sendEvent')) {
-        final match = RegExp(r'::([^]*?)::').firstMatch(message)?[1];
-        if (match != null) {
-          final json = jsonDecode(match.trim()) as Map<String, dynamic>;
-          final data = json['props'];
-          _logs.add(
-            Text(
-              '=> $data',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12.0,
-              ),
-            ),
-          );
-          setState(() {});
-        }
-      }
+    analyticsService.instance.events.listen((event) {
+      _logs.add(
+        Text(
+          '=> $event',
+          style: const TextStyle(color: Colors.white, fontSize: 12.0),
+        ),
+      );
+      setState(() {});
     });
   }
 

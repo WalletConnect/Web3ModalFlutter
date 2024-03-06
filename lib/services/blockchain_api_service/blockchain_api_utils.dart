@@ -17,14 +17,13 @@ class BlockchainApiUtils extends IBlockchainApiUtils {
   Future<BlockchainIdentity> getIdentity(String address, int chainId) async {
     final scope = '${StringConstants.namespace}:$chainId';
     final url = await coreUtils.instance.getBlockchainApiUrl();
-    final endpoint = '$url/v1/identity/$address';
-    '?chainId=$scope&projectId=$projectId';
-
+    final endpoint =
+        '$url/v1/identity/$address?chainId=$scope&projectId=$projectId';
     final response = await http.get(Uri.parse(endpoint));
     if (response.statusCode == 200) {
       return BlockchainIdentity.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('Failed to load data');
+      throw Exception('Failed to load avatar');
     }
   }
 }

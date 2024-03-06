@@ -5,16 +5,7 @@ import 'package:web3modal_flutter/services/logger_service/i_logger_service.dart'
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class LoggerService implements ILoggerService {
-  static final _loggerController = StreamController<LogEvent>.broadcast();
-
-  @override
-  final Stream<LogEvent> logEvents = _loggerController.stream;
-
-  @override
-  void sink(LogEvent event) => _loggerController.sink.add(event);
-
   late Logger _logger;
-
   LoggerService({required LogLevel level, bool debugMode = true}) {
     _logger = Logger(
       level: level.toLevel(),
@@ -26,7 +17,7 @@ class LoggerService implements ILoggerService {
   }
 
   void _logListener(LogEvent event) {
-    sink(event);
+    // debugPrint('${event.message}');
   }
 
   @override

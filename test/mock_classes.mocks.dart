@@ -647,7 +647,7 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
   _i14.Future<void> selectChain(
     _i3.W3MChainInfo? chainInfo, {
     bool? switchChain = false,
-    bool? event = true,
+    bool? logEvent = true,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -655,7 +655,7 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
           [chainInfo],
           {
             #switchChain: switchChain,
-            #event: event,
+            #logEvent: logEvent,
           },
         ),
         returnValue: _i14.Future<void>.value(),

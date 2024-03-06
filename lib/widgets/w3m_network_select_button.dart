@@ -35,8 +35,8 @@ class _W3MNetworkSelectButtonState extends State<W3MNetworkSelectButton> {
 
   @override
   void dispose() {
-    super.dispose();
     widget.service.removeListener(_onServiceUpdate);
+    super.dispose();
   }
 
   @override

@@ -1,12 +1,6 @@
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 abstract class ILoggerService {
-  //
-  Stream<LogEvent> get logEvents;
-  //
-  void sink(LogEvent event);
-  // Logger get logger;
-
   /// Log a message at level [Level.trace].
   void t(
     dynamic message, {

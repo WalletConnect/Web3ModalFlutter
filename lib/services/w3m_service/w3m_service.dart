@@ -117,7 +117,9 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         );
       }
       if (metadata == null) {
-        throw ArgumentError('Metada is required when using projectId.');
+        throw ArgumentError(
+          'Metada is required when using projectId.',
+        );
       }
     }
 
@@ -260,10 +262,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         defaultValue: '',
       )!;
       if (chainId.isNotEmpty && W3MChainPresets.chains.containsKey(chainId)) {
-        await selectChain(W3MChainPresets.chains[chainId]!, event: false);
+        await selectChain(W3MChainPresets.chains[chainId]!, logEvent: false);
       } else {
         final chainId = _currentSession!.chainId;
-        await selectChain(W3MChainPresets.chains[chainId]!, event: false);
+        await selectChain(W3MChainPresets.chains[chainId]!, logEvent: false);
       }
     }
   }
@@ -272,7 +274,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   Future<void> selectChain(
     W3MChainInfo? chainInfo, {
     bool switchChain = false,
-    bool event = true,
+    bool logEvent = true,
   }) async {
     _checkInitialized();
 
@@ -299,10 +301,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
           await launchConnectedWallet();
         }
       } else {
-        _setEthChain(chainInfo, event: event);
+        _setEthChain(chainInfo, logEvent: logEvent);
       }
     } else {
-      _setEthChain(chainInfo, event: event);
+      _setEthChain(chainInfo, logEvent: logEvent);
     }
   }
 
@@ -341,7 +343,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     return _currentSession!.getApprovedEvents();
   }
 
-  void _setEthChain(W3MChainInfo chainInfo, {bool event = false}) async {
+  void _setEthChain(W3MChainInfo chainInfo, {bool logEvent = false}) async {
     W3MLoggerUtil.logger.t('[$runtimeType] set chain ${chainInfo.namespace}');
     _currentSelectedChain = chainInfo;
 
@@ -351,7 +353,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       StringConstants.selectedChainId,
       _currentSelectedChain!.chainId,
     );
-    if (event) {
+    if (_isConnected) {
       final network = chainInfo.chainId;
       analyticsService.instance.sendEvent(SwitchNetworkEvent(network: network));
     }
@@ -904,11 +906,9 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         int.parse(_currentSelectedChain!.chainId),
       );
       _avatarUrl = blockchainId.avatar;
-    } catch (_) {
-      W3MLoggerUtil.logger
-          .e('[$runtimeType] Couldn\'t load avatar, will use default icon');
+    } catch (e) {
+      W3MLoggerUtil.logger.e('[$runtimeType] $e');
     }
-    W3MLoggerUtil.logger.t('[$runtimeType] account data laoded');
     _notify();
   }
 
@@ -927,7 +927,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         ],
       ),
     ).then((_) {
-      _setEthChain(newChain, event: true);
+      _setEthChain(newChain, logEvent: true);
     }).catchError(
       (e, s) {
         // if request errors due to user rejection then set the previous chain
@@ -944,7 +944,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
               params: [newChain.toJson()],
             ),
           ).then((_) {
-            _setEthChain(newChain, event: true);
+            _setEthChain(newChain, logEvent: true);
           }).catchError((_) {
             _setEthChain(_currentSelectedChain!);
           });
@@ -1124,9 +1124,9 @@ extension _W3MServiceExtension on W3MService {
     W3MLoggerUtil.logger.t('[$runtimeType] onSessionConnect: $args');
     if (args != null) {
       if (_selectedWallet == null) {
-        final walletName = args.session.peer.metadata.name;
+        // final walletName = args.session.peer.metadata.name;
         analyticsService.instance.sendEvent(ConnectSuccessEvent(
-          name: walletName,
+          name: 'WalletConnect',
           method: AnalyticsPlatform.qrcode,
         ));
         await storageService.instance.clearKey(
