@@ -20,29 +20,34 @@ class CoinbaseService implements ICoinbaseService {
   static const coinbaseWalletId =
       'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa';
   static const coinbaseSchema = 'cbwallet://wsegue';
+  static const coinbasePackageName = 'org.toshi';
+  static const coinbaseWalletName = 'Coinbase Wallet';
 
   static const supportedMethods = [
-    'personal_sign',
-    'eth_sendTransaction',
+    ...MethodsConstants.requiredMethods,
     'eth_requestAccounts',
     'eth_signTypedData_v3',
     'eth_signTypedData_v4',
     'eth_signTransaction',
-    'wallet_switchEthereumChain',
-    'wallet_addEthereumChain',
+    MethodsConstants.walletSwitchEthChain,
+    MethodsConstants.walletAddEthChain,
     'wallet_watchAsset',
   ];
 
+  @Deprecated('Use onModalConnect')
   @override
   Event<CoinbaseConnectEvent> onCoinbaseConnect = Event<CoinbaseConnectEvent>();
 
+  @Deprecated('Use onModalError')
   @override
   Event<CoinbaseErrorEvent> onCoinbaseError = Event<CoinbaseErrorEvent>();
 
+  @Deprecated('Use onModalSessionUpdate')
   @override
   Event<CoinbaseSessionEvent> onCoinbaseSessionUpdate =
       Event<CoinbaseSessionEvent>();
 
+  @Deprecated('Do no use')
   @override
   Event<CoinbaseResponseEvent> get onCoinbaseResponse =>
       Event<CoinbaseResponseEvent>();
@@ -136,12 +141,13 @@ class CoinbaseService implements ICoinbaseService {
           break;
       }
       return value;
-    } catch (e, s) {
-      if (e is W3MCoinbaseException) {
-        rethrow;
-      }
-      onCoinbaseError.broadcast(CoinbaseErrorEvent('Request error'));
-      throw W3MCoinbaseException('Request error', e, s);
+    } on W3MCoinbaseException catch (e) {
+      onCoinbaseError.broadcast(CoinbaseErrorEvent(e.message));
+      rethrow;
+    } on PlatformException catch (e, s) {
+      final message = 'Coinbase Wallet Error: (${e.code}) ${e.message}';
+      onCoinbaseError.broadcast(CoinbaseErrorEvent(message));
+      throw W3MCoinbaseException(message, e, s);
     }
   }
 
@@ -209,7 +215,7 @@ extension on SessionRequestParams {
           weiValue: BigInt.from(value),
           data: jsonData['data'],
         );
-      case 'eth_sendTransaction':
+      case MethodsConstants.ethSendTransaction:
         final jsonData = _getTransactionFromParams(params);
         return SendTransaction(
           fromAddress: jsonData['from'],
@@ -218,8 +224,8 @@ extension on SessionRequestParams {
           weiValue: jsonData['value'],
           data: jsonData['data'],
         );
-      case 'wallet_switchEthereumChain':
-      case 'wallet_addEthereumChain':
+      case MethodsConstants.walletSwitchEthChain:
+      case MethodsConstants.walletAddEthChain:
         try {
           final chainInfo = W3MChainPresets.chains[chainId!]!;
           final iconUrls =

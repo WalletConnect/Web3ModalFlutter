@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/wc_sample_wallets.dart';
 import 'package:web3modal_flutter/utils/debouncer.dart';
@@ -111,7 +112,8 @@ class ExplorerService implements IExplorerService {
   }
 
   Future<void> _setInstalledWalletIdsParam() async {
-    final installed = await (await _fetchNativeAppData()).getInstalledApps();
+    final nativeData = await _fetchNativeAppData();
+    final installed = await nativeData.getInstalledApps();
     _installedWalletIds = Set<String>.from(installed.map((e) => e.id));
   }
 
@@ -400,13 +402,22 @@ class ExplorerService implements IExplorerService {
         page: 1,
         entries: 1,
         search: 'coinbase wallet',
-        platform: _getPlatformType(),
+        // platform: _getPlatformType(),
       ),
       updateCount: false,
     );
 
     if (results.isNotEmpty) {
-      return results.first;
+      final wallet = W3MWalletInfo.fromJson(results.first.toJson());
+      bool installed = await urlUtils.instance.isInstalled(
+        CoinbaseService.coinbaseSchema,
+      );
+      return wallet.copyWith(
+        listing: wallet.listing.copyWith(
+          mobileLink: CoinbaseService.coinbaseSchema,
+        ),
+        installed: installed,
+      );
     }
     return null;
   }
@@ -430,7 +441,13 @@ class ExplorerService implements IExplorerService {
   @override
   WalletRedirect? getWalletRedirect(W3MWalletInfo? walletInfo) {
     if (walletInfo == null) return null;
-
+    if (walletInfo.listing.id == CoinbaseService.coinbaseWalletId) {
+      return WalletRedirect(
+        mobile: CoinbaseService.coinbaseSchema,
+        desktop: null,
+        web: null,
+      );
+    }
     return WalletRedirect(
       mobile: walletInfo.listing.mobileLink?.trim(),
       desktop: walletInfo.listing.desktopLink,

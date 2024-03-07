@@ -1,3 +1,7 @@
+## 3.1.2
+
+- Bug fixes for Coinbase Wallet integration
+
 ## 3.1.1
 
 - Minor bug fix during preferences clearing
