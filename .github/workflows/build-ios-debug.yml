@@ -120,7 +120,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"New iOS *ALPHA* version for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
+            "text":"New iOS *ALPHA* version for Web3Modal Flutter ${{ github.event.release.name }} was just deployed. Download at https://testflight.apple.com/join/2xNrJODX or Testflight app"
           }
     # Clean up
     - name: Clean up

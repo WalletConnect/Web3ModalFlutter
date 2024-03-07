@@ -109,7 +109,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"New Android *ALPHA* version for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
+            "text":"New Android *ALPHA* version for Web3Modal Flutter ${{ github.event.release.name }} was just deployed. Download at https://appdistribution.firebase.dev/i/db2964502d637bf5 or Firebase App Distribution app"
           }
     
     # Clean up Flutter envs
