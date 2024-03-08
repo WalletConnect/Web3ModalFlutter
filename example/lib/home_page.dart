@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:walletconnect_flutter_dapp/widgets/logger_widget.dart';
-import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
+import 'package:walletconnect_flutter_dapp/widgets/logger_widget.dart';
 import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
@@ -86,18 +85,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onModalDisconnect.subscribe(_onModalDisconnect);
     _w3mService.onModalError.subscribe(_onModalError);
     //
-    // _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
-    // _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
     _w3mService.onSessionExpireEvent.subscribe(_onSessionExpired);
     _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
-    _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
-    // _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
-    _w3mService.onCoinbaseConnect.subscribe(_onCoinbaseConnect);
     _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
     //
-    // _w3mService.onCoinbaseConnect.subscribe((args) {});
-    // _w3mService.onCoinbaseError.subscribe((args) {});
-    // _w3mService.onCoinbaseSessionUpdate.subscribe((args) {});
     //
     await _w3mService.init();
   }
@@ -110,23 +101,11 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onModalDisconnect.unsubscribe(_onModalDisconnect);
     _w3mService.onModalError.unsubscribe(_onModalError);
     //
-    // _w3mService.onSessionConnectEvent.unsubscribe(_onSessionConnect);
-    // _w3mService.onSessionDeleteEvent.unsubscribe(_onSessionDelete);
     _w3mService.onSessionExpireEvent.unsubscribe(_onSessionExpired);
     _w3mService.onSessionUpdateEvent.unsubscribe(_onSessionUpdate);
-    _w3mService.onSessionConnectEvent.unsubscribe(_onSessionConnect);
-    // _w3mService.onSessionDeleteEvent.unsubscribe(_onSessionDelete);
-    _w3mService.onCoinbaseConnect.unsubscribe(_onCoinbaseConnect);
     _w3mService.onSessionEventEvent.unsubscribe(_onSessionEvent);
     //
-    // _w3mService.onCoinbaseConnect.unsubscribe((args) {});
-    // _w3mService.onCoinbaseError.unsubscribe((args) {});
-    // _w3mService.onCoinbaseSessionUpdate.unsubscribe((args) {});
     super.dispose();
-  }
-
-  void _onCoinbaseConnect(CoinbaseConnectEvent? event) {
-    debugPrint('[$runtimeType] coinbase connect ${event?.data}');
   }
 
   void _serviceListener() {
@@ -141,12 +120,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onModalDisconnect(ModalDisconnect? event) {
     debugPrint('[$runtimeType] modal disconnect ${event?.toString()}');
-  }
-
-  void _onSessionConnect(SessionConnect? args) {
-    debugPrint('[$runtimeType] _onSessionConnect $args');
-    debugPrint(
-        '[$runtimeType] _onSessionConnect ${_w3mService.session?.toJson()}');
   }
 
   void _onModalError(ModalError? event) {

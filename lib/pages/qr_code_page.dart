@@ -6,7 +6,7 @@ import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
-import 'package:web3modal_flutter/widgets/w3m_qr_code.dart';
+import 'package:web3modal_flutter/widgets/qr_code_view.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
@@ -40,7 +40,7 @@ class _QRCodePageState extends State<QRCodePage> {
   }
 
   void _buildWidget() => setState(() {
-        _qrQodeWidget = QRCodeWidget(
+        _qrQodeWidget = QRCodeView(
           uri: _service!.wcUri!,
           logoPath: 'assets/png/logo_wc.png',
         );
