@@ -81,21 +81,47 @@ class _MyHomePageState extends State<MyHomePage> {
     // _w3mService.selectChain(W3MChainPresets.chains['137']);
 
     _w3mService.addListener(_serviceListener);
-    _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
+    //
+    _w3mService.onModalConnect.subscribe(_onModalConnect);
+    _w3mService.onModalDisconnect.subscribe(_onModalDisconnect);
+    _w3mService.onModalError.subscribe(_onModalError);
+    //
+    // _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
+    // _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
+    _w3mService.onSessionExpireEvent.subscribe(_onSessionExpired);
     _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
     _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
     _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
     _w3mService.onCoinbaseConnect.subscribe(_onCoinbaseConnect);
+    _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
+    //
+    // _w3mService.onCoinbaseConnect.subscribe((args) {});
+    // _w3mService.onCoinbaseError.subscribe((args) {});
+    // _w3mService.onCoinbaseSessionUpdate.subscribe((args) {});
+    //
     await _w3mService.init();
   }
 
   @override
   void dispose() {
-    _w3mService.onSessionEventEvent.unsubscribe(_onSessionEvent);
+    _w3mService.removeListener(_serviceListener);
+    //
+    _w3mService.onModalConnect.unsubscribe(_onModalConnect);
+    _w3mService.onModalDisconnect.unsubscribe(_onModalDisconnect);
+    _w3mService.onModalError.unsubscribe(_onModalError);
+    //
+    // _w3mService.onSessionConnectEvent.unsubscribe(_onSessionConnect);
+    // _w3mService.onSessionDeleteEvent.unsubscribe(_onSessionDelete);
+    _w3mService.onSessionExpireEvent.unsubscribe(_onSessionExpired);
     _w3mService.onSessionUpdateEvent.unsubscribe(_onSessionUpdate);
     _w3mService.onSessionConnectEvent.unsubscribe(_onSessionConnect);
     _w3mService.onSessionDeleteEvent.unsubscribe(_onSessionDelete);
     _w3mService.onCoinbaseConnect.unsubscribe(_onCoinbaseConnect);
+    _w3mService.onSessionEventEvent.unsubscribe(_onSessionEvent);
+    //
+    // _w3mService.onCoinbaseConnect.unsubscribe((args) {});
+    // _w3mService.onCoinbaseError.unsubscribe((args) {});
+    // _w3mService.onCoinbaseSessionUpdate.unsubscribe((args) {});
     super.dispose();
   }
 
@@ -107,12 +133,14 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {});
   }
 
-  void _onSessionEvent(SessionEvent? args) {
-    debugPrint('[$runtimeType] _onSessionEvent $args');
+  void _onModalConnect(ModalConnect? event) {
+    debugPrint('[$runtimeType] modal connect ${event?.toString()}');
+    debugPrint('[$runtimeType] modal connect ${event?.session.address}');
+    debugPrint('[$runtimeType] modal connect ${_w3mService.session?.address}');
   }
 
-  void _onSessionUpdate(SessionUpdate? args) {
-    debugPrint('[$runtimeType] _onSessionUpdate $args');
+  void _onModalDisconnect(ModalDisconnect? event) {
+    debugPrint('[$runtimeType] modal disconnect ${event?.toString()}');
   }
 
   void _onSessionConnect(SessionConnect? args) {
@@ -121,8 +149,26 @@ class _MyHomePageState extends State<MyHomePage> {
         '[$runtimeType] _onSessionConnect ${_w3mService.session?.toJson()}');
   }
 
-  void _onSessionDelete(SessionDelete? args) {
-    debugPrint('[$runtimeType] _onSessionDelete $args');
+  void _onModalError(ModalError? event) {
+    debugPrint('[$runtimeType] _onModalError ${event?.toString()}');
+    // When user connected to Coinbase Wallet but Coinbase Wallet does not have a session anymore
+    // (for instance if user disconnected the dapp directly within Coinbase Wallet)
+    // Then Coinbase Wallet won't emit any event
+    if ((event?.message ?? '').contains('Coinbase Wallet Error')) {
+      _w3mService.disconnect();
+    }
+  }
+
+  void _onSessionExpired(SessionExpire? event) {
+    debugPrint('[$runtimeType] _onSessionExpired ${event?.toString()}');
+  }
+
+  void _onSessionUpdate(SessionUpdate? event) {
+    debugPrint('[$runtimeType] _onSessionUpdate ${event?.toString()}');
+  }
+
+  void _onSessionEvent(SessionEvent? event) {
+    debugPrint('[$runtimeType] _onSessionEvent ${event?.toString()}');
   }
 
   @override

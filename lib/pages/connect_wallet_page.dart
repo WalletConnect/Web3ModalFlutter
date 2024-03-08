@@ -7,9 +7,9 @@ import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
-import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/toast/toast_message.dart';
 import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/segmented_control.dart';
@@ -33,7 +33,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     with WidgetsBindingObserver {
   IW3MService? _service;
   SegmentOption _selectedSegment = SegmentOption.mobile;
-  WalletErrorEvent? errorEvent;
+  ModalError? errorEvent;
 
   @override
   void initState() {
@@ -42,6 +42,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         _service = Web3ModalProvider.of(context).service;
+        _service?.onModalError.subscribe(_errorListener);
         _service?.onWalletConnectionError.subscribe(_errorListener);
       });
       Future.delayed(const Duration(milliseconds: 300), () {
@@ -61,12 +62,13 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     }
   }
 
-  void _errorListener(WalletErrorEvent? event) => setState(
+  void _errorListener(ModalError? event) => setState(
         () => errorEvent = event,
       );
 
   @override
   void dispose() {
+    _service?.onModalError.unsubscribe(_errorListener);
     _service?.onWalletConnectionError.unsubscribe(_errorListener);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -169,7 +171,7 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
                       ? Text(
                           errorEvent is ErrorOpeningWallet
                               ? 'Unable to connect with $walletName'
-                              : 'Connection can be declined if a previous request is still active',
+                              : 'Connection can be declined by the user or if a previous request is still active',
                           textAlign: TextAlign.center,
                           style: themeData.textStyles.small500.copyWith(
                             color: themeColors.foreground200,

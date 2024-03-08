@@ -1,14 +1,13 @@
-name: Build Android App Debug (alpha)
+name: Build Android App Internal (beta)
 
 on:
   workflow_dispatch:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+(-alpha)+[0-9]{2}'
+      - 'v[0-9]+.[0-9]+.[0-9]+(-beta)+[0-9]{2}'
 
 jobs:
   build_with_signing:
-    name: Build Android App Debug (alpha)
     runs-on: macos-latest
     
     steps:
@@ -71,8 +70,8 @@ jobs:
         VERSION=`echo $(cat $VERSION_FILE) | sed "s/[^']*'\([^']*\)'.*/\1/"`
 
         # # Change packageName in build.gradle
-        # sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.debug/g' android/app/build.gradle
-        # sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.debug/g' android/app/src/main/kotlin/com/example/sign/MainActivity.kt
+        # sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.internal/g' android/app/build.gradle
+        # sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.internal/g' android/app/src/main/kotlin/com/example/sign/MainActivity.kt
 
         # Set versionName on gradle.properties
         awk -F"=" -v newval="$VERSION" 'BEGIN{OFS=FS} $1=="versionName"{$2=newval}1' $GRADLE_FILE > "$GRADLE_FILE.tmp" && mv "$GRADLE_FILE.tmp" $GRADLE_FILE
@@ -84,8 +83,7 @@ jobs:
         NEXT_BUILD=$(grep 'versionCode' $GRADLE_FILE | cut -d'=' -f2)
 
         # Build Android app with flutter
-        flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --flavor alpha --release
-        
+        flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release --flavor beta
     # Setup Node
     - name: Setup Node
       uses: actions/setup-node@v3
@@ -98,9 +96,9 @@ jobs:
     - name: Upload APK
       working-directory: example/build/app/outputs/flutter-apk
       env:
-        APP_ID: ${{ secrets.ANDROID_APP_ID_DEBUG }}
+        APP_ID: ${{ secrets.ANDROID_APP_ID_INTERNAL }}
       run: |
-        firebase appdistribution:distribute app-alpha-release.apk --app $APP_ID --release-notes "Web3Modal Flutter alpha release" --groups flutter-team
+        firebase appdistribution:distribute app-beta-release.apk --app $APP_ID --release-notes "Web3Modal Flutter beta release" --groups flutter-team
     - name: Notify Channel
       uses: slackapi/slack-github-action@v1.24.0
       env:
@@ -109,9 +107,8 @@ jobs:
       with:
         payload: |-
           {
-            "text":"New Android *ALPHA* version for Web3Modal Flutter ${{ github.event.release.name }} was just deployed. Download at https://appdistribution.firebase.dev/i/db2964502d637bf5 or Firebase App Distribution app"
+            "text":"🤖 New *Android* build *${{ github.ref_name }}* version for Web3Modal Flutter was just deployed."
           }
-    
     # Clean up Flutter envs
     - name: Clean up
       if: ${{ always() }}

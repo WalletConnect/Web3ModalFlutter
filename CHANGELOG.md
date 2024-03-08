@@ -1,3 +1,8 @@
+## 3.1.2-beta01
+
+- Bug fixes for Coinbase Wallet integration
+- Added new events onModalConnect, onModalDisconnect and onModalError and deprecated previous ones
+
 ## 3.1.1
 
 - Minor bug fix during preferences clearing

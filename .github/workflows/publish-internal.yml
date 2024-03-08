@@ -1,16 +1,16 @@
-name: Publish to pub.dev
+name: Publish Internal (beta) to pub.dev
 
 on:
   workflow_dispatch:
-  # Publish a release version on pub.dev when a new tag (and release) with vX.X.X is created
-  # Always run this on a release_vX.X.X branch
+  # Publish a -betaXX version on pub.dev when a new tag (and release) with vX.X.X-betaYY is created
+  # Always run this on master branch
   push:
     tags:
-      - 'v((([0-9]+)\.([0-9]+)\.([0-9]+)?)?)$'
+      - 'v[0-9]+.[0-9]+.[0-9]+(-beta)+[0-9]{2}'
 
 jobs:
   publish:
-    name: Publish release to pub.dev
+    name: Publish Internal (beta) to pub.dev
     permissions:
       id-token: write
     runs-on: ubuntu-latest
@@ -21,12 +21,11 @@ jobs:
       # Setup Dart SDK
       - uses: dart-lang/setup-dart@v1
       # Install Flutter
-      - name: Install and set Flutter version
+      - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.0'
-          channel: 'stable'
-
+          channel: "stable"
+          architecture: x64
       # Get package dependencies and generate files
       - name: Get package dependencies and generate files
         run: |
@@ -51,5 +50,5 @@ jobs:
         with:
           payload: |-
             {
-              "text":"Web3Modal Flutter ${{ github.ref_name }} was just published at https://pub.dev/packages/web3modal_flutter"
+              "text":"🚀 Web3Modal Flutter *${{ github.ref_name }}* was just published at https://pub.dev/packages/web3modal_flutter"
             }

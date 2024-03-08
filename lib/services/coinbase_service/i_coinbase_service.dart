@@ -27,8 +27,12 @@ abstract class ICoinbaseService {
   Future<void> cbResetSession();
   Future<bool> cbIsInstalled();
 
+  @Deprecated('Use onModalConnect')
   abstract final Event<CoinbaseConnectEvent> onCoinbaseConnect;
+  @Deprecated('Use onModalError')
   abstract final Event<CoinbaseErrorEvent> onCoinbaseError;
+  @Deprecated('Use onModalSessionUpdate')
   abstract final Event<CoinbaseSessionEvent> onCoinbaseSessionUpdate;
+  @Deprecated('Do no use')
   abstract final Event<CoinbaseResponseEvent> onCoinbaseResponse;
 }

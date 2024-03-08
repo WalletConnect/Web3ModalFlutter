@@ -1,10 +1,10 @@
-name: Build iOS App Release
+name: Build iOS App Internal (beta)
 
 on:
   workflow_dispatch:
   push:
     tags:
-      - 'v((([0-9]+)\.([0-9]+)\.([0-9]+)?)?)$'
+      - 'v[0-9]+.[0-9]+.[0-9]+(-beta)+[0-9]{2}'
 
 jobs:
   build_with_signing:
@@ -19,12 +19,12 @@ jobs:
       env:
         BUILD_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERT }}
         P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-        BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+        BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_INTERNAL_BASE64 }}
         KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       run: |
         # create variables
         BUILD_CERT_PATH=$RUNNER_TEMP/build_certificate.p12        
-        PP_PATH=$RUNNER_TEMP/FlutterAppStoreProfileWithPush.mobileprovision
+        PP_PATH=$RUNNER_TEMP/FlutterAppStoreProfileInternal.mobileprovision
         KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
         # import certificate and provisioning profile from secrets
@@ -87,8 +87,14 @@ jobs:
         FULL_VERSION=${PARTS[1]}
         VERSION_NUMBER=(${FULL_VERSION//-/ })
 
+        # Change bundleId in Runner scheme
+        sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.internal/g' ios/Runner.xcodeproj/project.pbxproj
+        sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.internal/g' ios/Runner/Info.plist
+
+        # Change provisioning prfile in project.pbxproj
+        sed -i '' 's/FlutterAppStoreProfileWithPush/FlutterAppStoreProfileInternal/g' ios/Runner.xcodeproj/project.pbxproj
+
         # Build ios app with flutter
-        # echo "flutter build ios --build-name $VERSION_NUMBER --dart-define=\"PROJECT_ID=$PROJECT_ID\" --config-only --release"
         flutter build ios --build-name $VERSION_NUMBER --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
         
         cd ios
@@ -97,14 +103,15 @@ jobs:
 
         # Archive and export
         xcodebuild -workspace "$GITHUB_WORKSPACE/example/ios/Runner.xcworkspace" -scheme Runner -sdk iphoneos -destination generic/platform=iOS -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" archive
-        xcodebuild -exportArchive -allowProvisioningUpdates -sdk iphoneos -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" -exportOptionsPlist "$GITHUB_WORKSPACE/example/ios/Runner/ExportOptionsRelease.plist" -exportPath "$GITHUB_WORKSPACE/example/build/ios/ipa" -authenticationKeyIssuerID $APPLE_ISSUER_ID -authenticationKeyID $APP_STORE_KEY_ID -authenticationKeyPath "$GITHUB_WORKSPACE/example/build/ios/ipa/private_keys/AuthKey_$APP_STORE_KEY_ID.p8"
+        xcodebuild -exportArchive -allowProvisioningUpdates -sdk iphoneos -archivePath "$GITHUB_WORKSPACE/example/ios/Runner.xcarchive" -exportOptionsPlist "$GITHUB_WORKSPACE/example/ios/Runner/ExportOptionsInternal.plist" -exportPath "$GITHUB_WORKSPACE/example/build/ios/ipa" -authenticationKeyIssuerID $APPLE_ISSUER_ID -authenticationKeyID $APP_STORE_KEY_ID -authenticationKeyPath "$GITHUB_WORKSPACE/example/build/ios/ipa/private_keys/AuthKey_$APP_STORE_KEY_ID.p8"
     # Upload IPA to Testflight
     - name: Upload IPA to Testflight
       working-directory: example/build/ios/ipa
       env:
         APPLE_ISSUER_ID: ${{ secrets.APPLE_ISSUER_ID }}
         APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
-      run: xcrun altool --upload-app --type ios -f web3modal_flutter.ipa --apiKey $APP_STORE_KEY_ID --apiIssuer $APPLE_ISSUER_ID
+      run: | 
+        xcrun altool --upload-app --type ios -f web3modal_flutter.ipa --apiKey $APP_STORE_KEY_ID --apiIssuer $APPLE_ISSUER_ID
     - name: Notify Channel
       uses: slackapi/slack-github-action@v1.24.0
       env:
@@ -113,14 +120,14 @@ jobs:
       with:
         payload: |-
           {
-            "text":"New iOS Example app for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
+            "text":"🍎 New *iOS* build *${{ github.ref_name }}* version for Web3Modal Flutter was just deployed."
           }
     # Clean up
     - name: Clean up
       if: ${{ always() }}
       run: |
         security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
-        rm ~/Library/MobileDevice/Provisioning\ Profiles/FlutterAppStoreProfileWithPush.mobileprovision
+        rm ~/Library/MobileDevice/Provisioning\ Profiles/FlutterAppStoreProfileInternal.mobileprovision
         flutter clean
         cd example
         flutter clean
