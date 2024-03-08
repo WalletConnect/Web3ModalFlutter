@@ -2,8 +2,9 @@ name: Build Android App Release
 
 on:
   workflow_dispatch:
-  release:
-    types: [ published ]
+  push:
+    tags:
+      - 'v((([0-9]+)\.([0-9]+)\.([0-9]+)?)?)$'
 
 jobs:
   build_with_signing:
