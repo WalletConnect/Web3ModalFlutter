@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onSessionExpireEvent.subscribe(_onSessionExpired);
     _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
     _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
-    _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
+    // _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
     _w3mService.onCoinbaseConnect.subscribe(_onCoinbaseConnect);
     _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
     //
@@ -115,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onSessionExpireEvent.unsubscribe(_onSessionExpired);
     _w3mService.onSessionUpdateEvent.unsubscribe(_onSessionUpdate);
     _w3mService.onSessionConnectEvent.unsubscribe(_onSessionConnect);
-    _w3mService.onSessionDeleteEvent.unsubscribe(_onSessionDelete);
+    // _w3mService.onSessionDeleteEvent.unsubscribe(_onSessionDelete);
     _w3mService.onCoinbaseConnect.unsubscribe(_onCoinbaseConnect);
     _w3mService.onSessionEventEvent.unsubscribe(_onSessionEvent);
     //

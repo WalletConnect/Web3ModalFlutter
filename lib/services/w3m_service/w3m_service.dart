@@ -20,7 +20,6 @@ import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart
 import 'package:web3modal_flutter/services/ledger_service/ledger_service_singleton.dart';
 import 'package:web3modal_flutter/services/logger_service/logger_service.dart';
 import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
-import 'package:web3modal_flutter/services/w3m_service/models/w3m_session.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/url/launch_url_exception.dart';
