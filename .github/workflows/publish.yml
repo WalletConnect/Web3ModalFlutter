@@ -6,7 +6,7 @@ on:
   # Always run this on a release_vX.X.X branch
   push:
     tags:
-      - 'v((([0-9]+)\.([0-9]+)\.([0-9]+)?)?)$'
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
 
 jobs:
   publish:
