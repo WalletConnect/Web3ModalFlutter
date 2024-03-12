@@ -789,9 +789,13 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     if (_status == W3MServiceStatus.initialized) {
+      await disconnect();
+      await expirePreviousInactivePairings();
       _unregisterListeners();
+      _status = W3MServiceStatus.idle;
+      loggerService.instance.d('[$runtimeType] dispose');
     }
     super.dispose();
   }

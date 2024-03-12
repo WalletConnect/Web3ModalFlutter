@@ -10,11 +10,11 @@ import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
     super.key,
-    required this.swapTheme,
-    required this.changeTheme,
+    required this.toggleBrightness,
+    required this.toggleTheme,
   });
-  final VoidCallback swapTheme;
-  final VoidCallback changeTheme;
+  final VoidCallback toggleBrightness;
+  final VoidCallback toggleTheme;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -22,20 +22,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final overlay = OverlayController(const Duration(milliseconds: 200));
-
   late W3MService _w3mService;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showOverlay();
+      _toggleOverlay();
     });
     _initializeService();
   }
 
-  void _showOverlay() {
-    overlay.insert(context);
+  void _toggleOverlay() {
+    overlay.show(context);
   }
 
   void _initializeService() async {
@@ -156,22 +155,20 @@ class _MyHomePageState extends State<MyHomePage> {
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logo_dev_sharp),
-            onPressed: () {
-              overlay.toggle(context);
-            },
+            icon: const Icon(Icons.logo_dev_rounded),
+            onPressed: _toggleOverlay,
           ),
           IconButton(
             icon: isCustom
                 ? const Icon(Icons.yard)
                 : const Icon(Icons.yard_outlined),
-            onPressed: widget.changeTheme,
+            onPressed: widget.toggleTheme,
           ),
           IconButton(
             icon: Web3ModalTheme.maybeOf(context)?.isDarkMode ?? false
                 ? const Icon(Icons.light_mode_outlined)
                 : const Icon(Icons.dark_mode_outlined),
-            onPressed: widget.swapTheme,
+            onPressed: widget.toggleBrightness,
           ),
         ],
       ),

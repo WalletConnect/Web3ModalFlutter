@@ -19,15 +19,21 @@ class _DraggableCardState extends State<DraggableCard> {
   @override
   void initState() {
     super.initState();
-    analyticsService.instance.events.listen((event) {
-      _logs.add(
-        Text(
-          '=> $event',
-          style: const TextStyle(color: Colors.white, fontSize: 12.0),
+    analyticsService.instance.events.listen(_eventsListener);
+  }
+
+  void _eventsListener(event) {
+    if (!mounted) return;
+    _logs.add(
+      Text(
+        '=> $event',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12.0,
         ),
-      );
-      setState(() {});
-    });
+      ),
+    );
+    setState(() {});
   }
 
   @override
@@ -67,7 +73,7 @@ class _DraggableCardState extends State<DraggableCard> {
                 );
               },
               onPanEnd: (_) {
-                // overlayController.alignToScreenEdge();
+                // widget.overlayController.alignToScreenEdge();
               },
               child: Container(
                 width: 25.0,
@@ -89,22 +95,18 @@ class _DraggableCardState extends State<DraggableCard> {
 
 class OverlayController extends AnimatedOverlay {
   OverlayController(super.duration);
-
   OverlayEntry? _entry;
-
-  Alignment align = Alignment.centerRight;
-
+  final _defaultAlign = const Alignment(0.0, -1.8);
+  Alignment align = const Alignment(0.0, -1.8);
   Animation<Alignment>? alignAnimation;
 
   OverlayEntry createAlignOverlay(Widget child) {
     return OverlayEntry(
       maintainState: true,
-      builder: (_) {
-        return CustomAlign(
-          animation: alignAnimation ?? AlwaysStoppedAnimation(align),
-          child: child,
-        );
-      },
+      builder: (_) => CustomAlign(
+        animation: alignAnimation ?? AlwaysStoppedAnimation(align),
+        child: child,
+      ),
     );
   }
 
@@ -113,9 +115,9 @@ class OverlayController extends AnimatedOverlay {
     Overlay.of(context).insert(_entry!);
   }
 
-  void toggle(BuildContext context) {
+  void show(BuildContext context) {
     if (_entry != null) {
-      remove();
+      toggle();
     } else {
       insert(context);
     }
@@ -141,6 +143,25 @@ class OverlayController extends AnimatedOverlay {
     alignAnimation = createAnimation(begin: align, end: newAlign);
 
     align = newAlign;
+
+    controller.forward();
+    _entry?.markNeedsBuild();
+  }
+
+  void toggle() {
+    if (align == Alignment.center) {
+      alignAnimation = createAnimation<Alignment>(
+        begin: align,
+        end: _defaultAlign,
+      );
+      align = _defaultAlign;
+    } else {
+      alignAnimation = createAnimation<Alignment>(
+        begin: align,
+        end: Alignment.center,
+      );
+      align = Alignment.center;
+    }
 
     controller.forward();
     _entry?.markNeedsBuild();
