@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/wc_sample_wallets.dart';
 import 'package:web3modal_flutter/utils/debouncer.dart';
@@ -16,12 +17,13 @@ import 'package:web3modal_flutter/services/storage_service/storage_service_singl
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 const int _defaultEntriesCount = 48;
 
 class ExplorerService implements IExplorerService {
-  static const _apiUrl = 'https://api.web3modal.com';
+  String? _apiUrl;
 
   final http.Client _client;
   final String _referer;
@@ -102,6 +104,7 @@ class ExplorerService implements IExplorerService {
     }
 
     W3MLoggerUtil.logger.t('[$runtimeType] init()');
+    _apiUrl = await coreUtils.instance.getApiUrl();
 
     await _setInstalledWalletIdsParam();
     await _fetchInitialWallets();
@@ -111,7 +114,8 @@ class ExplorerService implements IExplorerService {
   }
 
   Future<void> _setInstalledWalletIdsParam() async {
-    final installed = await (await _fetchNativeAppData()).getInstalledApps();
+    final nativeData = await _fetchNativeAppData();
+    final installed = await nativeData.getInstalledApps();
     _installedWalletIds = Set<String>.from(installed.map((e) => e.id));
   }
 
@@ -193,10 +197,11 @@ class ExplorerService implements IExplorerService {
 
   Future<List<NativeAppData>> _fetchNativeAppData() async {
     try {
+      final apiUrl = await coreUtils.instance.getApiUrl();
       final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
       final uri = Platform.isIOS
-          ? Uri.parse('$_apiUrl/getIosData')
-          : Uri.parse('$_apiUrl/getAndroidData');
+          ? Uri.parse('$apiUrl/getIosData')
+          : Uri.parse('$apiUrl/getAndroidData');
       final response = await _client.get(uri, headers: headers);
       final apiResponse = ApiResponse<NativeAppData>.fromJson(
         jsonDecode(response.body),
@@ -263,8 +268,9 @@ class ExplorerService implements IExplorerService {
   }) async {
     final p = params?.toJson() ?? {};
     try {
+      final apiUrl = await coreUtils.instance.getApiUrl();
       final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
-      final uri = Uri.parse('$_apiUrl/getWallets').replace(queryParameters: p);
+      final uri = Uri.parse('$apiUrl/getWallets').replace(queryParameters: p);
       final response = await _client.get(uri, headers: headers);
       final apiResponse = ApiResponse<Listing>.fromJson(
         jsonDecode(response.body),
@@ -400,13 +406,22 @@ class ExplorerService implements IExplorerService {
         page: 1,
         entries: 1,
         search: 'coinbase wallet',
-        platform: _getPlatformType(),
+        // platform: _getPlatformType(),
       ),
       updateCount: false,
     );
 
     if (results.isNotEmpty) {
-      return results.first;
+      final wallet = W3MWalletInfo.fromJson(results.first.toJson());
+      bool installed = await urlUtils.instance.isInstalled(
+        CoinbaseService.coinbaseSchema,
+      );
+      return wallet.copyWith(
+        listing: wallet.listing.copyWith(
+          mobileLink: CoinbaseService.coinbaseSchema,
+        ),
+        installed: installed,
+      );
     }
     return null;
   }
@@ -416,7 +431,8 @@ class ExplorerService implements IExplorerService {
     if (imageId.startsWith('http')) {
       return imageId;
     }
-    return '$_apiUrl/getWalletImage/$imageId';
+    final apiUrl = _apiUrl ?? 'https://api.web3modal.com';
+    return '$apiUrl/getWalletImage/$imageId';
   }
 
   @override
@@ -424,13 +440,20 @@ class ExplorerService implements IExplorerService {
     if (imageId.startsWith('http')) {
       return imageId;
     }
-    return '$_apiUrl/public/getAssetImage/$imageId';
+    final apiUrl = _apiUrl ?? 'https://api.web3modal.com';
+    return '$apiUrl/public/getAssetImage/$imageId';
   }
 
   @override
   WalletRedirect? getWalletRedirect(W3MWalletInfo? walletInfo) {
     if (walletInfo == null) return null;
-
+    if (walletInfo.listing.id == CoinbaseService.coinbaseWalletId) {
+      return WalletRedirect(
+        mobile: CoinbaseService.coinbaseSchema,
+        desktop: null,
+        web: null,
+      );
+    }
     return WalletRedirect(
       mobile: walletInfo.listing.mobileLink?.trim(),
       desktop: walletInfo.listing.desktopLink,

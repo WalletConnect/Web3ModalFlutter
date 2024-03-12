@@ -10,13 +10,15 @@ export 'models/w3m_wallet_info.dart';
 
 /// Utils
 export 'utils/w3m_chains_presets.dart';
-export 'utils/w3m_logger.dart';
 
 /// Theme
 export 'theme/w3m_theme.dart';
 
 /// Services
 export 'services/w3m_service/w3m_service.dart';
+export 'services/w3m_service/models/w3m_session.dart';
+export 'services/w3m_service/events/w3m_events.dart';
+export 'services/w3m_service/models/w3m_exceptions.dart';
 
 /// Widgets
 export 'widgets/w3m_connect_wallet_button.dart';

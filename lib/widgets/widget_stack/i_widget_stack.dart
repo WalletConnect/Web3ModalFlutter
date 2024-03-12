@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 
 abstract class IWidgetStack with ChangeNotifier {
   abstract final ValueNotifier<bool> onRenderScreen;
@@ -7,7 +8,11 @@ abstract class IWidgetStack with ChangeNotifier {
   Widget getCurrent();
 
   /// Pushes a widget to the stack.
-  void push(Widget widget, {bool renderScreen = false});
+  void push(
+    Widget widget, {
+    bool renderScreen = false,
+    AnalyticsEvent? event,
+  });
 
   /// Removes a widget from the stack.
   void pop();

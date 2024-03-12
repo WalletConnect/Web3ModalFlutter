@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/util.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class W3MAddress extends StatefulWidget {
   const W3MAddress({

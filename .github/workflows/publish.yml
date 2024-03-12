@@ -1,13 +1,14 @@
 name: Publish to pub.dev
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+*'
 
 jobs:
   publish:
-    name: Publish to pub.dev
+    name: Publish release to pub.dev
     permissions:
       id-token: write
     runs-on: ubuntu-latest
@@ -23,7 +24,6 @@ jobs:
         with:
           flutter-version: '3.16.0'
           channel: 'stable'
-
       # Get package dependencies and generate files
       - name: Get package dependencies and generate files
         run: |
@@ -35,11 +35,13 @@ jobs:
         run: |
           flutter pub get
           flutter pub run build_runner build --delete-conflicting-outputs
-      # Publish
+      # Check Publish
       - name: Check Publish Warnings
         run: flutter pub publish --dry-run
+      # Publish
       - name: Publish Package
         run: flutter pub publish -f
+      # Notify
       - name: Notify Channel
         uses: slackapi/slack-github-action@v1.24.0
         env:
@@ -48,5 +50,5 @@ jobs:
         with:
           payload: |-
             {
-              "text":"Web3Modal Flutter ${{ github.ref_name }} was just published at https://pub.dev/packages/web3modal_flutter"
+              "text":"🚀 Web3Modal Flutter *${{ github.ref_name }}* was just published at https://pub.dev/packages/web3modal_flutter"
             }

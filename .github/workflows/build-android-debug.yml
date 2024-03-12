@@ -1,11 +1,16 @@
 name: Build Android App Debug (alpha)
 
-on: workflow_dispatch
-  # release:
-  #   types: [ published ]
+on:
+  workflow_dispatch:
+  push:
+    # branches:
+    #   - 'feature/**'
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+(-alpha)+[0-9]*'
 
 jobs:
   build_with_signing:
+    name: Build Android App Debug (alpha)
     runs-on: macos-latest
     
     steps:
@@ -81,7 +86,7 @@ jobs:
         NEXT_BUILD=$(grep 'versionCode' $GRADLE_FILE | cut -d'=' -f2)
 
         # Build Android app with flutter
-        flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release --flavor alpha
+        flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --flavor alpha --release
         
     # Setup Node
     - name: Setup Node
@@ -95,7 +100,7 @@ jobs:
     - name: Upload APK
       working-directory: example/build/app/outputs/flutter-apk
       env:
-        APP_ID: ${{ secrets.ANDROID_APP_ID }}
+        APP_ID: ${{ secrets.ANDROID_APP_ID_DEBUG }}
       run: |
         firebase appdistribution:distribute app-alpha-release.apk --app $APP_ID --release-notes "Web3Modal Flutter alpha release" --groups flutter-team
     - name: Notify Channel
@@ -106,7 +111,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"New Android *ALPHA* version for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
+            "text":"New Android *ALPHA* version for Web3Modal Flutter ${{ github.event.release.name }} was just deployed. Download at https://appdistribution.firebase.dev/i/db2964502d637bf5 or Firebase App Distribution app"
           }
     
     # Clean up Flutter envs

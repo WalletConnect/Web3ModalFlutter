@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
-import 'package:web3modal_flutter/services/w3m_service/models/w3m_session.dart';
 
 enum W3MServiceStatus {
   idle,
@@ -11,29 +10,6 @@ enum W3MServiceStatus {
 
   bool get isInitialized => this == initialized;
   bool get isLoading => this == initializing;
-}
-
-class W3MServiceException implements Exception {
-  final dynamic message;
-  final dynamic stackTrace;
-  W3MServiceException(this.message, [this.stackTrace]) : super();
-}
-
-class WalletErrorEvent implements EventArgs {
-  final String message;
-  WalletErrorEvent(this.message);
-}
-
-class WalletNotInstalled extends WalletErrorEvent {
-  WalletNotInstalled() : super('Wallet app not installed');
-}
-
-class ErrorOpeningWallet extends WalletErrorEvent {
-  ErrorOpeningWallet() : super('Unable to open Wallet app');
-}
-
-class UserRejectedConnection extends WalletErrorEvent {
-  UserRejectedConnection() : super('User rejected Wallet connection');
 }
 
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
@@ -159,11 +135,18 @@ abstract class IW3MService with ChangeNotifier {
 
   /* EVENTS DECLARATIONS */
 
+  abstract final Event<ModalConnect> onModalConnect;
+  abstract final Event<ModalDisconnect> onModalDisconnect;
+  abstract final Event<ModalError> onModalError;
+  @Deprecated('Use onModalError')
+  abstract final Event<ModalError> onWalletConnectionError;
+
+  //
+  @Deprecated('Use onModalConnect')
   abstract final Event<SessionConnect> onSessionConnectEvent;
+  @Deprecated('Use onModalDisconnect')
   abstract final Event<SessionDelete> onSessionDeleteEvent;
   abstract final Event<SessionExpire> onSessionExpireEvent;
   abstract final Event<SessionUpdate> onSessionUpdateEvent;
   abstract final Event<SessionEvent> onSessionEventEvent;
-  abstract final Event<PairingEvent> onPairingExpire;
-  abstract final Event<WalletErrorEvent> onWalletConnectionError;
 }

@@ -6,7 +6,7 @@ import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
-import 'package:web3modal_flutter/widgets/w3m_qr_code.dart';
+import 'package:web3modal_flutter/widgets/qr_code_view.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
@@ -31,14 +31,16 @@ class _QRCodePageState extends State<QRCodePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _service = Web3ModalProvider.of(context).service;
       _service!.addListener(_buildWidget);
-      _service!.onPairingExpire.subscribe(_onPairingExpire);
-      _service?.onWalletConnectionError.subscribe(_onError);
+      _service!.web3App!.core.pairing.onPairingExpire.subscribe(
+        _onPairingExpire,
+      );
+      _service?.onModalError.subscribe(_onError);
       await _service!.buildConnectionUri();
     });
   }
 
   void _buildWidget() => setState(() {
-        _qrQodeWidget = QRCodeWidget(
+        _qrQodeWidget = QRCodeView(
           uri: _service!.wcUri!,
           logoPath: 'assets/png/logo_wc.png',
         );
@@ -55,8 +57,10 @@ class _QRCodePageState extends State<QRCodePage> {
 
   @override
   void dispose() async {
-    _service?.onWalletConnectionError.unsubscribe(_onError);
-    _service!.onPairingExpire.unsubscribe(_onPairingExpire);
+    _service?.onModalError.unsubscribe(_onError);
+    _service!.web3App!.core.pairing.onPairingExpire.unsubscribe(
+      _onPairingExpire,
+    );
     _service!.removeListener(_buildWidget);
     _service!.expirePreviousInactivePairings();
     super.dispose();

@@ -28,8 +28,8 @@ class SessionWidgetState extends State<SessionWidget> {
   Widget build(BuildContext context) {
     final session = widget.w3mService.session!;
     String iconImage = '';
-    if ((session.sessionData?.peer.metadata.icons ?? []).isNotEmpty) {
-      iconImage = session.sessionData?.peer.metadata.icons.first ?? '';
+    if ((session.peer?.metadata.icons ?? []).isNotEmpty) {
+      iconImage = session.peer?.metadata.icons.first ?? '';
     }
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),

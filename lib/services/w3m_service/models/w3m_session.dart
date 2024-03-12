@@ -21,15 +21,21 @@ enum W3MSessionService {
 
 // TODO W3MSession shouldn't be public
 class W3MSession {
-  SessionData? sessionData;
-  CoinbaseData? coinbaseData;
+  SessionData? _sessionData;
+  CoinbaseData? _coinbaseData;
   MagicData? magicData;
 
   W3MSession({
-    this.sessionData,
-    this.coinbaseData,
+    SessionData? sessionData,
+    CoinbaseData? coinbaseData,
     this.magicData,
-  });
+  })  : _sessionData = sessionData,
+        _coinbaseData = coinbaseData;
+
+  @Deprecated('Do not use. Use instead session?.toJson() or access each method')
+  SessionData? get sessionData => _sessionData;
+  @Deprecated('Do not use. Use instead session?.toJson() or access each method')
+  CoinbaseData? get coinbaseData => _coinbaseData;
 
   factory W3MSession.fromJson(Map<String, dynamic> json) {
     final sessionDataString = json['sessionData'];
@@ -56,10 +62,10 @@ class W3MSession {
   }
 
   W3MSessionService get sessionService {
-    if (sessionData != null) {
+    if (_sessionData != null) {
       return W3MSessionService.wc;
     }
-    if (coinbaseData != null) {
+    if (_coinbaseData != null) {
       return W3MSessionService.coinbase;
     }
     if (magicData != null) {
@@ -157,7 +163,7 @@ class W3MSession {
       return MagicService.supportedMethods;
     }
 
-    final sessionNamespaces = sessionData!.namespaces;
+    final sessionNamespaces = _sessionData!.namespaces;
     final namespace = sessionNamespaces[StringConstants.namespace];
     final methodsList = namespace?.methods.toSet().toList();
     return methodsList ?? [];
@@ -174,7 +180,7 @@ class W3MSession {
       return [];
     }
 
-    final sessionNamespaces = sessionData!.namespaces;
+    final sessionNamespaces = _sessionData!.namespaces;
     final namespace = sessionNamespaces[StringConstants.namespace];
     final eventsList = namespace?.events.toSet().toList();
     return eventsList ?? [];
@@ -204,7 +210,7 @@ class W3MSession {
       return ['${StringConstants.namespace}:$chainId:$address'];
     }
 
-    final sessionNamespaces = sessionData!.namespaces;
+    final sessionNamespaces = _sessionData!.namespaces;
     return sessionNamespaces[StringConstants.namespace]?.accounts ?? [];
   }
 
@@ -213,6 +219,141 @@ class W3MSession {
       return null;
     }
 
-    return sessionData?.peer.metadata.redirect;
+    return _sessionData?.peer.metadata.redirect;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (topic != null) 'topic': topic,
+      if (pairingTopic != null) 'pairingTopic': pairingTopic,
+      if (relay != null) 'relay': relay,
+      if (expiry != null) 'expiry': expiry,
+      if (acknowledged != null) 'acknowledged': acknowledged,
+      if (controller != null) 'controller': controller,
+      'namespaces': _namespaces(),
+      if (requiredNamespaces != null) 'requiredNamespaces': requiredNamespaces,
+      if (optionalNamespaces != null) 'optionalNamespaces': optionalNamespaces,
+      'self': self?.toJson(),
+      'peer': peer?.toJson(),
+    };
+  }
+}
+
+extension W3MSessionExtension on W3MSession {
+  String? get topic => _sessionData?.topic;
+  String? get pairingTopic => _sessionData?.pairingTopic;
+  Relay? get relay => _sessionData?.relay;
+  int? get expiry => _sessionData?.expiry;
+  bool? get acknowledged => _sessionData?.acknowledged;
+  String? get controller => _sessionData?.controller;
+  Map<String, Namespace>? get namespaces => _sessionData?.namespaces;
+  Map<String, RequiredNamespace>? get requiredNamespaces =>
+      _sessionData?.requiredNamespaces;
+  Map<String, RequiredNamespace>? get optionalNamespaces =>
+      _sessionData?.optionalNamespaces;
+  Map<String, String>? get sessionProperties => _sessionData?.sessionProperties;
+  ConnectionMetadata? get self {
+    if (sessionService.isCoinbase) {
+      // TODO TODO return _web3App.metadata;
+    }
+    return _sessionData?.self;
+  }
+
+  ConnectionMetadata? get peer {
+    if (sessionService.isCoinbase) {
+      return ConnectionMetadata(
+        metadata: PairingMetadata(
+          name: CoinbaseService.coinbaseWalletName,
+          description: '',
+          url: '',
+          icons: [],
+          redirect: Redirect(
+            native: CoinbaseService.coinbaseSchema,
+          ),
+        ),
+        publicKey: '',
+      );
+    }
+    return _sessionData?.peer;
+  }
+
+  //
+  String? get address {
+    if (sessionService.noSession) {
+      return null;
+    }
+    if (sessionService.isCoinbase) {
+      return _coinbaseData!.address;
+    }
+    // if (sessionService.isMagic) {
+    //
+    final namespace = namespaces?[StringConstants.namespace];
+    final accounts = namespace?.accounts ?? [];
+    if (accounts.isNotEmpty) {
+      return NamespaceUtils.getAccount(accounts.first);
+    }
+    W3MLoggerUtil.logger.e('[$runtimeType] no address found');
+    return null;
+  }
+
+  String get chainId {
+    if (sessionService.isWC) {
+      final chainIds = NamespaceUtils.getChainIdsFromNamespaces(
+        namespaces: namespaces ?? {},
+      );
+      if (chainIds.isNotEmpty) {
+        final chainId = (chainIds..sort()).first.split(':')[1];
+        // If we have the chain in our presets, set it as the selected chain
+        if (W3MChainPresets.chains.containsKey(chainId)) {
+          return chainId;
+        }
+      }
+    }
+    if (sessionService.isCoinbase) {
+      return _coinbaseData!.chainId.toString();
+    }
+    // if (magicData != null)
+    //
+    return '1';
+  }
+
+  String? get connectedWalletName {
+    if (sessionService.isCoinbase) {
+      return 'Coinbase Wallet';
+    }
+    // if (magicData != null)
+    //
+    if (sessionService.isWC) {
+      return peer?.metadata.name;
+    }
+    return null;
+  }
+
+  Map<String, dynamic> toRawJson() {
+    return {
+      ...(_sessionData?.toJson() ?? {}),
+      ...(_coinbaseData?.toJson() ?? {}),
+    };
+  }
+
+  Map<String, Namespace>? _namespaces() {
+    if (sessionService.isCoinbase) {
+      return {
+        'eip155': Namespace(
+          accounts: ['eip155:$chainId:$address'],
+          methods: [...CoinbaseService.supportedMethods],
+          events: [],
+        ),
+      };
+    }
+    return namespaces;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'sessionData': _sessionData?.toJson(),
+      'coinbaseData': _coinbaseData?.toJson(),
+      // 'magicData': magicData?.toJson(),
+    };
   }
 }

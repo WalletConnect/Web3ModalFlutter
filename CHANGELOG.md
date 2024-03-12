@@ -1,6 +1,14 @@
 ## 3.2.0-alpha01
 
 - Email Login support
+## 3.1.3-beta01
+
+- Analytics API support
+
+## 3.1.2
+
+- Bug fixes for Coinbase Wallet integration
+- Added new events onModalConnect, onModalDisconnect and onModalError and deprecated previous ones
 
 ## 3.1.1
 

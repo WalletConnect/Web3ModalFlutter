@@ -59,19 +59,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         debugShowCheckedModeBanner: false,
         title: StringConstants.w3mPageTitleV3,
         home: MyHomePage(
-          swapTheme: () => _swapTheme(),
-          changeTheme: () => _changeTheme(),
+          toggleTheme: () => _toggleTheme(),
+          toggleBrightness: () => _toggleBrightness(),
         ),
       ),
     );
   }
 
-  void _swapTheme() => setState(() {
-        _isDarkMode = !_isDarkMode;
+  void _toggleTheme() => setState(() {
+        _themeData = (_themeData == null) ? _customTheme : null;
       });
 
-  void _changeTheme() => setState(() {
-        _themeData = (_themeData == null) ? _customTheme : null;
+  void _toggleBrightness() => setState(() {
+        _isDarkMode = !_isDarkMode;
       });
 
   Web3ModalThemeData get _customTheme => Web3ModalThemeData(

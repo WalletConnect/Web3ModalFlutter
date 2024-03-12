@@ -1,11 +1,16 @@
 name: Build iOS App Debug (alpha)
 
-on: workflow_dispatch
-  # release:
-  #   types: [ published ]
+on:
+  workflow_dispatch:
+  push:
+    # branches:
+    #   - 'feature/**'
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+(-alpha)+[0-9]*'
 
 jobs:
   build_with_signing:
+    name: Build iOS App Debug (alpha)
     runs-on: macos-latest
     
     steps:
@@ -117,7 +122,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"New iOS *ALPHA* version for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
+            "text":"New iOS *ALPHA* version for Web3Modal Flutter ${{ github.event.release.name }} was just deployed. Download at https://testflight.apple.com/join/2xNrJODX or Testflight app"
           }
     # Clean up
     - name: Clean up

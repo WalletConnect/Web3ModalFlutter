@@ -1,9 +1,23 @@
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/utils/core/i_core_utils.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
 
 class CoreUtils extends ICoreUtils {
+  static const restrictedTimezone = [
+    'ASIA/SHANGHAI',
+    'ASIA/URUMQI',
+    'ASIA/CHONGQING',
+    'ASIA/HARBIN',
+    'ASIA/KASHGAR',
+    'ASIA/MACAU',
+    'ASIA/HONG_KONG',
+    'ASIA/MACAO',
+    'ASIA/BEIJING',
+    'ASIA/HARBIN',
+  ];
+
   @override
   bool isValidProjectID(String projectId) {
     return RegExp(r'^[0-9a-fA-F]{32}$').hasMatch(projectId);
@@ -14,6 +28,44 @@ class CoreUtils extends ICoreUtils {
     return RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(email);
+  }
+
+  @override
+  Future<bool> isRestrictedRegion() async {
+    try {
+      String tz = await FlutterTimezone.getLocalTimezone();
+      tz = tz.toUpperCase();
+      return restrictedTimezone.contains(tz);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  Future<String> getApiUrl() async {
+    final restricted = await isRestrictedRegion();
+    if (restricted) {
+      return 'https://api.web3modal.org';
+    }
+    return 'https://api.web3modal.com';
+  }
+
+  @override
+  Future<String> getBlockchainApiUrl() async {
+    final restricted = await isRestrictedRegion();
+    if (restricted) {
+      return 'https://rpc.walletconnect.org';
+    }
+    return 'https://rpc.walletconnect.com';
+  }
+
+  @override
+  Future<String> getAnalyticsUrl() async {
+    final restricted = await isRestrictedRegion();
+    if (restricted) {
+      return 'https://pulse.walletconnect.org';
+    }
+    return 'https://pulse.walletconnect.com';
   }
 
   @override
@@ -106,7 +158,7 @@ class CoreUtils extends ICoreUtils {
       'x-sdk-type': StringConstants.X_SDK_TYPE,
       'x-sdk-version': 'flutter-${StringConstants.X_SDK_VERSION}',
       'user-agent': getUserAgent(),
-      'referer': referer ?? '',
+      if (referer != null) 'referer': referer,
     };
   }
 }

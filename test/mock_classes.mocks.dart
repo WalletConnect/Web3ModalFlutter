@@ -27,6 +27,8 @@ import 'package:walletconnect_flutter_v2/apis/core/store/i_generic_store.dart'
 import 'package:walletconnect_flutter_v2/apis/core/store/i_store.dart' as _i6;
 import 'package:walletconnect_flutter_v2/apis/sign_api/i_sessions.dart' as _i5;
 import 'package:web3modal_flutter/models/grid_item.dart' as _i30;
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart'
+    as _i35;
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart'
     as _i31;
 import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart'
@@ -486,22 +488,37 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
   }
 
   @override
-  _i3.Event<_i3.PairingEvent> get onPairingExpire => (super.noSuchMethod(
-        Invocation.getter(#onPairingExpire),
-        returnValue: _FakeEvent_1<_i3.PairingEvent>(
+  _i3.Event<_i3.ModalConnect> get onModalConnect => (super.noSuchMethod(
+        Invocation.getter(#onModalConnect),
+        returnValue: _FakeEvent_1<_i3.ModalConnect>(
           this,
-          Invocation.getter(#onPairingExpire),
+          Invocation.getter(#onModalConnect),
         ),
-      ) as _i3.Event<_i3.PairingEvent>);
+      ) as _i3.Event<_i3.ModalConnect>);
   @override
-  _i3.Event<_i15.WalletErrorEvent> get onWalletConnectionError =>
-      (super.noSuchMethod(
+  _i3.Event<_i3.ModalDisconnect> get onModalDisconnect => (super.noSuchMethod(
+        Invocation.getter(#onModalDisconnect),
+        returnValue: _FakeEvent_1<_i3.ModalDisconnect>(
+          this,
+          Invocation.getter(#onModalDisconnect),
+        ),
+      ) as _i3.Event<_i3.ModalDisconnect>);
+  @override
+  _i3.Event<_i3.ModalError> get onWalletConnectionError => (super.noSuchMethod(
         Invocation.getter(#onWalletConnectionError),
-        returnValue: _FakeEvent_1<_i15.WalletErrorEvent>(
+        returnValue: _FakeEvent_1<_i3.ModalError>(
           this,
           Invocation.getter(#onWalletConnectionError),
         ),
-      ) as _i3.Event<_i15.WalletErrorEvent>);
+      ) as _i3.Event<_i3.ModalError>);
+  @override
+  _i3.Event<_i3.ModalError> get onModalError => (super.noSuchMethod(
+        Invocation.getter(#onModalError),
+        returnValue: _FakeEvent_1<_i3.ModalError>(
+          this,
+          Invocation.getter(#onModalError),
+        ),
+      ) as _i3.Event<_i3.ModalError>);
   @override
   _i15.W3MServiceStatus get status => (super.noSuchMethod(
         Invocation.getter(#status),
@@ -540,14 +557,6 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         ),
       ) as _i3.Event<_i3.SessionDelete>);
   @override
-  _i3.Event<_i3.SessionEvent> get onSessionEventEvent => (super.noSuchMethod(
-        Invocation.getter(#onSessionEventEvent),
-        returnValue: _FakeEvent_1<_i3.SessionEvent>(
-          this,
-          Invocation.getter(#onSessionEventEvent),
-        ),
-      ) as _i3.Event<_i3.SessionEvent>);
-  @override
   _i3.Event<_i3.SessionExpire> get onSessionExpireEvent => (super.noSuchMethod(
         Invocation.getter(#onSessionExpireEvent),
         returnValue: _FakeEvent_1<_i3.SessionExpire>(
@@ -563,6 +572,14 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
           Invocation.getter(#onSessionUpdateEvent),
         ),
       ) as _i3.Event<_i3.SessionUpdate>);
+  @override
+  _i3.Event<_i3.SessionEvent> get onSessionEventEvent => (super.noSuchMethod(
+        Invocation.getter(#onSessionEventEvent),
+        returnValue: _FakeEvent_1<_i3.SessionEvent>(
+          this,
+          Invocation.getter(#onSessionEventEvent),
+        ),
+      ) as _i3.Event<_i3.SessionEvent>);
   @override
   bool get hasListeners => (super.noSuchMethod(
         Invocation.getter(#hasListeners),
@@ -645,12 +662,16 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
   _i14.Future<void> selectChain(
     _i3.W3MChainInfo? chainInfo, {
     bool? switchChain = false,
+    bool? logEvent = true,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #selectChain,
           [chainInfo],
-          {#switchChain: switchChain},
+          {
+            #switchChain: switchChain,
+            #logEvent: logEvent,
+          },
         ),
         returnValue: _i14.Future<void>.value(),
         returnValueForMissingStub: _i14.Future<void>.value(),
@@ -2342,14 +2363,6 @@ class MockBlockchainApiUtils extends _i1.Mock
   }
 
   @override
-  String get blockchainApiUriRoot => (super.noSuchMethod(
-        Invocation.getter(#blockchainApiUriRoot),
-        returnValue: _i13.dummyValue<String>(
-          this,
-          Invocation.getter(#blockchainApiUriRoot),
-        ),
-      ) as String);
-  @override
   String get projectId => (super.noSuchMethod(
         Invocation.getter(#projectId),
         returnValue: _i13.dummyValue<String>(
@@ -2557,12 +2570,16 @@ class MockWidgetStack extends _i1.Mock implements _i34.WidgetStack {
   void push(
     _i11.Widget? widget, {
     bool? renderScreen = false,
+    _i35.AnalyticsEvent? event,
   }) =>
       super.noSuchMethod(
         Invocation.method(
           #push,
           [widget],
-          {#renderScreen: renderScreen},
+          {
+            #renderScreen: renderScreen,
+            #event: event,
+          },
         ),
         returnValueForMissingStub: null,
       );
