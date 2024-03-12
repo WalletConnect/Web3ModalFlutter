@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/pages/about_wallets.dart';
 import 'package:web3modal_flutter/pages/connect_wallet_page.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
@@ -39,7 +40,10 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
       leftAction: NavbarActionButton(
         asset: 'assets/icons/help.svg',
         action: () {
-          widgetStack.instance.push(const AboutWallets());
+          widgetStack.instance.push(
+            const AboutWallets(),
+            event: ClickWalletHelpEvent(),
+          );
         },
       ),
       safeAreaLeft: true,
@@ -80,8 +84,10 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
                           },
                         ),
                         onTap: () {
-                          widgetStack.instance
-                              .push(const WalletsListLongPage());
+                          widgetStack.instance.push(
+                            const WalletsListLongPage(),
+                            event: ClickAllWalletsEvent(),
+                          );
                         },
                       ),
                     ],

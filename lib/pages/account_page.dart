@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
@@ -110,12 +111,15 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                     ),
                     title: _service?.selectedChain?.chainName ?? '',
                     onTap: () {
-                      widgetStack.instance.push(SelectNetworkPage(
-                        onTapNetwork: (W3MChainInfo chainInfo) {
-                          _service?.selectChain(chainInfo, switchChain: true);
-                          widgetStack.instance.pop();
-                        },
-                      ));
+                      widgetStack.instance.push(
+                        SelectNetworkPage(
+                          onTapNetwork: (W3MChainInfo chainInfo) {
+                            _service?.selectChain(chainInfo, switchChain: true);
+                            widgetStack.instance.pop();
+                          },
+                        ),
+                        event: ClickNetworksEvent(),
+                      );
                     },
                   ),
                   const SizedBox.square(dimension: kPadding8),

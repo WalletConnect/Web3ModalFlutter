@@ -10,7 +10,6 @@ export 'models/w3m_wallet_info.dart';
 
 /// Utils
 export 'utils/w3m_chains_presets.dart';
-export 'utils/w3m_logger.dart';
 
 /// Theme
 export 'theme/w3m_theme.dart';

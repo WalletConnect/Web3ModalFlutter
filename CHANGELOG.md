@@ -1,3 +1,7 @@
+## 3.1.3-beta01
+
+- Analytics API support
+
 ## 3.1.2
 
 - Bug fixes for Coinbase Wallet integration

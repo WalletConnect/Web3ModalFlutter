@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/pages/get_wallet_page.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/widgets/buttons/simple_icon_button.dart';
@@ -56,7 +57,10 @@ class AboutWallets extends StatelessWidget {
             const SizedBox(height: 8),
             SimpleIconButton(
               onTap: () {
-                widgetStack.instance.push(const GetWalletPage());
+                widgetStack.instance.push(
+                  const GetWalletPage(),
+                  event: ClickGetWalletEvent(),
+                );
               },
               leftIcon: 'assets/icons/wallet.svg',
               title: 'Get a wallet',

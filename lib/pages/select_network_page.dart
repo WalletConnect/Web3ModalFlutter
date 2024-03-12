@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/pages/about_networks.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
@@ -14,8 +15,10 @@ import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
 class SelectNetworkPage extends StatelessWidget {
-  const SelectNetworkPage({required this.onTapNetwork})
-      : super(key: KeyConstants.selectNetworkPage);
+  const SelectNetworkPage({
+    required this.onTapNetwork,
+  }) : super(key: KeyConstants.selectNetworkPage);
+
   final Function(W3MChainInfo)? onTapNetwork;
 
   @override
@@ -63,7 +66,10 @@ class SelectNetworkPage extends StatelessWidget {
           ),
           SimpleIconButton(
             onTap: () {
-              widgetStack.instance.push(const AboutNetworks());
+              widgetStack.instance.push(
+                const AboutNetworks(),
+                event: ClickNetworkHelpEvent(),
+              );
             },
             size: BaseButtonSize.small,
             leftIcon: 'assets/icons/help.svg',

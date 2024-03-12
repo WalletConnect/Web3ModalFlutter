@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
+import 'package:walletconnect_flutter_dapp/widgets/logger_widget.dart';
 import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
 import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
@@ -9,23 +10,31 @@ import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
     super.key,
-    required this.swapTheme,
-    required this.changeTheme,
+    required this.toggleBrightness,
+    required this.toggleTheme,
   });
-  final VoidCallback swapTheme;
-  final VoidCallback changeTheme;
+  final VoidCallback toggleBrightness;
+  final VoidCallback toggleTheme;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final overlay = OverlayController(const Duration(milliseconds: 200));
   late W3MService _w3mService;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _toggleOverlay();
+    });
     _initializeService();
+  }
+
+  void _toggleOverlay() {
+    overlay.show(context);
   }
 
   void _initializeService() async {
@@ -36,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
+      enableAnalytics: true,
       metadata: const PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
@@ -74,15 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onModalDisconnect.subscribe(_onModalDisconnect);
     _w3mService.onModalError.subscribe(_onModalError);
     //
-    // _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
-    // _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
     _w3mService.onSessionExpireEvent.subscribe(_onSessionExpired);
     _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
     _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
     //
-    // _w3mService.onCoinbaseConnect.subscribe((args) {});
-    // _w3mService.onCoinbaseError.subscribe((args) {});
-    // _w3mService.onCoinbaseSessionUpdate.subscribe((args) {});
     //
     await _w3mService.init();
   }
@@ -95,15 +100,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onModalDisconnect.unsubscribe(_onModalDisconnect);
     _w3mService.onModalError.unsubscribe(_onModalError);
     //
-    // _w3mService.onSessionConnectEvent.unsubscribe(_onSessionConnect);
-    // _w3mService.onSessionDeleteEvent.unsubscribe(_onSessionDelete);
     _w3mService.onSessionExpireEvent.unsubscribe(_onSessionExpired);
     _w3mService.onSessionUpdateEvent.unsubscribe(_onSessionUpdate);
     _w3mService.onSessionEventEvent.unsubscribe(_onSessionEvent);
     //
-    // _w3mService.onCoinbaseConnect.unsubscribe((args) {});
-    // _w3mService.onCoinbaseError.unsubscribe((args) {});
-    // _w3mService.onCoinbaseSessionUpdate.unsubscribe((args) {});
     super.dispose();
   }
 
@@ -155,16 +155,20 @@ class _MyHomePageState extends State<MyHomePage> {
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
         actions: [
           IconButton(
+            icon: const Icon(Icons.logo_dev_rounded),
+            onPressed: _toggleOverlay,
+          ),
+          IconButton(
             icon: isCustom
                 ? const Icon(Icons.yard)
                 : const Icon(Icons.yard_outlined),
-            onPressed: widget.changeTheme,
+            onPressed: widget.toggleTheme,
           ),
           IconButton(
             icon: Web3ModalTheme.maybeOf(context)?.isDarkMode ?? false
                 ? const Icon(Icons.light_mode_outlined)
                 : const Icon(Icons.dark_mode_outlined),
-            onPressed: widget.swapTheme,
+            onPressed: widget.toggleBrightness,
           ),
         ],
       ),
