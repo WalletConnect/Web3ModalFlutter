@@ -3,6 +3,8 @@ name: Build Android App Debug (alpha)
 on:
   workflow_dispatch:
   push:
+    # branches:
+    #   - 'feature/**'
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+(-alpha)+[0-9]*'
 

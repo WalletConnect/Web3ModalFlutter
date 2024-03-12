@@ -3,10 +3,10 @@ name: Build Android App Release
 on:
   workflow_dispatch:
   push:
+    # branches:
+    #   - 'release_v*'
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+*'
-      - '!v[0-9]+.[0-9]+.[0-9]+(-beta)+[0-9]*'
-      - '!v[0-9]+.[0-9]+.[0-9]+(-alpha)+[0-9]*'
 
 jobs:
   build_with_signing:
