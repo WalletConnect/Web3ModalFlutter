@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
+import 'package:web3modal_flutter/version.dart';
 
 class DraggableCard extends StatefulWidget {
   final OverlayController overlayController;
@@ -50,44 +51,63 @@ class _DraggableCardState extends State<DraggableCard> {
       elevation: 6.0,
       color: Colors.black87,
       clipBehavior: Clip.antiAlias,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: 200.0,
-        child: Row(
-          children: [
-            Expanded(
-              child: SizedBox(
-                height: 200.0,
-                child: ListView(
-                  reverse: true,
-                  padding: const EdgeInsets.all(6.0),
-                  children: _logs.reversed.toList(),
-                ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            color: Colors.black,
+            width: MediaQuery.of(context).size.width,
+            height: 20.0,
+            alignment: Alignment.center,
+            child: const Text(
+              packageVersion,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12.0,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            GestureDetector(
-              onPanUpdate: (details) {
-                widget.overlayController.alignChildTo(
-                  details.globalPosition,
-                  size * 0.5,
-                );
-              },
-              onPanEnd: (_) {
-                // widget.overlayController.alignToScreenEdge();
-              },
-              child: Container(
-                width: 25.0,
-                color: Colors.black,
-                child: const Center(
-                  child: Icon(
-                    Icons.drag_indicator_rounded,
-                    color: Colors.white,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 200.0,
+            child: Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 200.0,
+                    child: ListView(
+                      reverse: true,
+                      padding: const EdgeInsets.all(6.0),
+                      children: _logs.reversed.toList(),
+                    ),
                   ),
                 ),
-              ),
+                GestureDetector(
+                  onPanUpdate: (details) {
+                    widget.overlayController.alignChildTo(
+                      details.globalPosition,
+                      size * 0.5,
+                    );
+                  },
+                  onPanEnd: (_) {
+                    // widget.overlayController.alignToScreenEdge();
+                  },
+                  child: Container(
+                    width: 25.0,
+                    color: Colors.black,
+                    child: const Center(
+                      child: Icon(
+                        Icons.drag_indicator_rounded,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

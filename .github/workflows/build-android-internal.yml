@@ -98,7 +98,7 @@ jobs:
       env:
         APP_ID: ${{ secrets.ANDROID_APP_ID_INTERNAL }}
       run: |
-        firebase appdistribution:distribute app-beta-release.apk --app $APP_ID --release-notes "Web3Modal Flutter beta release" --groups flutter-team
+        firebase appdistribution:distribute app-beta-release.apk --app $APP_ID --release-notes "Web3Modal Flutter beta release" --groups "flutter-team, javascript-team, kotlin-team"
     - name: Notify Channel
       uses: slackapi/slack-github-action@v1.24.0
       env:
@@ -107,7 +107,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"🤖 New *Android* build *${{ github.ref_name }}* version for Web3Modal Flutter beta was just deployed."
+            "text":"🤖 New *Android* build *${{ github.ref_name }}* version for *Web3Modal Flutter* was just deployed. Test at https://appdistribution.firebase.dev/i/a47ee97e86fbdfff"
           }
     # Clean up Flutter envs
     - name: Clean up

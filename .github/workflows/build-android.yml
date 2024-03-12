@@ -104,7 +104,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"New Android Example app for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
+            "text":"🤖 New *Android* build *${{ github.ref_name }}* stable version for *Web3Modal Flutter* was just deployed. Test at https://appdistribution.firebase.dev/i/a8efff56e3f0fdb0"
           }
     
     # Clean up Flutter envs

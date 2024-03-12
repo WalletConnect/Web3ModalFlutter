@@ -120,7 +120,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"🍎 New *iOS* build *${{ github.ref_name }}* version for Web3Modal Flutter beta was just deployed."
+            "text":"🍎 New *iOS* build *${{ github.ref_name }}* version for *Web3Modal Flutter* was just deployed."
           }
     # Clean up
     - name: Clean up
