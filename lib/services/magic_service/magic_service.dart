@@ -269,7 +269,7 @@ class MagicService implements IMagicService {
 
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
     if (kDebugMode) {
-      loggerService.instance.i('[$runtimeType] JS Console ${message.message}');
+      // loggerService.instance.i('[$runtimeType] JS Console ${message.message}');
     }
   }
 

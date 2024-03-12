@@ -113,17 +113,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onModalConnect(ModalConnect? event) {
-    debugPrint('[$runtimeType] modal connect ${event?.toString()}');
-    debugPrint('[$runtimeType] modal connect ${event?.session.address}');
-    debugPrint('[$runtimeType] modal connect ${_w3mService.session?.address}');
+    debugPrint('[$runtimeType] 1 _onModalConnect ${event?.toString()}');
+    debugPrint('[$runtimeType] 2 _onModalConnect ${event?.session.address}');
+    debugPrint(
+        '[$runtimeType] 3 _onModalConnect ${_w3mService.session?.address}');
   }
 
   void _onModalDisconnect(ModalDisconnect? event) {
-    debugPrint('[$runtimeType] modal disconnect ${event?.toString()}');
+    debugPrint('[$runtimeType] 1 _onModalDisconnect ${event?.toString()}');
   }
 
   void _onModalError(ModalError? event) {
-    debugPrint('[$runtimeType] _onModalError ${event?.toString()}');
+    debugPrint('[$runtimeType] modal error ${event?.toString()}');
     // When user connected to Coinbase Wallet but Coinbase Wallet does not have a session anymore
     // (for instance if user disconnected the dapp directly within Coinbase Wallet)
     // Then Coinbase Wallet won't emit any event

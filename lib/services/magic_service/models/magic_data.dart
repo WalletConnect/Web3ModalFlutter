@@ -25,6 +25,9 @@ class MagicData {
     };
   }
 
+  @override
+  String toString() => toJson().toString();
+
   MagicData copytWith({
     String? email,
     String? address,

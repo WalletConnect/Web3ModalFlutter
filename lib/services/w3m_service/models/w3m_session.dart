@@ -154,6 +154,7 @@ class W3MSession {
     return _sessionData?.peer.metadata.redirect;
   }
 
+  // toJson would convert W3MSession to a WCFV2 kind of session object
   Map<String, dynamic> toJson() {
     return {
       if (topic != null) 'topic': topic,
@@ -219,6 +220,9 @@ extension W3MSessionExtension on W3MSession {
     }
     return _sessionData?.peer;
   }
+
+  //
+  String? get email => _magicData?.email;
 
   //
   String? get address {

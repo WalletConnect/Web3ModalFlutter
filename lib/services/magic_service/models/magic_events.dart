@@ -6,7 +6,7 @@ class MagicConnectEvent implements EventArgs {
   MagicConnectEvent(this.data);
 
   @override
-  String toString() => data?.toJson().toString() ?? '';
+  String toString() => data?.toString() ?? '';
 }
 
 class MagicErrorEvent implements EventArgs {
@@ -25,8 +25,23 @@ class MagicSessionEvent implements EventArgs {
     this.chainId,
   });
 
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> params = {};
+    if ((email ?? '').isNotEmpty) {
+      params['email'] = email;
+    }
+    if ((address ?? '').isNotEmpty) {
+      params['address'] = address;
+    }
+    if (chainId != null) {
+      params['chainId'] = chainId;
+    }
+
+    return params;
+  }
+
   @override
-  String toString() => 'email: $email, address: $address, chainId: $chainId';
+  String toString() => toJson().toString();
 }
 
 class MagicRequestEvent implements EventArgs {
