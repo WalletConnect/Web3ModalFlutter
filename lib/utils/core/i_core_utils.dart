@@ -3,6 +3,7 @@ abstract class ICoreUtils {
   bool isValidProjectID(String projectId);
 
   bool isValidEmail(String email);
+
   Future<bool> isRestrictedRegion();
 
   Future<String> getApiUrl();

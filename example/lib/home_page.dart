@@ -87,9 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
     //
     _w3mService.onSessionExpireEvent.subscribe(_onSessionExpired);
     _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
-    _w3mService.onSessionConnectEvent.subscribe(_onSessionConnect);
-    _w3mService.onSessionDeleteEvent.subscribe(_onSessionDelete);
-
     _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
     //
     //
@@ -125,8 +122,6 @@ class _MyHomePageState extends State<MyHomePage> {
     debugPrint('[$runtimeType] modal disconnect ${event?.toString()}');
   }
 
-  void _onSessionConnect(SessionConnect? args) {
-    debugPrint('[$runtimeType] _onSessionConnect ${args?.session}');
   void _onModalError(ModalError? event) {
     debugPrint('[$runtimeType] _onModalError ${event?.toString()}');
     // When user connected to Coinbase Wallet but Coinbase Wallet does not have a session anymore

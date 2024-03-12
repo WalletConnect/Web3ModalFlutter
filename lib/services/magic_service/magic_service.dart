@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
 import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
@@ -268,7 +269,7 @@ class MagicService implements IMagicService {
 
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
     if (kDebugMode) {
-      W3MLoggerUtil.logger.i('[$runtimeType] JS Console ${message.message}');
+      loggerService.instance.i('[$runtimeType] JS Console ${message.message}');
     }
   }
 
@@ -376,7 +377,7 @@ class MagicService implements IMagicService {
         // onMagicUpdate.broadcast(MagicSessionEvent(...));
       }
     } catch (e, s) {
-      W3MLoggerUtil.logger.e(
+      loggerService.instance.e(
         '[MagicService] error ${message.message}',
         error: e,
         stackTrace: s,
@@ -390,7 +391,7 @@ class MagicService implements IMagicService {
       _connected.complete(_authenticated);
     }
     onMagicError.broadcast(MagicErrorEvent(errorMessage));
-    W3MLoggerUtil.logger.e('[MagicService] error $errorMessage');
+    loggerService.instance.e('[MagicService] error $errorMessage');
   }
 
   Future<void> _runJavascript(String projectId) async {

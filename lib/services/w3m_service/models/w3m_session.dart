@@ -19,23 +19,25 @@ enum W3MSessionService {
   bool get noSession => this == W3MSessionService.none;
 }
 
-// TODO W3MSession shouldn't be public
 class W3MSession {
   SessionData? _sessionData;
   CoinbaseData? _coinbaseData;
-  MagicData? magicData;
+  MagicData? _magicData;
 
   W3MSession({
     SessionData? sessionData,
     CoinbaseData? coinbaseData,
-    this.magicData,
+    MagicData? magicData,
   })  : _sessionData = sessionData,
-        _coinbaseData = coinbaseData;
+        _coinbaseData = coinbaseData,
+        _magicData = magicData;
 
   @Deprecated('Do not use. Use instead session?.toJson() or access each method')
   SessionData? get sessionData => _sessionData;
   @Deprecated('Do not use. Use instead session?.toJson() or access each method')
   CoinbaseData? get coinbaseData => _coinbaseData;
+  @Deprecated('Do not use. Use instead session?.toJson() or access each method')
+  MagicData? get magicData => _magicData;
 
   factory W3MSession.fromJson(Map<String, dynamic> json) {
     final sessionDataString = json['sessionData'];
@@ -53,14 +55,6 @@ class W3MSession {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'sessionData': sessionData?.toJson(),
-      'coinbaseData': coinbaseData?.toJson(),
-      'magicData': magicData?.toJson(),
-    };
-  }
-
   W3MSessionService get sessionService {
     if (_sessionData != null) {
       return W3MSessionService.wc;
@@ -68,73 +62,11 @@ class W3MSession {
     if (_coinbaseData != null) {
       return W3MSessionService.coinbase;
     }
-    if (magicData != null) {
+    if (_magicData != null) {
       return W3MSessionService.magic;
     }
 
     return W3MSessionService.none;
-  }
-
-  String? get address {
-    if (sessionService.noSession) {
-      return null;
-    }
-    if (sessionService.isCoinbase) {
-      return coinbaseData!.address;
-    }
-    if (sessionService.isMagic) {
-      return magicData!.address;
-    }
-    final namespace = sessionData?.namespaces[StringConstants.namespace];
-    final accounts = namespace?.accounts ?? [];
-    if (accounts.isNotEmpty) {
-      return NamespaceUtils.getAccount(accounts.first);
-    }
-    W3MLoggerUtil.logger.e('[$runtimeType] no address found');
-    return null;
-  }
-
-  String get chainId {
-    if (sessionService.isCoinbase) {
-      return coinbaseData!.chainId.toString();
-    }
-    if (sessionService.isMagic) {
-      return magicData!.chainId.toString();
-    }
-    if (sessionService.isWC) {
-      final chainIds = NamespaceUtils.getChainIdsFromNamespaces(
-        namespaces: sessionData!.namespaces,
-      );
-      if (chainIds.isNotEmpty) {
-        final chainId = (chainIds..sort()).first.split(':')[1];
-        // If we have the chain in our presets, set it as the selected chain
-        if (W3MChainPresets.chains.containsKey(chainId)) {
-          return chainId;
-        }
-      }
-    }
-
-    return '1';
-  }
-
-  String? get connectedWalletName {
-    if (sessionService.isCoinbase) {
-      return 'Coinbase Wallet';
-    }
-    if (sessionService.isMagic) {
-      return 'Email Login';
-    }
-    if (sessionService.isWC) {
-      return sessionData!.peer.metadata.name;
-    }
-    return null;
-  }
-
-  String? get topic {
-    if (sessionData != null) {
-      return sessionData!.topic;
-    }
-    return null;
   }
 
   bool hasSwitchMethod() {
@@ -253,7 +185,7 @@ extension W3MSessionExtension on W3MSession {
       _sessionData?.optionalNamespaces;
   Map<String, String>? get sessionProperties => _sessionData?.sessionProperties;
   ConnectionMetadata? get self {
-    if (sessionService.isCoinbase) {
+    if (sessionService.isCoinbase || sessionService.isMagic) {
       // TODO TODO return _web3App.metadata;
     }
     return _sessionData?.self;
@@ -263,13 +195,24 @@ extension W3MSessionExtension on W3MSession {
     if (sessionService.isCoinbase) {
       return ConnectionMetadata(
         metadata: PairingMetadata(
-          name: CoinbaseService.coinbaseWalletName,
+          name: connectedWalletName!,
           description: '',
           url: '',
           icons: [],
           redirect: Redirect(
             native: CoinbaseService.coinbaseSchema,
           ),
+        ),
+        publicKey: '',
+      );
+    }
+    if (sessionService.isMagic) {
+      return ConnectionMetadata(
+        metadata: PairingMetadata(
+          name: connectedWalletName!,
+          description: '',
+          url: '',
+          icons: [],
         ),
         publicKey: '',
       );
@@ -285,8 +228,9 @@ extension W3MSessionExtension on W3MSession {
     if (sessionService.isCoinbase) {
       return _coinbaseData!.address;
     }
-    // if (sessionService.isMagic) {
-    //
+    if (sessionService.isMagic) {
+      return _magicData!.address;
+    }
     final namespace = namespaces?[StringConstants.namespace];
     final accounts = namespace?.accounts ?? [];
     if (accounts.isNotEmpty) {
@@ -312,17 +256,19 @@ extension W3MSessionExtension on W3MSession {
     if (sessionService.isCoinbase) {
       return _coinbaseData!.chainId.toString();
     }
-    // if (magicData != null)
-    //
+    if (sessionService.isMagic) {
+      return _magicData!.chainId.toString();
+    }
     return '1';
   }
 
   String? get connectedWalletName {
     if (sessionService.isCoinbase) {
-      return 'Coinbase Wallet';
+      return CoinbaseService.coinbaseWalletName;
     }
-    // if (magicData != null)
-    //
+    if (sessionService.isMagic) {
+      return 'Email Login';
+    }
     if (sessionService.isWC) {
       return peer?.metadata.name;
     }
@@ -333,6 +279,7 @@ extension W3MSessionExtension on W3MSession {
     return {
       ...(_sessionData?.toJson() ?? {}),
       ...(_coinbaseData?.toJson() ?? {}),
+      ...(_magicData?.toJson() ?? {}),
     };
   }
 
@@ -346,6 +293,15 @@ extension W3MSessionExtension on W3MSession {
         ),
       };
     }
+    if (sessionService.isMagic) {
+      return {
+        'eip155': Namespace(
+          accounts: ['eip155:$chainId:$address'],
+          methods: [...MagicService.supportedMethods],
+          events: [],
+        ),
+      };
+    }
     return namespaces;
   }
 
@@ -353,7 +309,7 @@ extension W3MSessionExtension on W3MSession {
     return {
       'sessionData': _sessionData?.toJson(),
       'coinbaseData': _coinbaseData?.toJson(),
-      // 'magicData': magicData?.toJson(),
+      'magicData': _magicData?.toJson(),
     };
   }
 }
