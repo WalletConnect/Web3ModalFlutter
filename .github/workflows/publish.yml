@@ -1,4 +1,4 @@
-name: Publish to pub.dev
+name: Publish release to pub.dev
 
 on:
   workflow_dispatch:
@@ -46,7 +46,7 @@ jobs:
       - name: Notify Channel
         uses: slackapi/slack-github-action@v1.24.0
         env:
-          SLACK_WEBHOOK_URL: 'https://hooks.slack.com/services/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'
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: 'INCOMING_WEBHOOK'
         with:
           payload: |-
