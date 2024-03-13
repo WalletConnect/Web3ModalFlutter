@@ -43,7 +43,6 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
       setState(() {
         _service = Web3ModalProvider.of(context).service;
         _service?.onModalError.subscribe(_errorListener);
-        _service?.onWalletConnectionError.subscribe(_errorListener);
       });
       Future.delayed(const Duration(milliseconds: 300), () {
         _service?.connectSelectedWallet();
@@ -62,14 +61,11 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     }
   }
 
-  void _errorListener(ModalError? event) => setState(
-        () => errorEvent = event,
-      );
+  void _errorListener(ModalError? event) => setState(() => errorEvent = event);
 
   @override
   void dispose() {
     _service?.onModalError.unsubscribe(_errorListener);
-    _service?.onWalletConnectionError.unsubscribe(_errorListener);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

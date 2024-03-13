@@ -504,14 +504,6 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         ),
       ) as _i3.Event<_i3.ModalDisconnect>);
   @override
-  _i3.Event<_i3.ModalError> get onWalletConnectionError => (super.noSuchMethod(
-        Invocation.getter(#onWalletConnectionError),
-        returnValue: _FakeEvent_1<_i3.ModalError>(
-          this,
-          Invocation.getter(#onWalletConnectionError),
-        ),
-      ) as _i3.Event<_i3.ModalError>);
-  @override
   _i3.Event<_i3.ModalError> get onModalError => (super.noSuchMethod(
         Invocation.getter(#onModalError),
         returnValue: _FakeEvent_1<_i3.ModalError>(

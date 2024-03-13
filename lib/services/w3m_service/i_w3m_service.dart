@@ -138,8 +138,6 @@ abstract class IW3MService with ChangeNotifier {
   abstract final Event<ModalConnect> onModalConnect;
   abstract final Event<ModalDisconnect> onModalDisconnect;
   abstract final Event<ModalError> onModalError;
-  @Deprecated('Use onModalError')
-  abstract final Event<ModalError> onWalletConnectionError;
 
   //
   @Deprecated('Use onModalConnect')
