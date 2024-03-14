@@ -22,6 +22,7 @@ import 'package:web3modal_flutter/services/explorer_service/explorer_service_sin
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/services/ledger_service/ledger_service_singleton.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
+import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/logger_service/logger_service.dart';
@@ -385,7 +386,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       StringConstants.selectedChainId,
       _currentSelectedChain!.chainId,
     );
-    if (_isConnected) {
+    if (_isConnected && logEvent) {
       final network = chainInfo.chainId;
       analyticsService.instance.sendEvent(SwitchNetworkEvent(network: network));
     }
@@ -1228,7 +1229,7 @@ extension _W3MMagicExtension on W3MService {
   }
 
   Future<void> _onMagicErrorEvent(MagicErrorEvent? args) async {
-    loggerService.instance.i('[$runtimeType] onMagicError: $args');
+    loggerService.instance.i('[$runtimeType] onMagicError: ${args?.error}');
     _notify();
   }
 

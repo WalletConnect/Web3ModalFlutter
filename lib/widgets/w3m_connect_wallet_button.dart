@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
-
+import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/connect_button.dart';

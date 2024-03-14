@@ -40,7 +40,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _initializeService() async {
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
-    W3MChainPresets.chains.putIfAbsent(_celo.chainId, () => _celo);
     W3MChainPresets.chains.putIfAbsent(_sepolia.chainId, () => _sepolia);
 
     _w3mService = W3MService(
@@ -280,18 +279,6 @@ class _ConnectedView extends StatelessWidget {
     );
   }
 }
-
-final _celo = W3MChainInfo(
-  chainName: 'Celo',
-  namespace: 'eip155:42220',
-  chainId: '42220',
-  tokenName: 'CELO',
-  rpcUrl: 'https://forno.celo.org/',
-  blockExplorer: W3MBlockExplorer(
-    name: 'Celo Explorer',
-    url: 'https://explorer.celo.org/mainnet',
-  ),
-);
 
 final _sepolia = W3MChainInfo(
   chainName: 'Sepolia Testnet',

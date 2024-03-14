@@ -15,20 +15,23 @@ class RoundedIcon extends StatelessWidget {
     this.borderColor,
     this.size = 36.0,
     this.padding = 8.0,
+    this.borderRadius,
   });
   final String? assetPath, imageUrl;
   final Color? assetColor, circleColor, borderColor;
   final double size, padding;
+  final double? borderRadius;
 
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
     final projectId = explorerService.instance.projectId;
+    final radius = borderRadius ?? size;
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(size)),
+        borderRadius: BorderRadius.all(Radius.circular(radius)),
         border: Border.fromBorderSide(
           BorderSide(
             color: borderColor ?? themeColors.grayGlass005,
@@ -41,7 +44,7 @@ class RoundedIcon extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: (imageUrl ?? '').isNotEmpty
           ? ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(size)),
+              borderRadius: BorderRadius.all(Radius.circular(radius)),
               child: CachedNetworkImage(
                 imageUrl: imageUrl!,
                 width: size,

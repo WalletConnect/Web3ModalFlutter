@@ -9,7 +9,7 @@ class W3MChainPresets {
       chainId: '1',
       chainIcon: chainImagesId['1'],
       tokenName: 'ETH',
-      rpcUrl: 'https://eth.drpc.org',
+      rpcUrl: 'https://ethereum-rpc.publicnode.com',
       blockExplorer: W3MBlockExplorer(
         name: 'Etherscan',
         url: 'https://etherscan.io',
@@ -33,7 +33,7 @@ class W3MChainPresets {
       chainId: '137',
       chainIcon: chainImagesId['137'],
       tokenName: 'MATIC',
-      rpcUrl: 'https://polygon.drpc.org',
+      rpcUrl: 'https://rpc-mainnet.maticvigil.com',
       blockExplorer: W3MBlockExplorer(
         name: 'Explorer',
         url: 'https://polygonscan.com',
@@ -52,7 +52,7 @@ class W3MChainPresets {
       ),
     ),
     '56': W3MChainInfo(
-      chainName: 'Binance Smart Chain',
+      chainName: 'BNB Smart Chain',
       namespace: 'eip155:56',
       chainId: '56',
       chainIcon: chainImagesId['56'],
@@ -75,6 +75,78 @@ class W3MChainPresets {
         url: 'https://explorer.optimism.io',
       ),
     ),
+    '100': W3MChainInfo(
+      chainName: 'Gnosis',
+      namespace: 'eip155:100',
+      chainId: '100',
+      chainIcon: chainImagesId['100'],
+      tokenName: 'xDAI',
+      rpcUrl: 'https://rpc.gnosischain.com',
+      blockExplorer: W3MBlockExplorer(
+        name: 'Gnosis Explorer',
+        url: 'https://gnosis.blockscout.com',
+      ),
+    ),
+    '324': W3MChainInfo(
+      chainName: 'ZkSync Era',
+      namespace: 'eip155:324',
+      chainId: '324',
+      chainIcon: chainImagesId['324'],
+      tokenName: 'ETH',
+      rpcUrl: 'https://mainnet.era.zksync.io',
+      blockExplorer: W3MBlockExplorer(
+        name: 'ZkSync Explorer',
+        url: 'https://explorer.zksync.io',
+      ),
+    ),
+    '7777777': W3MChainInfo(
+      chainName: 'Zora',
+      namespace: 'eip155:7777777',
+      chainId: '7777777',
+      chainIcon: chainImagesId['7777777'],
+      tokenName: 'ETH',
+      rpcUrl: 'https://rpc.zora.energy',
+      blockExplorer: W3MBlockExplorer(
+        name: 'Zora Explorer',
+        url: 'https://explorer.zora.energy',
+      ),
+    ),
+    '8453': W3MChainInfo(
+      chainName: 'Base',
+      namespace: 'eip155:8453',
+      chainId: '8453',
+      tokenName: 'BASE',
+      rpcUrl: 'https://mainnet.base.org',
+      blockExplorer: W3MBlockExplorer(
+        name: 'Base Explorer',
+        url: 'https://basescan.org',
+      ),
+    ),
+    '42220': W3MChainInfo(
+      chainName: 'Celo',
+      namespace: 'eip155:42220',
+      chainId: '42220',
+      tokenName: 'CELO',
+      rpcUrl: 'https://forno.celo.org',
+      blockExplorer: W3MBlockExplorer(
+        name: 'Celo Explorer',
+        url: 'https://explorer.celo.org/mainnet',
+      ),
+    ),
+    '1313161554': W3MChainInfo(
+      chainName: 'Aurora',
+      namespace: 'eip155:1313161554',
+      chainId: '1313161554',
+      tokenName: 'ETH',
+      rpcUrl: 'https://mainnet.aurora.dev',
+      blockExplorer: W3MBlockExplorer(
+        name: 'Aurora Explorer',
+        url: 'https://explorer.aurora.dev',
+      ),
+    ),
+  };
+
+  static Map<String, W3MChainInfo> extraChains = {
     '250': W3MChainInfo(
       chainName: 'Fantom',
       namespace: 'eip155:250',

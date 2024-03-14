@@ -23,7 +23,7 @@ ChainMetadata getChainMetadataFromChain(String namespace) {
         .first;
   } catch (_) {
     return ChainMetadata(
-      color: Colors.grey,
+      color: Colors.black,
       type: ChainType.eip155,
       w3mChainInfo: W3MChainPresets.chains.values.firstWhere(
         (e) => e.namespace == namespace,

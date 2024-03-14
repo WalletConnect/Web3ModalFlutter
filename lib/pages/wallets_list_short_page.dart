@@ -8,7 +8,7 @@ import 'package:web3modal_flutter/pages/confirm_email_page.dart';
 import 'package:web3modal_flutter/pages/connect_wallet_page.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
-import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
+import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
@@ -124,14 +124,15 @@ class InputEmailWidget extends StatefulWidget {
 
 class _InputEmailWidgetState extends State<InputEmailWidget> {
   bool hasFocus = false;
-  final _controller = TextEditingController();
+  final _controller = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
     return Web3ModalSearchBar(
-      controller: _controller,
       // enabled: magicService.instance.initialized,
+      controller: _controller,
+      initialValue: _controller.text,
       hint: 'Email',
       iconPath: 'assets/icons/mail.svg',
       textInputType: TextInputType.emailAddress,

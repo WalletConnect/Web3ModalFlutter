@@ -9,7 +9,7 @@ import 'package:web3modal_flutter/services/logger_service/logger_service_singlet
 import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
-import 'package:web3modal_flutter/services/magic_service/models/magic_message.dart';
+import 'package:web3modal_flutter/services/magic_service/models/frame_message.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -17,14 +17,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
-class MagicServiceSingleton {
-  late MagicService instance;
-}
-
-final magicService = MagicServiceSingleton();
-
 class MagicService implements IMagicService {
-  static const _origin = 'secure.walletconnect.com';
   static const _url = 'secure-mobile.walletconnect.com/mobile-sdk';
   static const _safeDomains = [
     'walletconnect.com',
@@ -108,6 +101,7 @@ class MagicService implements IMagicService {
           },
         ),
       )
+      ..enableZoom(false)
       ..addJavaScriptChannel('w3mWebview', onMessageReceived: _onFrameMessage)
       ..setOnConsoleMessage(_onDebugConsoleReceived);
 
@@ -150,7 +144,8 @@ class MagicService implements IMagicService {
         'referer': _web3app.metadata.url,
         'X-Bundle-Id': packageName,
       };
-      await _webViewController.loadRequest(_requestUri, headers: headers);
+      final uri = _requestUri(packageName);
+      await _webViewController.loadRequest(uri, headers: headers);
       // in case connection message or even the request itself hangs there's no other way to continue the flow than timing it out.
       _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _checkTimeOut);
     } catch (e) {
@@ -269,25 +264,23 @@ class MagicService implements IMagicService {
 
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
     if (kDebugMode) {
-      // loggerService.instance.d('[$runtimeType] JS Console ${message.message}');
+      loggerService.instance.d('[$runtimeType] JS Console ${message.message}');
     }
   }
 
-  void _onFrameMessage(JavaScriptMessage message) async {
+  void _onFrameMessage(JavaScriptMessage jsMessage) async {
     try {
-      final decodeMessage = jsonDecode(message.message) as Map<String, dynamic>;
-      final messageOrigin = decodeMessage['origin'] as String;
-      final messageData = decodeMessage['data'] as Map<String, dynamic>;
-      final messageMap = MagicMessage.fromJson(messageData);
-      if (!_isAllowedOrigin(messageOrigin)) {
+      final frameMessage = jsMessage.toFrameMessage();
+      if (!frameMessage.isValidOrigin || !frameMessage.isValidData) {
         return;
       }
-      if (messageMap.syncDataSuccess) {
+      final messageData = frameMessage.data!;
+      if (messageData.syncDataSuccess) {
         _resetTimeOut();
       }
       // ****** IS_CONNECTED
-      if (messageMap.isConnectSuccess) {
-        _authenticated = messageMap.payload?['isConnected'] as bool;
+      if (messageData.isConnectSuccess) {
+        _authenticated = messageData.getPayloadMapKey<bool>('isConnected');
         if (!_connected.isCompleted) {
           _connected.complete(_authenticated);
         }
@@ -295,31 +288,22 @@ class MagicService implements IMagicService {
           await getUser();
         }
       }
-      if (messageMap.isConnectError) {
-        _error('Error checking isConnected');
-      }
       // ****** CONNECT_EMAIL
-      if (messageMap.connectEmailSuccess) {
+      if (messageData.connectEmailSuccess) {
         if (step.value != EmailLoginStep.loading) {
-          final action = messageMap.payload?['action'] ?? '';
+          final action = messageData.getPayloadMapKey<String>('action');
           final value = action.toString().toUpperCase();
           step.value = EmailLoginStep.fromAction(value);
         }
       }
-      if (messageMap.connectEmailError) {
-        _error('Error connecting email');
-      }
       // ****** CONNECT_OTP
-      if (messageMap.connectOtpSuccess) {
+      if (messageData.connectOtpSuccess) {
         await getUser();
       }
-      if (messageMap.connectOtpError) {
-        _error('Error connecting OTP');
-      }
       // ****** GET_USER
-      if (messageMap.getUserSuccess) {
+      if (messageData.getUserSuccess) {
         _authenticated = true;
-        final data = MagicData.fromJson(messageMap.payload!);
+        final data = MagicData.fromJson(messageData.payload!);
         if (!_connected.isCompleted) {
           final event = MagicSessionEvent(
             email: data.email,
@@ -332,20 +316,14 @@ class MagicService implements IMagicService {
           onMagicLoginSuccess.broadcast(MagicConnectEvent(data));
         }
       }
-      if (messageMap.getUserError) {
-        _error('Error getting user');
-      }
       // ****** SWITCH_NETWORK
-      if (messageMap.switchNetworkSuccess) {
-        final chainId = messageMap.payload?['chainId'] as int?;
+      if (messageData.switchNetworkSuccess) {
+        final chainId = messageData.getPayloadMapKey<int?>('chainId');
         onMagicUpdate.broadcast(MagicSessionEvent(chainId: chainId));
       }
-      if (messageMap.switchNetworkError) {
-        _error('Error switching network');
-      }
       // ****** RPC_REQUEST
-      if (messageMap.rpcRequestSuccess) {
-        final hash = messageMap.payload as String?;
+      if (messageData.rpcRequestSuccess) {
+        final hash = messageData.payload as String?;
         _response.complete(hash);
         onMagicRpcRequest.broadcast(
           MagicRequestEvent(
@@ -355,43 +333,63 @@ class MagicService implements IMagicService {
           ),
         );
       }
-      if (messageMap.rpcRequestError) {
-        final message = messageMap.payload?['message'] as String?;
-        _response.complete(JsonRpcError(code: 0, message: message));
-        onMagicRpcRequest.broadcast(
-          MagicRequestEvent(
-            request: null,
-            result: JsonRpcError(code: 0, message: message),
-            success: false,
-          ),
-        );
-      }
       // ****** SIGN_OUT
-      if (messageMap.signOutSuccess) {
+      if (messageData.signOutSuccess) {
         //
       }
-      if (messageMap.signOutError) {
-        //
-      }
-      if (messageMap.sessionUpdate) {
+      // ****** SESSION_UPDATE
+      if (messageData.sessionUpdate) {
         // onMagicUpdate.broadcast(MagicSessionEvent(...));
       }
+      if (messageData.isConnectError) {
+        _error(IsConnectedErrorEvent());
+      }
+      if (messageData.connectEmailError) {
+        _error(ConnectEmailErrorEvent());
+      }
+      if (messageData.connectOtpError) {
+        _error(ConnectOtpErrorEvent());
+      }
+      if (messageData.getUserError) {
+        _error(GetUserErrorEvent());
+      }
+      if (messageData.switchNetworkError) {
+        _error(SwitchNetworkErrorEvent());
+      }
+      if (messageData.rpcRequestError) {
+        final message = messageData.getPayloadMapKey<String?>('message');
+        _error(RpcRequestErrorEvent(message));
+      }
+      if (messageData.signOutError) {
+        _error(SignOutErrorEvent());
+      }
     } catch (e, s) {
-      loggerService.instance.e(
-        '[MagicService] error ${message.message}',
-        error: e,
-        stackTrace: s,
-      );
+      loggerService.instance.e('[$runtimeType] $jsMessage', stackTrace: s);
     }
   }
 
-  void _error(String errorMessage) {
+  void _error(MagicErrorEvent errorEvent) {
+    if (errorEvent is ConnectEmailErrorEvent) {
+      step.value = EmailLoginStep.idle;
+    }
+    if (errorEvent is ConnectOtpErrorEvent) {
+      step.value = EmailLoginStep.verifyOtp;
+    }
+    if (errorEvent is RpcRequestErrorEvent) {
+      _response.complete(JsonRpcError(code: 0, message: errorEvent.error));
+      onMagicRpcRequest.broadcast(
+        MagicRequestEvent(
+          request: null,
+          result: JsonRpcError(code: 0, message: errorEvent.error),
+          success: false,
+        ),
+      );
+    }
     _authenticated = false;
     if (!_connected.isCompleted) {
       _connected.complete(_authenticated);
     }
-    onMagicError.broadcast(MagicErrorEvent(errorMessage));
-    loggerService.instance.e('[MagicService] error $errorMessage');
+    onMagicError.broadcast(errorEvent);
   }
 
   Future<void> _runJavascript(String projectId) async {
@@ -447,26 +445,32 @@ class MagicService implements IMagicService {
     return RegExp(r'' + domains).hasMatch(domain);
   }
 
-  bool _isAllowedOrigin(String origin) {
-    return Uri.parse(origin).authority == _origin;
-  }
-
   void _checkTimeOut(Timer time) {
     debugPrint(time.tick.toString());
     if (time.tick > 15) {
       _resetTimeOut();
-      _error('Error checking isConnected');
+      _error(IsConnectedErrorEvent());
     }
   }
 
-  Uri get _requestUri {
+  Uri _requestUri(String bundleId) {
     final uri = Uri.parse('https://$_url');
-    final queryParams = {'projectId': _web3app.core.projectId};
+    final queryParams = {
+      'projectId': _web3app.core.projectId,
+      'bundleId': bundleId,
+    };
     return uri.replace(queryParameters: queryParams);
   }
 
   void _resetTimeOut() {
     _timeOutTimer?.cancel();
     _timeOutTimer = null;
+  }
+}
+
+extension JavaScriptMessageExtension on JavaScriptMessage {
+  FrameMessage toFrameMessage() {
+    final decodeMessage = jsonDecode(message) as Map<String, dynamic>;
+    return FrameMessage.fromJson(decodeMessage);
   }
 }

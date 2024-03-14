@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/pages/approve_magic_request_page.dart';
 import 'package:web3modal_flutter/pages/confirm_email_page.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
-import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
+import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';

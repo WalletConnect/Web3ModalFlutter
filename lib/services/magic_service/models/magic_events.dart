@@ -9,11 +9,6 @@ class MagicConnectEvent implements EventArgs {
   String toString() => data?.toString() ?? '';
 }
 
-class MagicErrorEvent implements EventArgs {
-  final String? error;
-  MagicErrorEvent(this.error);
-}
-
 class MagicSessionEvent implements EventArgs {
   String? email;
   String? address;
@@ -54,4 +49,38 @@ class MagicRequestEvent implements EventArgs {
     this.result,
     this.success,
   });
+}
+
+class MagicErrorEvent implements EventArgs {
+  final String? error;
+  MagicErrorEvent(this.error);
+}
+
+class IsConnectedErrorEvent extends MagicErrorEvent {
+  IsConnectedErrorEvent() : super('Error checking connection');
+}
+
+class ConnectEmailErrorEvent extends MagicErrorEvent {
+  ConnectEmailErrorEvent() : super('Error connecting email');
+}
+
+class ConnectOtpErrorEvent extends MagicErrorEvent {
+  ConnectOtpErrorEvent() : super('Error validating OTP code');
+}
+
+class GetUserErrorEvent extends MagicErrorEvent {
+  GetUserErrorEvent() : super('Error getting user');
+}
+
+class SwitchNetworkErrorEvent extends MagicErrorEvent {
+  SwitchNetworkErrorEvent() : super('Error switching network');
+}
+
+class SignOutErrorEvent extends MagicErrorEvent {
+  SignOutErrorEvent() : super('Error on Signing out');
+}
+
+class RpcRequestErrorEvent extends MagicErrorEvent {
+  RpcRequestErrorEvent(String? message)
+      : super(message ?? 'Error during request');
 }

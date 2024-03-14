@@ -7,29 +7,83 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:convert/convert.dart';
 
-class MagicMessage {
-  String type;
-  dynamic payload;
+class FrameMessage {
+  static const _origin = 'secure.walletconnect.com';
 
-  MagicMessage({
-    required this.type,
-    this.payload,
+  final MessageData? data;
+  final String? origin;
+
+  FrameMessage({
+    this.data,
+    this.origin,
   });
 
-  factory MagicMessage.fromJson(Map<String, dynamic> json) {
-    return MagicMessage(
-      type: json['type'],
-      payload: json['payload'],
+  FrameMessage copyWith({
+    MessageData? data,
+    String? origin,
+  }) =>
+      FrameMessage(
+        data: data ?? this.data,
+        origin: origin ?? this.origin,
+      );
+
+  factory FrameMessage.fromRawJson(String str) {
+    return FrameMessage.fromJson(json.decode(str));
+  }
+
+  String toRawJson() => json.encode(toJson());
+
+  factory FrameMessage.fromJson(Map<String, dynamic> json) => FrameMessage(
+        data: MessageData.fromJson(json['data']),
+        origin: json['origin'],
+      );
+
+  Map<String, dynamic> toJson() => {
+        'data': data?.toJson(),
+        'origin': origin,
+      };
+
+  bool get isValidOrigin {
+    return Uri.parse(origin ?? '').authority == _origin;
+  }
+
+  bool get isValidData {
+    return data != null;
+  }
+}
+
+class MessageData {
+  final String? type;
+  final dynamic payload;
+
+  MessageData({this.type, this.payload});
+
+  MessageData copyWith({String? type, dynamic payload}) {
+    return MessageData(
+      type: type ?? this.type,
+      payload: payload ?? this.payload,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> params = {'type': type};
-    if ((payload ?? '').isNotEmpty) {
-      params['payload'] = payload;
-    }
+  factory MessageData.fromRawJson(String str) {
+    return MessageData.fromJson(json.decode(str));
+  }
 
-    return params;
+  String toRawJson() => json.encode(toJson());
+
+  factory MessageData.fromJson(Map<String, dynamic> json) => MessageData(
+        type: json['type'],
+        payload: json['payload'],
+      );
+
+  Map<String, dynamic> toJson() => {
+        'type': type,
+        'payload': payload?.toJson(),
+      };
+
+  T getPayloadMapKey<T>(String key) {
+    final p = payload as Map<String, dynamic>;
+    return p[key] as T;
   }
 
   // @w3m-frame events
@@ -53,14 +107,14 @@ class MagicMessage {
 }
 
 // @w3m-app events
-class IsConnected extends MagicMessage {
+class IsConnected extends MessageData {
   IsConnected() : super(type: '@w3m-app/IS_CONNECTED');
 
   @override
   String toString() => '{type: "${super.type}"}';
 }
 
-class SwitchNetwork extends MagicMessage {
+class SwitchNetwork extends MessageData {
   final String chainId;
   SwitchNetwork({
     required this.chainId,
@@ -70,7 +124,7 @@ class SwitchNetwork extends MagicMessage {
   String toString() => '{type:\'${super.type}\',payload:{chainId:$chainId}}';
 }
 
-class ConnectEmail extends MagicMessage {
+class ConnectEmail extends MessageData {
   final String email;
   ConnectEmail({required this.email}) : super(type: '@w3m-app/CONNECT_EMAIL');
 
@@ -78,14 +132,14 @@ class ConnectEmail extends MagicMessage {
   String toString() => '{type:\'${super.type}\',payload:{email:\'$email\'}}';
 }
 
-class ConnectDevice extends MagicMessage {
+class ConnectDevice extends MessageData {
   ConnectDevice() : super(type: '@w3m-app/CONNECT_DEVICE');
 
   @override
   String toString() => '{type: "${super.type}"}';
 }
 
-class ConnectOtp extends MagicMessage {
+class ConnectOtp extends MessageData {
   final String otp;
   ConnectOtp({required this.otp}) : super(type: '@w3m-app/CONNECT_OTP');
 
@@ -93,7 +147,7 @@ class ConnectOtp extends MagicMessage {
   String toString() => '{type:\'${super.type}\',payload:{otp:\'$otp\'}}';
 }
 
-class GetUser extends MagicMessage {
+class GetUser extends MessageData {
   final String? chainId;
   GetUser({this.chainId}) : super(type: '@w3m-app/GET_USER');
 
@@ -106,21 +160,21 @@ class GetUser extends MagicMessage {
   }
 }
 
-class SignOut extends MagicMessage {
+class SignOut extends MessageData {
   SignOut() : super(type: '@w3m-app/SIGN_OUT');
 
   @override
   String toString() => '{type: "${super.type}"}';
 }
 
-class GetChainId extends MagicMessage {
+class GetChainId extends MessageData {
   GetChainId() : super(type: '@w3m-app/GET_CHAIN_ID');
 
   @override
   String toString() => '{type: "${super.type}"}';
 }
 
-class RpcRequest extends MagicMessage {
+class RpcRequest extends MessageData {
   final String method;
   final List<dynamic> params;
 
@@ -160,7 +214,7 @@ class RpcRequest extends MagicMessage {
   }
 }
 
-class UpdateEmail extends MagicMessage {
+class UpdateEmail extends MessageData {
   UpdateEmail() : super(type: '@w3m-app/UPDATE_EMAIL');
 
   @override
@@ -168,7 +222,7 @@ class UpdateEmail extends MagicMessage {
 }
 // readonly APP_AWAIT_UPDATE_EMAIL: "@w3m-app/AWAIT_UPDATE_EMAIL";
 
-class SyncTheme extends MagicMessage {
+class SyncTheme extends MessageData {
   final Web3ModalTheme? theme;
   SyncTheme({required this.theme}) : super(type: '@w3m-app/SYNC_THEME');
 
@@ -203,7 +257,7 @@ class SyncTheme extends MagicMessage {
   }
 }
 
-class SyncAppData extends MagicMessage {
+class SyncAppData extends MessageData {
   SyncAppData({
     required this.metadata,
     required this.sdkVersion,
