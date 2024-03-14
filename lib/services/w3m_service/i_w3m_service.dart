@@ -97,6 +97,8 @@ abstract class IW3MService with ChangeNotifier {
   /// List of approved events by connected wallet
   List<String>? getApprovedEvents();
 
+  Future<void> loadAccountData();
+
   /// Disconnects the session and pairing, if any.
   /// If there is no session, this does nothing.
   Future<void> disconnect({bool disconnectAllSessions = true});

@@ -40,6 +40,7 @@ class MagicService implements IMagicService {
   final _webViewController = WebViewController();
   late WebViewWidget _webview;
   WebViewWidget get webview => _webview;
+  String? _connectionChainId;
 
   late Completer<bool> _initialized;
   Future<bool> initialized() => _initialized.future;
@@ -160,22 +161,23 @@ class MagicService implements IMagicService {
   // ****** W3mFrameProvider public methods ******* //
 
   @override
-  Future<void> connectEmail({required String value}) async {
-    if (!_initialized.isCompleted || !(await _initialized.future)) return;
+  Future<void> connectEmail({required String value, String? chainId}) async {
+    await _checkServiceReady();
+    _connectionChainId = chainId ?? _connectionChainId;
     final message = ConnectEmail(email: value).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   @override
   Future<void> connectDevice() async {
-    if (!_initialized.isCompleted || !(await _initialized.future)) return;
+    await _checkServiceReady();
     final message = ConnectDevice().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   @override
   Future<void> connectOtp({required String otp}) async {
-    if (!_initialized.isCompleted || !(await _initialized.future)) return;
+    await _checkServiceReady();
     step.value = EmailLoginStep.loading;
     final message = ConnectOtp(otp: otp).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
@@ -183,7 +185,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> isConnected() async {
-    if (!_initialized.isCompleted || !(await _initialized.future)) return;
+    await _checkServiceReady();
     _connected = Completer<bool>();
     final message = IsConnected().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
@@ -191,7 +193,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> getChainId() async {
-    if (!_initialized.isCompleted || !(await _initialized.future)) return;
+    await _checkServiceReady();
     final message = GetChainId().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
@@ -202,7 +204,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> syncTheme(Web3ModalTheme? theme) async {
-    if (!_initialized.isCompleted || !(await _initialized.future)) return;
+    await _checkServiceReady();
     _currentTheme = theme;
     final message = SyncTheme(theme: theme).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
@@ -210,7 +212,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> syncDappData() async {
-    if (!_initialized.isCompleted || !(await _initialized.future)) return;
+    await _checkServiceReady();
     final message = SyncAppData(
       metadata: _web3app.metadata,
       projectId: _web3app.core.projectId,
@@ -221,14 +223,14 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> getUser({String? chainId}) async {
-    if (!_initialized.isCompleted || !(await _initialized.future)) return;
+    await _checkServiceReady();
     final message = GetUser(chainId: chainId).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   @override
   Future<void> switchNetwork({required String chainId}) async {
-    if (!_initialized.isCompleted || !(await _initialized.future)) return;
+    await _checkServiceReady();
     final message = SwitchNetwork(chainId: chainId).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
@@ -236,7 +238,7 @@ class MagicService implements IMagicService {
   @override
   Future<void> request({required Map<String, dynamic> parameters}) async {
     _response = Completer<dynamic>();
-    if (!_initialized.isCompleted || !(await _initialized.future)) return;
+    await _checkServiceReady();
     if (!_authenticated) {
       onMagicLoginRequest.broadcast(MagicSessionEvent(email: email.value));
       _connected = Completer<bool>();
@@ -255,12 +257,19 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> disconnect() async {
-    if (!_initialized.isCompleted || !(await _initialized.future)) return;
+    await _checkServiceReady();
     final message = SignOut().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
   // ****** Private Methods ******* //
+
+  Future<void> _checkServiceReady() async {
+    if (!_initialized.isCompleted || !(await _initialized.future)) {
+      throw Exception('Service is not ready');
+    }
+    return;
+  }
 
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
     if (kDebugMode) {
@@ -285,7 +294,7 @@ class MagicService implements IMagicService {
           _connected.complete(_authenticated);
         }
         if (_authenticated) {
-          await getUser();
+          await getUser(chainId: _connectionChainId);
         }
       }
       // ****** CONNECT_EMAIL
@@ -298,7 +307,8 @@ class MagicService implements IMagicService {
       }
       // ****** CONNECT_OTP
       if (messageData.connectOtpSuccess) {
-        await getUser();
+        await getUser(chainId: _connectionChainId);
+        _connectionChainId = null;
       }
       // ****** GET_USER
       if (messageData.getUserSuccess) {
@@ -369,12 +379,6 @@ class MagicService implements IMagicService {
   }
 
   void _error(MagicErrorEvent errorEvent) {
-    if (errorEvent is ConnectEmailErrorEvent) {
-      step.value = EmailLoginStep.idle;
-    }
-    if (errorEvent is ConnectOtpErrorEvent) {
-      step.value = EmailLoginStep.verifyOtp;
-    }
     if (errorEvent is RpcRequestErrorEvent) {
       _response.complete(JsonRpcError(code: 0, message: errorEvent.error));
       onMagicRpcRequest.broadcast(
@@ -384,8 +388,20 @@ class MagicService implements IMagicService {
           success: false,
         ),
       );
+      return;
     }
-    _authenticated = false;
+    if (errorEvent is IsConnectedErrorEvent) {
+      _authenticated = false;
+      step.value = EmailLoginStep.idle;
+    }
+    if (errorEvent is ConnectEmailErrorEvent) {
+      _authenticated = false;
+      step.value = EmailLoginStep.idle;
+    }
+    if (errorEvent is ConnectOtpErrorEvent) {
+      _authenticated = false;
+      step.value = EmailLoginStep.verifyOtp;
+    }
     if (!_connected.isCompleted) {
       _connected.complete(_authenticated);
     }

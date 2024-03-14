@@ -13,16 +13,9 @@ class FrameMessage {
   final MessageData? data;
   final String? origin;
 
-  FrameMessage({
-    this.data,
-    this.origin,
-  });
+  FrameMessage({this.data, this.origin});
 
-  FrameMessage copyWith({
-    MessageData? data,
-    String? origin,
-  }) =>
-      FrameMessage(
+  FrameMessage copyWith({MessageData? data, String? origin}) => FrameMessage(
         data: data ?? this.data,
         origin: origin ?? this.origin,
       );

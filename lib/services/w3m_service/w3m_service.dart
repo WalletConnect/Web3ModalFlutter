@@ -392,7 +392,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     }
 
     _notify();
-    _loadAccountData();
+    loadAccountData();
   }
 
   @override
@@ -1002,7 +1002,8 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   /// Loads account balance and avatar.
   /// Returns true if it was able to actually load data (i.e. there is a selected chain and session)
-  void _loadAccountData() async {
+  @override
+  Future<void> loadAccountData() async {
     // If there is no selected chain or session, stop. No account to load in.
     if (_currentSelectedChain == null ||
         _currentSession == null ||
@@ -1010,7 +1011,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       return;
     }
 
-    loggerService.instance.i('[$runtimeType] _loadAccountData');
     // Get the chain balance.
     _chainBalance = await ledgerService.instance.getBalance(
       _currentSelectedChain!.rpcUrl,
@@ -1024,6 +1024,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         int.parse(_currentSelectedChain!.chainId),
       );
       _avatarUrl = blockchainId.avatar;
+      loggerService.instance.i('[$runtimeType] _loadAccountData');
     } catch (e) {
       loggerService.instance.e('[$runtimeType] _loadAccountData $e');
     }
@@ -1201,7 +1202,8 @@ extension _W3MMagicExtension on W3MService {
         );
       }
       final chainId = session.chainId.toString();
-      await selectChain(W3MChainPresets.chains[chainId]!);
+      final chainInfo = W3MChainPresets.chains[chainId]!;
+      _setEthChain(chainInfo, logEvent: false);
       if (_isOpen) {
         closeModal();
       }
@@ -1234,7 +1236,9 @@ extension _W3MMagicExtension on W3MService {
   }
 
   void _onMagicRequest(MagicRequestEvent? args) {
-    loggerService.instance.i('[$runtimeType] onMagicRpcRequest: $args');
+    loggerService.instance.i(
+      '[$runtimeType] onMagicRpcRequest: ${args?.toString()}',
+    );
     if (args?.result != null) {
       closeModal();
     }
@@ -1318,7 +1322,7 @@ extension _W3MServiceExtension on W3MService {
         ));
       }
       await _selectChainFromStoredId();
-      _loadAccountData();
+      loadAccountData();
       if (_isOpen) {
         closeModal();
       }
@@ -1340,7 +1344,7 @@ extension _W3MServiceExtension on W3MService {
     loggerService.instance.i('[$runtimeType] onSessionUpdate $args');
     final wcSessions = _web3App.sessions.getAll();
     await _storeSession(W3MSession(sessionData: wcSessions.first));
-    _loadAccountData();
+    loadAccountData();
   }
 
   void _onSessionDelete(SessionDelete? args) {

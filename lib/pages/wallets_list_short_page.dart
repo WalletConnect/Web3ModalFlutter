@@ -182,7 +182,9 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
     if (value.isEmpty || !coreUtils.instance.isValidEmail(value)) {
       return;
     }
-    magicService.instance.connectEmail(value: value);
+    final service = Web3ModalProvider.of(context).service;
+    final chainId = service.selectedChain?.chainId;
+    magicService.instance.connectEmail(value: value, chainId: chainId);
     widgetStack.instance.push(ConfirmEmailPage());
   }
 

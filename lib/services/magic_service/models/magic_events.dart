@@ -49,6 +49,9 @@ class MagicRequestEvent implements EventArgs {
     this.result,
     this.success,
   });
+
+  @override
+  String toString() => 'request: $request, success: $success, result: $result';
 }
 
 class MagicErrorEvent implements EventArgs {

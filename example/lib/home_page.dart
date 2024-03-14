@@ -173,22 +173,25 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox.square(dimension: 4.0),
-            Text(
-              'Custom theme is: ${isCustom ? 'ON' : 'OFF'}',
-              style: TextStyle(
-                color: Web3ModalTheme.colorsOf(context).foreground100,
+      body: RefreshIndicator(
+        onRefresh: () => _w3mService.loadAccountData(),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox.square(dimension: 4.0),
+              Text(
+                'Custom theme is: ${isCustom ? 'ON' : 'OFF'}',
+                style: TextStyle(
+                  color: Web3ModalTheme.colorsOf(context).foreground100,
+                ),
               ),
-            ),
-            _ButtonsView(w3mService: _w3mService),
-            // _CustomButtonsView(w3mService: _w3mService),
-            const Divider(height: 0.0, color: Colors.transparent),
-            _ConnectedView(w3mService: _w3mService)
-          ],
+              _ButtonsView(w3mService: _w3mService),
+              // _CustomButtonsView(w3mService: _w3mService),
+              const Divider(height: 0.0, color: Colors.transparent),
+              _ConnectedView(w3mService: _w3mService)
+            ],
+          ),
         ),
       ),
     );

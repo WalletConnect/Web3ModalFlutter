@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
-import 'package:walletconnect_flutter_dapp/models/eth/ethereum_transaction.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/contract.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/test_data.dart';
 
@@ -122,11 +121,12 @@ class EIP155 {
           topic: topic,
           chainId: chainId,
           method: method.name,
-          transaction: EthereumTransaction(
-            from: address,
-            to: address,
-            value: '0x01',
-            data: '0x', // to make it work with some wallets
+          transaction: Transaction(
+            from: EthereumAddress.fromHex(address),
+            to: EthereumAddress.fromHex(
+              '0x59e2f66C0E96803206B6486cDb39029abAE834c0',
+            ),
+            value: EtherAmount.fromInt(EtherUnit.finney, 11), // == 0.011
           ),
         );
       case EIP155UIMethods.walletWatchAsset:
@@ -215,8 +215,8 @@ class EIP155 {
     required W3MService w3mService,
     required String topic,
     required String chainId,
-    required EthereumTransaction transaction,
     required String method,
+    required Transaction transaction,
   }) async {
     return await w3mService.request(
       topic: topic,

@@ -852,6 +852,15 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: null,
       );
   @override
+  _i14.Future<void> loadAccountData() => (super.noSuchMethod(
+        Invocation.method(
+          #loadAccountData,
+          [],
+        ),
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
+  @override
   void addListener(_i17.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
