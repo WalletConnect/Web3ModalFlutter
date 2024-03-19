@@ -205,13 +205,6 @@ class MagicService implements IMagicService {
   }
 
   @override
-  Future<void> connectDevice() async {
-    await _checkServiceReady();
-    final message = ConnectDevice().toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
-  }
-
-  @override
   Future<void> connectOtp({required String otp}) async {
     await _checkServiceReady();
     step.value = EmailLoginStep.loading;

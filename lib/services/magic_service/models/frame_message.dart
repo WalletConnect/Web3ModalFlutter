@@ -161,13 +161,6 @@ class UpdateEmailSecondaryOtp extends MessageData {
   String toString() => '{type:\'${super.type}\',payload:{otp:\'$otp\'}}';
 }
 
-class ConnectDevice extends MessageData {
-  ConnectDevice() : super(type: '@w3m-app/CONNECT_DEVICE');
-
-  @override
-  String toString() => '{type: "${super.type}"}';
-}
-
 class ConnectOtp extends MessageData {
   final String otp;
   ConnectOtp({required this.otp}) : super(type: '@w3m-app/CONNECT_OTP');

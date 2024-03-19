@@ -5,15 +5,17 @@ import 'package:web3modal_flutter/theme/w3m_theme.dart';
 class BaseListItem extends StatelessWidget {
   const BaseListItem({
     super.key,
+    required this.child,
     this.trailing,
     this.onTap,
     this.padding,
-    required this.child,
+    this.hightlighted = false,
   });
   final Widget? trailing;
   final VoidCallback? onTap;
   final Widget child;
   final EdgeInsets? padding;
+  final bool hightlighted;
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +24,11 @@ class BaseListItem extends StatelessWidget {
     return FilledButton(
       onPressed: onTap,
       style: ButtonStyle(
-        fixedSize: MaterialStateProperty.all<Size>(
+        minimumSize: MaterialStateProperty.all<Size>(
           const Size(1000.0, kListItemHeight),
         ),
         backgroundColor: MaterialStateProperty.all<Color>(
-          themeColors.grayGlass002,
+          hightlighted ? themeColors.accenGlass015 : themeColors.grayGlass002,
         ),
         overlayColor: MaterialStateProperty.all<Color>(
           themeColors.grayGlass005,
@@ -37,7 +39,7 @@ class BaseListItem extends StatelessWidget {
           ),
         ),
         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-          const EdgeInsets.only(left: 4.0),
+          const EdgeInsets.all(0.0),
         ),
       ),
       child: Padding(

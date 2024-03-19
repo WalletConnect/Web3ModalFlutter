@@ -50,6 +50,7 @@ flutter:
     - assets/dark/
     - assets/light/
     - assets/icons/
+    - assets/icons/regular/
     - assets/help/
     - assets/png/
     - assets/png/2.0x/

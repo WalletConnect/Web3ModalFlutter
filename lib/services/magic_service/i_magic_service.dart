@@ -31,7 +31,6 @@ abstract class IMagicService {
 
   Future<void> connectOtp({required String otp});
 
-  Future<void> connectDevice();
   Future<void> isConnected();
   Future<void> getChainId();
 
