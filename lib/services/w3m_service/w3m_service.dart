@@ -180,7 +180,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     await _web3App.init();
     await Future.wait([
       magicService.instance.init(),
-      magicService.instance.initialized(),
+      magicService.instance.awaitInit(),
     ]);
     await magicService.instance.syncDappData();
     await magicService.instance.isConnected();
@@ -243,7 +243,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
           await _cleanSession();
         }
       } else {
-        final connected = await magicService.instance.connected();
+        final connected = await magicService.instance.awaitConnected();
         if (connected) {
           await magicService.instance.disconnect();
         }
@@ -863,7 +863,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     try {
       if (_currentSession!.sessionService.isMagic) {
         magicService.instance.request(parameters: request.toJson());
-        return await magicService.instance.response();
+        return await magicService.instance.awaitResponse();
       }
       if (_currentSession!.sessionService.isCoinbase) {
         return await cbRequest(

@@ -113,10 +113,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                       color: themeColors.foreground100,
                     ),
                     onTap: () {
-                      widgetStack.instance.push(
-                        EditEmailPage(),
-                        // event: ClickNetworksEvent(),
-                      );
+                      widgetStack.instance.push(EditEmailPage());
                     },
                   ),
                   const SizedBox.square(dimension: kPadding8),

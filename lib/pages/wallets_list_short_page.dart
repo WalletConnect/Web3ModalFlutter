@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/pages/about_wallets.dart';
 import 'package:web3modal_flutter/pages/confirm_email_page.dart';
 import 'package:web3modal_flutter/pages/connect_wallet_page.dart';
+import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
@@ -80,12 +81,20 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
               firstItem: Column(
                 children: [
                   InputEmailWidget(
+                    onFocus: (value) {
+                      if (value) {
+                        analyticsService.instance.sendEvent(
+                          EmailLoginSelected(),
+                        );
+                      }
+                    },
                     onValueChange: (value) {
                       magicService.instance.setEmail(value);
                     },
                     onSubmitted: (value) {
                       final service = Web3ModalProvider.of(context).service;
                       final chainId = service.selectedChain?.chainId;
+                      analyticsService.instance.sendEvent(EmailSubmitted());
                       magicService.instance.connectEmail(
                         value: value,
                         chainId: chainId,

@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
 import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
@@ -42,15 +44,17 @@ class MagicService implements IMagicService {
   WebViewWidget get webview => _webview;
   String? _connectionChainId;
 
-  late Completer<bool> _initialized;
-  Future<bool> initialized() => _initialized.future;
-
   bool _authenticated = false;
+  bool get isAuthenticated => _authenticated;
+
+  late Completer<bool> _initialized;
+  Future<bool> awaitInit() => _initialized.future;
+
   late Completer<bool> _connected;
-  Future<bool> connected() => _connected.future;
+  Future<bool> awaitConnected() => _connected.future;
 
   late Completer<dynamic> _response;
-  Future<dynamic> response() => _response.future;
+  Future<dynamic> awaitResponse() => _response.future;
 
   @override
   Event<MagicSessionEvent> onMagicLoginRequest = Event<MagicSessionEvent>();
@@ -330,11 +334,19 @@ class MagicService implements IMagicService {
         if (step.value != EmailLoginStep.loading) {
           final action = messageData.getPayloadMapKey<String>('action');
           final value = action.toString().toUpperCase();
-          step.value = EmailLoginStep.fromAction(value);
+          final newStep = EmailLoginStep.fromAction(value);
+          if (newStep == EmailLoginStep.verifyOtp) {
+            if (step.value == EmailLoginStep.verifyDevice) {
+              analyticsService.instance.sendEvent(DeviceRegisteredForEmail());
+            }
+            analyticsService.instance.sendEvent(EmailVerificationCodeSent());
+          }
+          step.value = newStep;
         }
       }
       // ****** CONNECT_OTP
       if (messageData.connectOtpSuccess) {
+        analyticsService.instance.sendEvent(EmailVerificationCodePass());
         step.value = EmailLoginStep.idle;
         await getUser(chainId: _connectionChainId);
       }
@@ -348,6 +360,7 @@ class MagicService implements IMagicService {
       }
       // ****** UPDATE_EMAIL_SECONDARY_OTP
       if (messageData.updateEmailSecondarySuccess) {
+        analyticsService.instance.sendEvent(EmailEdit());
         step.value = EmailLoginStep.idle;
         setEmail(newEmail.value);
         setNewEmail('');
@@ -410,6 +423,7 @@ class MagicService implements IMagicService {
         _error(UpdateEmailErrorEvent());
       }
       if (messageData.connectOtpError) {
+        analyticsService.instance.sendEvent(EmailVerificationCodeFail());
         _error(ConnectOtpErrorEvent());
       }
       if (messageData.getUserError) {

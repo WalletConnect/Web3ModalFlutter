@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
+import 'package:web3modal_flutter/pages/confirm_email_page.dart';
 import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
@@ -28,8 +29,14 @@ class _EditEmailPageState extends State<EditEmailPage> {
   @override
   void initState() {
     super.initState();
-    magicService.instance.onMagicError.subscribe(_onMagicErrorEvent);
-    _currentEmailValue = magicService.instance.email.value;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      magicService.instance.onMagicError.subscribe(_onMagicErrorEvent);
+      _currentEmailValue = magicService.instance.email.value;
+      if (!magicService.instance.isAuthenticated) {
+        magicService.instance.connectEmail(value: _currentEmailValue);
+        widgetStack.instance.popAllAndPush(ConfirmEmailPage());
+      }
+    });
   }
 
   @override

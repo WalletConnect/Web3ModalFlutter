@@ -12,12 +12,14 @@ class InputEmailWidget extends StatefulWidget {
   final String? initialValue;
   final Function(String value)? onValueChange;
   final Widget? suffixIcon;
+  final Function(bool value)? onFocus;
   const InputEmailWidget({
     super.key,
     required this.onSubmitted,
     this.initialValue,
     this.onValueChange,
     this.suffixIcon,
+    this.onFocus,
   });
 
   @override
@@ -49,7 +51,7 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
       onTextChanged: (value) {
         widget.onValueChange?.call(value);
       },
-      onFocusChange: (focus) => setState(() => hasFocus = focus),
+      onFocusChange: _onFocusChange,
       suffixIcon: widget.suffixIcon ??
           ValueListenableBuilder<String>(
             valueListenable: magicService.instance.email,
@@ -86,6 +88,12 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
             },
           ),
     );
+  }
+
+  void _onFocusChange(bool focus) {
+    if (hasFocus == focus) return;
+    widget.onFocus?.call(focus);
+    setState(() => hasFocus = focus);
   }
 
   bool _invalidEmail(String value) {
