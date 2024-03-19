@@ -68,6 +68,7 @@ class MagicService implements IMagicService {
   Event<MagicRequestEvent> onMagicRpcRequest = Event<MagicRequestEvent>();
 
   final email = ValueNotifier<String>('');
+  final newEmail = ValueNotifier<String>('');
   final step = ValueNotifier<EmailLoginStep>(EmailLoginStep.idle);
 
   MagicService({required IWeb3App web3app}) : _web3app = web3app {
@@ -158,6 +159,9 @@ class MagicService implements IMagicService {
   @override
   void setEmail(String value) => email.value = value;
 
+  @override
+  void setNewEmail(String value) => newEmail.value = value;
+
   // ****** W3mFrameProvider public methods ******* //
 
   @override
@@ -165,6 +169,34 @@ class MagicService implements IMagicService {
     await _checkServiceReady();
     _connectionChainId = chainId ?? _connectionChainId;
     final message = ConnectEmail(email: value).toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
+  }
+
+  @override
+  Future<void> updateEmail({required String value}) async {
+    await _checkServiceReady();
+    step.value = EmailLoginStep.loading;
+    final message = UpdateEmail(email: value).toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
+    Future.delayed(Duration(seconds: 5), () {
+      // If for any reason UPDATE_EMAIL_SUCCESS does not arrive I switch screen anyway.
+      step.value = EmailLoginStep.verifyOtp;
+    });
+  }
+
+  @override
+  Future<void> updateEmailPrimaryOtp({required String otp}) async {
+    await _checkServiceReady();
+    step.value = EmailLoginStep.loading;
+    final message = UpdateEmailPrimaryOtp(otp: otp).toString();
+    await _webViewController.runJavaScript('sendMessage($message)');
+  }
+
+  @override
+  Future<void> updateEmailSecondaryOtp({required String otp}) async {
+    await _checkServiceReady();
+    step.value = EmailLoginStep.loading;
+    final message = UpdateEmailSecondaryOtp(otp: otp).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
 
@@ -197,10 +229,6 @@ class MagicService implements IMagicService {
     final message = GetChainId().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
   }
-
-  // Future<void> updateEmail({required String email}) async {
-  //   await _webViewController.runJavaScript('provider.updateEmail(\'$email\')');
-  // }
 
   @override
   Future<void> syncTheme(Web3ModalTheme? theme) async {
@@ -307,8 +335,46 @@ class MagicService implements IMagicService {
       }
       // ****** CONNECT_OTP
       if (messageData.connectOtpSuccess) {
+        step.value = EmailLoginStep.idle;
         await getUser(chainId: _connectionChainId);
-        _connectionChainId = null;
+      }
+      // ****** UPDAET_EMAIL
+      if (messageData.updateEmailSuccess) {
+        step.value = EmailLoginStep.verifyOtp;
+      }
+      // ****** UPDATE_EMAIL_PRIMARY_OTP
+      if (messageData.updateEmailPrimarySuccess) {
+        step.value = EmailLoginStep.verifyOtp2;
+      }
+      // ****** UPDATE_EMAIL_SECONDARY_OTP
+      if (messageData.updateEmailSecondarySuccess) {
+        step.value = EmailLoginStep.idle;
+        setEmail(newEmail.value);
+        setNewEmail('');
+        await getUser(chainId: _connectionChainId);
+      }
+      // ****** SWITCH_NETWORK
+      if (messageData.switchNetworkSuccess) {
+        final chainId = messageData.getPayloadMapKey<int?>('chainId');
+        onMagicUpdate.broadcast(MagicSessionEvent(chainId: chainId));
+      }
+      // ****** GET_CHAIN_ID
+      if (messageData.getChainIdSuccess) {
+        final chainId = messageData.getPayloadMapKey<int?>('chainId');
+        onMagicUpdate.broadcast(MagicSessionEvent(chainId: chainId));
+        _connectionChainId = chainId?.toString();
+      }
+      // ****** RPC_REQUEST
+      if (messageData.rpcRequestSuccess) {
+        final hash = messageData.payload as String?;
+        _response.complete(hash);
+        onMagicRpcRequest.broadcast(
+          MagicRequestEvent(
+            request: null,
+            result: hash,
+            success: true,
+          ),
+        );
       }
       // ****** GET_USER
       if (messageData.getUserSuccess) {
@@ -326,23 +392,6 @@ class MagicService implements IMagicService {
           onMagicLoginSuccess.broadcast(MagicConnectEvent(data));
         }
       }
-      // ****** SWITCH_NETWORK
-      if (messageData.switchNetworkSuccess) {
-        final chainId = messageData.getPayloadMapKey<int?>('chainId');
-        onMagicUpdate.broadcast(MagicSessionEvent(chainId: chainId));
-      }
-      // ****** RPC_REQUEST
-      if (messageData.rpcRequestSuccess) {
-        final hash = messageData.payload as String?;
-        _response.complete(hash);
-        onMagicRpcRequest.broadcast(
-          MagicRequestEvent(
-            request: null,
-            result: hash,
-            success: true,
-          ),
-        );
-      }
       // ****** SIGN_OUT
       if (messageData.signOutSuccess) {
         //
@@ -356,6 +405,9 @@ class MagicService implements IMagicService {
       }
       if (messageData.connectEmailError) {
         _error(ConnectEmailErrorEvent());
+      }
+      if (messageData.updateEmailError) {
+        _error(UpdateEmailErrorEvent());
       }
       if (messageData.connectOtpError) {
         _error(ConnectOtpErrorEvent());
@@ -398,6 +450,10 @@ class MagicService implements IMagicService {
       _authenticated = false;
       step.value = EmailLoginStep.idle;
     }
+    if (errorEvent is UpdateEmailErrorEvent) {
+      _authenticated = false;
+      step.value = EmailLoginStep.verifyOtp;
+    }
     if (errorEvent is ConnectOtpErrorEvent) {
       _authenticated = false;
       step.value = EmailLoginStep.verifyOtp;
@@ -413,7 +469,7 @@ class MagicService implements IMagicService {
       const iframeFL = document.getElementById('frame-mobile-sdk')
       
       window.addEventListener('message', ({ data, origin }) => {
-        console.log('message received <===== ' + JSON.stringify({data,origin}))
+        console.log('message received <=== ' + JSON.stringify({data,origin}))
         window.w3mWebview.postMessage(JSON.stringify({data,origin}))
       })
 

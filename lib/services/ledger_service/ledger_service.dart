@@ -5,7 +5,7 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class LedgerService extends ILedgerService {
   @override
-  Future<double> getBalance(String rpcUrl, String address) async {
+  Future<double?> getBalance(String rpcUrl, String address) async {
     try {
       final client = Web3Client(rpcUrl, Client());
       final amount = await client.getBalance(EthereumAddress.fromHex(address));
@@ -16,7 +16,7 @@ class LedgerService extends ILedgerService {
         error: e,
         stackTrace: s,
       );
-      return 0.0;
+      return null;
     }
   }
 

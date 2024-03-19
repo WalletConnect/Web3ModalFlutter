@@ -84,6 +84,12 @@ class MessageData {
   bool get syncDataSuccess => type == '@w3m-frame/SYNC_DAPP_DATA_SUCCESS';
   bool get connectEmailSuccess => type == '@w3m-frame/CONNECT_EMAIL_SUCCESS';
   bool get connectEmailError => type == '@w3m-frame/CONNECT_EMAIL_ERROR';
+  bool get updateEmailSuccess => type == '@w3m-frame/UPDATE_EMAIL_SUCCESS';
+  bool get updateEmailPrimarySuccess =>
+      type == '@w3m-frame/UPDATE_EMAIL_PRIMARY_OTP_SUCCESS';
+  bool get updateEmailSecondarySuccess =>
+      type == '@w3m-frame/UPDATE_EMAIL_SECONDARY_OTP_SUCCESS';
+  bool get updateEmailError => type == '@w3m-frame/UPDATE_EMAIL_ERROR';
   bool get isConnectSuccess => type == '@w3m-frame/IS_CONNECTED_SUCCESS';
   bool get isConnectError => type == '@w3m-frame/IS_CONNECTED_ERROR';
   bool get connectOtpSuccess => type == '@w3m-frame/CONNECT_OTP_SUCCESS';
@@ -93,6 +99,8 @@ class MessageData {
   bool get sessionUpdate => type == '@w3m-frame/SESSION_UPDATE';
   bool get switchNetworkSuccess => type == '@w3m-frame/SWITCH_NETWORK_SUCCESS';
   bool get switchNetworkError => type == '@w3m-frame/SWITCH_NETWORK_ERROR';
+  bool get getChainIdSuccess => type == '@w3m-frame/GET_CHAIN_ID_SUCCESS';
+  bool get getChainIdError => type == '@w3m-frame/GET_CHAIN_ID_ERROR';
   bool get rpcRequestSuccess => type == '@w3m-frame/RPC_REQUEST_SUCCESS';
   bool get rpcRequestError => type == '@w3m-frame/RPC_REQUEST_ERROR';
   bool get signOutSuccess => type == '@w3m-frame/SIGN_OUT_SUCCESS';
@@ -123,6 +131,34 @@ class ConnectEmail extends MessageData {
 
   @override
   String toString() => '{type:\'${super.type}\',payload:{email:\'$email\'}}';
+}
+
+class UpdateEmail extends MessageData {
+  final String email;
+  UpdateEmail({required this.email}) : super(type: '@w3m-app/UPDATE_EMAIL');
+
+  @override
+  String toString() => '{type:\'${super.type}\',payload:{email:\'$email\'}}';
+}
+
+class UpdateEmailPrimaryOtp extends MessageData {
+  final String otp;
+  UpdateEmailPrimaryOtp({
+    required this.otp,
+  }) : super(type: '@w3m-app/UPDATE_EMAIL_PRIMARY_OTP');
+
+  @override
+  String toString() => '{type:\'${super.type}\',payload:{otp:\'$otp\'}}';
+}
+
+class UpdateEmailSecondaryOtp extends MessageData {
+  final String otp;
+  UpdateEmailSecondaryOtp({
+    required this.otp,
+  }) : super(type: '@w3m-app/UPDATE_EMAIL_SECONDARY_OTP');
+
+  @override
+  String toString() => '{type:\'${super.type}\',payload:{otp:\'$otp\'}}';
 }
 
 class ConnectDevice extends MessageData {
@@ -206,14 +242,6 @@ class RpcRequest extends MessageData {
     return '{$t,payload:{$m,params:[$ps]}}';
   }
 }
-
-class UpdateEmail extends MessageData {
-  UpdateEmail() : super(type: '@w3m-app/UPDATE_EMAIL');
-
-  @override
-  String toString() => '{type: "${super.type}"}';
-}
-// readonly APP_AWAIT_UPDATE_EMAIL: "@w3m-app/AWAIT_UPDATE_EMAIL";
 
 class SyncTheme extends MessageData {
   final Web3ModalTheme? theme;

@@ -37,7 +37,7 @@ class BaseListItem extends StatelessWidget {
           ),
         ),
         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-          const EdgeInsets.all(0.0),
+          const EdgeInsets.only(left: 4.0),
         ),
       ),
       child: Padding(

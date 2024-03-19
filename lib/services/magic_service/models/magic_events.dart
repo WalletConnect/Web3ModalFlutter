@@ -67,6 +67,10 @@ class ConnectEmailErrorEvent extends MagicErrorEvent {
   ConnectEmailErrorEvent() : super('Error connecting email');
 }
 
+class UpdateEmailErrorEvent extends MagicErrorEvent {
+  UpdateEmailErrorEvent() : super('Error updating email');
+}
+
 class ConnectOtpErrorEvent extends MagicErrorEvent {
   ConnectOtpErrorEvent() : super('Error validating OTP code');
 }

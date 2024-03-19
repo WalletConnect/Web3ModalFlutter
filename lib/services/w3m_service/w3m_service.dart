@@ -1024,9 +1024,9 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         int.parse(_currentSelectedChain!.chainId),
       );
       _avatarUrl = blockchainId.avatar;
-      loggerService.instance.i('[$runtimeType] _loadAccountData');
+      loggerService.instance.i('[$runtimeType] loadAccountData');
     } catch (e) {
-      loggerService.instance.e('[$runtimeType] _loadAccountData $e');
+      loggerService.instance.e('[$runtimeType] loadAccountData $e');
     }
     _notify();
   }

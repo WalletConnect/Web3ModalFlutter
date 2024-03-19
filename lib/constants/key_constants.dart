@@ -7,6 +7,7 @@ class KeyConstants {
   static const Key disconnectButton = Key('disconnectButton');
   static const Key w3mAccountButton = Key('w3mAccountButton');
   static const Key chainSwapButton = Key('chainSwapButton');
+  static const Key editEmailPage = Key('editEmailPage');
 
   static const Key helpPageKey = Key('helpPageKey');
   static const Key qrCodePageKey = Key('qrCodePageKey');

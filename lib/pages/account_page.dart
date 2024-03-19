@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
+import 'package:web3modal_flutter/pages/edit_email_page.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
@@ -105,11 +106,29 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                   ),
                   const SizedBox.square(dimension: 20.0),
                   AccountListItem(
+                    iconPath: 'assets/icons/mail.svg',
+                    iconColor: themeColors.foreground100,
+                    title: _service?.session?.email ?? '',
+                    titleStyle: themeData.textStyles.paragraph500.copyWith(
+                      color: themeColors.foreground100,
+                    ),
+                    onTap: () {
+                      widgetStack.instance.push(
+                        EditEmailPage(),
+                        // event: ClickNetworksEvent(),
+                      );
+                    },
+                  ),
+                  const SizedBox.square(dimension: kPadding8),
+                  AccountListItem(
                     iconWidget: RoundedIcon(
                       imageUrl: tokenImage,
                       assetColor: themeColors.background100,
                     ),
                     title: _service?.selectedChain?.chainName ?? '',
+                    titleStyle: themeData.textStyles.paragraph500.copyWith(
+                      color: themeColors.foreground100,
+                    ),
                     onTap: () {
                       widgetStack.instance.push(
                         SelectNetworkPage(
@@ -127,7 +146,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                     iconPath: 'assets/icons/disconnect.svg',
                     trailing: const SizedBox.shrink(),
                     title: 'Disconnect',
-                    titleStyle: themeData.textStyles.paragraph600.copyWith(
+                    titleStyle: themeData.textStyles.paragraph500.copyWith(
                       color: themeColors.foreground200,
                     ),
                     onTap: () async {

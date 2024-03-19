@@ -2407,7 +2407,7 @@ class MockLedgerService extends _i1.Mock implements _i32.LedgerService {
   }
 
   @override
-  _i14.Future<double> getBalance(
+  _i14.Future<double?> getBalance(
     String? rpcUrl,
     String? address,
   ) =>
@@ -2419,8 +2419,8 @@ class MockLedgerService extends _i1.Mock implements _i32.LedgerService {
             address,
           ],
         ),
-        returnValue: _i14.Future<double>.value(0.0),
-      ) as _i14.Future<double>);
+        returnValue: _i14.Future<double?>.value(),
+      ) as _i14.Future<double?>);
   @override
   _i14.Future<String> fetchEnsName(
     String? rpcUrl,
