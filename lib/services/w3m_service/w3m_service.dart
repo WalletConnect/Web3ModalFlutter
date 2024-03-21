@@ -1263,7 +1263,7 @@ extension _W3MCoinbaseExtension on W3MService {
   }
 
   void _onCoinbaseErrorEvent(CoinbaseErrorEvent? args) async {
-    loggerService.instance.i('[$runtimeType] onCoinbaseError: $args');
+    loggerService.instance.i('[$runtimeType] onCoinbaseError: ${args?.error}');
     final errorMessage = args?.error ?? 'Something went wrong';
     if (!errorMessage.toLowerCase().contains('user denied')) {
       onModalError.broadcast(ModalError(errorMessage));
