@@ -93,7 +93,7 @@ class _EditEmailPageState extends State<EditEmailPage> {
                   currentEmail: (action == EmailLoginStep.verifyOtp2)
                       ? magicService.instance.newEmail.value
                       : magicService.instance.email.value,
-                  resendEmail: magicService.instance.updateEmail,
+                  resendEmail: _resendEmail,
                   verifyOtp: (action == EmailLoginStep.verifyOtp2)
                       ? magicService.instance.updateEmailSecondaryOtp
                       : magicService.instance.updateEmailPrimaryOtp,
@@ -105,6 +105,11 @@ class _EditEmailPageState extends State<EditEmailPage> {
         );
       },
     );
+  }
+
+  Future<void> _resendEmail({String? value}) async {
+    final email = magicService.instance.newEmail.value;
+    magicService.instance.updateEmail(value: email);
   }
 }
 
@@ -134,17 +139,17 @@ class __EditEmailViewState extends State<_EditEmailView> {
     });
   }
 
+  void _onSubmittedEmail(String value) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    // magicService.instance.setNewEmail(value);
+    magicService.instance.updateEmail(value: value);
+  }
+
   void _goBack() {
     FocusManager.instance.primaryFocus?.unfocus();
     magicService.instance.setEmail(_currentEmailValue);
     magicService.instance.setNewEmail('');
     widgetStack.instance.pop();
-  }
-
-  void _onSubmittedEmail(String value) {
-    FocusManager.instance.primaryFocus?.unfocus();
-    magicService.instance.setNewEmail(value);
-    magicService.instance.updateEmail(value: value);
   }
 
   @override

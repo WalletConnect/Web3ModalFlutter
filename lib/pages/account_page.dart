@@ -105,11 +105,12 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                       ),
                     ],
                   ),
-                  const SizedBox.square(dimension: 20.0),
+                  const SizedBox.square(dimension: kPadding12),
+                  const SizedBox.square(dimension: kPadding8),
                   AccountListItem(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0,
-                      vertical: 12.0,
+                      horizontal: kPadding8,
+                      vertical: kPadding12,
                     ),
                     iconWidget: Padding(
                       padding: const EdgeInsets.all(4.0),
@@ -125,6 +126,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                     title: 'Upgrade your wallet',
                     subtitle: 'Transition to a self-custodial wallet',
                     hightlighted: true,
+                    flexible: true,
                     titleStyle: themeData.textStyles.paragraph500.copyWith(
                       color: themeColors.foreground100,
                     ),

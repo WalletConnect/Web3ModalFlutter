@@ -146,7 +146,6 @@ class MagicService implements IMagicService {
       final packageName = await WalletConnectUtils.getPackageName();
       final headers = {
         // secure-site's middleware requires a referer otherwise it throws `400: Missing projectId or referer`
-        // TODO check if sending _web3app.metadata.url is OK
         'referer': _web3app.metadata.url,
         'X-Bundle-Id': packageName,
       };
@@ -161,10 +160,14 @@ class MagicService implements IMagicService {
   }
 
   @override
-  void setEmail(String value) => email.value = value;
+  void setEmail(String value) {
+    email.value = value;
+  }
 
   @override
-  void setNewEmail(String value) => newEmail.value = value;
+  void setNewEmail(String value) {
+    newEmail.value = value;
+  }
 
   // ****** W3mFrameProvider public methods ******* //
 
@@ -182,10 +185,6 @@ class MagicService implements IMagicService {
     step.value = EmailLoginStep.loading;
     final message = UpdateEmail(email: value).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
-    Future.delayed(Duration(seconds: 5), () {
-      // If for any reason UPDATE_EMAIL_SUCCESS does not arrive I switch screen anyway.
-      step.value = EmailLoginStep.verifyOtp;
-    });
   }
 
   @override
@@ -345,6 +344,7 @@ class MagicService implements IMagicService {
       }
       // ****** UPDAET_EMAIL
       if (messageData.updateEmailSuccess) {
+        analyticsService.instance.sendEvent(EmailEdit());
         step.value = EmailLoginStep.verifyOtp;
       }
       // ****** UPDATE_EMAIL_PRIMARY_OTP
@@ -353,7 +353,7 @@ class MagicService implements IMagicService {
       }
       // ****** UPDATE_EMAIL_SECONDARY_OTP
       if (messageData.updateEmailSecondarySuccess) {
-        analyticsService.instance.sendEvent(EmailEdit());
+        analyticsService.instance.sendEvent(EmailEditComplete());
         step.value = EmailLoginStep.idle;
         setEmail(newEmail.value);
         setNewEmail('');

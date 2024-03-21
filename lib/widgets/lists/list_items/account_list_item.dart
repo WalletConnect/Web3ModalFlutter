@@ -20,6 +20,7 @@ class AccountListItem extends StatelessWidget {
     this.iconBGColor,
     this.iconBorderColor,
     this.hightlighted = false,
+    this.flexible = false,
     this.padding,
   });
   final Widget? iconWidget;
@@ -32,6 +33,7 @@ class AccountListItem extends StatelessWidget {
   final VoidCallback? onTap;
   final Color? iconColor, iconBGColor, iconBorderColor;
   final bool hightlighted;
+  final bool flexible;
   final EdgeInsets? padding;
 
   @override
@@ -42,6 +44,7 @@ class AccountListItem extends StatelessWidget {
       onTap: onTap,
       hightlighted: hightlighted,
       padding: padding,
+      flexible: flexible,
       child: Row(
         children: [
           iconWidget ?? const SizedBox.shrink(),

@@ -460,6 +460,24 @@ class EmailEdit implements AnalyticsEvent {
       };
 }
 
+class EmailEditComplete implements AnalyticsEvent {
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'EMAIL_EDIT_COMPLETE';
+
+  @override
+  Map<String, dynamic>? get properties => null;
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
 class EmailUpgradeFromModal implements AnalyticsEvent {
   @override
   String get type => 'track';

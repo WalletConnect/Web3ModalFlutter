@@ -10,12 +10,14 @@ class BaseListItem extends StatelessWidget {
     this.onTap,
     this.padding,
     this.hightlighted = false,
+    this.flexible = false,
   });
   final Widget? trailing;
   final VoidCallback? onTap;
   final Widget child;
   final EdgeInsets? padding;
   final bool hightlighted;
+  final bool flexible;
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +26,16 @@ class BaseListItem extends StatelessWidget {
     return FilledButton(
       onPressed: onTap,
       style: ButtonStyle(
-        minimumSize: MaterialStateProperty.all<Size>(
-          const Size(1000.0, kListItemHeight),
-        ),
+        minimumSize: flexible
+            ? MaterialStateProperty.all<Size>(
+                const Size(1000.0, kListItemHeight),
+              )
+            : null,
+        fixedSize: !flexible
+            ? MaterialStateProperty.all<Size>(
+                const Size(1000.0, kListItemHeight),
+              )
+            : null,
         backgroundColor: MaterialStateProperty.all<Color>(
           hightlighted ? themeColors.accenGlass015 : themeColors.grayGlass002,
         ),
