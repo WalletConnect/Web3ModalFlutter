@@ -197,9 +197,19 @@ extension W3MSessionExtension on W3MSession {
   Map<String, RequiredNamespace>? get optionalNamespaces =>
       _sessionData?.optionalNamespaces;
   Map<String, String>? get sessionProperties => _sessionData?.sessionProperties;
+
   ConnectionMetadata? get self {
-    if (sessionService.isCoinbase || sessionService.isMagic) {
-      // TODO TODO return _web3App.metadata;
+    if (sessionService.isCoinbase) {
+      // return ConnectionMetadata(
+      //   metadata: _sessionData?.self.metadata,
+      //   publicKey: '',
+      // );
+    }
+    if (sessionService.isMagic) {
+      // return ConnectionMetadata(
+      //   metadata: _sessionData?.self.metadata,
+      //   publicKey: '',
+      // );
     }
     return _sessionData?.self;
   }

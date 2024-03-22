@@ -252,7 +252,7 @@ extension on SessionRequestParams {
         } catch (e, s) {
           throw W3MCoinbaseException('Unrecognized chainId $chainId', e, s);
         }
-      // TODO implement
+      // TODO implement after Coinbase merges this PR https://github.com/MobileWalletProtocol/wallet-mobile-sdk/pull/327
       // case 'wallet_watchAsset':
       //   return WatchAsset(params: params);
       default:
@@ -285,20 +285,19 @@ extension on SessionRequestParams {
   }
 }
 
-// TODO this should be included in Coinbase SDK
-class WatchAsset extends Action {
-  WatchAsset({
-    required String address,
-    required String symbol,
-    int? decimals,
-    String? image,
-  }) : super(
-          method: 'wallet_watchAsset',
-          paramsJson: jsonEncode({
-            'address': address,
-            'symbol': symbol,
-            'decimals': decimals ?? 18,
-            if (image != null) 'image': image,
-          }),
-        );
-}
+// class WatchAsset extends Action {
+//   WatchAsset({
+//     required String address,
+//     required String symbol,
+//     int? decimals,
+//     String? image,
+//   }) : super(
+//           method: 'wallet_watchAsset',
+//           paramsJson: jsonEncode({
+//             'address': address,
+//             'symbol': symbol,
+//             'decimals': decimals ?? 18,
+//             if (image != null) 'image': image,
+//           }),
+//         );
+// }

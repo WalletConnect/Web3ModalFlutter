@@ -20,10 +20,11 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 class MagicService implements IMagicService {
-  static const _url = 'secure-mobile.walletconnect.com/mobile-sdk';
+  static const _url = 'secure-mobile.walletconnect.com';
   static const _safeDomains = [
-    'walletconnect.com',
-    'magic.link',
+    _url,
+    'secure.walletconnect.com',
+    'auth.magic.link',
     if (kDebugMode) 'ngrok.app',
   ];
   static const supportedMethods = [
@@ -533,7 +534,7 @@ class MagicService implements IMagicService {
   }
 
   Uri _requestUri(String bundleId) {
-    final uri = Uri.parse('https://$_url');
+    final uri = Uri.parse('https://$_url/mobile-sdk');
     final queryParams = {
       'projectId': _web3app.core.projectId,
       'bundleId': bundleId,

@@ -319,8 +319,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     if (_currentSession?.sessionService.isMagic == true) {
       await magicService.instance.switchNetwork(chainId: chainInfo.chainId);
-      // TODO this should be handled in an event
-      // _setEthChain(chainInfo, logEvent: logEvent);
     } else {
       final hasValidSession = _isConnected && _currentSession != null;
       if (switchChain && hasValidSession && _currentSelectedChain != null) {

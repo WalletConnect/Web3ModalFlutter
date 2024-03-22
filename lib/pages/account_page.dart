@@ -106,45 +106,59 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                     ],
                   ),
                   const SizedBox.square(dimension: kPadding12),
-                  const SizedBox.square(dimension: kPadding8),
-                  AccountListItem(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: kPadding8,
-                      vertical: kPadding12,
+                  Visibility(
+                    visible: _service?.session?.sessionService.isMagic ?? false,
+                    child: Column(
+                      children: [
+                        const SizedBox.square(dimension: kPadding8),
+                        AccountListItem(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: kPadding8,
+                            vertical: kPadding12,
+                          ),
+                          iconWidget: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: RoundedIcon(
+                              borderRadius: 8.0,
+                              size: 40.0,
+                              assetPath: 'assets/icons/regular/wallet.svg',
+                              assetColor: themeColors.accent100,
+                              circleColor: themeColors.accenGlass010,
+                              borderColor: themeColors.accenGlass010,
+                            ),
+                          ),
+                          title: 'Upgrade your wallet',
+                          subtitle: 'Transition to a self-custodial wallet',
+                          hightlighted: true,
+                          flexible: true,
+                          titleStyle:
+                              themeData.textStyles.paragraph500.copyWith(
+                            color: themeColors.foreground100,
+                          ),
+                          onTap: () =>
+                              widgetStack.instance.push(UpgradeWalletPage()),
+                        ),
+                      ],
                     ),
-                    iconWidget: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: RoundedIcon(
-                        borderRadius: 8.0,
-                        size: 40.0,
-                        assetPath: 'assets/icons/regular/wallet.svg',
-                        assetColor: themeColors.accent100,
-                        circleColor: themeColors.accenGlass010,
-                        borderColor: themeColors.accenGlass010,
-                      ),
-                    ),
-                    title: 'Upgrade your wallet',
-                    subtitle: 'Transition to a self-custodial wallet',
-                    hightlighted: true,
-                    flexible: true,
-                    titleStyle: themeData.textStyles.paragraph500.copyWith(
-                      color: themeColors.foreground100,
-                    ),
-                    onTap: () {
-                      widgetStack.instance.push(UpgradeWalletPage());
-                    },
                   ),
-                  const SizedBox.square(dimension: kPadding8),
-                  AccountListItem(
-                    iconPath: 'assets/icons/mail.svg',
-                    iconColor: themeColors.foreground100,
-                    title: _service?.session?.email ?? '',
-                    titleStyle: themeData.textStyles.paragraph500.copyWith(
-                      color: themeColors.foreground100,
+                  Visibility(
+                    visible: _service?.session?.sessionService.isMagic ?? false,
+                    child: Column(
+                      children: [
+                        const SizedBox.square(dimension: kPadding8),
+                        AccountListItem(
+                          iconPath: 'assets/icons/mail.svg',
+                          iconColor: themeColors.foreground100,
+                          title: _service?.session?.email ?? '',
+                          titleStyle:
+                              themeData.textStyles.paragraph500.copyWith(
+                            color: themeColors.foreground100,
+                          ),
+                          onTap: () =>
+                              widgetStack.instance.push(EditEmailPage()),
+                        ),
+                      ],
                     ),
-                    onTap: () {
-                      widgetStack.instance.push(EditEmailPage());
-                    },
                   ),
                   const SizedBox.square(dimension: kPadding8),
                   AccountListItem(
@@ -180,8 +194,8 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                       color: themeColors.foreground200,
                     ),
                     onTap: () async {
-                      _service?.closeModal();
                       await _service?.disconnect();
+                      _service?.closeModal();
                     },
                   ),
                 ],

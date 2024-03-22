@@ -226,11 +226,11 @@ class _CustomButtonsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (w3mService.status.isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+    // if (w3mService.status.isLoading) {
+    //   return const Center(
+    //     child: CircularProgressIndicator(),
+    //   );
+    // }
     return Column(
       children: [
         const SizedBox.square(dimension: 8.0),
