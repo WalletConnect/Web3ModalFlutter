@@ -45,7 +45,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
-      enableAnalytics: true,
+      enableAnalytics: true, // Optional - null by default
+      enableEmail: true, // Optional - false by default
       metadata: const PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
@@ -62,6 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
       // },
       // includedWalletIds: {
+      //   'a797aa35c0fadbfc1a53e7f675162ed5226968b44a19ee3d24385c64d1d3c393', // Phantom
       //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
       //   '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
       //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet

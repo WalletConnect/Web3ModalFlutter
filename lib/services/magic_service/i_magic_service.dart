@@ -17,6 +17,8 @@ enum EmailLoginStep {
 }
 
 abstract class IMagicService {
+  bool get isEnabled;
+
   Future<void> init();
   Future<void> loadRequest();
   void setEmail(String value);

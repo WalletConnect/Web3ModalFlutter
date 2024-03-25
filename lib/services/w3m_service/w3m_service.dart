@@ -107,6 +107,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     Set<String>? includedWalletIds,
     Set<String>? excludedWalletIds,
     bool? enableAnalytics,
+    bool enableEmail = false,
     LogLevel logLevel = LogLevel.nothing,
   }) {
     if (web3App == null) {
@@ -156,6 +157,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     magicService.instance = MagicService(
       web3app: _web3App,
+      enabled: enableEmail,
     );
   }
 

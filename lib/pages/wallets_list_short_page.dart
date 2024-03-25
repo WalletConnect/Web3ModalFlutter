@@ -64,13 +64,15 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
               ),
             );
           }
+          final emailEnabled = magicService.instance.isEnabled;
           final itemsCount = min(kShortWalletListCount, items.length);
           final itemsToShow = items.getRange(0, itemsCount);
           if (itemsCount < kShortWalletListCount && isPortrait) {
             maxHeight = kListItemHeight * (itemsCount + 1);
           }
-          // if firstItem
-          maxHeight += (kSearchFieldHeight * 2);
+          if (emailEnabled) {
+            maxHeight += (kSearchFieldHeight * 2);
+          }
           return ConstrainedBox(
             constraints: BoxConstraints(maxHeight: maxHeight),
             child: WalletsList(
@@ -78,34 +80,38 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
                 service.selectWallet(data);
                 widgetStack.instance.push(const ConnectWalletPage());
               },
-              firstItem: Column(
-                children: [
-                  InputEmailWidget(
-                    onFocus: (value) {
-                      if (value) {
-                        analyticsService.instance.sendEvent(
-                          EmailLoginSelected(),
-                        );
-                      }
-                    },
-                    onValueChange: (value) {
-                      magicService.instance.setEmail(value);
-                    },
-                    onSubmitted: (value) {
-                      final service = Web3ModalProvider.of(context).service;
-                      final chainId = service.selectedChain?.chainId;
-                      analyticsService.instance.sendEvent(EmailSubmitted());
-                      magicService.instance.connectEmail(
-                        value: value,
-                        chainId: chainId,
-                      );
-                      widgetStack.instance.push(ConfirmEmailPage());
-                    },
-                  ),
-                  const SizedBox.square(dimension: 4.0),
-                  _LoginDivider(),
-                ],
-              ),
+              firstItem: emailEnabled
+                  ? Column(
+                      children: [
+                        InputEmailWidget(
+                          onFocus: (value) {
+                            if (value) {
+                              analyticsService.instance.sendEvent(
+                                EmailLoginSelected(),
+                              );
+                            }
+                          },
+                          onValueChange: (value) {
+                            magicService.instance.setEmail(value);
+                          },
+                          onSubmitted: (value) {
+                            final service =
+                                Web3ModalProvider.of(context).service;
+                            final chainId = service.selectedChain?.chainId;
+                            analyticsService.instance
+                                .sendEvent(EmailSubmitted());
+                            magicService.instance.connectEmail(
+                              value: value,
+                              chainId: chainId,
+                            );
+                            widgetStack.instance.push(ConfirmEmailPage());
+                          },
+                        ),
+                        const SizedBox.square(dimension: 4.0),
+                        _LoginDivider(),
+                      ],
+                    )
+                  : null,
               itemList: itemsToShow.toList(),
               bottomItems: (itemsCount < kShortWalletListCount)
                   ? []

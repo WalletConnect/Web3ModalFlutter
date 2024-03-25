@@ -36,7 +36,8 @@ class MagicService implements IMagicService {
     'wallet_addEthereumChain',
   ];
   //
-  late final IWeb3App _web3app;
+  final bool _isEnabled;
+  final IWeb3App _web3app;
   Web3ModalTheme? _currentTheme;
   Timer? _timeOutTimer;
 
@@ -76,15 +77,25 @@ class MagicService implements IMagicService {
   final newEmail = ValueNotifier<String>('');
   final step = ValueNotifier<EmailLoginStep>(EmailLoginStep.idle);
 
-  MagicService({required IWeb3App web3app}) : _web3app = web3app {
-    _webview = WebViewWidget(
-      controller: _webViewController,
-    );
+  MagicService({required IWeb3App web3app, bool enabled = false})
+      : _web3app = web3app,
+        _isEnabled = enabled {
+    _webview = WebViewWidget(controller: _webViewController);
   }
+
+  @override
+  bool get isEnabled => _isEnabled;
 
   @override
   Future<void> init() async {
     _initialized = Completer<bool>();
+
+    if (!_isEnabled) {
+      _initialized.complete(false);
+      _connected = Completer<bool>();
+      _connected.complete(false);
+      return;
+    }
 
     _webViewController
       ..setBackgroundColor(Colors.transparent)
@@ -174,6 +185,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> connectEmail({required String value, String? chainId}) async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     _connectionChainId = chainId ?? _connectionChainId;
     final message = ConnectEmail(email: value).toString();
@@ -182,6 +194,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> updateEmail({required String value}) async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     step.value = EmailLoginStep.loading;
     final message = UpdateEmail(email: value).toString();
@@ -190,6 +203,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> updateEmailPrimaryOtp({required String otp}) async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     step.value = EmailLoginStep.loading;
     final message = UpdateEmailPrimaryOtp(otp: otp).toString();
@@ -198,6 +212,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> updateEmailSecondaryOtp({required String otp}) async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     step.value = EmailLoginStep.loading;
     final message = UpdateEmailSecondaryOtp(otp: otp).toString();
@@ -206,6 +221,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> connectOtp({required String otp}) async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     step.value = EmailLoginStep.loading;
     final message = ConnectOtp(otp: otp).toString();
@@ -214,6 +230,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> isConnected() async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     _connected = Completer<bool>();
     final message = IsConnected().toString();
@@ -222,6 +239,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> getChainId() async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     final message = GetChainId().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
@@ -229,6 +247,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> syncTheme(Web3ModalTheme? theme) async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     _currentTheme = theme;
     final message = SyncTheme(theme: theme).toString();
@@ -237,6 +256,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> syncDappData() async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     final message = SyncAppData(
       metadata: _web3app.metadata,
@@ -248,6 +268,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> getUser({String? chainId}) async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     final message = GetUser(chainId: chainId).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
@@ -255,6 +276,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> switchNetwork({required String chainId}) async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     final message = SwitchNetwork(chainId: chainId).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
@@ -262,6 +284,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> request({required Map<String, dynamic> parameters}) async {
+    if (!_isEnabled) return;
     _response = Completer<dynamic>();
     await _checkServiceReady();
     if (!_authenticated) {
@@ -282,6 +305,7 @@ class MagicService implements IMagicService {
 
   @override
   Future<void> disconnect() async {
+    if (!_isEnabled) return;
     await _checkServiceReady();
     final message = SignOut().toString();
     await _webViewController.runJavaScript('sendMessage($message)');

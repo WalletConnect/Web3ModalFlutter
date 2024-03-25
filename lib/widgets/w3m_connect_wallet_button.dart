@@ -59,17 +59,18 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
           serviceStatus: widget.service.status,
           state: _state,
           size: widget.size,
-          onTap: () => _onConnectPressed(context),
+          onTap: () => _onTap(context),
         ),
       ],
     );
   }
 
-  void _onConnectPressed(BuildContext context) {
+  void _onTap(BuildContext context) {
     if (widget.service.isConnected) {
       widget.service.disconnect();
     } else {
       widget.service.openModal(context);
+      _updateState();
     }
   }
 
