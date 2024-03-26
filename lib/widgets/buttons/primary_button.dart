@@ -14,6 +14,7 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     return BaseButton(
       size: BaseButtonSize.regular,
       child: Text(title),
@@ -42,7 +43,9 @@ class PrimaryButton extends StatelessWidget {
                 color: themeColors.grayGlass010,
                 width: 1.0,
               ),
-              borderRadius: BorderRadius.circular(100.0),
+              borderRadius: radiuses.isSquare()
+                  ? BorderRadius.all(Radius.zero)
+                  : BorderRadius.circular(100.0),
             );
           },
         ),

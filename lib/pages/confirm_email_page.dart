@@ -123,6 +123,8 @@ class __VerifyDeviceViewState extends State<_VerifyDeviceView> {
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
     final textStyles = Web3ModalTheme.getDataOf(context).textStyles;
+    final radiuses = Web3ModalTheme.radiusesOf(context);
+    final borderRadiusIcon = radiuses.isSquare() ? 0.0 : 20.0;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -141,7 +143,7 @@ class __VerifyDeviceViewState extends State<_VerifyDeviceView> {
                 borderColor: Colors.transparent,
                 padding: 22.0,
                 size: 70.0,
-                borderRadius: 20.0,
+                borderRadius: borderRadiusIcon,
               ),
               const SizedBox.square(dimension: kPadding16),
               Text(

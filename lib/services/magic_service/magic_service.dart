@@ -40,11 +40,11 @@ class MagicService implements IMagicService {
   final IWeb3App _web3app;
   Web3ModalTheme? _currentTheme;
   Timer? _timeOutTimer;
-
-  final _webViewController = WebViewController();
-  late WebViewWidget _webview;
-  WebViewWidget get webview => _webview;
   String? _connectionChainId;
+
+  late final WebViewController _webViewController;
+  late final WebViewWidget _webview;
+  WebViewWidget get webview => _webview;
 
   bool _authenticated = false;
   bool get isAuthenticated => _authenticated;
@@ -80,7 +80,10 @@ class MagicService implements IMagicService {
   MagicService({required IWeb3App web3app, bool enabled = false})
       : _web3app = web3app,
         _isEnabled = enabled {
-    _webview = WebViewWidget(controller: _webViewController);
+    if (_isEnabled) {
+      _webViewController = WebViewController();
+      _webview = WebViewWidget(controller: _webViewController);
+    }
   }
 
   @override

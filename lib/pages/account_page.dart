@@ -64,7 +64,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
     final chainId = _service?.selectedChain?.chainId ?? '1';
     final imageId = AssetUtil.getChainIconId(chainId);
     final tokenImage = explorerService.instance.getAssetImageUrl(imageId);
-
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     return SafeArea(
       child: Stack(
         children: [
@@ -119,7 +119,11 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                           iconWidget: Padding(
                             padding: const EdgeInsets.all(4.0),
                             child: RoundedIcon(
-                              borderRadius: 8.0,
+                              borderRadius: radiuses.isSquare()
+                                  ? 0.0
+                                  : radiuses.isCircular()
+                                      ? 40.0
+                                      : 8.0,
                               size: 40.0,
                               assetPath: 'assets/icons/regular/wallet.svg',
                               assetColor: themeColors.accent100,
@@ -165,6 +169,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                     iconWidget: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: RoundedIcon(
+                        borderRadius: radiuses.isSquare() ? 0.0 : null,
                         imageUrl: tokenImage,
                         assetColor: themeColors.background100,
                       ),

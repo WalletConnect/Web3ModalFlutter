@@ -45,7 +45,7 @@ class AllWalletsHeader extends StatelessWidget {
               );
             },
           ),
-          const SizedBox.square(dimension: 2.0),
+          const SizedBox.square(dimension: 4.0),
         ],
       ),
     );

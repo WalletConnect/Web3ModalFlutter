@@ -40,6 +40,7 @@ class AccountListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     return BaseListItem(
       onTap: onTap,
       hightlighted: hightlighted,
@@ -56,6 +57,7 @@ class AccountListItem extends StatelessWidget {
                 assetColor: iconColor,
                 circleColor: iconBGColor,
                 borderColor: iconBorderColor,
+                borderRadius: radiuses.isSquare() ? 0.0 : null,
               ),
             ),
           Expanded(
