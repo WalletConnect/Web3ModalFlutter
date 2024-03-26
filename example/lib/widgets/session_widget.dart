@@ -39,7 +39,7 @@ class SessionWidgetState extends State<SessionWidget> {
             Row(
               children: [
                 CircleAvatar(
-                  radius: 30.0,
+                  radius: 25.0,
                   backgroundImage: NetworkImage(iconImage),
                 ),
                 const SizedBox(width: 10.0),
@@ -59,11 +59,14 @@ class SessionWidgetState extends State<SessionWidget> {
                         ),
                   ),
                 ),
-                IconButton(
-                  onPressed: () {
-                    widget.w3mService.launchConnectedWallet();
-                  },
-                  icon: const Icon(Icons.open_in_new),
+                Visibility(
+                  visible: !session.sessionService.isMagic,
+                  child: IconButton(
+                    onPressed: () {
+                      widget.w3mService.launchConnectedWallet();
+                    },
+                    icon: const Icon(Icons.open_in_new),
+                  ),
                 )
               ],
             ),

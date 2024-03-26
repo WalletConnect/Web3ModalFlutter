@@ -39,4 +39,5 @@ class StringConstants {
       'https://explorer.walletconnect.com/?type=wallet';
   static const String learnMoreUrl =
       'https://ethereum.org/en/developers/docs/networks/';
+  static const String secureSite = 'https://secure.walletconnect.com/dashboard';
 }

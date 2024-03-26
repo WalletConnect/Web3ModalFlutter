@@ -504,14 +504,6 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         ),
       ) as _i3.Event<_i3.ModalDisconnect>);
   @override
-  _i3.Event<_i3.ModalError> get onWalletConnectionError => (super.noSuchMethod(
-        Invocation.getter(#onWalletConnectionError),
-        returnValue: _FakeEvent_1<_i3.ModalError>(
-          this,
-          Invocation.getter(#onWalletConnectionError),
-        ),
-      ) as _i3.Event<_i3.ModalError>);
-  @override
   _i3.Event<_i3.ModalError> get onModalError => (super.noSuchMethod(
         Invocation.getter(#onModalError),
         returnValue: _FakeEvent_1<_i3.ModalError>(
@@ -672,6 +664,16 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
             #switchChain: switchChain,
             #logEvent: logEvent,
           },
+        ),
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
+  @override
+  _i14.Future<void> openNetworks(_i11.BuildContext? context) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #openNetworks,
+          [context],
         ),
         returnValue: _i14.Future<void>.value(),
         returnValueForMissingStub: _i14.Future<void>.value(),
@@ -849,6 +851,15 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  _i14.Future<void> loadAccountData() => (super.noSuchMethod(
+        Invocation.method(
+          #loadAccountData,
+          [],
+        ),
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
   @override
   void addListener(_i17.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
@@ -1068,6 +1079,14 @@ class MockPlatformUtils extends _i1.Mock implements _i22.PlatformUtils {
         Invocation.method(
           #isMobileWidth,
           [width],
+        ),
+        returnValue: false,
+      ) as bool);
+  @override
+  bool isTablet(_i11.BuildContext? context) => (super.noSuchMethod(
+        Invocation.method(
+          #isTablet,
+          [context],
         ),
         returnValue: false,
       ) as bool);
@@ -2388,7 +2407,7 @@ class MockLedgerService extends _i1.Mock implements _i32.LedgerService {
   }
 
   @override
-  _i14.Future<double> getBalance(
+  _i14.Future<double?> getBalance(
     String? rpcUrl,
     String? address,
   ) =>
@@ -2400,8 +2419,8 @@ class MockLedgerService extends _i1.Mock implements _i32.LedgerService {
             address,
           ],
         ),
-        returnValue: _i14.Future<double>.value(0.0),
-      ) as _i14.Future<double>);
+        returnValue: _i14.Future<double?>.value(),
+      ) as _i14.Future<double?>);
   @override
   _i14.Future<String> fetchEnsName(
     String? rpcUrl,
@@ -2586,6 +2605,19 @@ class MockWidgetStack extends _i1.Mock implements _i34.WidgetStack {
         Invocation.method(
           #popUntil,
           [key],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void popAllAndPush(
+    _i11.Widget? widget, {
+    bool? renderScreen = false,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #popAllAndPush,
+          [widget],
+          {#renderScreen: renderScreen},
         ),
         returnValueForMissingStub: null,
       );

@@ -16,6 +16,8 @@ class AnalyticsService implements IAnalyticsService {
       'https://analytics-api-cf-workers-staging.walletconnect-v1-bridge.workers.dev';
   static const _debugProjectId = 'e087b4b0503b860119be49d906717c12';
   bool _isEnabled = false;
+  late final String _bundleId;
+  late final String _endpoint;
 
   @override
   final Stream<dynamic> events = _eventsController.stream;
@@ -39,6 +41,10 @@ class AnalyticsService implements IAnalyticsService {
       } else {
         _isEnabled = enableAnalytics!;
       }
+      _bundleId = await WalletConnectUtils.getPackageName();
+      _endpoint = kDebugMode
+          ? _debugApiEndpoint
+          : await coreUtils.instance.getAnalyticsUrl();
       loggerService.instance.i('[$runtimeType] init enabled: $_isEnabled');
     } catch (e, s) {
       loggerService.instance.e(
@@ -52,10 +58,10 @@ class AnalyticsService implements IAnalyticsService {
   @override
   Future<bool> fetchAnalyticsConfig() async {
     try {
-      final endpoint = await coreUtils.instance.getApiUrl();
+      final apiUrl = await coreUtils.instance.getApiUrl();
       final headers = coreUtils.instance.getAPIHeaders(projectId);
       final response = await http.get(
-        Uri.parse('$endpoint/getAnalyticsConfig'),
+        Uri.parse('$apiUrl/getAnalyticsConfig'),
         headers: headers,
       );
       final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -76,23 +82,19 @@ class AnalyticsService implements IAnalyticsService {
   void sendEvent(AnalyticsEvent analyticsEvent) async {
     if (!_isEnabled) return;
     try {
-      final endpoint = kDebugMode
-          ? _debugApiEndpoint
-          : await coreUtils.instance.getAnalyticsUrl();
       final headers = kDebugMode
           ? coreUtils.instance.getAPIHeaders(_debugProjectId)
           : coreUtils.instance.getAPIHeaders(projectId);
 
-      final packageName = await WalletConnectUtils.getPackageName();
       final body = jsonEncode({
         'eventId': Uuid().v4(),
-        'bundleId': packageName,
+        'bundleId': _bundleId,
         'timestamp': DateTime.now().toUtc().millisecondsSinceEpoch,
         'props': analyticsEvent.toMap(),
       });
 
       final response = await http.post(
-        Uri.parse('$endpoint/e'),
+        Uri.parse('$_endpoint/e'),
         headers: headers,
         body: body,
       );

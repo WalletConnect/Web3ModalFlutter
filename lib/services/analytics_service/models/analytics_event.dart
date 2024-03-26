@@ -333,3 +333,165 @@ class ClickGetWalletEvent implements AnalyticsEvent {
         if (properties != null) 'properties': properties,
       };
 }
+
+class EmailLoginSelected implements AnalyticsEvent {
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'EMAIL_LOGIN_SELECTED';
+
+  @override
+  Map<String, dynamic>? get properties => null;
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
+class EmailSubmitted implements AnalyticsEvent {
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'EMAIL_SUBMITTED';
+
+  @override
+  Map<String, dynamic>? get properties => null;
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
+class DeviceRegisteredForEmail implements AnalyticsEvent {
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'DEVICE_REGISTERED_FOR_EMAIL';
+
+  @override
+  Map<String, dynamic>? get properties => null;
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
+class EmailVerificationCodeSent implements AnalyticsEvent {
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'EMAIL_VERIFICATION_CODE_SENT';
+
+  @override
+  Map<String, dynamic>? get properties => null;
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
+class EmailVerificationCodePass implements AnalyticsEvent {
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'EMAIL_VERIFICATION_CODE_PASS';
+
+  @override
+  Map<String, dynamic>? get properties => null;
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
+class EmailVerificationCodeFail implements AnalyticsEvent {
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'EMAIL_VERIFICATION_CODE_FAIL';
+
+  @override
+  Map<String, dynamic>? get properties => null;
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
+class EmailEdit implements AnalyticsEvent {
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'EMAIL_EDIT';
+
+  @override
+  Map<String, dynamic>? get properties => null;
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
+class EmailEditComplete implements AnalyticsEvent {
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'EMAIL_EDIT_COMPLETE';
+
+  @override
+  Map<String, dynamic>? get properties => null;
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
+class EmailUpgradeFromModal implements AnalyticsEvent {
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'EMAIL_UPGRADE_FROM_MODAL';
+
+  @override
+  Map<String, dynamic>? get properties => null;
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}

@@ -27,4 +27,6 @@ abstract class IPlatformUtils {
   bool isLongBottomSheet(Orientation orientation);
 
   bool isMobileWidth(double width);
+
+  bool isTablet(BuildContext context);
 }

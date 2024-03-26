@@ -17,7 +17,7 @@ class LoggerService implements ILoggerService {
   }
 
   void _logListener(LogEvent event) {
-    // debugPrint('${event.message}');
+    debugPrint('${event.message}');
   }
 
   @override

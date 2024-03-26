@@ -6,7 +6,7 @@ class CoinbaseConnectEvent implements EventArgs {
   CoinbaseConnectEvent(this.data);
 
   @override
-  String toString() => data?.toJson().toString() ?? '';
+  String toString() => data?.toString() ?? '';
 }
 
 class CoinbaseErrorEvent implements EventArgs {
@@ -25,9 +25,23 @@ class CoinbaseSessionEvent implements EventArgs {
     this.chainId,
   });
 
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> params = {};
+    if ((address ?? '').isNotEmpty) {
+      params['address'] = address;
+    }
+    if ((chainName ?? '').isNotEmpty) {
+      params['chainName'] = chainName;
+    }
+    if (chainId != null) {
+      params['chainId'] = chainId;
+    }
+
+    return params;
+  }
+
   @override
-  String toString() =>
-      'address: $address, chainName: $chainName, chainId: $chainId';
+  String toString() => toJson().toString();
 }
 
 class CoinbaseResponseEvent implements EventArgs {

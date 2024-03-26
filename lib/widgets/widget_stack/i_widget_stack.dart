@@ -23,6 +23,8 @@ abstract class IWidgetStack with ChangeNotifier {
   /// Removes widgets from the stack until the given type of widget is found.
   void popUntil(Key key);
 
+  void popAllAndPush(Widget widget, {bool renderScreen = false});
+
   /// Checks if the stack contains a widget with the given key.
   bool containsKey(Key key);
 

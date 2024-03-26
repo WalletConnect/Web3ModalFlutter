@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/connect_button.dart';
@@ -46,19 +46,31 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
 
   @override
   Widget build(BuildContext context) {
-    return ConnectButton(
-      serviceStatus: widget.service.status,
-      state: _state,
-      size: widget.size,
-      onTap: () => _onConnectPressed(context),
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        // if (_state == ConnectButtonState.connected)
+        SizedBox(
+          width: 1.0,
+          height: 1.0,
+          child: magicService.instance.webview,
+        ),
+        ConnectButton(
+          serviceStatus: widget.service.status,
+          state: _state,
+          size: widget.size,
+          onTap: () => _onTap(context),
+        ),
+      ],
     );
   }
 
-  void _onConnectPressed(BuildContext context) {
+  void _onTap(BuildContext context) {
     if (widget.service.isConnected) {
       widget.service.disconnect();
     } else {
       widget.service.openModal(context);
+      _updateState();
     }
   }
 

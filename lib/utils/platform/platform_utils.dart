@@ -54,4 +54,10 @@ class PlatformUtils extends IPlatformUtils {
   bool isMobileWidth(double width) {
     return width <= 500.0;
   }
+
+  @override
+  bool isTablet(BuildContext context) {
+    final mqData = MediaQueryData.fromView(View.of(context));
+    return mqData.size.shortestSide < 600 ? false : true;
+  }
 }

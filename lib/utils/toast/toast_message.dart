@@ -27,16 +27,16 @@ class ToastMessage {
           assetColor: themeColors.success100,
           circleColor: themeColors.success100.withOpacity(0.15),
           borderColor: Colors.transparent,
-          padding: 6.0,
+          padding: 5.0,
           size: 24.0,
         );
       case ToastType.error:
         return RoundedIcon(
-          assetPath: 'assets/icons/warning.svg',
+          assetPath: 'assets/icons/close.svg',
           assetColor: themeColors.error100,
           circleColor: themeColors.error100.withOpacity(0.15),
           borderColor: Colors.transparent,
-          padding: 6.0,
+          padding: 5.0,
           size: 24.0,
         );
       default:
@@ -45,7 +45,7 @@ class ToastMessage {
           assetColor: themeColors.accent100,
           circleColor: themeColors.accent100.withOpacity(0.15),
           borderColor: Colors.transparent,
-          padding: 6.0,
+          padding: 5.0,
           size: 24.0,
         );
     }

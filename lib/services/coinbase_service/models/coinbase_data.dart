@@ -25,6 +25,9 @@ class CoinbaseData {
     };
   }
 
+  @override
+  String toString() => toJson().toString();
+
   CoinbaseData copytWith({
     String? address,
     String? chainName,

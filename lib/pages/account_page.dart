@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
+import 'package:web3modal_flutter/pages/edit_email_page.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
+import 'package:web3modal_flutter/pages/upgrade_wallet_page.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
@@ -62,7 +64,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
     final chainId = _service?.selectedChain?.chainId ?? '1';
     final imageId = AssetUtil.getChainIconId(chainId);
     final tokenImage = explorerService.instance.getAssetImageUrl(imageId);
-
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     return SafeArea(
       child: Stack(
         children: [
@@ -103,13 +105,79 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                       ),
                     ],
                   ),
-                  const SizedBox.square(dimension: 20.0),
+                  const SizedBox.square(dimension: kPadding12),
+                  Visibility(
+                    visible: _service?.session?.sessionService.isMagic ?? false,
+                    child: Column(
+                      children: [
+                        const SizedBox.square(dimension: kPadding8),
+                        AccountListItem(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: kPadding8,
+                            vertical: kPadding12,
+                          ),
+                          iconWidget: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: RoundedIcon(
+                              borderRadius: radiuses.isSquare()
+                                  ? 0.0
+                                  : radiuses.isCircular()
+                                      ? 40.0
+                                      : 8.0,
+                              size: 40.0,
+                              assetPath: 'assets/icons/regular/wallet.svg',
+                              assetColor: themeColors.accent100,
+                              circleColor: themeColors.accenGlass010,
+                              borderColor: themeColors.accenGlass010,
+                            ),
+                          ),
+                          title: 'Upgrade your wallet',
+                          subtitle: 'Transition to a self-custodial wallet',
+                          hightlighted: true,
+                          flexible: true,
+                          titleStyle:
+                              themeData.textStyles.paragraph500.copyWith(
+                            color: themeColors.foreground100,
+                          ),
+                          onTap: () =>
+                              widgetStack.instance.push(UpgradeWalletPage()),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                    visible: _service?.session?.sessionService.isMagic ?? false,
+                    child: Column(
+                      children: [
+                        const SizedBox.square(dimension: kPadding8),
+                        AccountListItem(
+                          iconPath: 'assets/icons/mail.svg',
+                          iconColor: themeColors.foreground100,
+                          title: _service?.session?.email ?? '',
+                          titleStyle:
+                              themeData.textStyles.paragraph500.copyWith(
+                            color: themeColors.foreground100,
+                          ),
+                          onTap: () =>
+                              widgetStack.instance.push(EditEmailPage()),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox.square(dimension: kPadding8),
                   AccountListItem(
-                    iconWidget: RoundedIcon(
-                      imageUrl: tokenImage,
-                      assetColor: themeColors.background100,
+                    iconWidget: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: RoundedIcon(
+                        borderRadius: radiuses.isSquare() ? 0.0 : null,
+                        imageUrl: tokenImage,
+                        assetColor: themeColors.background100,
+                      ),
                     ),
                     title: _service?.selectedChain?.chainName ?? '',
+                    titleStyle: themeData.textStyles.paragraph500.copyWith(
+                      color: themeColors.foreground100,
+                    ),
                     onTap: () {
                       widgetStack.instance.push(
                         SelectNetworkPage(
@@ -127,12 +195,12 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                     iconPath: 'assets/icons/disconnect.svg',
                     trailing: const SizedBox.shrink(),
                     title: 'Disconnect',
-                    titleStyle: themeData.textStyles.paragraph600.copyWith(
+                    titleStyle: themeData.textStyles.paragraph500.copyWith(
                       color: themeColors.foreground200,
                     ),
                     onTap: () async {
-                      _service?.closeModal();
                       await _service?.disconnect();
+                      _service?.closeModal();
                     },
                   ),
                 ],

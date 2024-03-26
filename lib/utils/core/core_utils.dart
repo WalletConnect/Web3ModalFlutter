@@ -24,6 +24,13 @@ class CoreUtils extends ICoreUtils {
   }
 
   @override
+  bool isValidEmail(String email) {
+    return RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(email);
+  }
+
+  @override
   Future<bool> isRestrictedRegion() async {
     try {
       String tz = await FlutterTimezone.getLocalTimezone();
@@ -125,7 +132,7 @@ class CoreUtils extends ICoreUtils {
   @override
   String formatChainBalance(double? chainBalance, {int precision = 3}) {
     if (chainBalance == null) {
-      return '_.'.padRight(precision + 2, '_');
+      return '_.'.padRight(precision + 1, '_');
     }
     if (chainBalance == 0.0) {
       return '0.'.padRight(precision + 2, '0');

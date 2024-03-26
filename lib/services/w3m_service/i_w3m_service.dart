@@ -56,12 +56,14 @@ abstract class IW3MService with ChangeNotifier {
   /// If none is provided, the default state will be used based on platform.
   Future<void> openModal(BuildContext context, [Widget? startWidget]);
 
+  Future<void> openNetworks(BuildContext context);
+
   /// Connects to the relay if not already connected.
   /// If the relay is already connected, this does nothing.
   Future<void> reconnectRelay();
 
   /// Sets the [selectedWallet] to be connected
-  void selectWallet(W3MWalletInfo walletInfo);
+  void selectWallet(W3MWalletInfo? walletInfo);
 
   /// Sets the [selectedChain] and gets the [chainBalance].
   /// If the wallet is already connected, it will request the chain to be changed and will update the session with the new chain.
@@ -94,6 +96,8 @@ abstract class IW3MService with ChangeNotifier {
 
   /// List of approved events by connected wallet
   List<String>? getApprovedEvents();
+
+  Future<void> loadAccountData();
 
   /// Disconnects the session and pairing, if any.
   /// If there is no session, this does nothing.
@@ -136,8 +140,6 @@ abstract class IW3MService with ChangeNotifier {
   abstract final Event<ModalConnect> onModalConnect;
   abstract final Event<ModalDisconnect> onModalDisconnect;
   abstract final Event<ModalError> onModalError;
-  @Deprecated('Use onModalError')
-  abstract final Event<ModalError> onWalletConnectionError;
 
   //
   @Deprecated('Use onModalConnect')

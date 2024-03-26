@@ -74,6 +74,7 @@ class SelectNetworkPage extends StatelessWidget {
             size: BaseButtonSize.small,
             leftIcon: 'assets/icons/help.svg',
             title: 'What is a network?',
+            fontSize: 15.0,
             backgroundColor: Colors.transparent,
             foregroundColor: themeColors.accent100,
             overlayColor: MaterialStateProperty.all<Color>(

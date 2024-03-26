@@ -2,42 +2,47 @@ import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
+import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
+import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/utils/w3m_chains_presets.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
 
 enum W3MSessionService {
   wc,
   coinbase,
-  // magic,
+  magic,
   none;
 
   bool get isWC => this == W3MSessionService.wc;
   bool get isCoinbase => this == W3MSessionService.coinbase;
-  // bool get isMagic => this == W3MSessionService.magic;
+  bool get isMagic => this == W3MSessionService.magic;
   bool get noSession => this == W3MSessionService.none;
 }
 
 class W3MSession {
   SessionData? _sessionData;
   CoinbaseData? _coinbaseData;
-  // MagicData? magicData;
+  MagicData? _magicData;
 
   W3MSession({
     SessionData? sessionData,
     CoinbaseData? coinbaseData,
-    // this.magicData,
+    MagicData? magicData,
   })  : _sessionData = sessionData,
-        _coinbaseData = coinbaseData;
+        _coinbaseData = coinbaseData,
+        _magicData = magicData;
 
   @Deprecated('Do not use. Use instead session?.toJson() or access each method')
   SessionData? get sessionData => _sessionData;
   @Deprecated('Do not use. Use instead session?.toJson() or access each method')
   CoinbaseData? get coinbaseData => _coinbaseData;
+  // @Deprecated('Do not use. Use instead session?.toJson() or access each method')
+  // MagicData? get magicData => _magicData;
 
   factory W3MSession.fromJson(Map<String, dynamic> json) {
     final sessionDataString = json['sessionData'];
     final coinbaseDataString = json['coinbaseData'];
-    // final magicDataString = json['magicData'];
+    final magicDataString = json['magicData'];
     return W3MSession(
       sessionData: sessionDataString != null
           ? SessionData.fromJson(sessionDataString)
@@ -45,9 +50,20 @@ class W3MSession {
       coinbaseData: coinbaseDataString != null
           ? CoinbaseData.fromJson(coinbaseDataString)
           : null,
-      // magicData: magicDataString != null
-      //     ? MagicData.fromJson(magicDataString)
-      //     : null,
+      magicData:
+          magicDataString != null ? MagicData.fromJson(magicDataString) : null,
+    );
+  }
+
+  W3MSession copyWith({
+    SessionData? sessionData,
+    CoinbaseData? coinbaseData,
+    MagicData? magicData,
+  }) {
+    return W3MSession(
+      sessionData: sessionData ?? _sessionData,
+      coinbaseData: coinbaseData ?? _coinbaseData,
+      magicData: magicData ?? _magicData,
     );
   }
 
@@ -58,9 +74,10 @@ class W3MSession {
     if (_coinbaseData != null) {
       return W3MSessionService.coinbase;
     }
-    // if (magicData != null)
-    // return W3MSessionService.magic;
-    //
+    if (_magicData != null) {
+      return W3MSessionService.magic;
+    }
+
     return W3MSessionService.none;
   }
 
@@ -86,6 +103,9 @@ class W3MSession {
     if (sessionService.isCoinbase) {
       return CoinbaseService.supportedMethods;
     }
+    if (sessionService.isMagic) {
+      return MagicService.supportedMethods;
+    }
 
     final sessionNamespaces = _sessionData!.namespaces;
     final namespace = sessionNamespaces[StringConstants.namespace];
@@ -100,6 +120,9 @@ class W3MSession {
     if (sessionService.isCoinbase) {
       return [];
     }
+    if (sessionService.isMagic) {
+      return [];
+    }
 
     final sessionNamespaces = _sessionData!.namespaces;
     final namespace = sessionNamespaces[StringConstants.namespace];
@@ -111,8 +134,7 @@ class W3MSession {
     if (sessionService.noSession) {
       return null;
     }
-    // We can not know which chains are approved from Coinbase of magic,
-    // so we enable everyone by default
+    // We can not know which chains are approved from Coinbase or Magic
     if (!sessionService.isWC) {
       return [chainId];
     }
@@ -128,6 +150,9 @@ class W3MSession {
     if (sessionService.isCoinbase) {
       return ['${StringConstants.namespace}:$chainId:$address'];
     }
+    if (sessionService.isMagic) {
+      return ['${StringConstants.namespace}:$chainId:$address'];
+    }
 
     final sessionNamespaces = _sessionData!.namespaces;
     return sessionNamespaces[StringConstants.namespace]?.accounts ?? [];
@@ -141,6 +166,7 @@ class W3MSession {
     return _sessionData?.peer.metadata.redirect;
   }
 
+  // toJson would convert W3MSession to a WCFV2 kind of session object
   Map<String, dynamic> toJson() {
     return {
       if (topic != null) 'topic': topic,
@@ -171,9 +197,19 @@ extension W3MSessionExtension on W3MSession {
   Map<String, RequiredNamespace>? get optionalNamespaces =>
       _sessionData?.optionalNamespaces;
   Map<String, String>? get sessionProperties => _sessionData?.sessionProperties;
+
   ConnectionMetadata? get self {
     if (sessionService.isCoinbase) {
-      // TODO TODO return _web3App.metadata;
+      // return ConnectionMetadata(
+      //   metadata: _sessionData?.self.metadata,
+      //   publicKey: '',
+      // );
+    }
+    if (sessionService.isMagic) {
+      // return ConnectionMetadata(
+      //   metadata: _sessionData?.self.metadata,
+      //   publicKey: '',
+      // );
     }
     return _sessionData?.self;
   }
@@ -182,7 +218,7 @@ extension W3MSessionExtension on W3MSession {
     if (sessionService.isCoinbase) {
       return ConnectionMetadata(
         metadata: PairingMetadata(
-          name: CoinbaseService.coinbaseWalletName,
+          name: connectedWalletName!,
           description: '',
           url: '',
           icons: [],
@@ -193,8 +229,22 @@ extension W3MSessionExtension on W3MSession {
         publicKey: '',
       );
     }
+    if (sessionService.isMagic) {
+      return ConnectionMetadata(
+        metadata: PairingMetadata(
+          name: connectedWalletName!,
+          description: '',
+          url: '',
+          icons: [],
+        ),
+        publicKey: '',
+      );
+    }
     return _sessionData?.peer;
   }
+
+  //
+  String? get email => _magicData?.email;
 
   //
   String? get address {
@@ -204,8 +254,9 @@ extension W3MSessionExtension on W3MSession {
     if (sessionService.isCoinbase) {
       return _coinbaseData!.address;
     }
-    // if (sessionService.isMagic) {
-    //
+    if (sessionService.isMagic) {
+      return _magicData!.address;
+    }
     final namespace = namespaces?[StringConstants.namespace];
     final accounts = namespace?.accounts ?? [];
     if (accounts.isNotEmpty) {
@@ -231,17 +282,19 @@ extension W3MSessionExtension on W3MSession {
     if (sessionService.isCoinbase) {
       return _coinbaseData!.chainId.toString();
     }
-    // if (magicData != null)
-    //
+    if (sessionService.isMagic) {
+      return _magicData!.chainId.toString();
+    }
     return '1';
   }
 
   String? get connectedWalletName {
     if (sessionService.isCoinbase) {
-      return 'Coinbase Wallet';
+      return CoinbaseService.coinbaseWalletName;
     }
-    // if (magicData != null)
-    //
+    if (sessionService.isMagic) {
+      return 'Email Login';
+    }
     if (sessionService.isWC) {
       return peer?.metadata.name;
     }
@@ -252,6 +305,7 @@ extension W3MSessionExtension on W3MSession {
     return {
       ...(_sessionData?.toJson() ?? {}),
       ...(_coinbaseData?.toJson() ?? {}),
+      ...(_magicData?.toJson() ?? {}),
     };
   }
 
@@ -265,6 +319,15 @@ extension W3MSessionExtension on W3MSession {
         ),
       };
     }
+    if (sessionService.isMagic) {
+      return {
+        'eip155': Namespace(
+          accounts: ['eip155:$chainId:$address'],
+          methods: [...MagicService.supportedMethods],
+          events: [],
+        ),
+      };
+    }
     return namespaces;
   }
 
@@ -272,7 +335,7 @@ extension W3MSessionExtension on W3MSession {
     return {
       'sessionData': _sessionData?.toJson(),
       'coinbaseData': _coinbaseData?.toJson(),
-      // 'magicData': magicData?.toJson(),
+      'magicData': _magicData?.toJson(),
     };
   }
 }

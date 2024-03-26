@@ -6,22 +6,22 @@ class ChainDataWrapper {
   static final List<ChainMetadata> chains = [
     ChainMetadata(
       type: ChainType.eip155,
-      color: Colors.blue.shade300,
+      color: Colors.blue,
       w3mChainInfo: W3MChainPresets.chains['1']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
-      color: Colors.purple.shade300,
-      w3mChainInfo: W3MChainPresets.chains['137']!,
-    ),
-    ChainMetadata(
-      type: ChainType.eip155,
-      color: Colors.purple.shade900,
+      color: Colors.cyan,
       w3mChainInfo: W3MChainPresets.chains['42161']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
-      color: Colors.red.shade400,
+      color: Colors.purple,
+      w3mChainInfo: W3MChainPresets.chains['137']!,
+    ),
+    ChainMetadata(
+      type: ChainType.eip155,
+      color: Colors.red.shade300,
       w3mChainInfo: W3MChainPresets.chains['43114']!,
     ),
     ChainMetadata(
@@ -31,33 +31,33 @@ class ChainDataWrapper {
     ),
     ChainMetadata(
       type: ChainType.eip155,
-      color: const Color(0xFF123962),
-      w3mChainInfo: W3MChainPresets.chains['250']!,
-    ),
-    ChainMetadata(
-      type: ChainType.eip155,
-      color: Colors.red.shade700,
+      color: Colors.red.shade900,
       w3mChainInfo: W3MChainPresets.chains['10']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
-      color: Colors.blue.shade800,
-      w3mChainInfo: W3MChainPresets.chains['9001']!,
+      color: Colors.green.shade900,
+      w3mChainInfo: W3MChainPresets.chains['100']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
-      color: Colors.purple.shade800,
-      w3mChainInfo: W3MChainPresets.chains['4689']!,
+      color: Colors.purple.shade50,
+      w3mChainInfo: W3MChainPresets.chains['324']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
-      color: Colors.purple.shade700,
-      w3mChainInfo: W3MChainPresets.chains['1088']!,
+      color: Colors.blue.shade100,
+      w3mChainInfo: W3MChainPresets.chains['8453']!,
     ),
     ChainMetadata(
       type: ChainType.eip155,
-      color: Colors.blue.shade200,
-      w3mChainInfo: W3MChainPresets.chains['11155111']!,
+      color: Colors.yellow,
+      w3mChainInfo: W3MChainPresets.chains['42220']!,
+    ),
+    ChainMetadata(
+      type: ChainType.eip155,
+      color: Colors.green.shade100,
+      w3mChainInfo: W3MChainPresets.chains['1313161554']!,
     ),
     // const ChainMetadata(
     //   type: ChainType.solana,

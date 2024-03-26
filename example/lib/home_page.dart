@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/utils/util.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -39,13 +40,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _initializeService() async {
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
-    W3MChainPresets.chains.putIfAbsent(_celo.chainId, () => _celo);
     W3MChainPresets.chains.putIfAbsent(_sepolia.chainId, () => _sepolia);
 
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
-      enableAnalytics: true,
+      enableAnalytics: true, // Optional - null by default
+      enableEmail: true, // Optional - false by default
       metadata: const PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
@@ -62,6 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
       // },
       // includedWalletIds: {
+      //   'a797aa35c0fadbfc1a53e7f675162ed5226968b44a19ee3d24385c64d1d3c393', // Phantom
       //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
       //   '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
       //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
@@ -112,17 +114,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onModalConnect(ModalConnect? event) {
-    debugPrint('[$runtimeType] modal connect ${event?.toString()}');
-    debugPrint('[$runtimeType] modal connect ${event?.session.address}');
-    debugPrint('[$runtimeType] modal connect ${_w3mService.session?.address}');
+    debugPrint('[$runtimeType] 1 _onModalConnect ${event?.toString()}');
+    debugPrint('[$runtimeType] 2 _onModalConnect ${event?.session.address}');
+    debugPrint(
+        '[$runtimeType] 3 _onModalConnect ${_w3mService.session?.address}');
   }
 
   void _onModalDisconnect(ModalDisconnect? event) {
-    debugPrint('[$runtimeType] modal disconnect ${event?.toString()}');
+    debugPrint('[$runtimeType] 1 _onModalDisconnect ${event?.toString()}');
   }
 
   void _onModalError(ModalError? event) {
-    debugPrint('[$runtimeType] _onModalError ${event?.toString()}');
+    debugPrint('[$runtimeType] modal error ${event?.toString()}');
     // When user connected to Coinbase Wallet but Coinbase Wallet does not have a session anymore
     // (for instance if user disconnected the dapp directly within Coinbase Wallet)
     // Then Coinbase Wallet won't emit any event
@@ -172,21 +175,25 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox.square(dimension: 4.0),
-            Text(
-              'Custom theme is: ${isCustom ? 'ON' : 'OFF'}',
-              style: TextStyle(
-                color: Web3ModalTheme.colorsOf(context).foreground100,
+      body: RefreshIndicator(
+        onRefresh: () => _w3mService.loadAccountData(),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox.square(dimension: 4.0),
+              Text(
+                'Custom theme is: ${isCustom ? 'ON' : 'OFF'}',
+                style: TextStyle(
+                  color: Web3ModalTheme.colorsOf(context).foreground100,
+                ),
               ),
-            ),
-            _ButtonsView(w3mService: _w3mService),
-            const Divider(height: 0.0, color: Colors.transparent),
-            _ConnectedView(w3mService: _w3mService)
-          ],
+              _ButtonsView(w3mService: _w3mService),
+              // _CustomButtonsView(w3mService: _w3mService),
+              const Divider(height: 0.0, color: Colors.transparent),
+              _ConnectedView(w3mService: _w3mService)
+            ],
+          ),
         ),
       ),
     );
@@ -207,6 +214,45 @@ class _ButtonsView extends StatelessWidget {
           child: W3MNetworkSelectButton(service: w3mService),
         ),
         W3MConnectWalletButton(service: w3mService),
+        // W3MAccountButton(service: w3mService),
+        const SizedBox.square(dimension: 8.0),
+      ],
+    );
+  }
+}
+
+// ignore: unused_element
+class _CustomButtonsView extends StatelessWidget {
+  const _CustomButtonsView({required this.w3mService});
+  final W3MService w3mService;
+
+  @override
+  Widget build(BuildContext context) {
+    // if (w3mService.status.isLoading) {
+    //   return const Center(
+    //     child: CircularProgressIndicator(),
+    //   );
+    // }
+    return Column(
+      children: [
+        const SizedBox.square(dimension: 8.0),
+        Visibility(
+          visible: !w3mService.isConnected,
+          child: ElevatedButton(
+            onPressed: () {
+              w3mService.openNetworks(context);
+            },
+            child: const Text('OPEN CHAINS'),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            w3mService.openModal(context);
+          },
+          child: w3mService.isConnected
+              ? Text(Util.truncate(w3mService.session!.address!))
+              : const Text('CONNECT WALLET'),
+        ),
         const SizedBox.square(dimension: 8.0),
       ],
     );
@@ -239,23 +285,11 @@ class _ConnectedView extends StatelessWidget {
   }
 }
 
-final _celo = W3MChainInfo(
-  chainName: 'Celo',
-  namespace: 'eip155:42220',
-  chainId: '42220',
-  tokenName: 'CELO',
-  rpcUrl: 'https://forno.celo.org/',
-  blockExplorer: W3MBlockExplorer(
-    name: 'Celo Explorer',
-    url: 'https://explorer.celo.org/mainnet',
-  ),
-);
-
 final _sepolia = W3MChainInfo(
   chainName: 'Sepolia Testnet',
   chainId: '11155111',
   namespace: 'eip155:11155111',
-  tokenName: 'ETH',
+  tokenName: 'SEP',
   rpcUrl: 'https://ethereum-sepolia.publicnode.com',
   blockExplorer: W3MBlockExplorer(
     name: 'Sepolia Etherscan',

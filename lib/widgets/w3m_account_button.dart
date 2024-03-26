@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/pages/account_page.dart';
+import 'package:web3modal_flutter/pages/approve_magic_request_page.dart';
+import 'package:web3modal_flutter/pages/confirm_email_page.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
+import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
@@ -10,6 +13,7 @@ import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_account_avatar.dart';
 import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
+import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 
 class W3MAccountButton extends StatefulWidget {
   const W3MAccountButton({
@@ -38,11 +42,16 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     super.initState();
     _w3mServiceUpdated();
     widget.service.addListener(_w3mServiceUpdated);
+    // TODO this should go in W3MService but for that, init() method of W3MService should receive a BuildContext, which would be a breaking change
+    magicService.instance.onMagicRpcRequest.subscribe(_approveSign);
+    magicService.instance.onMagicLoginRequest.subscribe(_loginRequested);
   }
 
   @override
   void dispose() {
     widget.service.removeListener(_w3mServiceUpdated);
+    magicService.instance.onMagicRpcRequest.unsubscribe(_approveSign);
+    magicService.instance.onMagicLoginRequest.unsubscribe(_loginRequested);
     super.dispose();
   }
 
@@ -59,7 +68,25 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     });
   }
 
-  void _onTap() => widget.service.openModal(context, const AccountPage());
+  void _onTap() => widget.service.openModal(context);
+
+  void _approveSign(MagicRequestEvent? args) async {
+    if (args?.request != null) {
+      if (widget.service.isOpen) {
+        widgetStack.instance.popAllAndPush(ApproveTransactionPage());
+      } else {
+        widget.service.openModal(context, ApproveTransactionPage());
+      }
+    }
+  }
+
+  void _loginRequested(MagicSessionEvent? args) {
+    if (widget.service.isOpen) {
+      widgetStack.instance.popAllAndPush(ConfirmEmailPage());
+    } else {
+      widget.service.openModal(context, ConfirmEmailPage());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

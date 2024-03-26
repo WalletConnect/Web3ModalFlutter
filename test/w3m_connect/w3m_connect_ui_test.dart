@@ -120,7 +120,7 @@ void main() {
       await tester.pump();
 
       verify(
-        service.openModal(anyNamed('context'), anyNamed('startWidget')),
+        service.openModal(anyNamed('context')),
       ).called(1);
     });
   });
