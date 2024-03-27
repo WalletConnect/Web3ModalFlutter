@@ -216,7 +216,6 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
           cursorColor: themeColors.accent100,
           enableSuggestions: false,
           autocorrect: false,
-          cursorHeight: 16.0,
           showCursor: widget.showCursor,
           decoration: InputDecoration(
             isDense: true,

@@ -101,6 +101,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           // Secondary Modal's text
           foreground150: const Color.fromARGB(255, 233, 237, 236),
         ),
-        radiuses: Web3ModalRadiuses.circular,
+        radiuses: Web3ModalRadiuses.square,
       );
 }

@@ -8,6 +8,7 @@ import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
+import 'package:web3modal_flutter/services/magic_service/models/email_login_step.dart';
 import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
@@ -25,6 +26,7 @@ class MagicService implements IMagicService {
     _url,
     'secure.walletconnect.com',
     'auth.magic.link',
+    'launchdarkly.com',
     if (kDebugMode) 'ngrok.app',
   ];
   static const supportedMethods = [
@@ -36,11 +38,13 @@ class MagicService implements IMagicService {
     'wallet_addEthereumChain',
   ];
   //
+  late final GlobalKey _key;
   final bool _isEnabled;
   final IWeb3App _web3app;
   Web3ModalTheme? _currentTheme;
   Timer? _timeOutTimer;
   String? _connectionChainId;
+  bool _pageFinished = false;
 
   late final WebViewController _webViewController;
   late final WebViewWidget _webview;
@@ -80,6 +84,7 @@ class MagicService implements IMagicService {
   MagicService({required IWeb3App web3app, bool enabled = false})
       : _web3app = web3app,
         _isEnabled = enabled {
+    _key = GlobalKey(debugLabel: 'magic_service');
     if (_isEnabled) {
       _webViewController = WebViewController();
       _webview = WebViewWidget(controller: _webViewController);
@@ -114,10 +119,18 @@ class MagicService implements IMagicService {
           },
           onWebResourceError: _onWebResourceError,
           onPageFinished: (String url) async {
-            await _runJavascript(_web3app.core.projectId);
-            await Future.delayed(Duration(milliseconds: 100));
-            if (!_initialized.isCompleted) {
-              _initialized.complete(true);
+            if (!_pageFinished) {
+              _pageFinished = true;
+              await _runJavascript(_web3app.core.projectId);
+              await Future.delayed(Duration(milliseconds: 500));
+              if (!_initialized.isCompleted) {
+                _initialized.complete(true);
+              }
+              // in case connection message or even the request itself hangs there's no other way to continue the flow than timing it out.
+              _timeOutTimer ??= Timer.periodic(
+                Duration(seconds: 1),
+                _checkTimeOut,
+              );
             }
           },
         ),
@@ -166,8 +179,6 @@ class MagicService implements IMagicService {
       };
       final uri = _requestUri(packageName);
       await _webViewController.loadRequest(uri, headers: headers);
-      // in case connection message or even the request itself hangs there's no other way to continue the flow than timing it out.
-      _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _checkTimeOut);
     } catch (e) {
       debugPrint('reload $e');
       _initialized.complete(false);
@@ -323,12 +334,6 @@ class MagicService implements IMagicService {
     return;
   }
 
-  void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
-    if (kDebugMode) {
-      loggerService.instance.d('[$runtimeType] JS Console ${message.message}');
-    }
-  }
-
   void _onFrameMessage(JavaScriptMessage jsMessage) async {
     try {
       final frameMessage = jsMessage.toFrameMessage();
@@ -341,6 +346,7 @@ class MagicService implements IMagicService {
       }
       // ****** IS_CONNECTED
       if (messageData.isConnectSuccess) {
+        _resetTimeOut();
         _authenticated = messageData.getPayloadMapKey<bool>('isConnected');
         if (!_connected.isCompleted) {
           _connected.complete(_authenticated);
@@ -523,6 +529,12 @@ class MagicService implements IMagicService {
     ''');
   }
 
+  void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
+    if (kDebugMode) {
+      loggerService.instance.d('[$runtimeType] JS Console ${message.message}');
+    }
+  }
+
   void _onWebResourceError(WebResourceError error) {
     debugPrint('''
               [$runtimeType] Page resource error:
@@ -553,7 +565,6 @@ class MagicService implements IMagicService {
   }
 
   void _checkTimeOut(Timer time) {
-    debugPrint(time.tick.toString());
     if (time.tick > 15) {
       _resetTimeOut();
       _error(IsConnectedErrorEvent());
