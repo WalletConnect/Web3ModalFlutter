@@ -60,10 +60,9 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       // excludedWalletIds: {
-      //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
+      //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
       // },
       // includedWalletIds: {
-      //   'a797aa35c0fadbfc1a53e7f675162ed5226968b44a19ee3d24385c64d1d3c393', // Phantom
       //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
       //   '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
       //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
@@ -114,18 +113,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onModalConnect(ModalConnect? event) {
-    debugPrint('[$runtimeType] 1 _onModalConnect ${event?.toString()}');
-    debugPrint('[$runtimeType] 2 _onModalConnect ${event?.session.address}');
-    debugPrint(
-        '[$runtimeType] 3 _onModalConnect ${_w3mService.session?.address}');
+    debugPrint('[HomePage] 1 _onModalConnect ${event?.toString()}');
+    debugPrint('[HomePage] 2 _onModalConnect ${event?.session.address}');
+    debugPrint('[HomePage] 3 _onModalConnect ${_w3mService.session?.address}');
   }
 
   void _onModalDisconnect(ModalDisconnect? event) {
-    debugPrint('[$runtimeType] 1 _onModalDisconnect ${event?.toString()}');
+    debugPrint('[HomePage] 1 _onModalDisconnect ${event?.toString()}');
   }
 
   void _onModalError(ModalError? event) {
-    debugPrint('[$runtimeType] modal error ${event?.toString()}');
+    debugPrint('[HomePage] modal error ${event?.toString()}');
     // When user connected to Coinbase Wallet but Coinbase Wallet does not have a session anymore
     // (for instance if user disconnected the dapp directly within Coinbase Wallet)
     // Then Coinbase Wallet won't emit any event
@@ -135,15 +133,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onSessionExpired(SessionExpire? event) {
-    debugPrint('[$runtimeType] _onSessionExpired ${event?.toString()}');
+    debugPrint('[HomePage] _onSessionExpired ${event?.toString()}');
   }
 
   void _onSessionUpdate(SessionUpdate? event) {
-    debugPrint('[$runtimeType] _onSessionUpdate ${event?.toString()}');
+    debugPrint('[HomePage] _onSessionUpdate ${event?.toString()}');
   }
 
   void _onSessionEvent(SessionEvent? event) {
-    debugPrint('[$runtimeType] _onSessionEvent ${event?.toString()}');
+    debugPrint('[HomePage] _onSessionEvent ${event?.toString()}');
   }
 
   @override

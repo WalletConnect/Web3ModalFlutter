@@ -109,7 +109,7 @@ class SessionWidgetState extends State<SessionWidget> {
     // Get current active account
     final accounts = session.getAccounts() ?? [];
     try {
-      final currentNamespace = widget.w3mService.selectedChain!.namespace;
+      final currentNamespace = widget.w3mService.selectedChain?.namespace;
       final chainsNamespaces = NamespaceUtils.getChainsFromAccounts(accounts);
       if (chainsNamespaces.contains(currentNamespace)) {
         final account = accounts.firstWhere(

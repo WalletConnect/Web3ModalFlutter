@@ -34,6 +34,22 @@ class WalletsListShortPage extends StatefulWidget {
 
 class _WalletsListShortPageState extends State<WalletsListShortPage> {
   @override
+  void initState() {
+    super.initState();
+    magicService.instance.isEnabled.addListener(_mailEnabledListener);
+  }
+
+  void _mailEnabledListener() {
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    magicService.instance.isEnabled.removeListener(_mailEnabledListener);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final service = Web3ModalProvider.of(context).service;
     final isPortrait = ResponsiveData.isPortrait(context);
@@ -64,7 +80,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
               ),
             );
           }
-          final emailEnabled = magicService.instance.isEnabled;
+          final emailEnabled = magicService.instance.isEnabled.value;
           final itemsCount = min(kShortWalletListCount, items.length);
           final itemsToShow = items.getRange(0, itemsCount);
           if (itemsCount < kShortWalletListCount && isPortrait) {

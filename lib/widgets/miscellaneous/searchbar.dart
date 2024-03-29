@@ -208,6 +208,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
             }
           },
           enabled: widget.enabled,
+          readOnly: !widget.enabled,
           onTapOutside: (_) => widget.onDismissKeyboard?.call(false),
           textAlignVertical: TextAlignVertical.center,
           textAlign: widget.textAlign ?? TextAlign.left,

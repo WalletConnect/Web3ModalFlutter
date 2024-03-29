@@ -32,7 +32,7 @@ class _EditEmailPageState extends State<EditEmailPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       magicService.instance.onMagicError.subscribe(_onMagicErrorEvent);
       _currentEmailValue = magicService.instance.email.value;
-      if (!magicService.instance.isAuthenticated) {
+      if (!magicService.instance.isConnected.value) {
         magicService.instance.connectEmail(value: _currentEmailValue);
         widgetStack.instance.popAllAndPush(ConfirmEmailPage());
       }
