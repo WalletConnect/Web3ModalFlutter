@@ -263,8 +263,6 @@ class MagicService implements IMagicService {
     final params = parameters['params'] as List;
     final message = RpcRequest(method: method, params: params).toString();
     await _webViewController.runJavaScript('sendMessage($message)');
-    // TODO THIS HAS TO BE REPLACED IN FAVOR OF PROER syncTheme() IMPLEMENTATION
-    // _setModalColor();
   }
 
   @override
@@ -497,6 +495,17 @@ class MagicService implements IMagicService {
         console.log('w3mMessage posted =====> ' + JSON.stringify(message))
         iframeFL.contentWindow.postMessage(message, '*')
       }
+
+      // TODO this would have to be removed after proper implementation of syncTheme()
+      // const setModalColor = (color) => {
+      //   console.log('setModalColor =====> ' + color)
+      //   iframeFL.style.background = color
+      //   iframeFL.style.backgroundColor = color
+      //   iframeFL.contentWindow.document.body.style.backgroundColor = color
+      //   document.body.style.backgroundColor = color
+      //   const buttons = document.getElementsByClassName("signWrapper")
+      //   buttons[0].style.backgroundColor = color
+      // }
     ''');
   }
 
@@ -526,7 +535,7 @@ class MagicService implements IMagicService {
         ? themeData.darkColors.background125
         : themeData.lightColors.background125;
     final jsColor = Util.colorToRGBA(rbgColor);
-    return await _webViewController.runJavaScript('setBGColor("$jsColor")');
+    return await _webViewController.runJavaScript('setModalColor("$jsColor")');
   }
 
   bool _isAllowedDomain(String domain) {

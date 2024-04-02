@@ -780,21 +780,13 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   @override
-  Future<dynamic> requestReadContract({
+  Future<List<dynamic>> requestReadContract({
     required DeployedContract deployedContract,
     required String functionName,
     required String rpcUrl,
     List parameters = const [],
   }) async {
     try {
-      // TODO Support Smart Contract with Magic
-      if (_currentSession!.sessionService.isMagic) {
-        throw 'Smart Contract interactions is currently not supported with Email Login';
-      }
-      // TODO Support Smart Contract with Coinbase
-      if (_currentSession!.sessionService.isCoinbase) {
-        throw 'Smart Contract interactions is currently not supported with Coinbase Wallet';
-      }
       return await _web3App.requestReadContract(
         deployedContract: deployedContract,
         functionName: functionName,
@@ -820,11 +812,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     try {
       // TODO Support Smart Contract with Magic
       if (_currentSession!.sessionService.isMagic) {
-        throw 'Smart Contract interactions is currently not supported with Email Login';
+        throw 'Write to Smart Contract is currently not supported with Email Login';
       }
       // TODO Support Smart Contract with Coinbase
       if (_currentSession!.sessionService.isCoinbase) {
-        throw 'Smart Contract interactions is currently not supported with Coinbase Wallet';
+        throw 'Write to Smart Contract is currently not supported with Coinbase Wallet';
       }
       return await _web3App.requestWriteContract(
         topic: topic,

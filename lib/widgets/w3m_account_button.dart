@@ -138,7 +138,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
             balance: _balance,
             tokenName: _tokenName,
             tokenImage: _tokenImage,
-            iconSize: widget.size.iconSize + 4.0,
+            iconSize: widget.size.iconSize,
             buttonSize: widget.size,
             onTap: enabled ? _onTap : null,
           ),
