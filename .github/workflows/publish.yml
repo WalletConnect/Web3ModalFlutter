@@ -19,11 +19,11 @@ jobs:
       # Setup Dart SDK
       - uses: dart-lang/setup-dart@v1
       # Install Flutter
-      - name: Install and set Flutter version
+      - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.0'
-          channel: 'stable'
+          channel: "stable"
+          architecture: x64
       # Get package dependencies and generate files
       - name: Get package dependencies and generate files
         run: |
