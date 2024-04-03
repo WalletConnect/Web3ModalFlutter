@@ -208,6 +208,7 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
             }
           },
           enabled: widget.enabled,
+          readOnly: !widget.enabled,
           onTapOutside: (_) => widget.onDismissKeyboard?.call(false),
           textAlignVertical: TextAlignVertical.center,
           textAlign: widget.textAlign ?? TextAlign.left,
@@ -216,7 +217,6 @@ class _Web3ModalSearchBarState extends State<Web3ModalSearchBar>
           cursorColor: themeColors.accent100,
           enableSuggestions: false,
           autocorrect: false,
-          cursorHeight: 16.0,
           showCursor: widget.showCursor,
           decoration: InputDecoration(
             isDense: true,

@@ -776,7 +776,7 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  _i14.Future<dynamic> requestReadContract({
+  _i14.Future<List<dynamic>> requestReadContract({
     required _i3.DeployedContract? deployedContract,
     required String? functionName,
     required String? rpcUrl,
@@ -793,8 +793,8 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
             #parameters: parameters,
           },
         ),
-        returnValue: _i14.Future<dynamic>.value(),
-      ) as _i14.Future<dynamic>);
+        returnValue: _i14.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i14.Future<List<dynamic>>);
   @override
   _i14.Future<dynamic> requestWriteContract({
     required String? topic,
@@ -1396,7 +1396,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
         returnValue: _i14.Future<dynamic>.value(),
       ) as _i14.Future<dynamic>);
   @override
-  _i14.Future<dynamic> requestReadContract({
+  _i14.Future<List<dynamic>> requestReadContract({
     required _i3.DeployedContract? deployedContract,
     required String? functionName,
     required String? rpcUrl,
@@ -1413,8 +1413,8 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
             #parameters: parameters,
           },
         ),
-        returnValue: _i14.Future<dynamic>.value(),
-      ) as _i14.Future<dynamic>);
+        returnValue: _i14.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i14.Future<List<dynamic>>);
   @override
   _i14.Future<dynamic> requestWriteContract({
     required String? topic,

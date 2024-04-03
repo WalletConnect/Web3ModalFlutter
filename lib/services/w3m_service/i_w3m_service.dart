@@ -103,7 +103,7 @@ abstract class IW3MService with ChangeNotifier {
   /// If there is no session, this does nothing.
   Future<void> disconnect({bool disconnectAllSessions = true});
 
-  Future<dynamic> requestReadContract({
+  Future<List<dynamic>> requestReadContract({
     required DeployedContract deployedContract,
     required String functionName,
     required String rpcUrl,

@@ -33,13 +33,24 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialValue);
+    magicService.instance.isReady.addListener(_isReadyListener);
+  }
+
+  void _isReadyListener() {
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    magicService.instance.isReady.removeListener(_isReadyListener);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
     return Web3ModalSearchBar(
-      // enabled: magicService.instance.initialized,
+      enabled: magicService.instance.isReady.value,
       controller: _controller,
       initialValue: _controller.text,
       hint: 'Email',
@@ -53,40 +64,56 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
       },
       onFocusChange: _onFocusChange,
       suffixIcon: widget.suffixIcon ??
-          ValueListenableBuilder<String>(
-            valueListenable: magicService.instance.email,
-            builder: (context, value, _) {
-              if (!hasFocus) {
-                return SizedBox.shrink();
-              }
-              if (_invalidEmail(value)) {
-                return GestureDetector(
-                  onTap: _clearEmail,
-                  child: Padding(
-                    padding: const EdgeInsets.all(kPadding8),
-                    child: SvgPicture.asset(
-                      AssetUtil.getThemedAsset(context, 'input_cancel.svg'),
-                      package: 'web3modal_flutter',
+          (!magicService.instance.isReady.value
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 20.0,
+                      height: 20.0,
+                      child: CircularProgressIndicator(
+                        color: themeColors.accent100,
+                        strokeWidth: 2.0,
+                      ),
                     ),
-                  ),
-                );
-              }
-              return GestureDetector(
-                onTap: () => _validate(value),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SvgPicture.asset(
-                    'assets/icons/chevron_right.svg',
-                    package: 'web3modal_flutter',
-                    colorFilter: ColorFilter.mode(
-                      themeColors.foreground300,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+                  ],
+                )
+              : ValueListenableBuilder<String>(
+                  valueListenable: magicService.instance.email,
+                  builder: (context, value, _) {
+                    if (!hasFocus) {
+                      return SizedBox.shrink();
+                    }
+                    if (_invalidEmail(value)) {
+                      return GestureDetector(
+                        onTap: _clearEmail,
+                        child: Padding(
+                          padding: const EdgeInsets.all(kPadding8),
+                          child: SvgPicture.asset(
+                            AssetUtil.getThemedAsset(
+                                context, 'input_cancel.svg'),
+                            package: 'web3modal_flutter',
+                          ),
+                        ),
+                      );
+                    }
+                    return GestureDetector(
+                      onTap: () => _validate(value),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: SvgPicture.asset(
+                          'assets/icons/chevron_right.svg',
+                          package: 'web3modal_flutter',
+                          colorFilter: ColorFilter.mode(
+                            themeColors.foreground300,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                )),
     );
   }
 

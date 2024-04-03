@@ -133,7 +133,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     _projectId = projectId ?? _web3App.core.projectId;
 
     _setRequiredNamespaces(requiredNamespaces);
-
     _setOptionalNamespaces(optionalNamespaces);
 
     analyticsService.instance = AnalyticsService(
@@ -179,27 +178,27 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     _notify();
 
-    await _web3App.init();
-    await Future.wait([
-      magicService.instance.init(),
-      magicService.instance.awaitInit(),
-    ]);
-    await magicService.instance.syncDappData();
-    await magicService.instance.isConnected();
+    _registerListeners();
+
     await storageService.instance.init();
     await networkService.instance.init();
     await explorerService.instance.init();
-    // await analyticsService.instance.init();
     if (_initializeCoinbaseSDK) {
       // final isInstalled = await cbIsInstalled();
       // Fetch Coinbase Wallet object to get updated metadata
       final cbWallet = await explorerService.instance.getCoinbaseWalletObject();
       await cbInit(metadata: _web3App.metadata, cbWallet: cbWallet);
     }
+    _currentSession = await _getStoredSession();
+    if (_currentSession?.sessionService.isMagic == true) {
+      await magicService.instance.init();
+      // await magicService.instance.getUser(chainId: _currentSession?.chainId);
+    } else {
+      magicService.instance.init();
+    }
+    await _web3App.init();
 
     await expirePreviousInactivePairings();
-
-    _registerListeners();
 
     final wcPairings = _web3App.pairings.getAll();
     final wcSessions = _web3App.sessions.getAll();
@@ -223,32 +222,24 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       }
     } else {
       // Check for other type of sessions stored
-      final storedSession = await _getStoredSession();
-      if (storedSession != null) {
-        loggerService.instance.i(
-          '[$runtimeType] Stored Session ${storedSession.sessionService}',
-        );
-        if (storedSession.sessionService.isCoinbase) {
+      // final storedSession = await _getStoredSession();
+      if (_currentSession != null) {
+        if (_currentSession!.sessionService.isCoinbase) {
           final isCbConnected = await cbIsConnected();
-          if (isCbConnected) {
-            await _storeSession(storedSession);
-          } else {
+          if (!isCbConnected) {
             await _cleanSession();
           }
-        } else if (storedSession.sessionService.isMagic) {
+        } else if (_currentSession!.sessionService.isMagic) {
           // Every time the app gets killed MAgic service will treat the user as disconnected
           // So we will need to treat magic session differently
-          await _storeSession(storedSession);
-          final email = storedSession.email!;
+          // await _storeSession(storedSession);
+          final email = _currentSession!.email!;
           magicService.instance.setEmail(email);
         } else {
           await _cleanSession();
         }
       } else {
-        final connected = await magicService.instance.awaitConnected();
-        if (connected) {
-          await magicService.instance.disconnect();
-        }
+        magicService.instance.disconnect();
       }
     }
 
@@ -789,21 +780,13 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   @override
-  Future<dynamic> requestReadContract({
+  Future<List<dynamic>> requestReadContract({
     required DeployedContract deployedContract,
     required String functionName,
     required String rpcUrl,
     List parameters = const [],
   }) async {
     try {
-      // TODO Support Smart Contract with Magic
-      if (_currentSession!.sessionService.isMagic) {
-        throw 'Smart Contract interactions is currently not supported with Email Login';
-      }
-      // TODO Support Smart Contract with Coinbase
-      if (_currentSession!.sessionService.isCoinbase) {
-        throw 'Smart Contract interactions is currently not supported with Coinbase Wallet';
-      }
       return await _web3App.requestReadContract(
         deployedContract: deployedContract,
         functionName: functionName,
@@ -829,11 +812,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     try {
       // TODO Support Smart Contract with Magic
       if (_currentSession!.sessionService.isMagic) {
-        throw 'Smart Contract interactions is currently not supported with Email Login';
+        throw 'Write to Smart Contract is currently not supported with Email Login';
       }
       // TODO Support Smart Contract with Coinbase
       if (_currentSession!.sessionService.isCoinbase) {
-        throw 'Smart Contract interactions is currently not supported with Coinbase Wallet';
+        throw 'Write to Smart Contract is currently not supported with Coinbase Wallet';
       }
       return await _web3App.requestWriteContract(
         topic: topic,
@@ -862,8 +845,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     }
     try {
       if (_currentSession!.sessionService.isMagic) {
-        magicService.instance.request(parameters: request.toJson());
-        return await magicService.instance.awaitResponse();
+        return await magicService.instance.request(
+          chainId: chainId,
+          request: request,
+        );
       }
       if (_currentSession!.sessionService.isCoinbase) {
         return await cbRequest(
@@ -1356,15 +1341,21 @@ extension _W3MServiceExtension on W3MService {
     _cleanSession();
   }
 
-  void _onRelayClientConnect(EventArgs? args) {
-    loggerService.instance.i('[$runtimeType] _onRelayClientConnect: $args');
-    _status = W3MServiceStatus.initialized;
-    _notify();
+  void _onRelayClientConnect(EventArgs? args) async {
+    final service = _currentSession?.sessionService ?? W3MSessionService.wc;
+    loggerService.instance.i('[$runtimeType] _onRelayClientConnect: $service');
+    if (service.isWC) {
+      _status = W3MServiceStatus.initialized;
+      _notify();
+    }
   }
 
   void _onRelayClientError(ErrorEvent? args) {
     loggerService.instance.e('[$runtimeType] _onRelayClientError: $args');
-    _status = W3MServiceStatus.error;
-    _notify();
+    final service = _currentSession?.sessionService ?? W3MSessionService.wc;
+    if (service.isWC) {
+      _status = W3MServiceStatus.error;
+      _notify();
+    }
   }
 }

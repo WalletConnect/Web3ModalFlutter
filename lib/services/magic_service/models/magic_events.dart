@@ -64,15 +64,39 @@ class IsConnectedErrorEvent extends MagicErrorEvent {
 }
 
 class ConnectEmailErrorEvent extends MagicErrorEvent {
-  ConnectEmailErrorEvent() : super('Error connecting email');
+  final String? message;
+  ConnectEmailErrorEvent({this.message})
+      : super(
+          message ?? 'Error connecting email',
+        );
 }
 
 class UpdateEmailErrorEvent extends MagicErrorEvent {
   UpdateEmailErrorEvent() : super('Error updating email');
 }
 
+class UpdateEmailPrimaryOtpErrorEvent extends MagicErrorEvent {
+  final String? message;
+  UpdateEmailPrimaryOtpErrorEvent({this.message})
+      : super(
+          message ?? 'Error validating OTP code',
+        );
+}
+
+class UpdateEmailSecondaryOtpErrorEvent extends MagicErrorEvent {
+  final String? message;
+  UpdateEmailSecondaryOtpErrorEvent({this.message})
+      : super(
+          message ?? 'Error validating OTP code',
+        );
+}
+
 class ConnectOtpErrorEvent extends MagicErrorEvent {
-  ConnectOtpErrorEvent() : super('Error validating OTP code');
+  final String? message;
+  ConnectOtpErrorEvent({this.message})
+      : super(
+          message ?? 'Error validating OTP code',
+        );
 }
 
 class GetUserErrorEvent extends MagicErrorEvent {

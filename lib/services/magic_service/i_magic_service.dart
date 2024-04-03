@@ -1,26 +1,9 @@
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
-enum EmailLoginStep {
-  verifyDevice('VERIFY_DEVICE'),
-  verifyOtp('VERIFY_OTP'),
-  verifyOtp2('VERIFY_OTP_2'), // not an actual action from service
-  loading('LOADING'),
-  idle('');
-
-  final String action;
-  const EmailLoginStep(this.action);
-
-  factory EmailLoginStep.fromAction(String action) {
-    return values.firstWhere((e) => e.action == action);
-  }
-}
-
 abstract class IMagicService {
-  bool get isEnabled;
-
   Future<void> init();
-  Future<void> loadRequest();
+
   void setEmail(String value);
   void setNewEmail(String value);
 
@@ -33,14 +16,15 @@ abstract class IMagicService {
 
   Future<void> connectOtp({required String otp});
 
-  Future<void> isConnected();
   Future<void> getChainId();
 
   Future<void> syncTheme(Web3ModalTheme? theme);
-  Future<void> syncDappData();
   Future<void> getUser({String? chainId});
   Future<void> switchNetwork({required String chainId});
-  Future<void> request({required Map<String, dynamic> parameters});
+  Future<dynamic> request({
+    String? chainId,
+    required SessionRequestParams request,
+  });
   Future<void> disconnect();
 
   abstract final Event<MagicSessionEvent> onMagicLoginRequest;

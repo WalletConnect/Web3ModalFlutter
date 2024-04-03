@@ -97,7 +97,7 @@ jobs:
       env:
         APP_ID: ${{ secrets.ANDROID_APP_ID }}
       run: |
-        firebase appdistribution:distribute app-release.apk --app $APP_ID --release-notes "Web3Modal Flutter beta testing" --groups flutter-team
+        firebase appdistribution:distribute app-release.apk --app $APP_ID --release-notes "Web3Modal Flutter stable release" --groups "flutter-team, javascript-team, kotlin-team"
     - name: Notify Channel
       uses: slackapi/slack-github-action@v1.24.0
       env:
