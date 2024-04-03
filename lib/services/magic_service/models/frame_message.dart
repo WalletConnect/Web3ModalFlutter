@@ -87,8 +87,12 @@ class MessageData {
   bool get updateEmailSuccess => type == '@w3m-frame/UPDATE_EMAIL_SUCCESS';
   bool get updateEmailPrimarySuccess =>
       type == '@w3m-frame/UPDATE_EMAIL_PRIMARY_OTP_SUCCESS';
+  bool get updateEmailPrimaryOtpError =>
+      type == '@w3m-frame/UPDATE_EMAIL_PRIMARY_OTP_ERROR';
   bool get updateEmailSecondarySuccess =>
       type == '@w3m-frame/UPDATE_EMAIL_SECONDARY_OTP_SUCCESS';
+  bool get updateEmailSecondaryOtpError =>
+      type == '@w3m-frame/UPDATE_EMAIL_SECONDARY_OTP_ERROR';
   bool get updateEmailError => type == '@w3m-frame/UPDATE_EMAIL_ERROR';
   bool get isConnectSuccess => type == '@w3m-frame/IS_CONNECTED_SUCCESS';
   bool get isConnectError => type == '@w3m-frame/IS_CONNECTED_ERROR';

@@ -27,7 +27,6 @@ class MagicService implements IMagicService {
     'secure.walletconnect.com',
     'auth.magic.link',
     'launchdarkly.com',
-    if (kDebugMode) 'ngrok.app',
   ];
   static const supportedMethods = [
     'personal_sign',
@@ -149,10 +148,14 @@ class MagicService implements IMagicService {
   }
 
   @override
-  void setEmail(String value) => email.value = value;
+  void setEmail(String value) {
+    email.value = value;
+  }
 
   @override
-  void setNewEmail(String value) => newEmail.value = value;
+  void setNewEmail(String value) {
+    newEmail.value = value;
+  }
 
   // ****** W3mFrameProvider public methods ******* //
 
@@ -270,15 +273,15 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     final message = SignOut().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
-    _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _disconnect);
+    // _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _disconnect);
   }
 
-  void _disconnect(Timer time) async {
-    if (time.tick > 2) {
-      _resetTimeOut();
-      _error(SignOutErrorEvent());
-    }
-  }
+  // void _disconnect(Timer time) async {
+  //   if (time.tick > 2) {
+  //     _resetTimeOut();
+  //     _error(SignOutErrorEvent());
+  //   }
+  // }
 
   // ****** Private Methods ******* //
 
@@ -417,14 +420,27 @@ class MagicService implements IMagicService {
         _error(IsConnectedErrorEvent());
       }
       if (messageData.connectEmailError) {
-        _error(ConnectEmailErrorEvent());
+        String? message = messageData.payload?['message']?.toString();
+        if (message?.toLowerCase() == 'invalid params') {
+          message = 'Wrong email format';
+        }
+        _error(ConnectEmailErrorEvent(message: message));
       }
       if (messageData.updateEmailError) {
         _error(UpdateEmailErrorEvent());
       }
+      if (messageData.updateEmailPrimaryOtpError) {
+        final message = messageData.payload?['message']?.toString();
+        _error(UpdateEmailPrimaryOtpErrorEvent(message: message));
+      }
+      if (messageData.updateEmailSecondaryOtpError) {
+        final message = messageData.payload?['message']?.toString();
+        _error(UpdateEmailSecondaryOtpErrorEvent(message: message));
+      }
       if (messageData.connectOtpError) {
         analyticsService.instance.sendEvent(EmailVerificationCodeFail());
-        _error(ConnectOtpErrorEvent());
+        final message = messageData.payload?['message']?.toString();
+        _error(ConnectOtpErrorEvent(message: message));
       }
       if (messageData.getUserError) {
         _error(GetUserErrorEvent());
@@ -457,6 +473,7 @@ class MagicService implements IMagicService {
       return;
     }
     if (errorEvent is IsConnectedErrorEvent) {
+      isReady.value = false;
       isConnected.value = false;
       step.value = EmailLoginStep.idle;
     }
@@ -467,6 +484,12 @@ class MagicService implements IMagicService {
     if (errorEvent is UpdateEmailErrorEvent) {
       isConnected.value = false;
       step.value = EmailLoginStep.verifyOtp;
+    }
+    if (errorEvent is UpdateEmailPrimaryOtpErrorEvent) {
+      step.value = EmailLoginStep.verifyOtp;
+    }
+    if (errorEvent is UpdateEmailSecondaryOtpErrorEvent) {
+      step.value = EmailLoginStep.verifyOtp2;
     }
     if (errorEvent is ConnectOtpErrorEvent) {
       isConnected.value = false;
@@ -516,6 +539,9 @@ class MagicService implements IMagicService {
   }
 
   void _onWebResourceError(WebResourceError error) {
+    isReady.value = false;
+    isConnected.value = false;
+    step.value = EmailLoginStep.idle;
     debugPrint('''
               [$runtimeType] Page resource error:
               code: ${error.errorCode}
