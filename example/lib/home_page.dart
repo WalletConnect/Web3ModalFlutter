@@ -45,8 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
-      enableAnalytics: true, // Optional - null by default
-      enableEmail: true, // Optional - false by default
       metadata: const PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
@@ -59,6 +57,10 @@ class _MyHomePageState extends State<MyHomePage> {
           universal: 'https://web3modal.com',
         ),
       ),
+      enableAnalytics: true, // Optional - null by default
+      enableEmail: true, // Optional - false by default
+      // requiredNamespaces: {},
+      // optionalNamespaces: {},
       // excludedWalletIds: {
       //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
       // },
