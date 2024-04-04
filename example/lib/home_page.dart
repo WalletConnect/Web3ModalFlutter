@@ -80,8 +80,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // If you want to support just one chain uncomment this line and avoid using W3MNetworkSelectButton()
     // _w3mService.selectChain(W3MChainPresets.chains['137']);
-
-    _w3mService.addListener(_serviceListener);
     //
     _w3mService.onModalConnect.subscribe(_onModalConnect);
     _w3mService.onModalDisconnect.subscribe(_onModalDisconnect);
@@ -91,14 +89,12 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
     _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
     //
-    //
     await _w3mService.init();
+    setState(() {});
   }
 
   @override
   void dispose() {
-    _w3mService.removeListener(_serviceListener);
-    //
     _w3mService.onModalConnect.unsubscribe(_onModalConnect);
     _w3mService.onModalDisconnect.unsubscribe(_onModalDisconnect);
     _w3mService.onModalError.unsubscribe(_onModalError);
@@ -110,40 +106,40 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  void _serviceListener() {
+  void _onModalConnect(ModalConnect? event) {
+    debugPrint('[ExampleApp] _onModalConnect ${event?.toString()}');
     setState(() {});
   }
 
-  void _onModalConnect(ModalConnect? event) {
-    debugPrint('[HomePage] 1 _onModalConnect ${event?.toString()}');
-    debugPrint('[HomePage] 2 _onModalConnect ${event?.session.address}');
-    debugPrint('[HomePage] 3 _onModalConnect ${_w3mService.session?.address}');
-  }
-
   void _onModalDisconnect(ModalDisconnect? event) {
-    debugPrint('[HomePage] 1 _onModalDisconnect ${event?.toString()}');
+    debugPrint('[ExampleApp] _onModalDisconnect ${event?.toString()}');
+    setState(() {});
   }
 
   void _onModalError(ModalError? event) {
-    debugPrint('[HomePage] modal error ${event?.toString()}');
+    debugPrint('[ExampleApp] _onModalError ${event?.toString()}');
     // When user connected to Coinbase Wallet but Coinbase Wallet does not have a session anymore
     // (for instance if user disconnected the dapp directly within Coinbase Wallet)
     // Then Coinbase Wallet won't emit any event
     if ((event?.message ?? '').contains('Coinbase Wallet Error')) {
       _w3mService.disconnect();
     }
+    setState(() {});
   }
 
   void _onSessionExpired(SessionExpire? event) {
-    debugPrint('[HomePage] _onSessionExpired ${event?.toString()}');
+    debugPrint('[ExampleApp] _onSessionExpired ${event?.toString()}');
+    setState(() {});
   }
 
   void _onSessionUpdate(SessionUpdate? event) {
-    debugPrint('[HomePage] _onSessionUpdate ${event?.toString()}');
+    debugPrint('[ExampleApp] _onSessionUpdate ${event?.toString()}');
+    setState(() {});
   }
 
   void _onSessionEvent(SessionEvent? event) {
-    debugPrint('[HomePage] _onSessionEvent ${event?.toString()}');
+    debugPrint('[ExampleApp] _onSessionEvent ${event?.toString()}');
+    setState(() {});
   }
 
   @override

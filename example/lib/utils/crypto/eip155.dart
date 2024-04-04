@@ -1,7 +1,4 @@
 import 'dart:convert';
-// ignore: depend_on_referenced_packages
-import 'package:convert/convert.dart';
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -146,9 +143,8 @@ class EIP155 {
     required String address,
     required String message,
   }) async {
-    final bytes = utf8.encode(message);
-    final encoded = hex.encode(bytes);
-    debugPrint('personalSign 0x$encoded');
+    // final bytes = utf8.encode(message);
+    // final encoded = hex.encode(bytes);
 
     return await w3mService.request(
       topic: topic,

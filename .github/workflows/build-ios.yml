@@ -10,7 +10,7 @@ on:
 
 jobs:
   build_with_signing:
-    runs-on: macos-latest
+    runs-on: macos-latest-xlarge
     
     steps:
     # Checkout the repo

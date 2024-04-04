@@ -140,12 +140,7 @@ abstract class IW3MService with ChangeNotifier {
   abstract final Event<ModalConnect> onModalConnect;
   abstract final Event<ModalDisconnect> onModalDisconnect;
   abstract final Event<ModalError> onModalError;
-
   //
-  @Deprecated('Use onModalConnect')
-  abstract final Event<SessionConnect> onSessionConnectEvent;
-  @Deprecated('Use onModalDisconnect')
-  abstract final Event<SessionDelete> onSessionDeleteEvent;
   abstract final Event<SessionExpire> onSessionExpireEvent;
   abstract final Event<SessionUpdate> onSessionUpdateEvent;
   abstract final Event<SessionEvent> onSessionEventEvent;

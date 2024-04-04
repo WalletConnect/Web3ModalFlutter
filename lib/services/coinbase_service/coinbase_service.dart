@@ -217,16 +217,18 @@ extension on SessionRequestParams {
           toAddress: jsonData['to'],
           chainId: chainId!,
           weiValue: BigInt.from(value),
-          data: jsonData['data'],
+          data: jsonData['data'] ?? '',
         );
       case MethodsConstants.ethSendTransaction:
         final jsonData = _getTransactionFromParams(params);
+        final hexValue = jsonData['value'].toString().replaceFirst('0x', '');
+        final value = int.parse(hexValue, radix: 16);
         return SendTransaction(
           fromAddress: jsonData['from'],
           toAddress: jsonData['to'],
           chainId: chainId!,
-          weiValue: jsonData['value'],
-          data: jsonData['data'],
+          weiValue: BigInt.from(value).toString(),
+          data: jsonData['data'] ?? '',
         );
       case MethodsConstants.walletSwitchEthChain:
       case MethodsConstants.walletAddEthChain:

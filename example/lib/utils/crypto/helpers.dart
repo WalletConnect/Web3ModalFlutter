@@ -11,7 +11,7 @@ String getChainName(String chain) {
         .w3mChainInfo
         .chainName;
   } catch (e) {
-    debugPrint('getChainName, Invalid chain: $chain');
+    debugPrint('[ExampleApp] getChainName, Invalid chain: $chain');
   }
   return 'Unknown';
 }

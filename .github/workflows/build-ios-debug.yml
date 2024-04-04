@@ -11,7 +11,7 @@ on:
 jobs:
   build_with_signing:
     name: Build iOS App Debug (alpha)
-    runs-on: macos-latest
+    runs-on: macos-latest-xlarge
     
     steps:
     # Checkout the repo

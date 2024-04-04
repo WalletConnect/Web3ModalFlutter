@@ -118,7 +118,7 @@ class SessionWidgetState extends State<SessionWidget> {
         children.add(_buildAccountWidget(account));
       }
     } catch (e) {
-      debugPrint('[$runtimeType] ${e.toString()}');
+      debugPrint('[ExampleApp] ${e.toString()}');
     }
 
     return Padding(

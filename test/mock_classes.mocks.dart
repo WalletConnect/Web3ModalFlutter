@@ -512,43 +512,6 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         ),
       ) as _i3.Event<_i3.ModalError>);
   @override
-  _i15.W3MServiceStatus get status => (super.noSuchMethod(
-        Invocation.getter(#status),
-        returnValue: _i15.W3MServiceStatus.idle,
-      ) as _i15.W3MServiceStatus);
-  @override
-  bool get hasNamespaces => (super.noSuchMethod(
-        Invocation.getter(#hasNamespaces),
-        returnValue: false,
-      ) as bool);
-  @override
-  bool get isOpen => (super.noSuchMethod(
-        Invocation.getter(#isOpen),
-        returnValue: false,
-      ) as bool);
-  @override
-  bool get isConnected => (super.noSuchMethod(
-        Invocation.getter(#isConnected),
-        returnValue: false,
-      ) as bool);
-  @override
-  _i3.Event<_i3.SessionConnect> get onSessionConnectEvent =>
-      (super.noSuchMethod(
-        Invocation.getter(#onSessionConnectEvent),
-        returnValue: _FakeEvent_1<_i3.SessionConnect>(
-          this,
-          Invocation.getter(#onSessionConnectEvent),
-        ),
-      ) as _i3.Event<_i3.SessionConnect>);
-  @override
-  _i3.Event<_i3.SessionDelete> get onSessionDeleteEvent => (super.noSuchMethod(
-        Invocation.getter(#onSessionDeleteEvent),
-        returnValue: _FakeEvent_1<_i3.SessionDelete>(
-          this,
-          Invocation.getter(#onSessionDeleteEvent),
-        ),
-      ) as _i3.Event<_i3.SessionDelete>);
-  @override
   _i3.Event<_i3.SessionExpire> get onSessionExpireEvent => (super.noSuchMethod(
         Invocation.getter(#onSessionExpireEvent),
         returnValue: _FakeEvent_1<_i3.SessionExpire>(
@@ -572,6 +535,26 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
           Invocation.getter(#onSessionEventEvent),
         ),
       ) as _i3.Event<_i3.SessionEvent>);
+  @override
+  _i15.W3MServiceStatus get status => (super.noSuchMethod(
+        Invocation.getter(#status),
+        returnValue: _i15.W3MServiceStatus.idle,
+      ) as _i15.W3MServiceStatus);
+  @override
+  bool get hasNamespaces => (super.noSuchMethod(
+        Invocation.getter(#hasNamespaces),
+        returnValue: false,
+      ) as bool);
+  @override
+  bool get isOpen => (super.noSuchMethod(
+        Invocation.getter(#isOpen),
+        returnValue: false,
+      ) as bool);
+  @override
+  bool get isConnected => (super.noSuchMethod(
+        Invocation.getter(#isConnected),
+        returnValue: false,
+      ) as bool);
   @override
   bool get hasListeners => (super.noSuchMethod(
         Invocation.getter(#hasListeners),

@@ -1,9 +1,9 @@
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
-class MagicConnectEvent implements EventArgs {
+class MagicLoginEvent implements EventArgs {
   final MagicData? data;
-  MagicConnectEvent(this.data);
+  MagicLoginEvent(this.data);
 
   @override
   String toString() => data?.toString() ?? '';
@@ -52,6 +52,11 @@ class MagicRequestEvent implements EventArgs {
 
   @override
   String toString() => 'request: $request, success: $success, result: $result';
+}
+
+class MagicConnectEvent implements EventArgs {
+  final bool connected;
+  MagicConnectEvent(this.connected);
 }
 
 class MagicErrorEvent implements EventArgs {

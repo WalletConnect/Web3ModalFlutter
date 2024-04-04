@@ -9,7 +9,7 @@ class W3MLoggerUtil {
   );
 
   static void setLogLevel(LogLevel level, {bool debugMode = false}) {
-    if (kDebugMode && debugMode) {
+    if (kDebugMode && debugMode && level == LogLevel.error) {
       Logger.addLogListener((LogEvent event) => debugPrint('${event.message}'));
     }
     logger = Logger(

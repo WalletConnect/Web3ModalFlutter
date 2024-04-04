@@ -28,7 +28,8 @@ abstract class IMagicService {
   Future<void> disconnect();
 
   abstract final Event<MagicSessionEvent> onMagicLoginRequest;
-  abstract final Event<MagicConnectEvent> onMagicLoginSuccess;
+  abstract final Event<MagicLoginEvent> onMagicLoginSuccess;
+  abstract final Event<MagicConnectEvent> onMagicConnect;
   abstract final Event<MagicSessionEvent> onMagicUpdate;
   abstract final Event<MagicErrorEvent> onMagicError;
   abstract final Event<MagicRequestEvent> onMagicRpcRequest;

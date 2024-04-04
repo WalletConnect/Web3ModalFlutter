@@ -56,7 +56,10 @@ class MagicService implements IMagicService {
   Event<MagicSessionEvent> onMagicLoginRequest = Event<MagicSessionEvent>();
 
   @override
-  Event<MagicConnectEvent> onMagicLoginSuccess = Event<MagicConnectEvent>();
+  Event<MagicLoginEvent> onMagicLoginSuccess = Event<MagicLoginEvent>();
+
+  @override
+  Event<MagicConnectEvent> onMagicConnect = Event<MagicConnectEvent>();
 
   @override
   Event<MagicErrorEvent> onMagicError = Event<MagicErrorEvent>();
@@ -327,6 +330,7 @@ class MagicService implements IMagicService {
         if (!_connected.isCompleted) {
           _connected.complete(isConnected.value);
         }
+        onMagicConnect.broadcast(MagicConnectEvent(isConnected.value));
         if (isConnected.value) {
           await _getUser(_connectionChainId);
         }
@@ -405,7 +409,7 @@ class MagicService implements IMagicService {
           onMagicUpdate.broadcast(event);
           _connected.complete(isConnected.value);
         } else {
-          onMagicLoginSuccess.broadcast(MagicConnectEvent(data));
+          onMagicLoginSuccess.broadcast(MagicLoginEvent(data));
         }
       }
       // ****** SIGN_OUT
