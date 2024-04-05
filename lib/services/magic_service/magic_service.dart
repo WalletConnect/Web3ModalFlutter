@@ -91,6 +91,14 @@ class MagicService implements IMagicService {
         key: Key('${_key.hashCode}'),
         controller: _webViewController,
       );
+      isReady.addListener(_readyListener);
+    }
+  }
+
+  final _awaitReadyness = Completer<bool>();
+  void _readyListener() {
+    if (isReady.value && !_awaitReadyness.isCompleted) {
+      _awaitReadyness.complete(true);
     }
   }
 
@@ -250,12 +258,13 @@ class MagicService implements IMagicService {
     String? chainId,
     required SessionRequestParams request,
   }) async {
+    if (!isEnabled.value) return;
+    await _awaitReadyness.future;
     await _rpcRequest(request.toJson());
     return await _response.future;
   }
 
   Future<void> _rpcRequest(Map<String, dynamic> parameters) async {
-    if (!isEnabled.value || !isReady.value) return;
     _response = Completer<dynamic>();
     if (!isConnected.value) {
       onMagicLoginRequest.broadcast(MagicSessionEvent(email: email.value));
