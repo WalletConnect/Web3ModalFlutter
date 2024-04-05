@@ -123,7 +123,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       }
     }
 
-    loggerService.instance = LoggerService(level: logLevel, debugMode: true);
+    loggerService.instance = LoggerService(
+      level: logLevel,
+      projectId: projectId ?? _web3App.core.projectId,
+      debugMode: true,
+    );
 
     _web3App = web3App ??
         Web3App(
@@ -377,7 +381,13 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   void _setEthChain(W3MChainInfo chainInfo, {bool logEvent = false}) async {
-    loggerService.instance.i('[$runtimeType] set chain ${chainInfo.namespace}');
+    loggerService.instance.i(
+      '[$runtimeType] _setEthChain ${chainInfo.namespace}',
+    );
+    onModalNetworkChange.broadcast(ModalNetworkChange(
+      previous: _currentSelectedChain?.namespace,
+      current: chainInfo.namespace,
+    ));
     _currentSelectedChain = chainInfo;
 
     // Store the chain for when we reload the app.
@@ -486,12 +496,12 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         useRootNavigator: true,
         anchorPoint: Offset(0, 0),
         context: _context!,
-        builder: (context) {
-          final radiuses = Web3ModalTheme.radiusesOf(context);
+        builder: (_) {
+          final radiuses = Web3ModalTheme.radiusesOf(_context!);
           final maxRadius = min(radiuses.radiusM, 36.0);
           final borderRadius = BorderRadius.all(Radius.circular(maxRadius));
           return Dialog(
-            backgroundColor: Web3ModalTheme.colorsOf(context).background125,
+            backgroundColor: Web3ModalTheme.colorsOf(_context!).background125,
             shape: RoundedRectangleBorder(borderRadius: borderRadius),
             clipBehavior: Clip.hardEdge,
             child: ConstrainedBox(
@@ -750,8 +760,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     // If we aren't open, then we can't and shouldn't close
     _close(event: false);
     if (_context != null) {
-      // _isOpen and notify() are handled when we call Navigator.pop()
-      // by the open() method
       Navigator.of(_context!, rootNavigator: true).pop();
       analyticsService.instance.sendEvent(ModalCloseEvent(
         connected: _isConnected,
@@ -909,6 +917,9 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   @override
   final Event<ModalConnect> onModalConnect = Event();
+
+  @override
+  final Event<ModalNetworkChange> onModalNetworkChange = Event();
 
   @override
   final Event<ModalDisconnect> onModalDisconnect = Event();

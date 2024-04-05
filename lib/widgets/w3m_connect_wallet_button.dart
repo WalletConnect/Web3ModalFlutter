@@ -12,11 +12,13 @@ class W3MConnectWalletButton extends StatefulWidget {
     required this.service,
     this.size = BaseButtonSize.regular,
     this.state,
+    this.context,
   });
 
   final IW3MService service;
   final BaseButtonSize size;
   final ConnectButtonState? state;
+  final BuildContext? context;
 
   @override
   State<W3MConnectWalletButton> createState() => _W3MConnectWalletButtonState();
@@ -48,11 +50,12 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
 
   @override
   Widget build(BuildContext context) {
+    final emailEnabled = magicService.instance.isEnabled.value;
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
         // if (_state == ConnectButtonState.connected)
-        if (Platform.isIOS)
+        if (Platform.isIOS && emailEnabled)
           SizedBox(
             width: 1.0,
             height: 1.0,
@@ -62,17 +65,17 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
           serviceStatus: widget.service.status,
           state: _state,
           size: widget.size,
-          onTap: () => _onTap(context),
+          onTap: _onTap,
         ),
       ],
     );
   }
 
-  void _onTap(BuildContext context) {
+  void _onTap() {
     if (widget.service.isConnected) {
       widget.service.disconnect();
     } else {
-      widget.service.openModal(context);
+      widget.service.openModal(widget.context ?? context);
       _updateState();
     }
   }

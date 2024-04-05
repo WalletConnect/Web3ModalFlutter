@@ -10,6 +10,20 @@ class ModalConnect extends EventArgs {
   }
 }
 
+class ModalNetworkChange extends EventArgs {
+  final String? previous;
+  final String current;
+  ModalNetworkChange({
+    required this.previous,
+    required this.current,
+  });
+
+  @override
+  String toString() {
+    return 'ModalNetworkChange(previous: $previous, current: $current)';
+  }
+}
+
 class ModalDisconnect extends EventArgs {
   final String? topic;
   final int? id;

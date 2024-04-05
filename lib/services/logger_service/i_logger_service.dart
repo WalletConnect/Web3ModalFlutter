@@ -58,6 +58,14 @@ abstract class ILoggerService {
     StackTrace? stackTrace,
   });
 
+  /// Log a message at level private.
+  void p(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  });
+
   /// Closes the logger and releases all resources.
   Future<void> close();
 }

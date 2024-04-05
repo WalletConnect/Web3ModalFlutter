@@ -116,8 +116,8 @@ class _DraggableCardState extends State<DraggableCard> {
 class OverlayController extends AnimatedOverlay {
   OverlayController(super.duration);
   OverlayEntry? _entry;
-  final _defaultAlign = const Alignment(0.0, -2.0);
-  Alignment align = const Alignment(0.0, -2.0);
+  final _defaultAlign = const Alignment(0.0, -30.0);
+  Alignment align = const Alignment(0.0, -30.0);
   Animation<Alignment>? alignAnimation;
 
   OverlayEntry createAlignOverlay(Widget child) {

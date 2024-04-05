@@ -21,11 +21,13 @@ class W3MAccountButton extends StatefulWidget {
     required this.service,
     this.size = BaseButtonSize.regular,
     this.avatar,
+    this.context,
   });
 
   final IW3MService service;
   final BaseButtonSize size;
   final String? avatar;
+  final BuildContext? context;
 
   @override
   State<W3MAccountButton> createState() => _W3MAccountButtonState();
@@ -68,14 +70,17 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     });
   }
 
-  void _onTap() => widget.service.openModal(context);
+  void _onTap() => widget.service.openModal(widget.context ?? context);
 
   void _approveSign(MagicRequestEvent? args) async {
     if (args?.request != null) {
       if (widget.service.isOpen) {
         widgetStack.instance.popAllAndPush(ApproveTransactionPage());
       } else {
-        widget.service.openModal(context, ApproveTransactionPage());
+        widget.service.openModal(
+          widget.context ?? context,
+          ApproveTransactionPage(),
+        );
       }
     }
   }
@@ -84,7 +89,10 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     if (widget.service.isOpen) {
       widgetStack.instance.popAllAndPush(ConfirmEmailPage());
     } else {
-      widget.service.openModal(context, ConfirmEmailPage());
+      widget.service.openModal(
+        widget.context ?? context,
+        ConfirmEmailPage(),
+      );
     }
   }
 

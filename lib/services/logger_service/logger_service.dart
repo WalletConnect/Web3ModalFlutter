@@ -6,7 +6,13 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class LoggerService implements ILoggerService {
   late Logger _logger;
-  LoggerService({required LogLevel level, bool debugMode = true}) {
+  late String _projectId;
+  LoggerService({
+    required LogLevel level,
+    required String projectId,
+    bool debugMode = true,
+  }) {
+    _projectId = projectId;
     _logger = Logger(
       level: level.toLevel(),
       printer: PrettyPrinter(methodCount: null),
@@ -18,6 +24,19 @@ class LoggerService implements ILoggerService {
 
   void _logListener(LogEvent event) {
     debugPrint('${event.message}');
+  }
+
+  @override
+  void p(
+    message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
+    // TODO fix this
+    if (_projectId == 'cad4956f31a5e40a00b62865b030c6f8') {
+      _logger.i(message, time: time, error: error, stackTrace: stackTrace);
+    }
   }
 
   @override

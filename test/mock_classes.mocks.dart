@@ -496,6 +496,15 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         ),
       ) as _i3.Event<_i3.ModalConnect>);
   @override
+  _i3.Event<_i3.ModalNetworkChange> get onModalNetworkChange =>
+      (super.noSuchMethod(
+        Invocation.getter(#onModalNetworkChange),
+        returnValue: _FakeEvent_1<_i3.ModalNetworkChange>(
+          this,
+          Invocation.getter(#onModalNetworkChange),
+        ),
+      ) as _i3.Event<_i3.ModalNetworkChange>);
+  @override
   _i3.Event<_i3.ModalDisconnect> get onModalDisconnect => (super.noSuchMethod(
         Invocation.getter(#onModalDisconnect),
         returnValue: _FakeEvent_1<_i3.ModalDisconnect>(

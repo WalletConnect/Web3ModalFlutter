@@ -85,6 +85,7 @@ class MagicService implements IMagicService {
   })  : _web3app = web3app,
         _key = key ?? Key('magic_service') {
     isEnabled.value = enabled;
+    loggerService.instance.p('[$runtimeType] enabled $enabled');
     if (isEnabled.value) {
       _webViewController = WebViewController();
       _webview = WebViewWidget(
@@ -142,7 +143,6 @@ class MagicService implements IMagicService {
         onPageFinished: (String url) async {
           _onLoadCount++;
           if (_onLoadCount < 2 && Platform.isAndroid) return;
-          loggerService.instance.d('[$runtimeType] onPageFinished $url');
           await _runJavascript(_web3app.core.projectId);
           await Future.delayed(Duration(milliseconds: 200));
           await _webViewController.enableZoom(false);
@@ -321,7 +321,7 @@ class MagicService implements IMagicService {
 
   void _onFrameMessage(JavaScriptMessage jsMessage) async {
     if (Platform.isAndroid) {
-      loggerService.instance.i('[$runtimeType] jsMessage ${jsMessage.message}');
+      loggerService.instance.p('[$runtimeType] jsMessage ${jsMessage.message}');
     }
     try {
       final frameMessage = jsMessage.toFrameMessage();
@@ -469,7 +469,7 @@ class MagicService implements IMagicService {
         _error(SignOutErrorEvent());
       }
     } catch (e, s) {
-      loggerService.instance.e('[$runtimeType] $jsMessage', stackTrace: s);
+      loggerService.instance.p('[$runtimeType] $jsMessage', stackTrace: s);
     }
   }
 
@@ -547,7 +547,7 @@ class MagicService implements IMagicService {
 
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
     if (kDebugMode && Platform.isIOS) {
-      loggerService.instance.d('[$runtimeType] JS Console ${message.message}');
+      loggerService.instance.p('[$runtimeType] JS Console ${message.message}');
     }
   }
 

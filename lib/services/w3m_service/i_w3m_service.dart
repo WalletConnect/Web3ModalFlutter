@@ -52,11 +52,11 @@ abstract class IW3MService with ChangeNotifier {
   /// Sets up the explorer and the web3App if they already been initialized.
   Future<void> init();
 
+  Future<void> openNetworks(BuildContext context);
+
   /// Opens the modal with the provided [startWidget] (if any).
   /// If none is provided, the default state will be used based on platform.
   Future<void> openModal(BuildContext context, [Widget? startWidget]);
-
-  Future<void> openNetworks(BuildContext context);
 
   /// Connects to the relay if not already connected.
   /// If the relay is already connected, this does nothing.
@@ -138,6 +138,7 @@ abstract class IW3MService with ChangeNotifier {
   /* EVENTS DECLARATIONS */
 
   abstract final Event<ModalConnect> onModalConnect;
+  abstract final Event<ModalNetworkChange> onModalNetworkChange;
   abstract final Event<ModalDisconnect> onModalDisconnect;
   abstract final Event<ModalError> onModalError;
   //

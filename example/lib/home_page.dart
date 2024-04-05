@@ -80,10 +80,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // If you want to support just one chain uncomment this line and avoid using W3MNetworkSelectButton()
     // _w3mService.selectChain(W3MChainPresets.chains['137']);
-    // TODO this shouldn't be needed
-    _w3mService.addListener(_updateState);
     //
     _w3mService.onModalConnect.subscribe(_onModalConnect);
+    _w3mService.onModalNetworkChange.subscribe(_onModalNetworkChange);
     _w3mService.onModalDisconnect.subscribe(_onModalDisconnect);
     _w3mService.onModalError.subscribe(_onModalError);
     //
@@ -97,9 +96,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    _w3mService.removeListener(_updateState);
     //
     _w3mService.onModalConnect.unsubscribe(_onModalConnect);
+    _w3mService.onModalNetworkChange.unsubscribe(_onModalNetworkChange);
     _w3mService.onModalDisconnect.unsubscribe(_onModalDisconnect);
     _w3mService.onModalError.unsubscribe(_onModalError);
     //
@@ -110,12 +109,13 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  void _updateState() {
+  void _onModalConnect(ModalConnect? event) {
+    debugPrint('[ExampleApp] _onModalConnect ${event?.toString()}');
     setState(() {});
   }
 
-  void _onModalConnect(ModalConnect? event) {
-    debugPrint('[ExampleApp] _onModalConnect ${event?.toString()}');
+  void _onModalNetworkChange(ModalNetworkChange? event) {
+    debugPrint('[ExampleApp] _onModalNetworkChange ${event?.toString()}');
     setState(() {});
   }
 
@@ -215,9 +215,9 @@ class _ButtonsView extends StatelessWidget {
         const SizedBox.square(dimension: 8.0),
         Visibility(
           visible: !w3mService.isConnected,
-          child: W3MNetworkSelectButton(service: w3mService),
+          child: W3MNetworkSelectButton(service: w3mService, context: context),
         ),
-        W3MConnectWalletButton(service: w3mService),
+        W3MConnectWalletButton(service: w3mService, context: context),
         // W3MAccountButton(service: w3mService),
         const SizedBox.square(dimension: 8.0),
       ],
@@ -276,7 +276,7 @@ class _ConnectedView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox.square(dimension: 12.0),
-        W3MAccountButton(service: w3mService),
+        W3MAccountButton(service: w3mService, context: context),
         SessionWidget(
           w3mService: w3mService,
           launchRedirect: () {
