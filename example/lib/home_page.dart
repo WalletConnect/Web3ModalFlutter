@@ -80,6 +80,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // If you want to support just one chain uncomment this line and avoid using W3MNetworkSelectButton()
     // _w3mService.selectChain(W3MChainPresets.chains['137']);
+    // TODO this shouldn't be needed
+    _w3mService.addListener(_updateState);
     //
     _w3mService.onModalConnect.subscribe(_onModalConnect);
     _w3mService.onModalDisconnect.subscribe(_onModalDisconnect);
@@ -95,6 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
+    _w3mService.removeListener(_updateState);
+    //
     _w3mService.onModalConnect.unsubscribe(_onModalConnect);
     _w3mService.onModalDisconnect.unsubscribe(_onModalDisconnect);
     _w3mService.onModalError.unsubscribe(_onModalError);
@@ -104,6 +108,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onSessionEventEvent.unsubscribe(_onSessionEvent);
     //
     super.dispose();
+  }
+
+  void _updateState() {
+    setState(() {});
   }
 
   void _onModalConnect(ModalConnect? event) {
