@@ -109,7 +109,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"🤖 New *Android* build *beta* version for *Web3Modal Flutter* was just deployed. Test at https://appdistribution.firebase.dev/i/a47ee97e86fbdfff"
+            "text":"🤖 New *Android* build *${{ github.ref_name }}* version for *Web3Modal Flutter* was just deployed. Test at https://appdistribution.firebase.dev/i/a47ee97e86fbdfff"
           }
     # Clean up Flutter envs
     - name: Clean up
