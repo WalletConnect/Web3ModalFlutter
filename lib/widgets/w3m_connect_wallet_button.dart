@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
@@ -55,7 +56,7 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
       alignment: AlignmentDirectional.center,
       children: [
         // if (_state == ConnectButtonState.connected)
-        if (Platform.isIOS && emailEnabled)
+        if (kIsWeb == false && Platform.isIOS && emailEnabled)
           SizedBox(
             width: 1.0,
             height: 1.0,
