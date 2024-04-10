@@ -55,19 +55,19 @@ class WCSampleWallets {
         schema: 'com.walletconnect.sample.wallet',
       ),
     },
-    // // Kotlin Wallet Internal
-    // '123456789012345678901234567894': {
-    //   'name': 'Wallet (Kotlin Internal)',
-    //   'platform': ['android'],
-    //   'ios': NativeAppData(
-    //     id: '123456789012345678901234567894',
-    //     schema: 'kotlin-web3wallet://',
-    //   ),
-    //   'android': NativeAppData(
-    //     id: '123456789012345678901234567894',
-    //     schema: 'com.walletconnect.sample.wallet.internal',
-    //   ),
-    // }
+    // Kotlin Wallet Internal
+    '123456789012345678901234567894': {
+      'name': 'Wallet (Kotlin Internal)',
+      'platform': ['android'],
+      'ios': NativeAppData(
+        id: '123456789012345678901234567894',
+        schema: 'kotlin-web3wallet://',
+      ),
+      'android': NativeAppData(
+        id: '123456789012345678901234567894',
+        schema: 'com.walletconnect.sample.wallet.internal',
+      ),
+    }
   };
 
   static List<W3MWalletInfo> getSampleWallets(String platform) {
