@@ -6,7 +6,6 @@ import 'package:web3modal_flutter/services/magic_service/magic_service_singleton
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
-import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
@@ -22,12 +21,14 @@ class W3MAccountButton extends StatefulWidget {
     this.size = BaseButtonSize.regular,
     this.avatar,
     this.context,
+    this.custom,
   });
 
   final IW3MService service;
   final BaseButtonSize size;
   final String? avatar;
   final BuildContext? context;
+  final Widget? custom;
 
   @override
   State<W3MAccountButton> createState() => _W3MAccountButtonState();
@@ -63,9 +64,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
       final chainId = widget.service.selectedChain?.chainId ?? '1';
       final imageId = AssetUtil.getChainIconId(chainId);
       _tokenImage = explorerService.instance.getAssetImageUrl(imageId);
-      _balance = coreUtils.instance.formatChainBalance(
-        widget.service.chainBalance,
-      );
+      _balance = widget.service.chainBalance;
       _tokenName = widget.service.selectedChain?.tokenName;
     });
   }
@@ -98,6 +97,9 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.custom != null) {
+      return widget.custom!;
+    }
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final borderRadius = radiuses.isSquare() ? 0.0 : widget.size.height / 2;

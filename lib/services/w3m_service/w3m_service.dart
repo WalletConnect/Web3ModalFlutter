@@ -82,8 +82,14 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   String? get avatarUrl => _avatarUrl;
 
   double? _chainBalance;
+
   @override
-  double? get chainBalance => _chainBalance;
+  String get chainBalance {
+    return coreUtils.instance.formatChainBalance(_chainBalance);
+  }
+
+  @override
+  final balanceNotifier = ValueNotifier<String>('-.--');
 
   bool _isOpen = false;
   @override
@@ -721,8 +727,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   @override
   Future<void> reconnectRelay() async {
-    _checkInitialized();
-
     await _web3App.core.relayClient.connect();
   }
 
@@ -1017,6 +1021,8 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       _currentSelectedChain!.rpcUrl,
       _currentSession!.address!,
     );
+    balanceNotifier.value =
+        '$chainBalance ${_currentSelectedChain?.tokenName ?? ''}';
 
     // Get the avatar, each chainId is just a number in string form.
     try {
@@ -1089,16 +1095,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   Future<void> _disconnectSession(String? pairingTopic, String? topic) async {
-    // Disconnect both the pairing and session
-    if (pairingTopic != null) {
-      await _web3App.disconnectSession(
-        topic: pairingTopic,
-        reason: const WalletConnectError(
-          code: 0,
-          message: 'User disconnected',
-        ),
-      );
-    }
     // Disconnecting the session will produce the onSessionDisconnect callback
     if (topic != null) {
       await _web3App.disconnectSession(
@@ -1108,6 +1104,16 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
           message: 'User disconnected',
         ),
       );
+    }
+    if (pairingTopic != null) {
+      await _web3App.core.pairing.disconnect(topic: pairingTopic);
+      // await _web3App.disconnectSession(
+      //   topic: pairingTopic,
+      //   reason: const WalletConnectError(
+      //     code: 0,
+      //     message: 'User disconnected',
+      //   ),
+      // );
     }
   }
 
@@ -1123,12 +1129,12 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     );
     await storageService.instance.clearAll();
     await explorerService.instance.storeRecentWalletId(walletId);
-    if (_currentSession != null) {
-      onModalDisconnect.broadcast(ModalDisconnect(
-        topic: args?.topic,
-        id: args?.id,
-      ));
-    }
+    // if (_currentSession != null) {
+    onModalDisconnect.broadcast(ModalDisconnect(
+      topic: args?.topic,
+      id: args?.id,
+    ));
+    // }
     _currentSelectedChain = null;
     _isConnected = false;
     _currentSession = null;

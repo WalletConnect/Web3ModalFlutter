@@ -41,7 +41,9 @@ abstract class IW3MService with ChangeNotifier {
   String? get avatarUrl;
 
   /// Returns the balance of the currently connected wallet on the selected chain.
-  double? get chainBalance;
+  String get chainBalance;
+
+  ValueNotifier<String> get balanceNotifier;
 
   /// The currently selected chain.
   W3MChainInfo? get selectedChain;

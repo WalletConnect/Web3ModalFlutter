@@ -15,11 +15,13 @@ class W3MNetworkSelectButton extends StatefulWidget {
     required this.service,
     this.size = BaseButtonSize.regular,
     this.context,
+    this.custom,
   });
 
   final IW3MService service;
   final BaseButtonSize size;
   final BuildContext? context;
+  final Widget? custom;
 
   @override
   State<W3MNetworkSelectButton> createState() => _W3MNetworkSelectButtonState();
@@ -43,12 +45,13 @@ class _W3MNetworkSelectButtonState extends State<W3MNetworkSelectButton> {
 
   @override
   Widget build(BuildContext context) {
-    return NetworkButton(
-      serviceStatus: widget.service.status,
-      chainInfo: _selectedChain,
-      size: widget.size,
-      onTap: () => _onConnectPressed(),
-    );
+    return widget.custom ??
+        NetworkButton(
+          serviceStatus: widget.service.status,
+          chainInfo: _selectedChain,
+          size: widget.size,
+          onTap: () => _onConnectPressed(),
+        );
   }
 
   void _onConnectPressed() {

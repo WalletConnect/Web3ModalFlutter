@@ -488,6 +488,14 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
   }
 
   @override
+  _i2.ValueNotifier<String> get balanceNotifier => (super.noSuchMethod(
+        Invocation.getter(#balanceNotifier),
+        returnValue: _FakeValueNotifier_0<String>(
+          this,
+          Invocation.getter(#balanceNotifier),
+        ),
+      ) as _i2.ValueNotifier<String>);
+  @override
   _i3.Event<_i3.ModalConnect> get onModalConnect => (super.noSuchMethod(
         Invocation.getter(#onModalConnect),
         returnValue: _FakeEvent_1<_i3.ModalConnect>(
@@ -554,6 +562,14 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         Invocation.getter(#hasNamespaces),
         returnValue: false,
       ) as bool);
+  @override
+  String get chainBalance => (super.noSuchMethod(
+        Invocation.getter(#chainBalance),
+        returnValue: _i13.dummyValue<String>(
+          this,
+          Invocation.getter(#chainBalance),
+        ),
+      ) as String);
   @override
   bool get isOpen => (super.noSuchMethod(
         Invocation.getter(#isOpen),
