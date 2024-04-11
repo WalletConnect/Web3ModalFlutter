@@ -2,7 +2,6 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/utils/core/i_core_utils.dart';
-import 'package:web3modal_flutter/utils/w3m_logger.dart';
 
 class CoreUtils extends ICoreUtils {
   static const restrictedTimezone = [
@@ -81,6 +80,13 @@ class CoreUtils extends ICoreUtils {
     if (!safeUrl.contains('://')) {
       safeUrl = url.replaceAll('/', '').replaceAll(':', '');
       safeUrl = '$safeUrl://';
+    } else {
+      final parts = safeUrl.split('://');
+      if (parts.last.isNotEmpty && parts.last != 'wc') {
+        return safeUrl;
+      } else {
+        safeUrl = url.replaceFirst('://wc', '://');
+      }
     }
     return safeUrl;
   }
@@ -97,34 +103,38 @@ class CoreUtils extends ICoreUtils {
   }
 
   @override
-  Uri? formatCustomSchemeUri(String? appUrl, String wcUri) {
+  Uri? formatCustomSchemeUri(String? appUrl, String? wcUri) {
     if (appUrl == null || appUrl.isEmpty) return null;
 
     if (isHttpUrl(appUrl)) {
       return formatWebUrl(appUrl, wcUri);
     }
 
-    String safeAppUrl = createSafeUrl(appUrl);
-    String encodedWcUrl = Uri.encodeComponent(wcUri);
-    W3MLoggerUtil.logger.t('[$runtimeType] Encoded WC URL: $encodedWcUrl');
+    final safeAppUrl = createSafeUrl(appUrl);
+
+    if (wcUri == null) {
+      return Uri.parse(safeAppUrl);
+    }
+
+    final encodedWcUrl = Uri.encodeComponent(wcUri);
 
     return Uri.parse('${safeAppUrl}wc?uri=$encodedWcUrl');
   }
 
   @override
-  Uri? formatWebUrl(String? appUrl, String wcUri) {
+  Uri? formatWebUrl(String? appUrl, String? wcUri) {
     if (appUrl == null || appUrl.isEmpty) return null;
 
     if (!isHttpUrl(appUrl)) {
       return formatCustomSchemeUri(appUrl, wcUri);
     }
-    String plainAppUrl = appUrl;
-    if (!appUrl.endsWith('/')) {
-      plainAppUrl = '$appUrl/';
+    String plainAppUrl = createPlainUrl(appUrl);
+
+    if (wcUri == null) {
+      return Uri.parse(plainAppUrl);
     }
 
-    String encodedWcUrl = Uri.encodeComponent(wcUri);
-    W3MLoggerUtil.logger.t('[$runtimeType] Encoded WC URL: $encodedWcUrl');
+    final encodedWcUrl = Uri.encodeComponent(wcUri);
 
     return Uri.parse('${plainAppUrl}wc?uri=$encodedWcUrl');
   }

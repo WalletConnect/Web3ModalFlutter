@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
+// ignore: depend_on_referenced_packages
+import 'package:convert/convert.dart';
+
 import 'package:walletconnect_flutter_dapp/utils/crypto/contract.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/test_data.dart';
 
@@ -143,15 +146,15 @@ class EIP155 {
     required String address,
     required String message,
   }) async {
-    // final bytes = utf8.encode(message);
-    // final encoded = hex.encode(bytes);
+    final bytes = utf8.encode(message);
+    final encoded = hex.encode(bytes);
 
     return await w3mService.request(
       topic: topic,
       chainId: chainId,
       request: SessionRequestParams(
         method: EIP155UIMethods.personalSign.name,
-        params: [message, address],
+        params: [encoded, address],
       ),
     );
   }

@@ -10,14 +10,9 @@ import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 import 'package:walletconnect_flutter_dapp/widgets/method_dialog.dart';
 
 class SessionWidget extends StatefulWidget {
-  const SessionWidget({
-    super.key,
-    required this.w3mService,
-    required this.launchRedirect,
-  });
+  const SessionWidget({super.key, required this.w3mService});
 
   final W3MService w3mService;
-  final void Function() launchRedirect;
 
   @override
   SessionWidgetState createState() => SessionWidgetState();
@@ -218,6 +213,7 @@ class SessionWidgetState extends State<SessionWidget> {
           child: ElevatedButton(
             onPressed: implemented
                 ? () async {
+                    widget.w3mService.launchConnectedWallet();
                     final future = callChainMethod(
                       chainMetadata.type,
                       EIP155.methodFromName(method),
@@ -225,7 +221,6 @@ class SessionWidgetState extends State<SessionWidget> {
                       address,
                     );
                     MethodDialog.show(context, method, future);
-                    widget.launchRedirect();
                   }
                 : null,
             style: ButtonStyle(
@@ -309,12 +304,12 @@ class SessionWidgetState extends State<SessionWidget> {
         child: ElevatedButton(
           onPressed: onSepolia
               ? () async {
+                  widget.w3mService.launchConnectedWallet();
                   final future = EIP155.callSmartContract(
                     w3mService: widget.w3mService,
                     action: 'write',
                   );
                   MethodDialog.show(context, 'Test Contract (Write)', future);
-                  widget.launchRedirect();
                 }
               : null,
           style: ButtonStyle(

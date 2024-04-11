@@ -561,6 +561,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     final walletRedirect = explorerService.instance.getWalletRedirect(
       selectedWallet,
     );
+
     if (walletRedirect == null) {
       throw W3MServiceException(
         'You didn\'t select a wallet or walletInfo argument is null',
@@ -697,7 +698,8 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       return false;
     }
 
-    if (walletInfo.isCoinbase) {
+    final isCoinbase = _currentSession!.sessionService.isCoinbase == true;
+    if (walletInfo.isCoinbase || isCoinbase) {
       // Coinbase Wallet is getting launched at every request by it's own SDK
       // SO no need to do it here.
       return false;
@@ -708,15 +710,27 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       return false;
     }
 
-    final redirect = explorerService.instance.getWalletRedirect(walletInfo);
-    if (redirect == null) {
+    final metadataRedirect = _currentSession!.peer?.metadata.redirect;
+
+    final walletRedirect = explorerService.instance.getWalletRedirect(
+      walletInfo,
+    );
+
+    if (walletRedirect == null) {
       return false;
     }
 
-    return await urlUtils.instance.openRedirect(
-      redirect,
-      pType: platformUtils.instance.getPlatformType(),
-    );
+    try {
+      return await urlUtils.instance.openRedirect(
+        walletRedirect.copyWith(
+          mobile: metadataRedirect?.native ?? metadataRedirect?.universal,
+        ),
+        pType: platformUtils.instance.getPlatformType(),
+      );
+    } catch (e) {
+      onModalError.broadcast(ErrorOpeningWallet());
+      return false;
+    }
   }
 
   @override

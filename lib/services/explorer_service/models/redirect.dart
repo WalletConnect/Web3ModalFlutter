@@ -17,6 +17,18 @@ class WalletRedirect {
   Uri? get webUri => web != null ? Uri.parse(web!) : null;
   Uri? get desktopUri => desktop != null ? Uri.parse(desktop!) : null;
 
+  WalletRedirect copyWith({
+    String? mobile,
+    String? desktop,
+    String? web,
+  }) {
+    return WalletRedirect(
+      mobile: mobile ?? this.mobile,
+      desktop: desktop ?? this.desktop,
+      web: web ?? this.web,
+    );
+  }
+
   @override
   String toString() =>
       'mobile: $mobile (mobileOnly: $mobileOnly), desktop: $desktop (desktopOnly: $desktopOnly), web: $web (webOnly: $webOnly)';

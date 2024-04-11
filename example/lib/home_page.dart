@@ -277,12 +277,7 @@ class _ConnectedView extends StatelessWidget {
       children: [
         const SizedBox.square(dimension: 12.0),
         W3MAccountButton(service: w3mService, context: context),
-        SessionWidget(
-          w3mService: w3mService,
-          launchRedirect: () {
-            w3mService.launchConnectedWallet();
-          },
-        ),
+        SessionWidget(w3mService: w3mService),
         const SizedBox.square(dimension: 12.0),
       ],
     );

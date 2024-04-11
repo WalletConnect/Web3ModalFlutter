@@ -23,11 +23,11 @@ abstract class ICoreUtils {
 
   /// Formats a native URL for the given [appUrl] and [wcUri].
   /// metamask:// is a native URL
-  Uri? formatCustomSchemeUri(String? appUrl, String wcUri);
+  Uri? formatCustomSchemeUri(String? appUrl, String? wcUri);
 
   /// Formats a universal URL for the given [appUrl] and [wcUri].
   /// https://metamask.app.link/ is a universal URL
-  Uri? formatWebUrl(String? appUrl, String wcUri);
+  Uri? formatWebUrl(String? appUrl, String? wcUri);
 
   String formatChainBalance(double? chainBalance, {int precision = 4});
 
