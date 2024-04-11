@@ -1,6 +1,7 @@
 import 'package:appcheck/appcheck.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
+import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
@@ -87,42 +88,44 @@ class UrlUtils extends IUrlUtils {
     String? wcURI,
     PlatformType? pType,
   }) async {
+    //
     Uri? uriToOpen;
     try {
       final isMobile = (redirect.mobileOnly || pType == PlatformType.mobile);
       if (isMobile && redirect.mobile != null) {
-        final uri = wcURI ?? redirect.mobileUri?.toString();
+        // final uri = wcURI ?? redirect.mobileUri?.toString();
         uriToOpen = coreUtils.instance.formatCustomSchemeUri(
           redirect.mobile,
-          uri!,
+          wcURI,
         );
       }
       //
       final isWeb = (redirect.webOnly || pType == PlatformType.web);
       if (isWeb && redirect.web != null) {
-        final uri = wcURI ?? redirect.webUri?.toString();
+        // final uri = wcURI ?? redirect.webUri?.toString();
         uriToOpen = coreUtils.instance.formatWebUrl(
           redirect.web,
-          uri!,
+          wcURI,
         );
       }
       //
       final isDesktop = (redirect.desktopOnly || pType == PlatformType.desktop);
       if (isDesktop && redirect.desktop != null) {
-        final uri = wcURI ?? redirect.desktopUri?.toString();
+        // final uri = wcURI ?? redirect.desktopUri?.toString();
         uriToOpen = coreUtils.instance.formatCustomSchemeUri(
           redirect.desktop,
-          uri!,
+          wcURI,
         );
       }
     } catch (e, s) {
-      W3MLoggerUtil.logger.e(
+      loggerService.instance.e(
         'Error opening redirect',
         error: e,
         stackTrace: s,
       );
       return false;
     }
+    loggerService.instance.i('[$runtimeType] openRedirect $uriToOpen');
     return await launchUrlFunc(
       uriToOpen!,
       mode: launcher.LaunchMode.externalApplication,

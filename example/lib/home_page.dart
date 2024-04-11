@@ -285,12 +285,7 @@ class _ConnectedView extends StatelessWidget {
             );
           },
         ),
-        SessionWidget(
-          w3mService: w3mService,
-          launchRedirect: () {
-            w3mService.launchConnectedWallet();
-          },
-        ),
+        SessionWidget(w3mService: w3mService),
         const SizedBox.square(dimension: 12.0),
       ],
     );
