@@ -135,7 +135,7 @@ abstract class IW3MService with ChangeNotifier {
   void closeModal();
 
   @override
-  void dispose();
+  Future<void> dispose();
 
   /* EVENTS DECLARATIONS */
 

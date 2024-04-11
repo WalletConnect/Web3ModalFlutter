@@ -266,7 +266,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     final chainId = w3mSession.chainId.toString();
     final chainInfo =
         W3MChainPresets.chains[chainId] ?? W3MChainPresets.chains['1']!;
-    _setEthChain(chainInfo, logEvent: false);
+    await _setEthChain(chainInfo, logEvent: false);
     // await selectChain(chainInfo);
   }
 
@@ -386,7 +386,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     return _currentSession!.getApprovedEvents();
   }
 
-  void _setEthChain(W3MChainInfo chainInfo, {bool logEvent = false}) async {
+  Future<void> _setEthChain(
+    W3MChainInfo chainInfo, {
+    bool logEvent = false,
+  }) async {
     loggerService.instance.i(
       '[$runtimeType] _setEthChain ${chainInfo.namespace}',
     );
@@ -395,7 +398,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       current: chainInfo.namespace,
     ));
     _currentSelectedChain = chainInfo;
-
     // Store the chain for when we reload the app.
     // If switchChain is true the store is on [_switchEthChain]
     await storageService.instance.setString(
@@ -922,7 +924,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   @override
-  void dispose() async {
+  Future<void> dispose() async {
     if (_status == W3MServiceStatus.initialized) {
       await disconnect();
       await expirePreviousInactivePairings();

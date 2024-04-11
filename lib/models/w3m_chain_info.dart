@@ -61,12 +61,9 @@ extension W3MChainInfoExtension on W3MChainInfo {
       'rpcUrls': [
         rpcUrl,
       ],
-      'blockExplorers': {
-        'default': {
-          'name': blockExplorer?.name,
-          'url': blockExplorer?.url,
-        },
-      },
+      'blockExplorerUrls': [
+        blockExplorer?.url,
+      ],
     };
   }
 }
