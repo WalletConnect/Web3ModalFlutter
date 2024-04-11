@@ -112,6 +112,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onModalConnect(ModalConnect? event) {
     debugPrint('[ExampleApp] _onModalConnect ${event?.toString()}');
+    debugPrint(
+      '[ExampleApp] _onModalConnect selectedChain ${_w3mService.selectedChain}',
+    );
     setState(() {});
   }
 

@@ -852,13 +852,14 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValue: _i14.Future<dynamic>.value(),
       ) as _i14.Future<dynamic>);
   @override
-  void dispose() => super.noSuchMethod(
+  _i14.Future<void> dispose() => (super.noSuchMethod(
         Invocation.method(
           #dispose,
           [],
         ),
-        returnValueForMissingStub: null,
-      );
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
   @override
   _i14.Future<void> loadAccountData() => (super.noSuchMethod(
         Invocation.method(

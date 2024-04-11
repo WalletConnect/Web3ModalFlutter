@@ -291,6 +291,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       StringConstants.w3mSession,
       jsonEncode(_currentSession!.toMap()),
     );
+    // _isConnected shoudl probably go at the very end of the connection
     _isConnected = true;
   }
 
@@ -398,6 +399,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       current: chainInfo.namespace,
     ));
     _currentSelectedChain = chainInfo;
+    _notify();
     // Store the chain for when we reload the app.
     // If switchChain is true the store is on [_switchEthChain]
     await storageService.instance.setString(
@@ -409,7 +411,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       analyticsService.instance.sendEvent(SwitchNetworkEvent(network: network));
     }
 
-    _notify();
     loadAccountData();
   }
 
