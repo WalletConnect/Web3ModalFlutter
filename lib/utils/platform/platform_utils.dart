@@ -1,12 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class PlatformUtils extends IPlatformUtils {
   @override
   PlatformExact getPlatformExact() {
-    if (Platform.isAndroid) {
+    if (kIsWeb) {
+      return PlatformExact.web;
+    } else if (Platform.isAndroid) {
       return PlatformExact.android;
     } else if (Platform.isIOS) {
       return PlatformExact.iOS;
@@ -16,22 +19,24 @@ class PlatformUtils extends IPlatformUtils {
       return PlatformExact.macOS;
     } else if (Platform.isWindows) {
       return PlatformExact.windows;
-    } else if (kIsWeb) {
+    } else {
       return PlatformExact.web;
     }
-    return PlatformExact.web;
   }
 
   @override
   PlatformType getPlatformType() {
-    if (Platform.isAndroid || Platform.isIOS) {
-      return PlatformType.mobile;
-    } else if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
-      return PlatformType.desktop;
-    } else if (kIsWeb) {
+    if (kIsWeb) {
       return PlatformType.web;
+    } else {
+      if (Platform.isAndroid || Platform.isIOS) {
+        return PlatformType.mobile;
+      } else if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
+        return PlatformType.desktop;
+      } else {
+        return PlatformType.mobile;
+      }
     }
-    return PlatformType.mobile;
   }
 
   @override
