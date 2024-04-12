@@ -9,15 +9,11 @@ abstract class IMagicService {
 
   // ****** W3mFrameProvider public methods ******* //
   Future<void> connectEmail({required String value});
-
   Future<void> updateEmail({required String value});
   Future<void> updateEmailPrimaryOtp({required String otp});
   Future<void> updateEmailSecondaryOtp({required String otp});
-
   Future<void> connectOtp({required String otp});
-
   Future<void> getChainId();
-
   Future<void> syncTheme(Web3ModalTheme? theme);
   Future<void> getUser({String? chainId});
   Future<void> switchNetwork({required String chainId});
