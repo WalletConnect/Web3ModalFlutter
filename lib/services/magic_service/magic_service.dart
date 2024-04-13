@@ -593,7 +593,7 @@ class MagicService implements IMagicService {
       loggerService.instance.e(
         '[EmailLogin] initialization timed out. Please check if your '
         'bundleId/packageName $_packageName is whitelisted in your cloud '
-        'configuration at https://cloud.walletconnect.com/',
+        'configuration at https://cloud.walletconnect.com/ for project id ${_web3app.core.projectId}',
       );
     }
   }

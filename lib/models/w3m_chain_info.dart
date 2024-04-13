@@ -11,6 +11,7 @@ class W3MChainInfo with _$W3MChainInfo {
     required String namespace,
     required String tokenName,
     required String rpcUrl,
+    @Default(<String>[]) List<String> extraRpcUrls,
     String? chainIcon,
     W3MBlockExplorer? blockExplorer,
   }) = _W3MChainInfo;
@@ -60,10 +61,12 @@ extension W3MChainInfoExtension on W3MChainInfo {
       },
       'rpcUrls': [
         rpcUrl,
+        ...extraRpcUrls,
       ],
-      'blockExplorerUrls': [
-        blockExplorer?.url,
-      ],
+      if (blockExplorer != null && blockExplorer!.url.isNotEmpty)
+        'blockExplorerUrls': [
+          blockExplorer!.url,
+        ],
     };
   }
 }
