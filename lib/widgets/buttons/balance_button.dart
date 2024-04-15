@@ -45,7 +45,7 @@ class _BalanceButtonState extends State<BalanceButton> {
   void _w3mServiceUpdated() {
     setState(() {
       final chainId = widget.service.selectedChain?.chainId ?? '1';
-      final imageId = AssetUtil.getChainIconId(chainId);
+      final imageId = AssetUtil.getChainIconId(chainId) ?? '';
       _tokenImage = explorerService.instance.getAssetImageUrl(imageId);
       _balance = widget.service.chainBalance;
       _tokenName = widget.service.selectedChain?.tokenName;

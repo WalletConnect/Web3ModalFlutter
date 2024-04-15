@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
@@ -58,9 +59,21 @@ class W3MListAvatar extends StatelessWidget {
                       ),
                     ),
                   )
-                : ColoredBox(
-                    color: themeColors.grayGlass005,
-                  ),
+                : isNetwork
+                    ? Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: SvgPicture.asset(
+                          'assets/icons/network.svg',
+                          package: 'web3modal_flutter',
+                          colorFilter: ColorFilter.mode(
+                            themeColors.grayGlass030,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      )
+                    : ColoredBox(
+                        color: themeColors.grayGlass005,
+                      ),
           ),
         ),
         AspectRatio(

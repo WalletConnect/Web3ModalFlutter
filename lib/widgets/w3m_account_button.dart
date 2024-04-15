@@ -61,9 +61,11 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
   void _w3mServiceUpdated() {
     setState(() {
       _address = widget.service.session?.address ?? '';
-      final chainId = widget.service.selectedChain?.chainId ?? '1';
-      final imageId = AssetUtil.getChainIconId(chainId);
-      _tokenImage = explorerService.instance.getAssetImageUrl(imageId);
+      final chainId = widget.service.selectedChain?.chainId ?? '';
+      final imageId = AssetUtil.getChainIconId(chainId) ?? '';
+      _tokenImage = imageId.isEmpty
+          ? ''
+          : explorerService.instance.getAssetImageUrl(imageId);
       _balance = widget.service.chainBalance;
       _tokenName = widget.service.selectedChain?.tokenName;
     });
@@ -322,10 +324,17 @@ class _BalanceButton extends StatelessWidget {
                   height: 18,
                   child: CircularProgressIndicator(strokeWidth: 1.5),
                 )
-              : RoundedIcon(
-                  imageUrl: tokenImage,
-                  size: iconSize,
-                ),
+              : (tokenImage ?? '').isEmpty
+                  ? RoundedIcon(
+                      assetPath: 'assets/icons/network.svg',
+                      size: iconSize,
+                      assetColor: themeColors.inverse100,
+                      padding: 4.0,
+                    )
+                  : RoundedIcon(
+                      imageUrl: tokenImage,
+                      size: iconSize + 2.0,
+                    ),
           const SizedBox.square(dimension: 4.0),
           Text(
             '$balance ${tokenName ?? ''}',

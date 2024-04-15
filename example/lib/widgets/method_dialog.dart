@@ -46,6 +46,7 @@ class MethodDialogState extends State<MethodDialog> {
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.hasData) {
             final String t = jsonEncode(snapshot.data);
+            debugPrint('[ExampleApp] result $t');
             return InkWell(
               onTap: () => _copyToClipboard(t),
               child: Text(t),

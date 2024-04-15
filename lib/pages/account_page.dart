@@ -9,6 +9,7 @@ import 'package:web3modal_flutter/services/explorer_service/explorer_service_sin
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
@@ -59,11 +60,11 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    if (_service == null) {
+      return ContentLoading(viewHeight: 400.0);
+    }
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
-    final chainId = _service?.selectedChain?.chainId ?? '1';
-    final imageId = AssetUtil.getChainIconId(chainId);
-    final tokenImage = explorerService.instance.getAssetImageUrl(imageId);
     final radiuses = Web3ModalTheme.radiusesOf(context);
     return SafeArea(
       child: Stack(
@@ -87,11 +88,11 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                       const W3MAddressWithCopyButton(),
                       const W3MBalanceText(),
                       Visibility(
-                        visible: _service?.selectedChain?.blockExplorer != null,
+                        visible: _service!.selectedChain?.blockExplorer != null,
                         child: Padding(
                           padding: const EdgeInsets.only(top: kPadding12),
                           child: SimpleIconButton(
-                            onTap: () => _service?.launchBlockExplorer(),
+                            onTap: () => _service!.launchBlockExplorer(),
                             leftIcon: 'assets/icons/compass.svg',
                             rightIcon: 'assets/icons/arrow_top_right.svg',
                             title: 'Block Explorer',
@@ -107,7 +108,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                   ),
                   const SizedBox.square(dimension: kPadding12),
                   Visibility(
-                    visible: _service?.session?.sessionService.isMagic ?? false,
+                    visible: _service!.session?.sessionService.isMagic ?? false,
                     child: Column(
                       children: [
                         const SizedBox.square(dimension: kPadding8),
@@ -146,50 +147,27 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                     ),
                   ),
                   Visibility(
-                    visible: _service?.session?.sessionService.isMagic ?? false,
+                    visible: _service!.session?.sessionService.isMagic ?? false,
                     child: Column(
                       children: [
                         const SizedBox.square(dimension: kPadding8),
                         AccountListItem(
                           iconPath: 'assets/icons/mail.svg',
                           iconColor: themeColors.foreground100,
-                          title: _service?.session?.email ?? '',
+                          title: _service!.session?.email ?? '',
                           titleStyle:
                               themeData.textStyles.paragraph500.copyWith(
                             color: themeColors.foreground100,
                           ),
-                          onTap: () =>
-                              widgetStack.instance.push(EditEmailPage()),
+                          onTap: () {
+                            widgetStack.instance.push(EditEmailPage());
+                          },
                         ),
                       ],
                     ),
                   ),
                   const SizedBox.square(dimension: kPadding8),
-                  AccountListItem(
-                    iconWidget: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: RoundedIcon(
-                        borderRadius: radiuses.isSquare() ? 0.0 : null,
-                        imageUrl: tokenImage,
-                        assetColor: themeColors.background100,
-                      ),
-                    ),
-                    title: _service?.selectedChain?.chainName ?? '',
-                    titleStyle: themeData.textStyles.paragraph500.copyWith(
-                      color: themeColors.foreground100,
-                    ),
-                    onTap: () {
-                      widgetStack.instance.push(
-                        SelectNetworkPage(
-                          onTapNetwork: (W3MChainInfo chainInfo) {
-                            _service?.selectChain(chainInfo, switchChain: true);
-                            widgetStack.instance.pop();
-                          },
-                        ),
-                        event: ClickNetworksEvent(),
-                      );
-                    },
-                  ),
+                  _SelectNetworkButton(service: _service!),
                   const SizedBox.square(dimension: kPadding8),
                   AccountListItem(
                     iconPath: 'assets/icons/disconnect.svg',
@@ -199,8 +177,8 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                       color: themeColors.foreground200,
                     ),
                     onTap: () async {
-                      await _service?.disconnect();
-                      _service?.closeModal();
+                      await _service!.disconnect();
+                      _service!.closeModal();
                     },
                   ),
                 ],
@@ -212,11 +190,93 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
             right: 0,
             child: NavbarActionButton(
               asset: 'assets/icons/close.svg',
-              action: () => _service?.closeModal(),
+              action: () => _service!.closeModal(),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SelectNetworkButton extends StatefulWidget {
+  final IW3MService service;
+
+  _SelectNetworkButton({required this.service});
+
+  @override
+  State<_SelectNetworkButton> createState() => _SelectNetworkButtonState();
+}
+
+class _SelectNetworkButtonState extends State<_SelectNetworkButton> {
+  @override
+  Widget build(BuildContext context) {
+    final themeData = Web3ModalTheme.getDataOf(context);
+    final themeColors = Web3ModalTheme.colorsOf(context);
+    final chainId = widget.service.selectedChain?.chainId ?? '1';
+    final imageId = AssetUtil.getChainIconId(chainId) ?? '';
+    final tokenImage = explorerService.instance.getAssetImageUrl(imageId);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
+    return ValueListenableBuilder<bool>(
+      valueListenable: widget.service.waitingResponse,
+      builder: (context, switching, _) {
+        return AccountListItem(
+          iconWidget: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: switching
+                ? SizedBox(
+                    width: 34,
+                    height: 34,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(
+                        color: themeColors.accent100,
+                        strokeWidth: 2.0,
+                      ),
+                    ),
+                  )
+                : imageId.isEmpty
+                    ? RoundedIcon(
+                        assetPath: 'assets/icons/network.svg',
+                        assetColor: themeColors.inverse100,
+                        borderRadius: radiuses.isSquare() ? 0.0 : null,
+                      )
+                    : RoundedIcon(
+                        borderRadius: radiuses.isSquare() ? 0.0 : null,
+                        imageUrl: tokenImage,
+                        assetColor: themeColors.background100,
+                      ),
+          ),
+          title: switching
+              ? 'Awaiting confirmation...'
+              : Web3ModalProvider.of(context)
+                      .service
+                      .selectedChain
+                      ?.chainName ??
+                  '',
+          titleStyle: themeData.textStyles.paragraph500.copyWith(
+            color: switching
+                ? themeColors.foreground200
+                : themeColors.foreground100,
+          ),
+          onTap: switching
+              ? null
+              : () {
+                  widgetStack.instance.push(
+                    SelectNetworkPage(
+                      onTapNetwork: (W3MChainInfo chainInfo) {
+                        widget.service.selectChain(
+                          chainInfo,
+                          switchChain: true,
+                        );
+                        widgetStack.instance.pop();
+                      },
+                    ),
+                    event: ClickNetworksEvent(),
+                  );
+                },
+        );
+      },
     );
   }
 }
