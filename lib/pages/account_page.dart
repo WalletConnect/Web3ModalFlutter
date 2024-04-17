@@ -167,7 +167,7 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                     ),
                   ),
                   const SizedBox.square(dimension: kPadding8),
-                  _SelectNetworkButton(service: _service!),
+                  _SelectNetworkButton(),
                   const SizedBox.square(dimension: kPadding8),
                   AccountListItem(
                     iconPath: 'assets/icons/disconnect.svg',
@@ -199,82 +199,39 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
   }
 }
 
-class _SelectNetworkButton extends StatefulWidget {
-  final IW3MService service;
-
-  _SelectNetworkButton({required this.service});
-
-  @override
-  State<_SelectNetworkButton> createState() => _SelectNetworkButtonState();
-}
-
-class _SelectNetworkButtonState extends State<_SelectNetworkButton> {
+class _SelectNetworkButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final service = Web3ModalProvider.of(context).service;
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
-    final chainId = widget.service.selectedChain?.chainId ?? '1';
+    final chainId = service.selectedChain?.chainId ?? '';
     final imageId = AssetUtil.getChainIconId(chainId) ?? '';
     final tokenImage = explorerService.instance.getAssetImageUrl(imageId);
     final radiuses = Web3ModalTheme.radiusesOf(context);
-    return ValueListenableBuilder<bool>(
-      valueListenable: widget.service.waitingResponse,
-      builder: (context, switching, _) {
-        return AccountListItem(
-          iconWidget: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: switching
-                ? SizedBox(
-                    width: 34,
-                    height: 34,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircularProgressIndicator(
-                        color: themeColors.accent100,
-                        strokeWidth: 2.0,
-                      ),
-                    ),
-                  )
-                : imageId.isEmpty
-                    ? RoundedIcon(
-                        assetPath: 'assets/icons/network.svg',
-                        assetColor: themeColors.inverse100,
-                        borderRadius: radiuses.isSquare() ? 0.0 : null,
-                      )
-                    : RoundedIcon(
-                        borderRadius: radiuses.isSquare() ? 0.0 : null,
-                        imageUrl: tokenImage,
-                        assetColor: themeColors.background100,
-                      ),
-          ),
-          title: switching
-              ? 'Awaiting confirmation...'
-              : Web3ModalProvider.of(context)
-                      .service
-                      .selectedChain
-                      ?.chainName ??
-                  '',
-          titleStyle: themeData.textStyles.paragraph500.copyWith(
-            color: switching
-                ? themeColors.foreground200
-                : themeColors.foreground100,
-          ),
-          onTap: switching
-              ? null
-              : () {
-                  widgetStack.instance.push(
-                    SelectNetworkPage(
-                      onTapNetwork: (W3MChainInfo chainInfo) {
-                        widget.service.selectChain(
-                          chainInfo,
-                          switchChain: true,
-                        );
-                        widgetStack.instance.pop();
-                      },
-                    ),
-                    event: ClickNetworksEvent(),
-                  );
-                },
+    return AccountListItem(
+      iconWidget: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: imageId.isEmpty
+            ? RoundedIcon(
+                assetPath: 'assets/icons/network.svg',
+                assetColor: themeColors.inverse100,
+                borderRadius: radiuses.isSquare() ? 0.0 : null,
+              )
+            : RoundedIcon(
+                borderRadius: radiuses.isSquare() ? 0.0 : null,
+                imageUrl: tokenImage,
+                assetColor: themeColors.background100,
+              ),
+      ),
+      title: service.selectedChain?.chainName ?? '',
+      titleStyle: themeData.textStyles.paragraph500.copyWith(
+        color: themeColors.foreground100,
+      ),
+      onTap: () {
+        widgetStack.instance.push(
+          SelectNetworkPage(),
+          event: ClickNetworksEvent(),
         );
       },
     );

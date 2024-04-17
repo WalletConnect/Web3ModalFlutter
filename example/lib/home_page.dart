@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       enableAnalytics: true, // Optional - null by default
-      enableEmail: true, // Optional - false by default
+      // enableEmail: true, // Optional - false by default
       // requiredNamespaces: {},
       // optionalNamespaces: {},
       // excludedWalletIds: {
@@ -113,9 +113,42 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onModalConnect(ModalConnect? event) {
     debugPrint('[ExampleApp] _onModalConnect ${event?.toString()}');
     debugPrint(
-      '[ExampleApp] _onModalConnect selectedChain ${_w3mService.selectedChain}',
+      '[ExampleApp] _onModalConnect selectedChain ${_w3mService.selectedChain?.chainId}',
+    );
+    debugPrint(
+      '[ExampleApp] _onModalConnect address ${_w3mService.session!.address}',
     );
     setState(() {});
+    Future.delayed(
+      const Duration(milliseconds: 500),
+      () async {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text('Switch to Polygon?'),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final polygon = W3MChainPresets.chains['137']!;
+                    _w3mService.requestSwitchToChain(polygon);
+                    _w3mService.launchConnectedWallet();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Switch'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   void _onModalNetworkChange(ModalNetworkChange? event) {

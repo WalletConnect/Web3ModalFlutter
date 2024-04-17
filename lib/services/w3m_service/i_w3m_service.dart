@@ -85,7 +85,7 @@ abstract class IW3MService with ChangeNotifier {
   Future<void> connectSelectedWallet({bool inBrowser = false});
 
   /// Opens the native wallet [selectedWallet] after connected
-  Future<void> launchConnectedWallet();
+  void launchConnectedWallet();
 
   /// List of available chains to be added in connected wallet
   List<String>? getAvailableChains();
@@ -130,6 +130,9 @@ abstract class IW3MService with ChangeNotifier {
     String? switchToChainId,
     required SessionRequestParams request,
   });
+
+  Future<dynamic> requestSwitchToChain(W3MChainInfo newChain);
+  Future<dynamic> requestAddChain(W3MChainInfo newChain);
 
   /// Closes the modal.
   void closeModal();

@@ -9,6 +9,7 @@ import CoinbaseWalletSDK
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+    CoinbaseWalletSDK.configure(host: URL(string: "cbwallet://wsegue")!, callback: URL(string: "web3modalflutter://")!)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
     
