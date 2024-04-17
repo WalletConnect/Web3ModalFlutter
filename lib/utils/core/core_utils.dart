@@ -118,7 +118,7 @@ class CoreUtils extends ICoreUtils {
 
     final encodedWcUrl = Uri.encodeComponent(wcUri);
 
-    return Uri.parse('${safeAppUrl}wc?uri=$encodedWcUrl');
+    return Uri.parse('${safeAppUrl}/wc?uri=$encodedWcUrl');
   }
 
   @override
