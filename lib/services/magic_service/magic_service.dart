@@ -308,8 +308,15 @@ class MagicService implements IMagicService {
         'referer': _web3app.metadata.url,
         'x-bundle-id': _packageName,
       };
-      final uri = _requestUri(_packageName);
-      await _webViewController.loadRequest(uri, headers: headers);
+      final uri = Uri.parse('https://$_url/mobile-sdk');
+      final queryParams = {
+        'projectId': _web3app.core.projectId,
+        'bundleId': _packageName,
+      };
+      await _webViewController.loadRequest(
+        uri.replace(queryParameters: queryParams),
+        headers: headers,
+      );
       await _webViewController.enableZoom(false);
     } catch (e) {
       _initialized.complete(false);
@@ -596,15 +603,6 @@ class MagicService implements IMagicService {
         'configuration at https://cloud.walletconnect.com/ for project id ${_web3app.core.projectId}',
       );
     }
-  }
-
-  Uri _requestUri(String bundleId) {
-    final uri = Uri.parse('https://$_url/mobile-sdk');
-    final queryParams = {
-      'projectId': _web3app.core.projectId,
-      'bundleId': bundleId,
-    };
-    return uri.replace(queryParameters: queryParams);
   }
 
   Future<void> _setDebugMode() async {
