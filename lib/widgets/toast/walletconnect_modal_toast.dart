@@ -62,7 +62,9 @@ class _WalletConnectModalToastState extends State<WalletConnectModalToast>
         child: FadeTransition(
           opacity: _opacityAnimation,
           child: Container(
-            height: 40,
+            constraints: BoxConstraints(
+              minHeight: 40.0,
+            ),
             decoration: BoxDecoration(
               color: themeColors.background175,
               borderRadius: BorderRadius.circular(radiuses.radiusM),
@@ -81,11 +83,13 @@ class _WalletConnectModalToastState extends State<WalletConnectModalToast>
                 children: [
                   widget.message.icon(context),
                   const SizedBox(width: 8.0),
-                  Text(
-                    widget.message.text,
-                    textAlign: TextAlign.center,
-                    style: themeData.textStyles.paragraph500.copyWith(
-                      color: themeColors.foreground100,
+                  Flexible(
+                    child: Text(
+                      widget.message.text,
+                      textAlign: TextAlign.center,
+                      style: themeData.textStyles.paragraph500.copyWith(
+                        color: themeColors.foreground100,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8.0),
