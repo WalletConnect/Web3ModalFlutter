@@ -488,6 +488,14 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
   }
 
   @override
+  _i2.ValueNotifier<String> get balanceNotifier => (super.noSuchMethod(
+        Invocation.getter(#balanceNotifier),
+        returnValue: _FakeValueNotifier_0<String>(
+          this,
+          Invocation.getter(#balanceNotifier),
+        ),
+      ) as _i2.ValueNotifier<String>);
+  @override
   _i3.Event<_i3.ModalConnect> get onModalConnect => (super.noSuchMethod(
         Invocation.getter(#onModalConnect),
         returnValue: _FakeEvent_1<_i3.ModalConnect>(
@@ -554,6 +562,14 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         Invocation.getter(#hasNamespaces),
         returnValue: false,
       ) as bool);
+  @override
+  String get chainBalance => (super.noSuchMethod(
+        Invocation.getter(#chainBalance),
+        returnValue: _i13.dummyValue<String>(
+          this,
+          Invocation.getter(#chainBalance),
+        ),
+      ) as String);
   @override
   bool get isOpen => (super.noSuchMethod(
         Invocation.getter(#isOpen),
@@ -716,13 +732,13 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
-  _i14.Future<bool> launchConnectedWallet() => (super.noSuchMethod(
+  void launchConnectedWallet() => super.noSuchMethod(
         Invocation.method(
           #launchConnectedWallet,
           [],
         ),
-        returnValue: _i14.Future<bool>.value(false),
-      ) as _i14.Future<bool>);
+        returnValueForMissingStub: null,
+      );
   @override
   _i14.Future<void> reconnectRelay() => (super.noSuchMethod(
         Invocation.method(
@@ -836,13 +852,14 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValue: _i14.Future<dynamic>.value(),
       ) as _i14.Future<dynamic>);
   @override
-  void dispose() => super.noSuchMethod(
+  _i14.Future<void> dispose() => (super.noSuchMethod(
         Invocation.method(
           #dispose,
           [],
         ),
-        returnValueForMissingStub: null,
-      );
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
   @override
   _i14.Future<void> loadAccountData() => (super.noSuchMethod(
         Invocation.method(
@@ -852,6 +869,24 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValue: _i14.Future<void>.value(),
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
+  @override
+  _i14.Future<dynamic> requestSwitchToChain(_i3.W3MChainInfo? newChain) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #requestSwitchToChain,
+          [newChain],
+        ),
+        returnValue: _i14.Future<dynamic>.value(),
+      ) as _i14.Future<dynamic>);
+  @override
+  _i14.Future<dynamic> requestAddChain(_i3.W3MChainInfo? newChain) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #requestAddChain,
+          [newChain],
+        ),
+        returnValue: _i14.Future<dynamic>.value(),
+      ) as _i14.Future<dynamic>);
   @override
   void addListener(_i17.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(

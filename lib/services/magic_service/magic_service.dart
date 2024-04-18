@@ -73,6 +73,7 @@ class MagicService implements IMagicService {
   final isEnabled = ValueNotifier(false);
   final isReady = ValueNotifier(false);
   final isConnected = ValueNotifier(false);
+  final isTimeout = ValueNotifier(false);
 
   final email = ValueNotifier<String>('');
   final newEmail = ValueNotifier<String>('');
@@ -103,6 +104,8 @@ class MagicService implements IMagicService {
     }
   }
 
+  String _packageName = '';
+
   @override
   Future<void> init() async {
     if (!isEnabled.value) {
@@ -112,6 +115,7 @@ class MagicService implements IMagicService {
       _connected.complete(false);
       return;
     }
+    _packageName = await WalletConnectUtils.getPackageName();
     await _init();
     await _initialized.future;
     await _isConnected();
@@ -299,14 +303,20 @@ class MagicService implements IMagicService {
 
   Future<void> _loadRequest() async {
     try {
-      final packageName = await WalletConnectUtils.getPackageName();
       final headers = {
         // secure-site's middleware requires a referer otherwise it throws `400: Missing projectId or referer`
         'referer': _web3app.metadata.url,
-        'x-bundle-id': packageName,
+        'x-bundle-id': _packageName,
       };
-      final uri = _requestUri(packageName);
-      await _webViewController.loadRequest(uri, headers: headers);
+      final uri = Uri.parse('https://$_url/mobile-sdk');
+      final queryParams = {
+        'projectId': _web3app.core.projectId,
+        'bundleId': _packageName,
+      };
+      await _webViewController.loadRequest(
+        uri.replace(queryParameters: queryParams),
+        headers: headers,
+      );
       await _webViewController.enableZoom(false);
     } catch (e) {
       _initialized.complete(false);
@@ -586,16 +596,13 @@ class MagicService implements IMagicService {
     if (time.tick > 15) {
       _resetTimeOut();
       _error(IsConnectedErrorEvent());
+      isTimeout.value = true;
+      loggerService.instance.e(
+        '[EmailLogin] initialization timed out. Please check if your '
+        'bundleId/packageName $_packageName is whitelisted in your cloud '
+        'configuration at https://cloud.walletconnect.com/ for project id ${_web3app.core.projectId}',
+      );
     }
-  }
-
-  Uri _requestUri(String bundleId) {
-    final uri = Uri.parse('https://$_url/mobile-sdk');
-    final queryParams = {
-      'projectId': _web3app.core.projectId,
-      'bundleId': bundleId,
-    };
-    return uri.replace(queryParameters: queryParams);
   }
 
   Future<void> _setDebugMode() async {

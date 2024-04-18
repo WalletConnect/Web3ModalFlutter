@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:walletconnect_flutter_dapp/home_page.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -171,7 +172,7 @@ class SessionWidgetState extends State<SessionWidget> {
       padding: const EdgeInsets.all(StyleConstants.linear8),
       margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
       decoration: BoxDecoration(
-        border: Border.all(color: chainMetadata.color),
+        border: Border.all(color: Web3ModalTheme.colorsOf(context).accent100),
         borderRadius: const BorderRadius.all(
           Radius.circular(StyleConstants.linear8),
         ),
@@ -223,32 +224,8 @@ class SessionWidgetState extends State<SessionWidget> {
                     MethodDialog.show(context, method, future);
                   }
                 : null,
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                (states) {
-                  if (states.contains(MaterialState.disabled)) {
-                    return Colors.grey;
-                  }
-                  return chainMetadata.color;
-                },
-              ),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    StyleConstants.linear8,
-                  ),
-                ),
-              ),
-            ),
-            child: Text(
-              method,
-              style: Web3ModalTheme.getDataOf(context)
-                  .textStyles
-                  .small600
-                  .copyWith(
-                    color: Web3ModalTheme.colorsOf(context).foreground100,
-                  ),
-            ),
+            style: buttonStyle(context),
+            child: Text(method),
           ),
         ),
       );
@@ -275,26 +252,8 @@ class SessionWidgetState extends State<SessionWidget> {
                   MethodDialog.show(context, 'Test Contract (Read)', future);
                 }
               : null,
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-              if (states.contains(MaterialState.disabled)) {
-                return Colors.grey;
-              }
-              return Colors.orange;
-            }),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(StyleConstants.linear8),
-              ),
-            ),
-          ),
-          child: Text(
-            'Test Contract (Read)',
-            style:
-                Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
-                      color: Web3ModalTheme.colorsOf(context).foreground100,
-                    ),
-          ),
+          style: buttonStyle(context),
+          child: const Text('Test Contract (Read)'),
         ),
       ),
       Container(
@@ -312,26 +271,8 @@ class SessionWidgetState extends State<SessionWidget> {
                   MethodDialog.show(context, 'Test Contract (Write)', future);
                 }
               : null,
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-              if (states.contains(MaterialState.disabled)) {
-                return Colors.grey;
-              }
-              return Colors.orange;
-            }),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(StyleConstants.linear8),
-              ),
-            ),
-          ),
-          child: Text(
-            'Test Contract (Write)',
-            style:
-                Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
-                      color: Web3ModalTheme.colorsOf(context).foreground100,
-                    ),
-          ),
+          style: buttonStyle(context),
+          child: const Text('Test Contract (Write)'),
         ),
       ),
     ]);
@@ -386,11 +327,9 @@ class SessionWidgetState extends State<SessionWidget> {
           padding: const EdgeInsets.all(StyleConstants.linear8),
           decoration: BoxDecoration(
             border: Border.all(
-              color: chainMetadata.color,
+              color: Web3ModalTheme.colorsOf(context).accent100,
             ),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(StyleConstants.linear8),
-            ),
+            borderRadius: borderRadius(context),
           ),
           child: Text(
             event,

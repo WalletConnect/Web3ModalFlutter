@@ -22,7 +22,7 @@ void main() {
       when(service.isConnected).thenReturn(false);
       when(service.isOpen).thenReturn(false);
       when(service.session?.address).thenReturn(address);
-      when(service.chainBalance).thenReturn(null);
+      when(service.chainBalance).thenReturn('');
       when(service.selectedChain).thenReturn(null);
       when(service.avatarUrl).thenReturn(null);
     });
@@ -101,7 +101,7 @@ void main() {
         findsOneWidget,
       );
 
-      when(service.chainBalance).thenReturn(0.0);
+      when(service.chainBalance).thenReturn('0.0');
       service.notifyListeners();
       await tester.pumpAndSettle();
 

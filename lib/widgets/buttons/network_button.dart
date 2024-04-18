@@ -27,7 +27,7 @@ class NetworkButton extends StatelessWidget {
     if (chainInfo.chainIcon != null && chainInfo.chainIcon!.contains('http')) {
       return chainInfo.chainIcon!;
     }
-    final chainImageId = AssetUtil.getChainIconId(chainInfo.chainId);
+    final chainImageId = AssetUtil.getChainIconId(chainInfo.chainId) ?? '';
     return explorerService.instance.getAssetImageUrl(chainImageId);
   }
 

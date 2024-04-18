@@ -72,7 +72,7 @@ void main() {
       when(service.status).thenReturn(W3MServiceStatus.initialized);
       when(service.isOpen).thenReturn(true);
       when(service.session?.address).thenReturn(address);
-      when(service.chainBalance).thenReturn(null);
+      when(service.chainBalance).thenReturn('');
       when(service.selectedChain).thenReturn(null);
       when(service.avatarUrl).thenReturn(null);
     });

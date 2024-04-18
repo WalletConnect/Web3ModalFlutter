@@ -162,7 +162,7 @@ class __VerifyDeviceViewState extends State<_VerifyDeviceView> {
               ),
               const SizedBox.square(dimension: kPadding12),
               Text(
-                'The code expires in 20 minutes',
+                'The link expires in 20 minutes',
                 style: textStyles.small400.copyWith(
                   color: themeColors.foreground200,
                 ),
