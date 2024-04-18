@@ -83,6 +83,9 @@ class CoreUtils extends ICoreUtils {
     } else {
       final parts = safeUrl.split('://');
       if (parts.last.isNotEmpty && parts.last != 'wc') {
+        if (!safeUrl.endsWith('/')) {
+          return '$safeUrl/';
+        }
         return safeUrl;
       } else {
         safeUrl = url.replaceFirst('://wc', '://');
@@ -118,7 +121,7 @@ class CoreUtils extends ICoreUtils {
 
     final encodedWcUrl = Uri.encodeComponent(wcUri);
 
-    return Uri.parse('${safeAppUrl}/wc?uri=$encodedWcUrl');
+    return Uri.parse('${safeAppUrl}wc?uri=$encodedWcUrl');
   }
 
   @override
