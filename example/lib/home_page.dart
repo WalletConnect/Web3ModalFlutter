@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       enableAnalytics: true, // Optional - null by default
-      // enableEmail: true, // Optional - false by default
+      enableEmail: true, // Optional - false by default
       // requiredNamespaces: {},
       // optionalNamespaces: {},
       // excludedWalletIds: {
@@ -120,12 +120,24 @@ class _MyHomePageState extends State<MyHomePage> {
       '[ExampleApp] _onModalConnect address ${_w3mService.session!.address}',
     );
     setState(() {});
+    _switchToPolygonIfNeeded();
+  }
+
+  void _switchToPolygonIfNeeded() {
+    if (_w3mService.session!.email.isNotEmpty) {
+      return;
+    }
+    final polygon = W3MChainPresets.chains['137']!;
+    final approvedChains = _w3mService.getApprovedChains() ?? [];
+    if (approvedChains.contains(polygon.namespace)) {
+      return;
+    }
     Future.delayed(
       const Duration(milliseconds: 500),
-      () async {
+      () {
         showDialog(
           context: context,
-          builder: (BuildContext context) {
+          builder: (_) {
             return AlertDialog(
               content: const Text('Switch to Polygon?'),
               actions: [
@@ -137,7 +149,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    final polygon = W3MChainPresets.chains['137']!;
                     _w3mService.requestSwitchToChain(polygon);
                     _w3mService.launchConnectedWallet();
                     Navigator.of(context).pop();

@@ -249,7 +249,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
           // Every time the app gets killed MAgic service will treat the user as disconnected
           // So we will need to treat magic session differently
           // await _storeSession(storedSession);
-          final email = _currentSession!.email!;
+          final email = _currentSession!.email;
           magicService.instance.setEmail(email);
         } else {
           await _cleanSession();
@@ -1066,6 +1066,9 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   @override
   Future<dynamic> requestSwitchToChain(W3MChainInfo newChain) async {
+    if (_currentSession?.sessionService.isMagic == true) {
+      return selectChain(newChain);
+    }
     final chainId = _currentSelectedChain?.chainId;
     final currentChainId = '${StringConstants.namespace}:$chainId';
     final newChainId = '${StringConstants.namespace}:${newChain.chainId}';
@@ -1274,7 +1277,7 @@ extension _W3MMagicExtension on W3MService {
     _logger.p('[$runtimeType] _onMagicUpdateEvent: $args');
     if (args != null) {
       try {
-        final newEmail = args.email ?? _currentSession!.email!;
+        final newEmail = args.email ?? _currentSession!.email;
         final address = args.address ?? _currentSession!.address!;
         final chainId = args.chainId?.toString() ?? _currentSession!.chainId;
         final newChain = W3MChainPresets.chains[chainId]!;
