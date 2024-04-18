@@ -29,20 +29,36 @@ class InputEmailWidget extends StatefulWidget {
 class _InputEmailWidgetState extends State<InputEmailWidget> {
   bool hasFocus = false;
   late TextEditingController _controller;
+  bool _ready = false;
+  bool _timedOut = false;
+  //
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialValue);
-    magicService.instance.isReady.addListener(_isReadyListener);
+    _ready = magicService.instance.isReady.value;
+    _timedOut = magicService.instance.isTimeout.value;
+    magicService.instance.isReady.addListener(_updateStatus);
+    magicService.instance.isTimeout.addListener(_updateStatus);
   }
 
-  void _isReadyListener() {
-    setState(() {});
+  void _updateStatus() {
+    setState(() {
+      _ready = magicService.instance.isReady.value;
+      _timedOut = magicService.instance.isTimeout.value;
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant InputEmailWidget oldWidget) {
+    _updateStatus();
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
   void dispose() {
-    magicService.instance.isReady.removeListener(_isReadyListener);
+    magicService.instance.isTimeout.addListener(_updateStatus);
+    magicService.instance.isReady.removeListener(_updateStatus);
     super.dispose();
   }
 
@@ -50,7 +66,7 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
     return Web3ModalSearchBar(
-      enabled: magicService.instance.isReady.value,
+      enabled: !_timedOut && _ready,
       controller: _controller,
       initialValue: _controller.text,
       hint: 'Email',

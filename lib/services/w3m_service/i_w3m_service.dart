@@ -41,7 +41,9 @@ abstract class IW3MService with ChangeNotifier {
   String? get avatarUrl;
 
   /// Returns the balance of the currently connected wallet on the selected chain.
-  double? get chainBalance;
+  String get chainBalance;
+
+  ValueNotifier<String> get balanceNotifier;
 
   /// The currently selected chain.
   W3MChainInfo? get selectedChain;
@@ -83,7 +85,7 @@ abstract class IW3MService with ChangeNotifier {
   Future<void> connectSelectedWallet({bool inBrowser = false});
 
   /// Opens the native wallet [selectedWallet] after connected
-  Future<void> launchConnectedWallet();
+  void launchConnectedWallet();
 
   /// List of available chains to be added in connected wallet
   List<String>? getAvailableChains();
@@ -129,11 +131,14 @@ abstract class IW3MService with ChangeNotifier {
     required SessionRequestParams request,
   });
 
+  Future<dynamic> requestSwitchToChain(W3MChainInfo newChain);
+  Future<dynamic> requestAddChain(W3MChainInfo newChain);
+
   /// Closes the modal.
   void closeModal();
 
   @override
-  void dispose();
+  Future<void> dispose();
 
   /* EVENTS DECLARATIONS */
 

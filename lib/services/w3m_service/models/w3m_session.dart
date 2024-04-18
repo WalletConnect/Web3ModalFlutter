@@ -244,7 +244,7 @@ extension W3MSessionExtension on W3MSession {
   }
 
   //
-  String? get email => _magicData?.email;
+  String get email => _magicData?.email ?? '';
 
   //
   String? get address {

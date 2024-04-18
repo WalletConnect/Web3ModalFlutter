@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/pages/about_networks.dart';
+import 'package:web3modal_flutter/pages/connet_network_page.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
@@ -16,10 +17,26 @@ import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
 class SelectNetworkPage extends StatelessWidget {
   const SelectNetworkPage({
-    required this.onTapNetwork,
+    this.onTapNetwork,
   }) : super(key: KeyConstants.selectNetworkPage);
 
   final Function(W3MChainInfo)? onTapNetwork;
+
+  void _onSelectNetwork(BuildContext context, W3MChainInfo chainInfo) {
+    final service = Web3ModalProvider.of(context).service;
+    final approvedChains = service.session!.getApprovedChains() ?? [];
+    final hasChainAlready = approvedChains.contains(
+      chainInfo.namespace,
+    );
+    if (chainInfo.chainId == service.selectedChain?.chainId) {
+      widgetStack.instance.pop();
+    } else if (hasChainAlready || service.session!.sessionService.isMagic) {
+      service.selectChain(chainInfo, switchChain: true);
+      widgetStack.instance.pop();
+    } else {
+      widgetStack.instance.push(ConnectNetworkPage(chainInfo: chainInfo));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +65,10 @@ class SelectNetworkPage extends StatelessWidget {
                     return const ContentLoading();
                   }
                   return NetworksGrid(
-                    onTapNetwork: onTapNetwork,
+                    onTapNetwork: (chainInfo) => _onSelectNetwork(
+                      context,
+                      chainInfo,
+                    ),
                     itemList: items,
                   );
                 },

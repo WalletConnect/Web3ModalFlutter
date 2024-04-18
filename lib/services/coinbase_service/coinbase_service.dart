@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'package:web3modal_flutter/services/coinbase_service/i_coinbase_service.dart';
+import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -13,8 +14,6 @@ import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
 import 'package:coinbase_wallet_sdk/configuration.dart';
 import 'package:coinbase_wallet_sdk/eth_web3_rpc.dart';
 import 'package:coinbase_wallet_sdk/request.dart';
-
-import 'models/coinbase_data.dart';
 
 class CoinbaseService implements ICoinbaseService {
   static const coinbaseWalletId =

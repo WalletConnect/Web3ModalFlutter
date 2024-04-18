@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import 'package:web3modal_flutter/utils/util.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -71,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //   'be49f0a78d6ea1beed3804c3a6b62ea71f568d58d9df8097f3d61c7c9baf273d', // Uniswap
       // },
       // featuredWalletIds: {
+      //   '18450873727504ae9315a084fa7624b5297d2fe5880f0982979c17345a138277', // Kraken Wallet
       //   '19177a98252e07ddfc9af2083ba8e07ef627cb6103467ffebb3f8f4205fd7927', // Ledger Live
       //   '4457c130df49fb3cb1f8b99574b97b35208bd3d0d13b8d25d2b5884ed2cad13a', // Shapeshift
       //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
@@ -111,7 +113,54 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onModalConnect(ModalConnect? event) {
     debugPrint('[ExampleApp] _onModalConnect ${event?.toString()}');
+    debugPrint(
+      '[ExampleApp] _onModalConnect selectedChain ${_w3mService.selectedChain?.chainId}',
+    );
+    debugPrint(
+      '[ExampleApp] _onModalConnect address ${_w3mService.session!.address}',
+    );
     setState(() {});
+    _switchToPolygonIfNeeded();
+  }
+
+  void _switchToPolygonIfNeeded() {
+    if (_w3mService.session!.email.isNotEmpty) {
+      return;
+    }
+    final polygon = W3MChainPresets.chains['137']!;
+    final approvedChains = _w3mService.getApprovedChains() ?? [];
+    if (approvedChains.contains(polygon.namespace)) {
+      return;
+    }
+    Future.delayed(
+      const Duration(milliseconds: 500),
+      () {
+        showDialog(
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              content: const Text('Switch to Polygon?'),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    _w3mService.requestSwitchToChain(polygon);
+                    _w3mService.launchConnectedWallet();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Switch'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   void _onModalNetworkChange(ModalNetworkChange? event) {
@@ -180,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => _w3mService.loadAccountData(),
+        onRefresh: () => _refreshData(),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -202,6 +251,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  Future<void> _refreshData() async {
+    await _w3mService.loadAccountData();
+    setState(() {});
+    return;
+  }
 }
 
 class _ButtonsView extends StatelessWidget {
@@ -215,47 +270,33 @@ class _ButtonsView extends StatelessWidget {
         const SizedBox.square(dimension: 8.0),
         Visibility(
           visible: !w3mService.isConnected,
-          child: W3MNetworkSelectButton(service: w3mService, context: context),
-        ),
-        W3MConnectWalletButton(service: w3mService, context: context),
-        // W3MAccountButton(service: w3mService),
-        const SizedBox.square(dimension: 8.0),
-      ],
-    );
-  }
-}
-
-// ignore: unused_element
-class _CustomButtonsView extends StatelessWidget {
-  const _CustomButtonsView({required this.w3mService});
-  final W3MService w3mService;
-
-  @override
-  Widget build(BuildContext context) {
-    // if (w3mService.status.isLoading) {
-    //   return const Center(
-    //     child: CircularProgressIndicator(),
-    //   );
-    // }
-    return Column(
-      children: [
-        const SizedBox.square(dimension: 8.0),
-        Visibility(
-          visible: !w3mService.isConnected,
-          child: ElevatedButton(
-            onPressed: () {
-              w3mService.openNetworks(context);
-            },
-            child: const Text('OPEN CHAINS'),
+          child: W3MNetworkSelectButton(
+            service: w3mService,
+            context: context,
+            // UNCOMMENT TO USE A CUSTOM BUTTON
+            // custom: ElevatedButton(
+            //   style: buttonStyle(context),
+            //   onPressed: () {
+            //     w3mService.openNetworks(context);
+            //   },
+            //   child: const Text('OPEN CHAINS'),
+            // ),
           ),
         ),
-        ElevatedButton(
-          onPressed: () {
-            w3mService.openModal(context);
-          },
-          child: w3mService.isConnected
-              ? Text(Util.truncate(w3mService.session!.address!))
-              : const Text('CONNECT WALLET'),
+        W3MConnectWalletButton(
+          service: w3mService,
+          context: context,
+          // UNCOMMENT TO USE A CUSTOM BUTTON
+          // TO HIDE W3MConnectWalletButton BUT STILL RENDER IT (NEEDED) JUST USE SizedBox.shrink()
+          // custom: ElevatedButton(
+          //   style: buttonStyle(context),
+          //   onPressed: () {
+          //     w3mService.openModal(context);
+          //   },
+          //   child: w3mService.isConnected
+          //       ? Text(Util.truncate(w3mService.session!.address!))
+          //       : const Text('CONNECT WALLET'),
+          // ),
         ),
         const SizedBox.square(dimension: 8.0),
       ],
@@ -275,8 +316,23 @@ class _ConnectedView extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox.square(dimension: 12.0),
-        W3MAccountButton(service: w3mService, context: context),
+        ValueListenableBuilder<String>(
+          valueListenable: w3mService.balanceNotifier,
+          builder: (_, balance, __) {
+            return W3MAccountButton(
+              service: w3mService,
+              context: context,
+              // UNCOMMENT TO USE A CUSTOM BUTTON
+              // custom: ElevatedButton(
+              //   style: buttonStyle(context),
+              //   onPressed: () {
+              //     w3mService.openModal(context);
+              //   },
+              //   child: Text(balance),
+              // ),
+            );
+          },
+        ),
         SessionWidget(w3mService: w3mService),
         const SizedBox.square(dimension: 12.0),
       ],
@@ -295,3 +351,52 @@ final _sepolia = W3MChainInfo(
     url: 'https://sepolia.etherscan.io/',
   ),
 );
+
+ButtonStyle buttonStyle(BuildContext context) {
+  final themeColors = Web3ModalTheme.colorsOf(context);
+  return ButtonStyle(
+    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+      (states) {
+        if (states.contains(MaterialState.disabled)) {
+          return Web3ModalTheme.colorsOf(context).background225;
+        }
+        return Web3ModalTheme.colorsOf(context).accent100;
+      },
+    ),
+    shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
+      (states) {
+        return RoundedRectangleBorder(
+          side: states.contains(MaterialState.disabled)
+              ? BorderSide(color: themeColors.grayGlass005, width: 1.0)
+              : BorderSide(color: themeColors.grayGlass010, width: 1.0),
+          borderRadius: borderRadius(context),
+        );
+      },
+    ),
+    textStyle: MaterialStateProperty.resolveWith<TextStyle>(
+      (states) {
+        return Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+              color: (states.contains(MaterialState.disabled))
+                  ? Web3ModalTheme.colorsOf(context).foreground300
+                  : Web3ModalTheme.colorsOf(context).background100,
+            );
+      },
+    ),
+    foregroundColor: MaterialStateProperty.resolveWith<Color>(
+      (states) {
+        return (states.contains(MaterialState.disabled))
+            ? Web3ModalTheme.colorsOf(context).foreground300
+            : Web3ModalTheme.colorsOf(context).background100;
+      },
+    ),
+  );
+}
+
+BorderRadiusGeometry borderRadius(BuildContext context) {
+  final radiuses = Web3ModalTheme.radiusesOf(context);
+  return radiuses.isSquare()
+      ? const BorderRadius.all(Radius.zero)
+      : radiuses.isCircular()
+          ? BorderRadius.circular(1000.0)
+          : BorderRadius.circular(8.0);
+}

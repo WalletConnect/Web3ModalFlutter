@@ -17,7 +17,7 @@ class LoggerService implements ILoggerService {
       level: level.toLevel(),
       printer: PrettyPrinter(methodCount: null),
     );
-    if (kDebugMode && debugMode && level == LogLevel.error) {
+    if (debugMode && level == LogLevel.error) {
       Logger.addLogListener(_logListener);
     }
   }

@@ -21,6 +21,7 @@ mixin _$W3MChainInfo {
   String get namespace => throw _privateConstructorUsedError;
   String get tokenName => throw _privateConstructorUsedError;
   String get rpcUrl => throw _privateConstructorUsedError;
+  List<String> get extraRpcUrls => throw _privateConstructorUsedError;
   String? get chainIcon => throw _privateConstructorUsedError;
   W3MBlockExplorer? get blockExplorer => throw _privateConstructorUsedError;
 
@@ -41,6 +42,7 @@ abstract class $W3MChainInfoCopyWith<$Res> {
       String namespace,
       String tokenName,
       String rpcUrl,
+      List<String> extraRpcUrls,
       String? chainIcon,
       W3MBlockExplorer? blockExplorer});
 
@@ -65,6 +67,7 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
     Object? namespace = null,
     Object? tokenName = null,
     Object? rpcUrl = null,
+    Object? extraRpcUrls = null,
     Object? chainIcon = freezed,
     Object? blockExplorer = freezed,
   }) {
@@ -89,6 +92,10 @@ class _$W3MChainInfoCopyWithImpl<$Res, $Val extends W3MChainInfo>
           ? _value.rpcUrl
           : rpcUrl // ignore: cast_nullable_to_non_nullable
               as String,
+      extraRpcUrls: null == extraRpcUrls
+          ? _value.extraRpcUrls
+          : extraRpcUrls // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       chainIcon: freezed == chainIcon
           ? _value.chainIcon
           : chainIcon // ignore: cast_nullable_to_non_nullable
@@ -127,6 +134,7 @@ abstract class _$$W3MChainInfoImplCopyWith<$Res>
       String namespace,
       String tokenName,
       String rpcUrl,
+      List<String> extraRpcUrls,
       String? chainIcon,
       W3MBlockExplorer? blockExplorer});
 
@@ -150,6 +158,7 @@ class __$$W3MChainInfoImplCopyWithImpl<$Res>
     Object? namespace = null,
     Object? tokenName = null,
     Object? rpcUrl = null,
+    Object? extraRpcUrls = null,
     Object? chainIcon = freezed,
     Object? blockExplorer = freezed,
   }) {
@@ -174,6 +183,10 @@ class __$$W3MChainInfoImplCopyWithImpl<$Res>
           ? _value.rpcUrl
           : rpcUrl // ignore: cast_nullable_to_non_nullable
               as String,
+      extraRpcUrls: null == extraRpcUrls
+          ? _value._extraRpcUrls
+          : extraRpcUrls // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       chainIcon: freezed == chainIcon
           ? _value.chainIcon
           : chainIcon // ignore: cast_nullable_to_non_nullable
@@ -195,8 +208,10 @@ class _$W3MChainInfoImpl implements _W3MChainInfo {
       required this.namespace,
       required this.tokenName,
       required this.rpcUrl,
+      final List<String> extraRpcUrls = const <String>[],
       this.chainIcon,
-      this.blockExplorer});
+      this.blockExplorer})
+      : _extraRpcUrls = extraRpcUrls;
 
   @override
   final String chainName;
@@ -208,6 +223,15 @@ class _$W3MChainInfoImpl implements _W3MChainInfo {
   final String tokenName;
   @override
   final String rpcUrl;
+  final List<String> _extraRpcUrls;
+  @override
+  @JsonKey()
+  List<String> get extraRpcUrls {
+    if (_extraRpcUrls is EqualUnmodifiableListView) return _extraRpcUrls;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_extraRpcUrls);
+  }
+
   @override
   final String? chainIcon;
   @override
@@ -215,7 +239,7 @@ class _$W3MChainInfoImpl implements _W3MChainInfo {
 
   @override
   String toString() {
-    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, namespace: $namespace, tokenName: $tokenName, rpcUrl: $rpcUrl, chainIcon: $chainIcon, blockExplorer: $blockExplorer)';
+    return 'W3MChainInfo(chainName: $chainName, chainId: $chainId, namespace: $namespace, tokenName: $tokenName, rpcUrl: $rpcUrl, extraRpcUrls: $extraRpcUrls, chainIcon: $chainIcon, blockExplorer: $blockExplorer)';
   }
 
   @override
@@ -231,6 +255,8 @@ class _$W3MChainInfoImpl implements _W3MChainInfo {
             (identical(other.tokenName, tokenName) ||
                 other.tokenName == tokenName) &&
             (identical(other.rpcUrl, rpcUrl) || other.rpcUrl == rpcUrl) &&
+            const DeepCollectionEquality()
+                .equals(other._extraRpcUrls, _extraRpcUrls) &&
             (identical(other.chainIcon, chainIcon) ||
                 other.chainIcon == chainIcon) &&
             (identical(other.blockExplorer, blockExplorer) ||
@@ -238,8 +264,16 @@ class _$W3MChainInfoImpl implements _W3MChainInfo {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, chainName, chainId, namespace,
-      tokenName, rpcUrl, chainIcon, blockExplorer);
+  int get hashCode => Object.hash(
+      runtimeType,
+      chainName,
+      chainId,
+      namespace,
+      tokenName,
+      rpcUrl,
+      const DeepCollectionEquality().hash(_extraRpcUrls),
+      chainIcon,
+      blockExplorer);
 
   @JsonKey(ignore: true)
   @override
@@ -255,6 +289,7 @@ abstract class _W3MChainInfo implements W3MChainInfo {
       required final String namespace,
       required final String tokenName,
       required final String rpcUrl,
+      final List<String> extraRpcUrls,
       final String? chainIcon,
       final W3MBlockExplorer? blockExplorer}) = _$W3MChainInfoImpl;
 
@@ -268,6 +303,8 @@ abstract class _W3MChainInfo implements W3MChainInfo {
   String get tokenName;
   @override
   String get rpcUrl;
+  @override
+  List<String> get extraRpcUrls;
   @override
   String? get chainIcon;
   @override

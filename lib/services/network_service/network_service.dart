@@ -21,7 +21,8 @@ class NetworkService implements INetworkService {
     if (chainInfo.chainIcon != null && chainInfo.chainIcon!.contains('http')) {
       return chainInfo.chainIcon!;
     }
-    final chainImageId = AssetUtil.getChainIconId(chainInfo.chainId);
+    final chainImageId = AssetUtil.getChainIconId(chainInfo.chainId) ?? '';
+    if (chainImageId.isEmpty) return '';
     return explorerService.instance.getAssetImageUrl(chainImageId);
   }
 

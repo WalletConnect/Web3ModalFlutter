@@ -36,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>51</string>
+	<string>53</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
@@ -81,7 +81,7 @@
 		<string>okex</string>
 		<string>trust</string>
 		<string>thorwallet</string>
-		<string>everspace</string>
+		<string>krakenwallet</string>
 		<string>cosmostation</string>
 		<string>coinwallet</string>
 		<string>mewwallet</string>

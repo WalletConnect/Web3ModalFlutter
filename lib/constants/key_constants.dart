@@ -14,6 +14,7 @@ class KeyConstants {
   static const Key walletListShortPageKey = Key('walletListShortPageKey');
   static const Key walletListLongPageKey = Key('walletListLongPageKey');
   static const Key connecWalletPageKey = Key('connecWalletPageKey');
+  static const Key connecNetworkPageKey = Key('connecNetworkPageKey');
   static const Key qrCodeAndWalletListPageKey =
       Key('qrCodeAndWalletListFullPageKey');
   static const Key getAWalletPageKey = Key('getAWalletPageKey');

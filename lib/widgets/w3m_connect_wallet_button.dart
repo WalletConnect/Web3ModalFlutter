@@ -13,12 +13,14 @@ class W3MConnectWalletButton extends StatefulWidget {
     this.size = BaseButtonSize.regular,
     this.state,
     this.context,
+    this.custom,
   });
 
   final IW3MService service;
   final BaseButtonSize size;
   final ConnectButtonState? state;
   final BuildContext? context;
+  final Widget? custom;
 
   @override
   State<W3MConnectWalletButton> createState() => _W3MConnectWalletButtonState();
@@ -54,19 +56,19 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
-        // if (_state == ConnectButtonState.connected)
         if (Platform.isIOS && emailEnabled)
           SizedBox(
-            width: 1.0,
-            height: 1.0,
+            width: 0.5,
+            height: 0.5,
             child: magicService.instance.webview,
           ),
-        ConnectButton(
-          serviceStatus: widget.service.status,
-          state: _state,
-          size: widget.size,
-          onTap: _onTap,
-        ),
+        widget.custom ??
+            ConnectButton(
+              serviceStatus: widget.service.status,
+              state: _state,
+              size: widget.size,
+              onTap: _onTap,
+            ),
       ],
     );
   }
