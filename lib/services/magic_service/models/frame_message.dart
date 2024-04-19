@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
-import 'package:convert/convert.dart';
-
 class FrameMessage {
   static const _origin = 'secure.walletconnect.com';
 
@@ -217,10 +215,9 @@ class RpcRequest extends MessageData {
     final p = params.map((i) => '$i').toList();
 
     if (method == 'personal_sign') {
-      final bytes = utf8.encode(p.first);
-      final data = hex.encode(bytes);
+      final data = p.first;
       final address = p.last;
-      return '{$t,payload:{$m,params:[\'0x$data\',\'$address\']}}';
+      return '{$t,payload:{$m,params:[\'$data\',\'$address\']}}';
     }
     if (method == 'eth_signTypedData_v4' ||
         method == 'eth_signTypedData_v3' ||
