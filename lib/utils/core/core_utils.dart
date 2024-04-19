@@ -83,6 +83,9 @@ class CoreUtils extends ICoreUtils {
     } else {
       final parts = safeUrl.split('://');
       if (parts.last.isNotEmpty && parts.last != 'wc') {
+        if (!safeUrl.endsWith('/')) {
+          return '$safeUrl/';
+        }
         return safeUrl;
       } else {
         safeUrl = url.replaceFirst('://wc', '://');
