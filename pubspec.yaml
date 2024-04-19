@@ -33,7 +33,7 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.4.7
   build_version: ^2.1.1
-  flutter_test: 
+  flutter_test:
     sdk: flutter
   freezed: ^2.4.7
   json_serializable: ^6.7.0
@@ -58,7 +58,3 @@ flutter:
 platforms:
   android:
   ios:
-  # web:
-  # linux:
-  # macos:
-  # windows:

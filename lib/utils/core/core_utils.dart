@@ -73,6 +73,17 @@ class CoreUtils extends ICoreUtils {
   }
 
   @override
+  String createPlainUrl(String url) {
+    if (url.isEmpty) return url;
+
+    String plainUrl = url;
+    if (!plainUrl.endsWith('/')) {
+      plainUrl = '$url/';
+    }
+    return plainUrl;
+  }
+
+  @override
   String createSafeUrl(String url) {
     if (url.isEmpty) return url;
 
@@ -83,23 +94,15 @@ class CoreUtils extends ICoreUtils {
     } else {
       final parts = safeUrl.split('://');
       if (parts.last.isNotEmpty && parts.last != 'wc') {
+        if (!safeUrl.endsWith('/')) {
+          return '$safeUrl/';
+        }
         return safeUrl;
       } else {
         safeUrl = url.replaceFirst('://wc', '://');
       }
     }
     return safeUrl;
-  }
-
-  @override
-  String createPlainUrl(String url) {
-    if (url.isEmpty) return url;
-
-    String plainUrl = url;
-    if (!plainUrl.endsWith('/')) {
-      plainUrl = '$url/';
-    }
-    return plainUrl;
   }
 
   @override
