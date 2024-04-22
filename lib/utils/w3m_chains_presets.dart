@@ -146,6 +146,36 @@ class W3MChainPresets {
     ),
   };
 
+  static Map<String, W3MChainInfo> testChains = {
+    '11155111': W3MChainInfo(
+      chainName: 'Sepolia',
+      chainId: '11155111',
+      namespace: 'eip155:11155111',
+      tokenName: 'SEP',
+      rpcUrl: 'https://ethereum-sepolia.publicnode.com',
+      blockExplorer: W3MBlockExplorer(
+        name: 'Sepolia Etherscan',
+        url: 'https://sepolia.etherscan.io/',
+      ),
+    ),
+    '80001': W3MChainInfo(
+      chainName: 'Mumbai',
+      namespace: 'eip155:80001',
+      chainId: '80001',
+      tokenName: 'MATIC',
+      rpcUrl: 'https://polygon-mumbai-bor-rpc.publicnode.com',
+      extraRpcUrls: [
+        'https://rpc.ankr.com/polygon_mumbai',
+        'https://polygon-testnet.public.blastapi.io',
+        'https://polygon-mumbai.blockpi.network/v1/rpc/public',
+      ],
+      blockExplorer: W3MBlockExplorer(
+        name: 'Explorer',
+        url: 'https://mumbai.polygonscan.com',
+      ),
+    ),
+  };
+
   static Map<String, W3MChainInfo> extraChains = {
     '250': W3MChainInfo(
       chainName: 'Fantom',

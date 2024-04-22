@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -11,6 +10,7 @@ import 'package:web3modal_flutter/services/explorer_service/models/native_app_da
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/request_params.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/wc_sample_wallets.dart';
+import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
 import 'package:web3modal_flutter/utils/debouncer.dart';
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
@@ -20,7 +20,6 @@ import 'package:web3modal_flutter/services/storage_service/storage_service_singl
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
-import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 const int _defaultEntriesCount = 48;
@@ -106,14 +105,14 @@ class ExplorerService implements IExplorerService {
       return;
     }
 
-    W3MLoggerUtil.logger.t('[$runtimeType] init()');
+    loggerService.instance.p('[$runtimeType] init()');
     _apiUrl = await coreUtils.instance.getApiUrl();
 
     await _setInstalledWalletIdsParam();
     await _fetchInitialWallets();
 
     initialized.value = true;
-    W3MLoggerUtil.logger.t('[$runtimeType] init() done');
+    loggerService.instance.p('[$runtimeType] init() done');
   }
 
   Future<void> _setInstalledWalletIdsParam() async {
@@ -199,25 +198,32 @@ class ExplorerService implements IExplorerService {
   }
 
   Future<List<NativeAppData>> _fetchNativeAppData() async {
+    final apiUrl = await coreUtils.instance.getApiUrl();
+    final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
+    final uri = Platform.isIOS
+        ? Uri.parse('$apiUrl/getIosData')
+        : Uri.parse('$apiUrl/getAndroidData');
     try {
-      final apiUrl = await coreUtils.instance.getApiUrl();
-      final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
-      final uri = Platform.isIOS
-          ? Uri.parse('$apiUrl/getIosData')
-          : Uri.parse('$apiUrl/getAndroidData');
       final response = await _client.get(uri, headers: headers);
-      final apiResponse = ApiResponse<NativeAppData>.fromJson(
-        jsonDecode(response.body),
-        (json) => NativeAppData.fromJson(json),
-      );
-      return apiResponse.data.toList();
-    } catch (e, s) {
-      W3MLoggerUtil.logger.e(
-        '[$runtimeType] Error fetching native apps data',
+      if (response.statusCode == 200 || response.statusCode == 202) {
+        final apiResponse = ApiResponse<NativeAppData>.fromJson(
+          jsonDecode(response.body),
+          (json) => NativeAppData.fromJson(json),
+        );
+        return apiResponse.data.toList();
+      } else {
+        loggerService.instance.d(
+          '⛔ [$runtimeType] error fetching native data $uri',
+          error: response.statusCode,
+        );
+        return <NativeAppData>[];
+      }
+    } catch (e) {
+      loggerService.instance.e(
+        '[$runtimeType] error fetching native data $uri',
         error: e,
-        stackTrace: s,
       );
-      throw Exception(e);
+      return [];
     }
   }
 
@@ -270,24 +276,34 @@ class ExplorerService implements IExplorerService {
     bool updateCount = true,
   }) async {
     final p = params?.toJson() ?? {};
+    final apiUrl = await coreUtils.instance.getApiUrl();
+    final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
+    final uri = Uri.parse('$apiUrl/getWallets').replace(queryParameters: p);
+    loggerService.instance.d('[$runtimeType] fetching $uri');
     try {
-      final apiUrl = await coreUtils.instance.getApiUrl();
-      final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
-      final uri = Uri.parse('$apiUrl/getWallets').replace(queryParameters: p);
       final response = await _client.get(uri, headers: headers);
-      final apiResponse = ApiResponse<Listing>.fromJson(
-        jsonDecode(response.body),
-        (json) => Listing.fromJson(json),
-      );
-      if (updateCount) {
-        totalListings.value += apiResponse.count;
+      if (response.statusCode == 200 || response.statusCode == 202) {
+        final apiResponse = ApiResponse<Listing>.fromJson(
+          jsonDecode(response.body),
+          (json) => Listing.fromJson(json),
+        );
+        if (updateCount) {
+          totalListings.value += apiResponse.count;
+        }
+        return apiResponse.data.toList().toW3MWalletInfo();
+      } else {
+        loggerService.instance.d(
+          '⛔ [$runtimeType] error fetching listings $uri',
+          error: response.statusCode,
+        );
+        return <W3MWalletInfo>[];
       }
-      W3MLoggerUtil.logger.t('[$runtimeType] _fetchListings() $uri $p');
-      return apiResponse.data.toList().toW3MWalletInfo();
-    } catch (error) {
-      W3MLoggerUtil.logger
-          .e('[$runtimeType] Error fetch wallets params: $p', error: error);
-      throw Exception(e);
+    } catch (e) {
+      loggerService.instance.d(
+        '[$runtimeType] error fetching listings: $uri',
+        error: e,
+      );
+      return [];
     }
   }
 
@@ -322,7 +338,7 @@ class ExplorerService implements IExplorerService {
         return W3MWalletInfo.fromJson(jsonDecode(walletString));
       }
     } catch (e, s) {
-      W3MLoggerUtil.logger.e(
+      loggerService.instance.e(
         '[$runtimeType] error getConnectedWallet:',
         error: e,
         stackTrace: s,
@@ -352,10 +368,12 @@ class ExplorerService implements IExplorerService {
       }
       _listings = currentListings;
       listings.value = _listings;
-      W3MLoggerUtil.logger.t('[$runtimeType] _updateRecentWalletId $walletId '
-          '${walletInfo?.toJson()}');
+      loggerService.instance.p(
+        '[$runtimeType] _updateRecentWalletId $walletId '
+        '${walletInfo?.toJson()}',
+      );
     } catch (e, s) {
-      W3MLoggerUtil.logger.e(
+      loggerService.instance.e(
         '[$runtimeType] _updateRecentWalletId',
         error: e,
         stackTrace: s,
@@ -383,7 +401,7 @@ class ExplorerService implements IExplorerService {
     final excludedIds = (excludedWalletIds ?? <String>{});
     final exclude = excludedIds.isNotEmpty ? excludedIds.join(',') : null;
 
-    W3MLoggerUtil.logger.t('[$runtimeType] search $query');
+    loggerService.instance.p('[$runtimeType] search $query');
     _currentSearchValue = query;
     final newListins = await _fetchListings(
       params: RequestParams(
@@ -398,7 +416,7 @@ class ExplorerService implements IExplorerService {
     );
 
     listings.value = newListins;
-    W3MLoggerUtil.logger.t('[$runtimeType] _searchListings $query');
+    loggerService.instance.p('[$runtimeType] _searchListings $query');
     _debouncer.run(() => isSearching.value = false);
   }
 

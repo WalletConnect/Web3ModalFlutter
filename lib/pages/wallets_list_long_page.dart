@@ -53,10 +53,11 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
     final service = Web3ModalProvider.of(context).service;
     final totalListings = explorerService.instance.totalListings.value;
     final rows = (totalListings / 4.0).ceil();
+    final isSearchAvailable = totalListings >= kShortWalletListCount;
     final maxHeight = (rows * kGridItemHeight) +
-        (kPadding16 * 2.0) +
+        (kPadding16 * 4.0) +
+        (isSearchAvailable ? kSearchFieldHeight : 0.0) +
         ResponsiveData.paddingBottomOf(context);
-    final isSearchAvailable = totalListings >= 20;
     return Web3ModalNavbar(
       title: 'All wallets',
       onTapTitle: () => _controller.animateTo(
@@ -76,7 +77,7 @@ class _WalletsListLongPageState extends State<WalletsListLongPage> {
         constraints: BoxConstraints(
           maxHeight: !isSearchAvailable
               ? maxHeight
-              : ResponsiveData.maxHeightOf(context),
+              : min(maxHeight, ResponsiveData.maxHeightOf(context)),
         ),
         child: Column(
           children: [

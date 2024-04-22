@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _initializeService() async {
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
-    W3MChainPresets.chains.putIfAbsent(_sepolia.chainId, () => _sepolia);
+    W3MChainPresets.chains.addAll(W3MChainPresets.testChains);
 
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
@@ -69,7 +69,11 @@ class _MyHomePageState extends State<MyHomePage> {
       //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
       //   '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
       //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
-      //   'be49f0a78d6ea1beed3804c3a6b62ea71f568d58d9df8097f3d61c7c9baf273d', // Uniswap
+      //   'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a', // Uniswap
+      //   '18450873727504ae9315a084fa7624b5297d2fe5880f0982979c17345a138277', // Kraken Wallet
+      //   '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', // Bitget
+      //   '19177a98252e07ddfc9af2083ba8e07ef627cb6103467ffebb3f8f4205fd7927', // Ledger Live
+      //   '4457c130df49fb3cb1f8b99574b97b35208bd3d0d13b8d25d2b5884ed2cad13a', // Shapeshift
       // },
       // featuredWalletIds: {
       //   '18450873727504ae9315a084fa7624b5297d2fe5880f0982979c17345a138277', // Kraken Wallet
@@ -129,38 +133,37 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     final polygon = W3MChainPresets.chains['137']!;
     final approvedChains = _w3mService.getApprovedChains() ?? [];
-    if (approvedChains.contains(polygon.namespace)) {
-      return;
+    if (!approvedChains.contains(polygon.namespace)) {
+      Future.delayed(
+        const Duration(milliseconds: 500),
+        () {
+          showDialog(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                content: const Text('Switch to Polygon?'),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      _w3mService.requestSwitchToChain(polygon);
+                      _w3mService.launchConnectedWallet();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Switch'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      );
     }
-    Future.delayed(
-      const Duration(milliseconds: 500),
-      () {
-        showDialog(
-          context: context,
-          builder: (_) {
-            return AlertDialog(
-              content: const Text('Switch to Polygon?'),
-              actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    _w3mService.requestSwitchToChain(polygon);
-                    _w3mService.launchConnectedWallet();
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Switch'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
   }
 
   void _onModalNetworkChange(ModalNetworkChange? event) {
@@ -339,18 +342,6 @@ class _ConnectedView extends StatelessWidget {
     );
   }
 }
-
-final _sepolia = W3MChainInfo(
-  chainName: 'Sepolia Testnet',
-  chainId: '11155111',
-  namespace: 'eip155:11155111',
-  tokenName: 'SEP',
-  rpcUrl: 'https://ethereum-sepolia.publicnode.com',
-  blockExplorer: W3MBlockExplorer(
-    name: 'Sepolia Etherscan',
-    url: 'https://sepolia.etherscan.io/',
-  ),
-);
 
 ButtonStyle buttonStyle(BuildContext context) {
   final themeColors = Web3ModalTheme.colorsOf(context);
