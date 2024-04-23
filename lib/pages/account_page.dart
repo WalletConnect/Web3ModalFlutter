@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
-import 'package:web3modal_flutter/pages/edit_email_page.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/pages/upgrade_wallet_page.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
@@ -146,27 +145,6 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                       ],
                     ),
                   ),
-                  Visibility(
-                    visible: _service!.session?.sessionService.isMagic ?? false,
-                    child: Column(
-                      children: [
-                        const SizedBox.square(dimension: kPadding8),
-                        AccountListItem(
-                          iconPath: 'assets/icons/mail.svg',
-                          iconColor: themeColors.foreground100,
-                          title: _service!.session?.email ?? '',
-                          titleStyle:
-                              themeData.textStyles.paragraph500.copyWith(
-                            color: themeColors.foreground100,
-                          ),
-                          onTap: () {
-                            widgetStack.instance.push(EditEmailPage());
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox.square(dimension: kPadding8),
                   _SelectNetworkButton(),
                   const SizedBox.square(dimension: kPadding8),
                   AccountListItem(

@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/connect_button.dart';
@@ -52,25 +49,13 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
 
   @override
   Widget build(BuildContext context) {
-    final emailEnabled = magicService.instance.isEnabled.value;
-    return Stack(
-      alignment: AlignmentDirectional.center,
-      children: [
-        if (Platform.isIOS && emailEnabled)
-          SizedBox(
-            width: 0.5,
-            height: 0.5,
-            child: magicService.instance.webview,
-          ),
-        widget.custom ??
-            ConnectButton(
-              serviceStatus: widget.service.status,
-              state: _state,
-              size: widget.size,
-              onTap: _onTap,
-            ),
-      ],
-    );
+    return widget.custom ??
+        ConnectButton(
+          serviceStatus: widget.service.status,
+          state: _state,
+          size: widget.size,
+          onTap: _onTap,
+        );
   }
 
   void _onTap() {

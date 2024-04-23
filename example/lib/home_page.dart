@@ -128,9 +128,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _switchToPolygonIfNeeded() {
-    if (_w3mService.session!.email.isNotEmpty) {
-      return;
-    }
     final polygon = W3MChainPresets.chains['137']!;
     final approvedChains = _w3mService.getApprovedChains() ?? [];
     if (!approvedChains.contains(polygon.namespace)) {

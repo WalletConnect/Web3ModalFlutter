@@ -1,7 +1,6 @@
-## 3.2.0-beta05
+## 3.1.3
 
-- Email Login support
-- Analytics API support
+- Basic Analytics API support
 
 ## 3.1.2
 

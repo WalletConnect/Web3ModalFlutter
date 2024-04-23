@@ -2,8 +2,6 @@ import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
-import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
-import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/utils/w3m_chains_presets.dart';
 import 'package:web3modal_flutter/utils/w3m_logger.dart';
 
@@ -22,15 +20,12 @@ enum W3MSessionService {
 class W3MSession {
   SessionData? _sessionData;
   CoinbaseData? _coinbaseData;
-  MagicData? _magicData;
 
   W3MSession({
     SessionData? sessionData,
     CoinbaseData? coinbaseData,
-    MagicData? magicData,
   })  : _sessionData = sessionData,
-        _coinbaseData = coinbaseData,
-        _magicData = magicData;
+        _coinbaseData = coinbaseData;
 
   @Deprecated('Do not use. Use instead session?.toJson() or access each method')
   SessionData? get sessionData => _sessionData;
@@ -42,7 +37,6 @@ class W3MSession {
   factory W3MSession.fromJson(Map<String, dynamic> json) {
     final sessionDataString = json['sessionData'];
     final coinbaseDataString = json['coinbaseData'];
-    final magicDataString = json['magicData'];
     return W3MSession(
       sessionData: sessionDataString != null
           ? SessionData.fromJson(sessionDataString)
@@ -50,20 +44,16 @@ class W3MSession {
       coinbaseData: coinbaseDataString != null
           ? CoinbaseData.fromJson(coinbaseDataString)
           : null,
-      magicData:
-          magicDataString != null ? MagicData.fromJson(magicDataString) : null,
     );
   }
 
   W3MSession copyWith({
     SessionData? sessionData,
     CoinbaseData? coinbaseData,
-    MagicData? magicData,
   }) {
     return W3MSession(
       sessionData: sessionData ?? _sessionData,
       coinbaseData: coinbaseData ?? _coinbaseData,
-      magicData: magicData ?? _magicData,
     );
   }
 
@@ -73,9 +63,6 @@ class W3MSession {
     }
     if (_coinbaseData != null) {
       return W3MSessionService.coinbase;
-    }
-    if (_magicData != null) {
-      return W3MSessionService.magic;
     }
 
     return W3MSessionService.none;
@@ -102,9 +89,6 @@ class W3MSession {
     }
     if (sessionService.isCoinbase) {
       return CoinbaseService.supportedMethods;
-    }
-    if (sessionService.isMagic) {
-      return MagicService.supportedMethods;
     }
 
     final sessionNamespaces = _sessionData!.namespaces;
@@ -244,18 +228,12 @@ extension W3MSessionExtension on W3MSession {
   }
 
   //
-  String get email => _magicData?.email ?? '';
-
-  //
   String? get address {
     if (sessionService.noSession) {
       return null;
     }
     if (sessionService.isCoinbase) {
       return _coinbaseData!.address;
-    }
-    if (sessionService.isMagic) {
-      return _magicData!.address;
     }
     final namespace = namespaces?[StringConstants.namespace];
     final accounts = namespace?.accounts ?? [];
@@ -282,9 +260,6 @@ extension W3MSessionExtension on W3MSession {
     if (sessionService.isCoinbase) {
       return _coinbaseData!.chainId.toString();
     }
-    if (sessionService.isMagic) {
-      return _magicData!.chainId.toString();
-    }
     return '1';
   }
 
@@ -305,7 +280,6 @@ extension W3MSessionExtension on W3MSession {
     return {
       ...(_sessionData?.toJson() ?? {}),
       ...(_coinbaseData?.toJson() ?? {}),
-      ...(_magicData?.toJson() ?? {}),
     };
   }
 
@@ -319,15 +293,6 @@ extension W3MSessionExtension on W3MSession {
         ),
       };
     }
-    if (sessionService.isMagic) {
-      return {
-        'eip155': Namespace(
-          accounts: ['eip155:$chainId:$address'],
-          methods: [...MagicService.supportedMethods],
-          events: [],
-        ),
-      };
-    }
     return namespaces;
   }
 
@@ -335,7 +300,6 @@ extension W3MSessionExtension on W3MSession {
     return {
       'sessionData': _sessionData?.toJson(),
       'coinbaseData': _coinbaseData?.toJson(),
-      'magicData': _magicData?.toJson(),
     };
   }
 }
