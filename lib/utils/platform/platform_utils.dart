@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
-import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class PlatformUtils extends IPlatformUtils {
   @override
