@@ -366,9 +366,10 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     }
   }
 
-  // bool get _isMM => (_currentSession?.peer?.metadata.name ?? '')
-  //     .toLowerCase()
-  //     .contains('metamask');
+  // bool get _isMM {
+  //   final walletName = _currentSession?.peer?.metadata.name ?? '';
+  //   return walletName.contains('metamask');
+  // }
 
   /// Will get the list of available chains to add
   @override

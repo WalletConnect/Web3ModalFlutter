@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/pages/about_wallets.dart';
 import 'package:web3modal_flutter/pages/confirm_email_page.dart';
 import 'package:web3modal_flutter/pages/connect_wallet_page.dart';
+import 'package:web3modal_flutter/pages/qr_code_page.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
@@ -71,7 +72,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
       safeAreaRight: true,
       body: ExplorerServiceItemsListener(
         builder: (context, initialised, items, _) {
-          if (!initialised || items.isEmpty) {
+          if (!initialised) {
             return ConstrainedBox(
               constraints: BoxConstraints(maxHeight: maxHeight),
               child: const WalletsList(
@@ -80,15 +81,15 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
               ),
             );
           }
-          final emailEnabled = magicService.instance.isEnabled.value;
           final itemsCount = min(kShortWalletListCount, items.length);
-          final itemsToShow = items.getRange(0, itemsCount);
-          if (itemsCount < kShortWalletListCount && isPortrait) {
-            maxHeight = kListItemHeight * (itemsCount + 1);
+          if (itemsCount < kShortWalletListCount) {
+            maxHeight = kListItemHeight * (itemsCount + 1.5);
           }
+          final emailEnabled = magicService.instance.isEnabled.value;
           if (emailEnabled) {
             maxHeight += (kSearchFieldHeight * 2);
           }
+          final itemsToShow = items.getRange(0, itemsCount);
           return ConstrainedBox(
             constraints: BoxConstraints(maxHeight: maxHeight),
             child: WalletsList(
@@ -129,25 +130,35 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
                     )
                   : null,
               itemList: itemsToShow.toList(),
-              bottomItems: (itemsCount < kShortWalletListCount)
-                  ? []
-                  : [
-                      AllWalletsItem(
-                        trailing: ValueListenableBuilder<int>(
+              bottomItems: [
+                AllWalletsItem(
+                  trailing: itemsCount < kShortWalletListCount
+                      ? null
+                      : ValueListenableBuilder<int>(
                           valueListenable:
                               explorerService.instance.totalListings,
                           builder: (context, value, _) {
                             return WalletItemChip(value: value.lazyCount);
                           },
                         ),
-                        onTap: () {
-                          widgetStack.instance.push(
-                            const WalletsListLongPage(),
-                            event: ClickAllWalletsEvent(),
-                          );
-                        },
-                      ),
-                    ],
+                  onTap: () {
+                    if (itemsCount < kShortWalletListCount) {
+                      widgetStack.instance.push(
+                        const QRCodePage(),
+                        event: SelectWalletEvent(
+                          name: 'WalletConnect',
+                          platform: AnalyticsPlatform.qrcode,
+                        ),
+                      );
+                    } else {
+                      widgetStack.instance.push(
+                        const WalletsListLongPage(),
+                        event: ClickAllWalletsEvent(),
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
           );
         },

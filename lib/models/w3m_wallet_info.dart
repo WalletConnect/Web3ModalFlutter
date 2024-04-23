@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
+import 'package:web3modal_flutter/models/listing.dart';
 
 part 'w3m_wallet_info.freezed.dart';
 part 'w3m_wallet_info.g.dart';

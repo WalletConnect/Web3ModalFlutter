@@ -90,10 +90,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     if (widget.service.isOpen) {
       widgetStack.instance.popAllAndPush(ConfirmEmailPage());
     } else {
-      widget.service.openModal(
-        widget.context ?? context,
-        ConfirmEmailPage(),
-      );
+      widget.service.openModal(widget.context ?? context, ConfirmEmailPage());
     }
   }
 

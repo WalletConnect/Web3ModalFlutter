@@ -1,4 +1,5 @@
-import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
+import 'package:web3modal_flutter/models/listing.dart';
+import 'package:web3modal_flutter/services/explorer_service/models/native_app_data.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class WCSampleWallets {

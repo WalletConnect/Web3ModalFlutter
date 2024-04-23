@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 
-// TODO change transition type to reflect Web implementation
 class TransitionContainer extends StatefulWidget {
   const TransitionContainer({
     super.key,
