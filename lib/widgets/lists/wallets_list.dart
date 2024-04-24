@@ -71,8 +71,8 @@ class WalletsList extends StatelessWidget {
           child: items[index],
         );
       },
-      separatorBuilder: (_, __) => const SizedBox.square(
-        dimension: kListViewSeparatorHeight,
+      separatorBuilder: (_, index) => SizedBox.square(
+        dimension: index == 0 ? 0.0 : kListViewSeparatorHeight,
       ),
       itemCount: items.length,
     );

@@ -32,13 +32,6 @@ class W3MSession {
         _coinbaseData = coinbaseData,
         _magicData = magicData;
 
-  @Deprecated('Do not use. Use instead session?.toJson() or access each method')
-  SessionData? get sessionData => _sessionData;
-  @Deprecated('Do not use. Use instead session?.toJson() or access each method')
-  CoinbaseData? get coinbaseData => _coinbaseData;
-  // @Deprecated('Do not use. Use instead session?.toJson() or access each method')
-  // MagicData? get magicData => _magicData;
-
   factory W3MSession.fromJson(Map<String, dynamic> json) {
     final sessionDataString = json['sessionData'];
     final coinbaseDataString = json['coinbaseData'];

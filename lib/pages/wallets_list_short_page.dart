@@ -97,38 +97,7 @@ class _WalletsListShortPageState extends State<WalletsListShortPage> {
                 service.selectWallet(data);
                 widgetStack.instance.push(const ConnectWalletPage());
               },
-              firstItem: emailEnabled
-                  ? Column(
-                      children: [
-                        InputEmailWidget(
-                          onFocus: (value) {
-                            if (value) {
-                              analyticsService.instance.sendEvent(
-                                EmailLoginSelected(),
-                              );
-                            }
-                          },
-                          onValueChange: (value) {
-                            magicService.instance.setEmail(value);
-                          },
-                          onSubmitted: (value) {
-                            final service =
-                                Web3ModalProvider.of(context).service;
-                            final chainId = service.selectedChain?.chainId;
-                            analyticsService.instance
-                                .sendEvent(EmailSubmitted());
-                            magicService.instance.connectEmail(
-                              value: value,
-                              chainId: chainId,
-                            );
-                            widgetStack.instance.push(ConfirmEmailPage());
-                          },
-                        ),
-                        const SizedBox.square(dimension: 4.0),
-                        _LoginDivider(),
-                      ],
-                    )
-                  : null,
+              firstItem: _EmailLoginWidget(),
               itemList: itemsToShow.toList(),
               bottomItems: [
                 AllWalletsItem(
@@ -201,5 +170,55 @@ extension on int {
   String get lazyCount {
     if (this <= 10) return toString();
     return '${toString().substring(0, toString().length - 1)}0+';
+  }
+}
+
+class _EmailLoginWidget extends StatefulWidget {
+  const _EmailLoginWidget({super.key});
+
+  @override
+  State<_EmailLoginWidget> createState() => __EmailLoginWidgetState();
+}
+
+class __EmailLoginWidgetState extends State<_EmailLoginWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: magicService.instance.isEnabled,
+      builder: (context, emailEnabled, _) {
+        if (!emailEnabled) {
+          return const SizedBox.shrink();
+        }
+        return Column(
+          children: [
+            InputEmailWidget(
+              onFocus: (value) {
+                if (value) {
+                  analyticsService.instance.sendEvent(
+                    EmailLoginSelected(),
+                  );
+                }
+              },
+              onValueChange: (value) {
+                magicService.instance.setEmail(value);
+              },
+              onSubmitted: (value) {
+                final service = Web3ModalProvider.of(context).service;
+                final chainId = service.selectedChain?.chainId;
+                analyticsService.instance.sendEvent(EmailSubmitted());
+                magicService.instance.connectEmail(
+                  value: value,
+                  chainId: chainId,
+                );
+                widgetStack.instance.push(ConfirmEmailPage());
+              },
+            ),
+            const SizedBox.square(dimension: 4.0),
+            _LoginDivider(),
+            const SizedBox.square(dimension: kListViewSeparatorHeight),
+          ],
+        );
+      },
+    );
   }
 }

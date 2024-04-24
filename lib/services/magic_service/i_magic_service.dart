@@ -21,7 +21,7 @@ abstract class IMagicService {
     String? chainId,
     required SessionRequestParams request,
   });
-  Future<void> disconnect();
+  Future<dynamic> disconnect();
 
   abstract final Event<MagicSessionEvent> onMagicLoginRequest;
   abstract final Event<MagicLoginEvent> onMagicLoginSuccess;

@@ -77,7 +77,9 @@ class ConnectEmailErrorEvent extends MagicErrorEvent {
 }
 
 class UpdateEmailErrorEvent extends MagicErrorEvent {
-  UpdateEmailErrorEvent() : super('Error updating email');
+  final String? message;
+  UpdateEmailErrorEvent({this.message})
+      : super(message ?? 'Error updating email');
 }
 
 class UpdateEmailPrimaryOtpErrorEvent extends MagicErrorEvent {

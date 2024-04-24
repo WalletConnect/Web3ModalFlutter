@@ -52,6 +52,7 @@ class MagicService implements IMagicService {
   late Completer<bool> _initialized;
   late Completer<bool> _connected;
   late Completer<dynamic> _response;
+  // late Completer<bool> _disconnect;
 
   @override
   Event<MagicSessionEvent> onMagicLoginRequest = Event<MagicSessionEvent>();
@@ -286,10 +287,12 @@ class MagicService implements IMagicService {
   }
 
   @override
-  Future<void> disconnect() async {
+  Future<dynamic> disconnect() async {
     if (!isEnabled.value || !isReady.value) return;
+    // _disconnect = Completer<bool>();
     final message = SignOut().toString();
     await _webViewController.runJavaScript('sendMessage($message)');
+    // return await _disconnect.future;
     // _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _disconnect);
   }
 
@@ -378,8 +381,13 @@ class MagicService implements IMagicService {
       }
       // ****** UPDAET_EMAIL
       if (messageData.updateEmailSuccess) {
+        final action = messageData.getPayloadMapKey<String>('action');
+        if (action == 'VERIFY_SECONDARY_OTP') {
+          step.value = EmailLoginStep.verifyOtp2;
+        } else {
+          step.value = EmailLoginStep.verifyOtp;
+        }
         analyticsService.instance.sendEvent(EmailEdit());
-        step.value = EmailLoginStep.verifyOtp;
       }
       // ****** UPDATE_EMAIL_PRIMARY_OTP
       if (messageData.updateEmailPrimarySuccess) {
@@ -435,6 +443,7 @@ class MagicService implements IMagicService {
       // ****** SIGN_OUT
       if (messageData.signOutSuccess) {
         _resetTimeOut();
+        // _disconnect.complete(true);
       }
       // ****** SESSION_UPDATE
       if (messageData.sessionUpdate) {
@@ -451,7 +460,8 @@ class MagicService implements IMagicService {
         _error(ConnectEmailErrorEvent(message: message));
       }
       if (messageData.updateEmailError) {
-        _error(UpdateEmailErrorEvent());
+        final message = messageData.payload?['message']?.toString();
+        _error(UpdateEmailErrorEvent(message: message));
       }
       if (messageData.updateEmailPrimaryOtpError) {
         final message = messageData.payload?['message']?.toString();
@@ -521,6 +531,7 @@ class MagicService implements IMagicService {
     }
     if (errorEvent is SignOutErrorEvent) {
       isConnected.value = true;
+      // _disconnect.complete(false);
       disconnect();
     }
     if (!_connected.isCompleted) {
