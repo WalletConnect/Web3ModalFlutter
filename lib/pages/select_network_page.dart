@@ -24,17 +24,21 @@ class SelectNetworkPage extends StatelessWidget {
 
   void _onSelectNetwork(BuildContext context, W3MChainInfo chainInfo) {
     final service = Web3ModalProvider.of(context).service;
-    final approvedChains = service.session!.getApprovedChains() ?? [];
-    final hasChainAlready = approvedChains.contains(
-      chainInfo.namespace,
-    );
-    if (chainInfo.chainId == service.selectedChain?.chainId) {
-      widgetStack.instance.pop();
-    } else if (hasChainAlready || service.session!.sessionService.isMagic) {
-      service.selectChain(chainInfo, switchChain: true);
-      widgetStack.instance.pop();
+    if (service.isConnected) {
+      final approvedChains = service.session!.getApprovedChains() ?? [];
+      final hasChainAlready = approvedChains.contains(
+        chainInfo.namespace,
+      );
+      if (chainInfo.chainId == service.selectedChain?.chainId) {
+        widgetStack.instance.pop();
+      } else if (hasChainAlready || service.session!.sessionService.isMagic) {
+        service.selectChain(chainInfo, switchChain: true);
+        widgetStack.instance.pop();
+      } else {
+        widgetStack.instance.push(ConnectNetworkPage(chainInfo: chainInfo));
+      }
     } else {
-      widgetStack.instance.push(ConnectNetworkPage(chainInfo: chainInfo));
+      onTapNetwork?.call(chainInfo);
     }
   }
 

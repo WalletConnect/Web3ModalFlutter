@@ -34,7 +34,10 @@ class NetworkButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
-    final imageUrl = chainInfo != null ? _getImageUrl(chainInfo!) : null;
+    String imageUrl = '';
+    if (chainInfo != null && (chainInfo!.chainIcon ?? '').isNotEmpty) {
+      imageUrl = _getImageUrl(chainInfo!);
+    }
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final borderRadius = radiuses.isSquare() ? 0.0 : size.height / 2;
     return BaseButton(
