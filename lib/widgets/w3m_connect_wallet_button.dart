@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
+import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/connect_button.dart';
@@ -52,16 +53,10 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
 
   @override
   Widget build(BuildContext context) {
-    final emailEnabled = magicService.instance.isEnabled.value;
     return Stack(
       alignment: AlignmentDirectional.center,
       children: [
-        if (Platform.isIOS && emailEnabled)
-          SizedBox(
-            width: 0.5,
-            height: 0.5,
-            child: magicService.instance.webview,
-          ),
+        _WebViewWidget(),
         widget.custom ??
             ConnectButton(
               serviceStatus: widget.service.status,
@@ -107,5 +102,45 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
     else if (widget.service.isOpen && !widget.service.isConnected) {
       return setState(() => _state = ConnectButtonState.connecting);
     }
+  }
+}
+
+class _WebViewWidget extends StatefulWidget {
+  @override
+  State<_WebViewWidget> createState() => _WebViewWidgetState();
+}
+
+class _WebViewWidgetState extends State<_WebViewWidget> {
+  bool _show = true;
+  //
+  @override
+  void initState() {
+    super.initState();
+    magicService.instance.onMagicRpcRequest.subscribe(_onRequest);
+  }
+
+  @override
+  void dispose() {
+    magicService.instance.onMagicRpcRequest.unsubscribe(_onRequest);
+    super.dispose();
+  }
+
+  void _onRequest(MagicRequestEvent? args) {
+    if (args != null) {
+      setState(() => _show = args.request == null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final emailEnabled = magicService.instance.isEnabled.value;
+    if (Platform.isIOS && emailEnabled && _show) {
+      return SizedBox(
+        width: 0.5,
+        height: 0.5,
+        child: magicService.instance.webview,
+      );
+    }
+    return const SizedBox.shrink();
   }
 }

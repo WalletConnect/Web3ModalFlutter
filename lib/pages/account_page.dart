@@ -9,6 +9,7 @@ import 'package:web3modal_flutter/services/explorer_service/explorer_service_sin
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
+import 'package:web3modal_flutter/widgets/loader.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -171,15 +172,24 @@ class _AccountPageState extends State<AccountPage> with WidgetsBindingObserver {
                   const SizedBox.square(dimension: kPadding8),
                   AccountListItem(
                     iconPath: 'assets/icons/disconnect.svg',
-                    trailing: const SizedBox.shrink(),
+                    trailing: _service!.status.isLoading
+                        ? Row(
+                            children: [
+                              CircularLoader(size: 18.0, strokeWidth: 2.0),
+                              SizedBox.square(dimension: kPadding12),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
                     title: 'Disconnect',
                     titleStyle: themeData.textStyles.paragraph500.copyWith(
                       color: themeColors.foreground200,
                     ),
-                    onTap: () async {
-                      await _service!.disconnect();
-                      _service!.closeModal();
-                    },
+                    onTap: _service!.status.isLoading
+                        ? null
+                        : () async {
+                            await _service!.disconnect();
+                            _service!.closeModal();
+                          },
                   ),
                 ],
               ),

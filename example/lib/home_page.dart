@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _initializeService() async {
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
+    W3MChainPresets.chains.addAll(W3MChainPresets.extraChains);
     W3MChainPresets.chains.addAll(W3MChainPresets.testChains);
     // W3MChainPresets.chains.removeWhere((key, _) => key != '137');
 
@@ -67,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // excludedWalletIds: {
       //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
       // },
+      // MORE WALLETS https://explorer.walletconnect.com/?type=wallet&chains=eip155%3A1
       // includedWalletIds: {
       //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
       //   '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow

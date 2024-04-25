@@ -190,7 +190,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       return;
     }
     _status = W3MServiceStatus.initializing;
-
     _notify();
 
     _registerListeners();
@@ -436,10 +435,9 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     );
   }
 
-  // TODO [Widget? startWidget] parameter should be removed
+  // TODO [W3MService] startWidget parameter should be removed
   @override
   Future<void> openModal(BuildContext context, [Widget? startWidget]) async {
-    // , [Widget? startWidget]
     return _showModalView(context, startWidget);
   }
 
@@ -758,14 +756,25 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   Future<void> disconnect({bool disconnectAllSessions = true}) async {
     _checkInitialized();
 
-    // TODO uncomment this and fix
-    // if (_currentSession?.sessionService.isCoinbase == true) {
-    //   await cbResetSession();
-    // }
-    // if (_currentSession?.sessionService.isMagic == true) {
-    //   final disconnected = await magicService.instance.disconnect();
-    //   debugPrint('[$runtimeType] disconnected $disconnected');
-    // }
+    _status = W3MServiceStatus.initializing;
+    _notify();
+    if (_currentSession?.sessionService.isCoinbase == true) {
+      try {
+        await cbResetSession();
+      } catch (_) {
+        _status = W3MServiceStatus.initialized;
+        _notify();
+        return;
+      }
+    }
+    if (_currentSession?.sessionService.isMagic == true) {
+      final disconnected = await magicService.instance.disconnect();
+      if (!disconnected) {
+        _status = W3MServiceStatus.initialized;
+        _notify();
+        return;
+      }
+    }
 
     try {
       // If we want to disconnect all sessions, loop through them and disconnect them
@@ -789,6 +798,8 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       return;
     } catch (e) {
       analyticsService.instance.sendEvent(DisconnectErrorEvent());
+      _status = W3MServiceStatus.initialized;
+      _notify();
     }
   }
 
@@ -868,11 +879,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     List parameters = const [],
   }) async {
     try {
-      // TODO Support Smart Contract with Magic
+      // TODO [W3MService] Support Smart Contract with email if possible
       if (_currentSession!.sessionService.isMagic) {
-        throw 'Write to Smart Contract is currently not supported with Email Login';
+        throw 'Write to Smart Contract is currently not supported with Email Wallet';
       }
-      // TODO Support Smart Contract with Coinbase
+      // TODO [W3MService] Support Smart Contract with Coinbase if possible
       if (_currentSession!.sessionService.isCoinbase) {
         throw 'Write to Smart Contract is currently not supported with Coinbase Wallet';
       }
@@ -1172,14 +1183,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   Future<void> _cleanSession({SessionDelete? args, bool event = true}) async {
-    // TODO remove from here
-    if (_currentSession?.sessionService.isCoinbase == true) {
-      await cbResetSession();
-    }
-    if (_currentSession?.sessionService.isMagic == true) {
-      await magicService.instance.disconnect();
-    }
-    //
     final walletId = storageService.instance.getString(
       StringConstants.recentWalletId,
     );
@@ -1195,6 +1198,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     _isConnected = false;
     _currentSession = null;
     _lastChainEmitted = null;
+    _status = W3MServiceStatus.initialized;
     _notify();
   }
 

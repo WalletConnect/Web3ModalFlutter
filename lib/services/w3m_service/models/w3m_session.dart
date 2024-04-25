@@ -286,7 +286,7 @@ extension W3MSessionExtension on W3MSession {
       return CoinbaseService.coinbaseWalletName;
     }
     if (sessionService.isMagic) {
-      return 'Email Login';
+      return 'Email Wallet';
     }
     if (sessionService.isWC) {
       return peer?.metadata.name;

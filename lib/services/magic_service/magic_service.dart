@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+// import 'package:url_launcher/url_launcher_string.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
@@ -38,12 +38,13 @@ class MagicService implements IMagicService {
     'wallet_addEthereumChain',
   ];
   //
-  late final Key _key;
+  // late final Key _key;
   final IWeb3App _web3app;
   Web3ModalTheme? _currentTheme;
   Timer? _timeOutTimer;
   String? _connectionChainId;
   int _onLoadCount = 0;
+  String _packageName = '';
 
   late final WebViewController _webViewController;
   late final WebViewWidget _webview;
@@ -52,7 +53,7 @@ class MagicService implements IMagicService {
   late Completer<bool> _initialized;
   late Completer<bool> _connected;
   late Completer<dynamic> _response;
-  // late Completer<bool> _disconnect;
+  late Completer<dynamic> _disconnect;
 
   @override
   Event<MagicSessionEvent> onMagicLoginRequest = Event<MagicSessionEvent>();
@@ -84,17 +85,15 @@ class MagicService implements IMagicService {
   MagicService({
     required IWeb3App web3app,
     bool enabled = false,
-    Key? key,
-  })  : _web3app = web3app,
-        _key = key ?? Key('magic_service') {
+    // Key? key,
+  }) : _web3app = web3app //,
+  // _key = key ?? Key('magic_service')
+  {
     isEnabled.value = enabled;
-    loggerService.instance.p('[$runtimeType] enabled $enabled');
     if (isEnabled.value) {
       _webViewController = WebViewController();
-      _webview = WebViewWidget(
-        key: Key('${_key.hashCode}'),
-        controller: _webViewController,
-      );
+      // key: Key('${_key.hashCode}'),
+      _webview = WebViewWidget(controller: _webViewController);
       isReady.addListener(_readyListener);
     }
   }
@@ -105,8 +104,6 @@ class MagicService implements IMagicService {
       _awaitReadyness.complete(true);
     }
   }
-
-  String _packageName = '';
 
   @override
   Future<void> init() async {
@@ -142,7 +139,10 @@ class MagicService implements IMagicService {
           if (_isAllowedDomain(request.url)) {
             return NavigationDecision.navigate;
           }
-          launchUrlString(request.url, mode: LaunchMode.externalApplication);
+          // launchUrlString(
+          //   request.url,
+          //   mode: LaunchMode.externalApplication,
+          // );
           return NavigationDecision.prevent;
         },
         onWebResourceError: _onWebResourceError,
@@ -181,7 +181,7 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     _connectionChainId = chainId ?? _connectionChainId;
     final message = ConnectEmail(email: value).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -189,7 +189,7 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     step.value = EmailLoginStep.loading;
     final message = UpdateEmail(email: value).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -197,7 +197,7 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     step.value = EmailLoginStep.loading;
     final message = UpdateEmailPrimaryOtp(otp: otp).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -205,7 +205,7 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     step.value = EmailLoginStep.loading;
     final message = UpdateEmailSecondaryOtp(otp: otp).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -213,14 +213,14 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     step.value = EmailLoginStep.loading;
     final message = ConnectOtp(otp: otp).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
   Future<void> getChainId() async {
     if (!isEnabled.value || !isReady.value) return;
     final message = GetChainId().toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -228,7 +228,7 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     _currentTheme = theme;
     final message = SyncTheme(theme: theme).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   void _syncDappData() async {
@@ -238,7 +238,7 @@ class MagicService implements IMagicService {
       projectId: _web3app.core.projectId,
       sdkVersion: 'flutter-${StringConstants.X_SDK_VERSION}',
     ).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -249,14 +249,14 @@ class MagicService implements IMagicService {
 
   Future<void> _getUser(String? chainId) async {
     final message = GetUser(chainId: chainId).toString();
-    return await _webViewController.runJavaScript('sendMessage($message)');
+    return await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
   Future<void> switchNetwork({required String chainId}) async {
     if (!isEnabled.value || !isReady.value) return;
     final message = SwitchNetwork(chainId: chainId).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -283,25 +283,17 @@ class MagicService implements IMagicService {
     final method = parameters['method'];
     final params = parameters['params'] as List;
     final message = RpcRequest(method: method, params: params).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
   Future<dynamic> disconnect() async {
     if (!isEnabled.value || !isReady.value) return;
-    // _disconnect = Completer<bool>();
+    _disconnect = Completer<dynamic>();
     final message = SignOut().toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
-    // return await _disconnect.future;
-    // _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _disconnect);
+    await _webViewController.runJavaScript('sendW3Message($message)');
+    return await _disconnect.future;
   }
-
-  // void _disconnect(Timer time) async {
-  //   if (time.tick > 2) {
-  //     _resetTimeOut();
-  //     _error(SignOutErrorEvent());
-  //   }
-  // }
 
   // ****** Private Methods ******* //
 
@@ -330,7 +322,7 @@ class MagicService implements IMagicService {
   Future<void> _isConnected() async {
     _connected = Completer<bool>();
     final message = IsConnected().toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   void _onFrameMessage(JavaScriptMessage jsMessage) async {
@@ -443,7 +435,7 @@ class MagicService implements IMagicService {
       // ****** SIGN_OUT
       if (messageData.signOutSuccess) {
         _resetTimeOut();
-        // _disconnect.complete(true);
+        _disconnect.complete(true);
       }
       // ****** SESSION_UPDATE
       if (messageData.sessionUpdate) {
@@ -531,8 +523,7 @@ class MagicService implements IMagicService {
     }
     if (errorEvent is SignOutErrorEvent) {
       isConnected.value = true;
-      // _disconnect.complete(false);
-      disconnect();
+      _disconnect.complete(false);
     }
     if (!_connected.isCompleted) {
       _connected.complete(isConnected.value);
@@ -549,7 +540,7 @@ class MagicService implements IMagicService {
         window.w3mWebview.postMessage(JSON.stringify({data,origin}))
       })
 
-      const sendMessage = async (message) => {
+      const sendW3Message = async (message) => {
         console.log('w3mMessage posted =====> ' + JSON.stringify(message))
         iframeFL.contentWindow.postMessage(message, '*')
       }

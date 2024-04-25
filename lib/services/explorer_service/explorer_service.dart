@@ -450,6 +450,9 @@ class ExplorerService implements IExplorerService {
 
   @override
   String getWalletImageUrl(String imageId) {
+    if (imageId.isEmpty) {
+      return '';
+    }
     if (imageId.startsWith('http')) {
       return imageId;
     }
@@ -459,6 +462,9 @@ class ExplorerService implements IExplorerService {
 
   @override
   String getAssetImageUrl(String imageId) {
+    if (imageId.isEmpty) {
+      return '';
+    }
     if (imageId.startsWith('http')) {
       return imageId;
     }

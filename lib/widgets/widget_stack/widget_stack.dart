@@ -91,7 +91,7 @@ class WidgetStack extends IWidgetStack {
     } else if (pType == PlatformType.desktop || pType == PlatformType.web) {
       // add(const QRCodeAndWalletListPage());
       push(const WalletsListShortPage(), renderScreen: true);
-      // TODO fix non mobile page
+      // TODO [WidgetStack] fix non mobile page
     }
   }
 }
