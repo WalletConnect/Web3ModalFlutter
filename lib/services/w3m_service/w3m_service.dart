@@ -177,8 +177,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   ////////* PUBLIC METHODS */////////
 
+  bool _serviceInitialized = false;
+
   @override
   Future<void> init() async {
+    _serviceInitialized = false;
     if (!coreUtils.instance.isValidProjectID(_projectId)) {
       loggerService.instance.e(
           '[$runtimeType] projectId $_projectId is invalid. Please provide a valid projectId. '
@@ -206,13 +209,15 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     await _web3App.init();
 
     _currentSession = await _getStoredSession();
-    if (_currentSession?.sessionService.isMagic == true ||
-        _currentSession?.sessionService.isCoinbase == true) {
-      final chainId = _currentSession!.chainId;
-      _currentSelectedChain = W3MChainPresets.chains[chainId];
-      await _setSesionAndChainData(_currentSession!);
+    if (_currentSession != null) {
+      if (_currentSession!.sessionService.isMagic ||
+          _currentSession!.sessionService.isCoinbase) {
+        final chainId = _currentSession!.chainId;
+        _currentSelectedChain = W3MChainPresets.chains[chainId];
+        await _setSesionAndChainData(_currentSession!);
+      }
     }
-    magicService.instance.init();
+    await magicService.instance.init();
 
     await expirePreviousInactivePairings();
 
@@ -262,6 +267,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     // Get the chainId of the chain we are connected to.
     await _selectChainFromStoredId();
 
+    _serviceInitialized = true;
     _status = W3MServiceStatus.initialized;
     loggerService.instance.i('[$runtimeType] initialized');
     _notify();
@@ -399,7 +405,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     W3MChainInfo chainInfo, {
     bool logEvent = false,
   }) async {
-    _logger.i('[$runtimeType] _setLocalEthChain ${chainInfo.namespace}');
+    _logger.i('[$runtimeType] set local chain ${chainInfo.namespace}');
     _currentSelectedChain = chainInfo;
     _notify();
     // Store the chain for when we reload the app.
@@ -1060,11 +1066,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       return;
     }
 
-    // magicService.instance = MagicService(
-    //   web3app: _web3App,
-    //   enabled: magicService.instance.isEnabled.value,
-    // )..init();
-
     // Get the chain balance.
     _chainBalance = await ledgerService.instance.getBalance(
       _currentSelectedChain!.rpcUrl,
@@ -1403,7 +1404,7 @@ extension _W3MCoinbaseExtension on W3MService {
 
 extension _W3MServiceExtension on W3MService {
   void _onSessionConnect(SessionConnect? args) async {
-    _logger.i('[$runtimeType] _onSessionConnect $args');
+    _logger.i('[$runtimeType] session connect $args');
     if (args != null) {
       if (_currentSelectedChain == null) {
         final chain = NamespaceUtils.getChainIdsFromNamespaces(
@@ -1436,7 +1437,7 @@ extension _W3MServiceExtension on W3MService {
   }
 
   void _onSessionEvent(SessionEvent? args) async {
-    _logger.i('[$runtimeType] _onSessionEvent $args');
+    _logger.i('[$runtimeType] session event $args');
     onSessionEventEvent.broadcast(args);
     if (args?.name == EventsConstants.chainChanged) {
       final chainId = args?.data.toString() ?? '';
@@ -1451,7 +1452,7 @@ extension _W3MServiceExtension on W3MService {
   }
 
   void _onSessionUpdate(SessionUpdate? args) async {
-    _logger.i('[$runtimeType] _onSessionUpdate $args');
+    _logger.i('[$runtimeType] session update $args');
     if (args != null) {
       final wcSessions = _web3App.sessions.getAll();
       if (wcSessions.isEmpty) return;
@@ -1462,35 +1463,35 @@ extension _W3MServiceExtension on W3MService {
   }
 
   void _onSessionExpire(SessionExpire? args) {
-    _logger.i('[$runtimeType] _onSessionExpire $args');
+    _logger.i('[$runtimeType] session expire $args');
     onSessionExpireEvent.broadcast(args);
   }
 
   void _onSessionDelete(SessionDelete? args) {
-    _logger.i('[$runtimeType] _onSessionDelete $args');
+    _logger.i('[$runtimeType] session delete $args');
     _cleanSession(args: args);
   }
 
   void _onRelayClientConnect(EventArgs? args) {
-    _logger.i('[$runtimeType] _onRelayClientConnect');
+    _logger.i('[$runtimeType] relay client connected');
     final service = _currentSession?.sessionService ?? W3MSessionService.wc;
-    if (service.isWC) {
+    if (service.isWC && _serviceInitialized) {
       _status = W3MServiceStatus.initialized;
       _notify();
     }
   }
 
   void _onRelayClientDisconnect(EventArgs? args) {
-    _logger.i('[$runtimeType] _onRelayClientDisconnect');
+    _logger.i('[$runtimeType] relay client disconnected');
     final service = _currentSession?.sessionService ?? W3MSessionService.wc;
-    if (service.isWC) {
+    if (service.isWC && _serviceInitialized) {
       _status = W3MServiceStatus.idle;
       _notify();
     }
   }
 
   void _onRelayClientError(ErrorEvent? args) {
-    _logger.i('[$runtimeType] _onRelayClientError $args');
+    _logger.i('[$runtimeType] relay client error: $args');
     final service = _currentSession?.sessionService ?? W3MSessionService.wc;
     if (service.isWC) {
       _status = W3MServiceStatus.error;

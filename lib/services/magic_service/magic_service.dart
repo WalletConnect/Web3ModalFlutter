@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
@@ -139,10 +139,12 @@ class MagicService implements IMagicService {
           if (_isAllowedDomain(request.url)) {
             return NavigationDecision.navigate;
           }
-          // launchUrlString(
-          //   request.url,
-          //   mode: LaunchMode.externalApplication,
-          // );
+          if (isReady.value) {
+            launchUrlString(
+              request.url,
+              mode: LaunchMode.externalApplication,
+            );
+          }
           return NavigationDecision.prevent;
         },
         onWebResourceError: _onWebResourceError,
@@ -150,13 +152,14 @@ class MagicService implements IMagicService {
           _onLoadCount++;
           if (_onLoadCount < 2 && Platform.isAndroid) return;
           await _runJavascript(_web3app.core.projectId);
-          await Future.delayed(Duration(milliseconds: 200));
-          await _webViewController.enableZoom(false);
-          if (!_initialized.isCompleted) {
-            _initialized.complete(true);
-          }
-          // in case connection message or even the request itself hangs there's no other way to continue the flow than timing it out.
-          _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _timeOut);
+          Future.delayed(Duration(milliseconds: 200)).then((_) async {
+            await _webViewController.enableZoom(false);
+            try {
+              _initialized.complete(true);
+            } catch (e) {
+              loggerService.instance.e('[$runtimeType] CRASH! $e');
+            }
+          });
         },
       ),
     );
@@ -290,6 +293,11 @@ class MagicService implements IMagicService {
   Future<dynamic> disconnect() async {
     if (!isEnabled.value || !isReady.value) return;
     _disconnect = Completer<dynamic>();
+    if (!isConnected.value) {
+      _resetTimeOut();
+      _disconnect.complete(true);
+      return await _disconnect.future;
+    }
     final message = SignOut().toString();
     await _webViewController.runJavaScript('sendW3Message($message)');
     return await _disconnect.future;
@@ -314,6 +322,8 @@ class MagicService implements IMagicService {
         headers: headers,
       );
       await _webViewController.enableZoom(false);
+      // in case connection message or even the request itself hangs there's no other way to continue the flow than timing it out.
+      _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _timeOut);
     } catch (e) {
       _initialized.complete(false);
     }
@@ -596,7 +606,7 @@ class MagicService implements IMagicService {
   }
 
   void _timeOut(Timer time) {
-    if (time.tick > 15) {
+    if (time.tick > 30) {
       _resetTimeOut();
       _error(IsConnectedErrorEvent());
       isTimeout.value = true;

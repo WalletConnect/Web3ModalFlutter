@@ -8,8 +8,6 @@ import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/url/i_url_utils.dart';
 import 'package:web3modal_flutter/utils/url/launch_url_exception.dart';
 
-import 'package:web3modal_flutter/utils/w3m_logger.dart';
-
 Future<bool> _launchUrlFunc(Uri url, {launcher.LaunchMode? mode}) async {
   try {
     final success = await launcher.launchUrl(
@@ -46,7 +44,7 @@ class UrlUtils extends IUrlUtils {
   final Future<bool> Function(Uri url) canLaunchUrlFunc;
 
   @override
-  Future<bool> isInstalled(String? uri) async {
+  Future<bool> isInstalled(String? uri, {String? id}) async {
     if (uri == null || uri.isEmpty) {
       return false;
     }
@@ -65,7 +63,11 @@ class UrlUtils extends IUrlUtils {
           return await canLaunchUrlFunc(Uri.parse(uri));
         }
       } on FormatException catch (e) {
-        W3MLoggerUtil.logger.i('[$runtimeType] $e');
+        if (id != null) {
+          loggerService.instance.p('[$runtimeType] $uri ($id): ${e.message}');
+        } else {
+          loggerService.instance.p('[$runtimeType] $uri: ${e.message}');
+        }
       } catch (e) {
         rethrow;
       }
