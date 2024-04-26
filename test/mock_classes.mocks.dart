@@ -1014,10 +1014,15 @@ class MockUrlUtils extends _i1.Mock implements _i18.UrlUtils {
         returnValue: (Uri url) => _i14.Future<bool>.value(false),
       ) as _i14.Future<bool> Function(Uri));
   @override
-  _i14.Future<bool> isInstalled(String? uri) => (super.noSuchMethod(
+  _i14.Future<bool> isInstalled(
+    String? uri, {
+    String? id,
+  }) =>
+      (super.noSuchMethod(
         Invocation.method(
           #isInstalled,
           [uri],
+          {#id: id},
         ),
         returnValue: _i14.Future<bool>.value(false),
       ) as _i14.Future<bool>);

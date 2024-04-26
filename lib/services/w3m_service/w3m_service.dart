@@ -1282,13 +1282,15 @@ extension _W3MMagicExtension on W3MService {
   Future<void> _onMagicLoginEvent(MagicLoginEvent? args) async {
     _logger.p('[$runtimeType] _onMagicLoginEvent $args');
     if (args != null) {
-      final chainId = _savedChainId(args.data?.chainId.toString());
+      final chainId = args.data?.chainId.toString();
+      // final chainId = _savedChainId(args.data?.chainId.toString());
       final newChainId = chainId ?? '1';
-      final newChain = W3MChainPresets.chains[newChainId]!;
+      final newChain = W3MChainPresets.chains[chainId]!;
       _currentSelectedChain = newChain;
       final magicData = args.data?.copytWith(chainId: int.tryParse(newChainId));
       final session = W3MSession(magicData: magicData);
       await _setSesionAndChainData(session);
+      // magicService.instance.switchNetwork(chainId: newChainId);
       onModalConnect.broadcast(ModalConnect(session));
       if (_isOpen) {
         closeModal();

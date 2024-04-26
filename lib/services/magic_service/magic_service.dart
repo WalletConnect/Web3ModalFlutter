@@ -47,6 +47,8 @@ class MagicService implements IMagicService {
   String _packageName = '';
 
   late final WebViewController _webViewController;
+  WebViewController get controller => _webViewController;
+
   late final WebViewWidget _webview;
   WebViewWidget get webview => _webview;
 
@@ -153,7 +155,6 @@ class MagicService implements IMagicService {
           if (_onLoadCount < 2 && Platform.isAndroid) return;
           await _runJavascript(_web3app.core.projectId);
           Future.delayed(Duration(milliseconds: 200)).then((_) async {
-            await _webViewController.enableZoom(false);
             try {
               _initialized.complete(true);
             } catch (e) {
@@ -321,7 +322,6 @@ class MagicService implements IMagicService {
         uri.replace(queryParameters: queryParams),
         headers: headers,
       );
-      await _webViewController.enableZoom(false);
       // in case connection message or even the request itself hangs there's no other way to continue the flow than timing it out.
       _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _timeOut);
     } catch (e) {
@@ -546,12 +546,12 @@ class MagicService implements IMagicService {
       const iframeFL = document.getElementById('frame-mobile-sdk')
       
       window.addEventListener('message', ({ data, origin }) => {
-        console.log('w3mMessage received <=== ' + JSON.stringify({data,origin}))
+        // console.log('w3mMessage received <=== ' + JSON.stringify({data,origin}))
         window.w3mWebview.postMessage(JSON.stringify({data,origin}))
       })
 
       const sendW3Message = async (message) => {
-        console.log('w3mMessage posted =====> ' + JSON.stringify(message))
+        // console.log('w3mMessage posted =====> ' + JSON.stringify(message))
         iframeFL.contentWindow.postMessage(message, '*')
       }
 
@@ -569,16 +569,15 @@ class MagicService implements IMagicService {
   }
 
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
-    if (kDebugMode && Platform.isIOS) {
-      loggerService.instance.p('[$runtimeType] JS Console ${message.message}');
-    }
+    loggerService.instance.p('[$runtimeType] JS Console ${message.message}');
   }
 
   void _onWebResourceError(WebResourceError error) {
-    isReady.value = false;
-    isConnected.value = false;
-    step.value = EmailLoginStep.idle;
-    debugPrint('''
+    if (error.isForMainFrame == true) {
+      isReady.value = false;
+      isConnected.value = false;
+      step.value = EmailLoginStep.idle;
+      debugPrint('''
               [$runtimeType] Page resource error:
               code: ${error.errorCode}
               description: ${error.description}
@@ -586,6 +585,7 @@ class MagicService implements IMagicService {
               isForMainFrame: ${error.isForMainFrame}
               url: ${error.url}
             ''');
+    }
   }
 
   // ignore: unused_element
@@ -620,9 +620,11 @@ class MagicService implements IMagicService {
 
   Future<void> _setDebugMode() async {
     if (kDebugMode) {
-      await _webViewController.setOnConsoleMessage(_onDebugConsoleReceived);
       try {
         if (Platform.isIOS) {
+          await _webViewController.setOnConsoleMessage(
+            _onDebugConsoleReceived,
+          );
           final webkitCtrl =
               _webViewController.platform as WebKitWebViewController;
           webkitCtrl.setInspectable(true);

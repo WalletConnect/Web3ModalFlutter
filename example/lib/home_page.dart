@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     setState(() {});
     final walletName = _w3mService.session?.peer?.metadata.name ?? '';
-    if (walletName.contains('metamask')) {
+    if (walletName.toLowerCase().contains('metamask')) {
       _switchToPolygonIfNeeded();
     }
   }

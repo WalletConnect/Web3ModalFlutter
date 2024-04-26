@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
@@ -125,8 +123,10 @@ class _WebViewWidgetState extends State<_WebViewWidget> {
     super.dispose();
   }
 
-  void _onRequest(MagicRequestEvent? args) {
+  void _onRequest(MagicRequestEvent? args) async {
     if (args != null) {
+      final show = args.request == null;
+      await Future.delayed(Duration(milliseconds: show ? 500 : 0));
       setState(() => _show = args.request == null);
     }
   }
@@ -134,7 +134,7 @@ class _WebViewWidgetState extends State<_WebViewWidget> {
   @override
   Widget build(BuildContext context) {
     final emailEnabled = magicService.instance.isEnabled.value;
-    if (Platform.isIOS && emailEnabled && _show) {
+    if (emailEnabled && _show) {
       return SizedBox(
         width: 0.5,
         height: 0.5,
