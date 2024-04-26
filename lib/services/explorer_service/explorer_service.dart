@@ -106,14 +106,12 @@ class ExplorerService implements IExplorerService {
       return;
     }
 
-    loggerService.instance.p('[$runtimeType] init()');
     _apiUrl = await coreUtils.instance.getApiUrl();
 
     await _setInstalledWalletIdsParam();
     await _fetchInitialWallets();
 
     initialized.value = true;
-    loggerService.instance.p('[$runtimeType] init() done');
   }
 
   Future<void> _setInstalledWalletIdsParam() async {
@@ -159,6 +157,9 @@ class ExplorerService implements IExplorerService {
         sampleWallets.add(sampleWallet);
       }
     }
+    loggerService.instance.p(
+      '[$runtimeType] sample wallets: ${sampleWallets.length}',
+    );
     return sampleWallets;
   }
 
@@ -245,7 +246,11 @@ class ExplorerService implements IExplorerService {
       platform: _getPlatformType(),
     );
     // this query gives me a count of installedWalletsParam.length
-    return (await _fetchListings(params: params)).setInstalledFlag();
+    final installedWallets = await _fetchListings(params: params);
+    loggerService.instance.d(
+      '[$runtimeType] installed wallets: ${installedWallets.length}',
+    );
+    return installedWallets.setInstalledFlag();
   }
 
   Future<List<W3MWalletInfo>> _fetchFeaturedListings() async {
@@ -369,16 +374,8 @@ class ExplorerService implements IExplorerService {
       }
       _listings = currentListings;
       listings.value = _listings;
-      loggerService.instance.p(
-        '[$runtimeType] _updateRecentWalletId $walletId '
-        '${walletInfo?.toJson()}',
-      );
-    } catch (e, s) {
-      loggerService.instance.e(
-        '[$runtimeType] _updateRecentWalletId',
-        error: e,
-        stackTrace: s,
-      );
+    } catch (e) {
+      loggerService.instance.e('[$runtimeType] updating recent wallet: $e');
     }
   }
 
@@ -417,8 +414,8 @@ class ExplorerService implements IExplorerService {
     );
 
     listings.value = newListins;
-    loggerService.instance.p('[$runtimeType] _searchListings $query');
     _debouncer.run(() => isSearching.value = false);
+    loggerService.instance.d('[$runtimeType] _searchListings $query');
   }
 
   @override
@@ -450,6 +447,9 @@ class ExplorerService implements IExplorerService {
 
   @override
   String getWalletImageUrl(String imageId) {
+    if (imageId.isEmpty) {
+      return '';
+    }
     if (imageId.startsWith('http')) {
       return imageId;
     }
@@ -459,6 +459,9 @@ class ExplorerService implements IExplorerService {
 
   @override
   String getAssetImageUrl(String imageId) {
+    if (imageId.isEmpty) {
+      return '';
+    }
     if (imageId.startsWith('http')) {
       return imageId;
     }
@@ -538,7 +541,10 @@ extension on List<NativeAppData> {
   Future<List<NativeAppData>> getInstalledApps() async {
     final installedApps = <NativeAppData>[];
     for (var appData in this) {
-      bool installed = await urlUtils.instance.isInstalled(appData.schema);
+      bool installed = await urlUtils.instance.isInstalled(
+        appData.schema,
+        id: appData.id,
+      );
       if (installed) {
         installedApps.add(appData);
       }

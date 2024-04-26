@@ -1,3 +1,4 @@
+import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:web3modal_flutter/utils/util.dart';
@@ -41,7 +42,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _initializeService() async {
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
+    W3MChainPresets.chains.addAll(W3MChainPresets.extraChains);
     W3MChainPresets.chains.addAll(W3MChainPresets.testChains);
+    // W3MChainPresets.chains.removeWhere((key, _) => key != '137');
 
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
@@ -65,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // excludedWalletIds: {
       //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
       // },
+      // MORE WALLETS https://explorer.walletconnect.com/?type=wallet&chains=eip155%3A1
       // includedWalletIds: {
       //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
       //   '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
@@ -83,9 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
       //   '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', // Bitget
       // },
     );
-
-    // If you want to support just one chain uncomment this line and avoid using W3MNetworkSelectButton()
-    // _w3mService.selectChain(W3MChainPresets.chains['137']);
     //
     _w3mService.onModalConnect.subscribe(_onModalConnect);
     _w3mService.onModalNetworkChange.subscribe(_onModalNetworkChange);
@@ -96,12 +97,32 @@ class _MyHomePageState extends State<MyHomePage> {
     _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
     _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
     //
+    _w3mService.web3App!.core.relayClient.onRelayClientConnect.subscribe(
+      _onRelayClientConnect,
+    );
+    _w3mService.web3App!.core.relayClient.onRelayClientError.subscribe(
+      _onRelayClientError,
+    );
+    _w3mService.web3App!.core.relayClient.onRelayClientDisconnect.subscribe(
+      _onRelayClientDisconnect,
+    );
+    //
     await _w3mService.init();
     setState(() {});
   }
 
   @override
   void dispose() {
+    //
+    _w3mService.web3App!.core.relayClient.onRelayClientConnect.unsubscribe(
+      _onRelayClientConnect,
+    );
+    _w3mService.web3App!.core.relayClient.onRelayClientError.unsubscribe(
+      _onRelayClientError,
+    );
+    _w3mService.web3App!.core.relayClient.onRelayClientDisconnect.unsubscribe(
+      _onRelayClientDisconnect,
+    );
     //
     _w3mService.onModalConnect.unsubscribe(_onModalConnect);
     _w3mService.onModalNetworkChange.unsubscribe(_onModalNetworkChange);
@@ -124,46 +145,49 @@ class _MyHomePageState extends State<MyHomePage> {
       '[ExampleApp] _onModalConnect address ${_w3mService.session!.address}',
     );
     setState(() {});
-    _switchToPolygonIfNeeded();
+    final walletName = _w3mService.session?.peer?.metadata.name ?? '';
+    if (walletName.toLowerCase().contains('metamask')) {
+      _switchToPolygonIfNeeded();
+    }
   }
 
   void _switchToPolygonIfNeeded() {
-    if (_w3mService.session!.email.isNotEmpty) {
-      return;
-    }
     final polygon = W3MChainPresets.chains['137']!;
-    final approvedChains = _w3mService.getApprovedChains() ?? [];
-    if (!approvedChains.contains(polygon.namespace)) {
-      Future.delayed(
-        const Duration(milliseconds: 500),
-        () {
-          showDialog(
-            context: context,
-            builder: (_) {
-              return AlertDialog(
-                content: const Text('Switch to Polygon?'),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Cancel'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      _w3mService.requestSwitchToChain(polygon);
-                      _w3mService.launchConnectedWallet();
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Switch'),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      );
-    }
+    // final approvedChains = _w3mService.getApprovedChains() ?? [];
+    // if (!approvedChains.contains(polygon.namespace)) {
+    Future.delayed(
+      const Duration(milliseconds: 500),
+      () {
+        showDialog(
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              content: const Text('Switch to Polygon?'),
+              actions: [
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    _w3mService.launchConnectedWallet();
+                    _w3mService.requestAddChain(polygon).then(
+                      (value) {
+                        final success = value == true;
+                        debugPrint('[ExampleApp] then success $success');
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  },
+                  child: const Text('Switch'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    // }
   }
 
   void _onModalNetworkChange(ModalNetworkChange? event) {
@@ -200,6 +224,24 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onSessionEvent(SessionEvent? event) {
     debugPrint('[ExampleApp] _onSessionEvent ${event?.toString()}');
     setState(() {});
+  }
+
+  void _onRelayClientConnect(EventArgs? event) {
+    setState(() {});
+    showTextToast(text: 'Relay connected', context: context);
+  }
+
+  void _onRelayClientError(EventArgs? event) {
+    debugPrint('[ExampleApp] _onRelayClientError ${event?.toString()}');
+    setState(() {});
+  }
+
+  void _onRelayClientDisconnect(EventArgs? event) {
+    setState(() {});
+    showTextToast(
+      text: 'Relay disconnected: ${event?.toString()}',
+      context: context,
+    );
   }
 
   @override
@@ -245,7 +287,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               _ButtonsView(w3mService: _w3mService),
-              // _CustomButtonsView(w3mService: _w3mService),
               const Divider(height: 0.0, color: Colors.transparent),
               _ConnectedView(w3mService: _w3mService)
             ],

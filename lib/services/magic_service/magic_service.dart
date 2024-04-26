@@ -38,20 +38,24 @@ class MagicService implements IMagicService {
     'wallet_addEthereumChain',
   ];
   //
-  late final Key _key;
+  // late final Key _key;
   final IWeb3App _web3app;
   Web3ModalTheme? _currentTheme;
   Timer? _timeOutTimer;
   String? _connectionChainId;
   int _onLoadCount = 0;
+  String _packageName = '';
 
   late final WebViewController _webViewController;
+  WebViewController get controller => _webViewController;
+
   late final WebViewWidget _webview;
   WebViewWidget get webview => _webview;
 
   late Completer<bool> _initialized;
   late Completer<bool> _connected;
   late Completer<dynamic> _response;
+  late Completer<dynamic> _disconnect;
 
   @override
   Event<MagicSessionEvent> onMagicLoginRequest = Event<MagicSessionEvent>();
@@ -83,17 +87,15 @@ class MagicService implements IMagicService {
   MagicService({
     required IWeb3App web3app,
     bool enabled = false,
-    Key? key,
-  })  : _web3app = web3app,
-        _key = key ?? Key('magic_service') {
+    // Key? key,
+  }) : _web3app = web3app //,
+  // _key = key ?? Key('magic_service')
+  {
     isEnabled.value = enabled;
-    loggerService.instance.p('[$runtimeType] enabled $enabled');
     if (isEnabled.value) {
       _webViewController = WebViewController();
-      _webview = WebViewWidget(
-        key: Key('${_key.hashCode}'),
-        controller: _webViewController,
-      );
+      // key: Key('${_key.hashCode}'),
+      _webview = WebViewWidget(controller: _webViewController);
       isReady.addListener(_readyListener);
     }
   }
@@ -104,8 +106,6 @@ class MagicService implements IMagicService {
       _awaitReadyness.complete(true);
     }
   }
-
-  String _packageName = '';
 
   @override
   Future<void> init() async {
@@ -141,7 +141,12 @@ class MagicService implements IMagicService {
           if (_isAllowedDomain(request.url)) {
             return NavigationDecision.navigate;
           }
-          launchUrlString(request.url, mode: LaunchMode.externalApplication);
+          if (isReady.value) {
+            launchUrlString(
+              request.url,
+              mode: LaunchMode.externalApplication,
+            );
+          }
           return NavigationDecision.prevent;
         },
         onWebResourceError: _onWebResourceError,
@@ -149,13 +154,13 @@ class MagicService implements IMagicService {
           _onLoadCount++;
           if (_onLoadCount < 2 && Platform.isAndroid) return;
           await _runJavascript(_web3app.core.projectId);
-          await Future.delayed(Duration(milliseconds: 200));
-          await _webViewController.enableZoom(false);
-          if (!_initialized.isCompleted) {
-            _initialized.complete(true);
-          }
-          // in case connection message or even the request itself hangs there's no other way to continue the flow than timing it out.
-          _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _timeOut);
+          Future.delayed(Duration(milliseconds: 200)).then((_) async {
+            try {
+              _initialized.complete(true);
+            } catch (e) {
+              loggerService.instance.e('[$runtimeType] CRASH! $e');
+            }
+          });
         },
       ),
     );
@@ -180,7 +185,7 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     _connectionChainId = chainId ?? _connectionChainId;
     final message = ConnectEmail(email: value).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -188,7 +193,7 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     step.value = EmailLoginStep.loading;
     final message = UpdateEmail(email: value).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -196,7 +201,7 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     step.value = EmailLoginStep.loading;
     final message = UpdateEmailPrimaryOtp(otp: otp).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -204,7 +209,7 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     step.value = EmailLoginStep.loading;
     final message = UpdateEmailSecondaryOtp(otp: otp).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -212,14 +217,14 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     step.value = EmailLoginStep.loading;
     final message = ConnectOtp(otp: otp).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
   Future<void> getChainId() async {
     if (!isEnabled.value || !isReady.value) return;
     final message = GetChainId().toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -227,7 +232,7 @@ class MagicService implements IMagicService {
     if (!isEnabled.value || !isReady.value) return;
     _currentTheme = theme;
     final message = SyncTheme(theme: theme).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   void _syncDappData() async {
@@ -237,7 +242,7 @@ class MagicService implements IMagicService {
       projectId: _web3app.core.projectId,
       sdkVersion: 'flutter-${StringConstants.X_SDK_VERSION}',
     ).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -248,14 +253,14 @@ class MagicService implements IMagicService {
 
   Future<void> _getUser(String? chainId) async {
     final message = GetUser(chainId: chainId).toString();
-    return await _webViewController.runJavaScript('sendMessage($message)');
+    return await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
   Future<void> switchNetwork({required String chainId}) async {
     if (!isEnabled.value || !isReady.value) return;
     final message = SwitchNetwork(chainId: chainId).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
@@ -282,23 +287,22 @@ class MagicService implements IMagicService {
     final method = parameters['method'];
     final params = parameters['params'] as List;
     final message = RpcRequest(method: method, params: params).toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   @override
-  Future<void> disconnect() async {
+  Future<dynamic> disconnect() async {
     if (!isEnabled.value || !isReady.value) return;
+    _disconnect = Completer<dynamic>();
+    if (!isConnected.value) {
+      _resetTimeOut();
+      _disconnect.complete(true);
+      return await _disconnect.future;
+    }
     final message = SignOut().toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
-    // _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _disconnect);
+    await _webViewController.runJavaScript('sendW3Message($message)');
+    return await _disconnect.future;
   }
-
-  // void _disconnect(Timer time) async {
-  //   if (time.tick > 2) {
-  //     _resetTimeOut();
-  //     _error(SignOutErrorEvent());
-  //   }
-  // }
 
   // ****** Private Methods ******* //
 
@@ -318,7 +322,8 @@ class MagicService implements IMagicService {
         uri.replace(queryParameters: queryParams),
         headers: headers,
       );
-      await _webViewController.enableZoom(false);
+      // in case connection message or even the request itself hangs there's no other way to continue the flow than timing it out.
+      _timeOutTimer ??= Timer.periodic(Duration(seconds: 1), _timeOut);
     } catch (e) {
       _initialized.complete(false);
     }
@@ -327,7 +332,7 @@ class MagicService implements IMagicService {
   Future<void> _isConnected() async {
     _connected = Completer<bool>();
     final message = IsConnected().toString();
-    await _webViewController.runJavaScript('sendMessage($message)');
+    await _webViewController.runJavaScript('sendW3Message($message)');
   }
 
   void _onFrameMessage(JavaScriptMessage jsMessage) async {
@@ -378,8 +383,13 @@ class MagicService implements IMagicService {
       }
       // ****** UPDAET_EMAIL
       if (messageData.updateEmailSuccess) {
+        final action = messageData.getPayloadMapKey<String>('action');
+        if (action == 'VERIFY_SECONDARY_OTP') {
+          step.value = EmailLoginStep.verifyOtp2;
+        } else {
+          step.value = EmailLoginStep.verifyOtp;
+        }
         analyticsService.instance.sendEvent(EmailEdit());
-        step.value = EmailLoginStep.verifyOtp;
       }
       // ****** UPDATE_EMAIL_PRIMARY_OTP
       if (messageData.updateEmailPrimarySuccess) {
@@ -435,6 +445,7 @@ class MagicService implements IMagicService {
       // ****** SIGN_OUT
       if (messageData.signOutSuccess) {
         _resetTimeOut();
+        _disconnect.complete(true);
       }
       // ****** SESSION_UPDATE
       if (messageData.sessionUpdate) {
@@ -451,7 +462,8 @@ class MagicService implements IMagicService {
         _error(ConnectEmailErrorEvent(message: message));
       }
       if (messageData.updateEmailError) {
-        _error(UpdateEmailErrorEvent());
+        final message = messageData.payload?['message']?.toString();
+        _error(UpdateEmailErrorEvent(message: message));
       }
       if (messageData.updateEmailPrimaryOtpError) {
         final message = messageData.payload?['message']?.toString();
@@ -521,7 +533,7 @@ class MagicService implements IMagicService {
     }
     if (errorEvent is SignOutErrorEvent) {
       isConnected.value = true;
-      disconnect();
+      _disconnect.complete(false);
     }
     if (!_connected.isCompleted) {
       _connected.complete(isConnected.value);
@@ -534,12 +546,12 @@ class MagicService implements IMagicService {
       const iframeFL = document.getElementById('frame-mobile-sdk')
       
       window.addEventListener('message', ({ data, origin }) => {
-        console.log('w3mMessage received <=== ' + JSON.stringify({data,origin}))
+        // console.log('w3mMessage received <=== ' + JSON.stringify({data,origin}))
         window.w3mWebview.postMessage(JSON.stringify({data,origin}))
       })
 
-      const sendMessage = async (message) => {
-        console.log('w3mMessage posted =====> ' + JSON.stringify(message))
+      const sendW3Message = async (message) => {
+        // console.log('w3mMessage posted =====> ' + JSON.stringify(message))
         iframeFL.contentWindow.postMessage(message, '*')
       }
 
@@ -557,16 +569,15 @@ class MagicService implements IMagicService {
   }
 
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
-    if (kDebugMode && Platform.isIOS) {
-      loggerService.instance.p('[$runtimeType] JS Console ${message.message}');
-    }
+    loggerService.instance.p('[$runtimeType] JS Console ${message.message}');
   }
 
   void _onWebResourceError(WebResourceError error) {
-    isReady.value = false;
-    isConnected.value = false;
-    step.value = EmailLoginStep.idle;
-    debugPrint('''
+    if (error.isForMainFrame == true) {
+      isReady.value = false;
+      isConnected.value = false;
+      step.value = EmailLoginStep.idle;
+      debugPrint('''
               [$runtimeType] Page resource error:
               code: ${error.errorCode}
               description: ${error.description}
@@ -574,6 +585,7 @@ class MagicService implements IMagicService {
               isForMainFrame: ${error.isForMainFrame}
               url: ${error.url}
             ''');
+    }
   }
 
   // ignore: unused_element
@@ -594,7 +606,7 @@ class MagicService implements IMagicService {
   }
 
   void _timeOut(Timer time) {
-    if (time.tick > 15) {
+    if (time.tick > 30) {
       _resetTimeOut();
       _error(IsConnectedErrorEvent());
       isTimeout.value = true;
@@ -608,9 +620,11 @@ class MagicService implements IMagicService {
 
   Future<void> _setDebugMode() async {
     if (kDebugMode) {
-      await _webViewController.setOnConsoleMessage(_onDebugConsoleReceived);
       try {
         if (Platform.isIOS) {
+          await _webViewController.setOnConsoleMessage(
+            _onDebugConsoleReceived,
+          );
           final webkitCtrl =
               _webViewController.platform as WebKitWebViewController;
           webkitCtrl.setInspectable(true);

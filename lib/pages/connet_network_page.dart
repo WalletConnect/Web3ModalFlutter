@@ -121,9 +121,7 @@ class _ConnectNetworkPageState extends State<ConnectNetworkPage>
     //
     final chainId = widget.chainInfo.chainId;
     final imageId = AssetUtil.getChainIconId(chainId) ?? '';
-    final imageUrl = imageId.isEmpty
-        ? ''
-        : explorerService.instance.getAssetImageUrl(imageId);
+    final imageUrl = explorerService.instance.getAssetImageUrl(imageId);
     //
     return Web3ModalNavbar(
       title: widget.chainInfo.chainName,

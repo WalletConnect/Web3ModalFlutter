@@ -9,6 +9,7 @@ import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
+import 'package:web3modal_flutter/widgets/loader.dart';
 
 class NetworkButton extends StatelessWidget {
   const NetworkButton({
@@ -34,7 +35,10 @@ class NetworkButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
-    final imageUrl = chainInfo != null ? _getImageUrl(chainInfo!) : null;
+    String imageUrl = '';
+    if (chainInfo != null && (chainInfo!.chainIcon ?? '').isNotEmpty) {
+      imageUrl = _getImageUrl(chainInfo!);
+    }
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final borderRadius = radiuses.isSquare() ? 0.0 : size.height / 2;
     return BaseButton(
@@ -72,14 +76,15 @@ class NetworkButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           serviceStatus.isLoading
-              ? Container(
-                  width: size.height * 0.7,
-                  height: size.height * 0.7,
-                  padding: const EdgeInsets.all(kPadding6),
-                  child: CircularProgressIndicator(
-                    color: themeColors.accent100,
-                    strokeWidth: size == BaseButtonSize.small ? 1.0 : 1.5,
-                  ),
+              ? Row(
+                  children: [
+                    const SizedBox.square(dimension: kPadding6),
+                    CircularLoader(
+                      size: size.height * 0.4,
+                      strokeWidth: size == BaseButtonSize.small ? 1.0 : 1.5,
+                    ),
+                    const SizedBox.square(dimension: kPadding6),
+                  ],
                 )
               : RoundedIcon(
                   assetPath: 'assets/icons/network.svg',

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
-import 'package:web3modal_flutter/theme/constants.dart';
-import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:web3modal_flutter/widgets/loader.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/searchbar.dart';
 
 class InputEmailWidget extends StatefulWidget {
@@ -31,6 +30,7 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
   late TextEditingController _controller;
   bool _ready = false;
   bool _timedOut = false;
+  bool _submitted = false;
   //
   @override
   void initState() {
@@ -66,13 +66,13 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
     return Web3ModalSearchBar(
-      enabled: !_timedOut && _ready,
+      enabled: !_timedOut && _ready && !_submitted,
       controller: _controller,
       initialValue: _controller.text,
       hint: 'Email',
       iconPath: 'assets/icons/mail.svg',
       textInputType: TextInputType.emailAddress,
-      textInputAction: TextInputAction.go,
+      textInputAction: TextInputAction.done,
       onSubmitted: _validate,
       debounce: false,
       onTextChanged: (value) {
@@ -80,39 +80,19 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
       },
       onFocusChange: _onFocusChange,
       suffixIcon: widget.suffixIcon ??
-          (!magicService.instance.isReady.value
+          (!magicService.instance.isReady.value || _submitted
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      width: 20.0,
-                      height: 20.0,
-                      child: CircularProgressIndicator(
-                        color: themeColors.accent100,
-                        strokeWidth: 2.0,
-                      ),
-                    ),
+                    CircularLoader(size: 20.0, strokeWidth: 2.0),
                   ],
                 )
               : ValueListenableBuilder<String>(
                   valueListenable: magicService.instance.email,
                   builder: (context, value, _) {
-                    if (!hasFocus) {
+                    if (!hasFocus || _invalidEmail(value)) {
                       return SizedBox.shrink();
-                    }
-                    if (_invalidEmail(value)) {
-                      return GestureDetector(
-                        onTap: _clearEmail,
-                        child: Padding(
-                          padding: const EdgeInsets.all(kPadding8),
-                          child: SvgPicture.asset(
-                            AssetUtil.getThemedAsset(
-                                context, 'input_cancel.svg'),
-                            package: 'web3modal_flutter',
-                          ),
-                        ),
-                      );
                     }
                     return GestureDetector(
                       onTap: () => _validate(value),
@@ -145,9 +125,13 @@ class _InputEmailWidgetState extends State<InputEmailWidget> {
 
   void _validate(String value) {
     if (_invalidEmail(value)) {
+      if (value.isEmpty) {
+        _clearEmail();
+      }
       return;
     }
     widget.onSubmitted(value);
+    setState(() => _submitted = true);
   }
 
   void _clearEmail() {

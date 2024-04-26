@@ -5,7 +5,7 @@ import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 abstract class IUrlUtils {
   const IUrlUtils();
 
-  Future<bool> isInstalled(String? uri);
+  Future<bool> isInstalled(String? uri, {String? id});
 
   Future<bool> launchUrl(Uri url, {LaunchMode? mode});
 

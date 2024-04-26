@@ -253,7 +253,7 @@ extension on SessionRequestParams {
         } catch (e, s) {
           throw W3MCoinbaseException('Unrecognized chainId $chainId', e, s);
         }
-      // TODO implement after Coinbase merges this PR https://github.com/MobileWalletProtocol/wallet-mobile-sdk/pull/327
+      // TODO [CoinbaseService] implement after Coinbase merges this PR https://github.com/MobileWalletProtocol/wallet-mobile-sdk/pull/327
       // case 'wallet_watchAsset':
       //   return WatchAsset(params: params);
       default:
@@ -261,7 +261,7 @@ extension on SessionRequestParams {
     }
   }
 
-  // TODO this should be an utils on WCFV2
+  // TODO [CoinbaseService] this should be an utils on WCFV2
   String _getAddressFromParamsList(dynamic params) {
     return (params as List).firstWhere((p) {
       try {

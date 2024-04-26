@@ -274,20 +274,55 @@ class EIP155 {
           address: w3mService.session!.address!,
         );
       case 'write':
-        return _writeToSmartContract(
-          w3mService: w3mService,
-          rpcUrl: 'https://ethereum-sepolia.publicnode.com',
-          address: w3mService.session!.address!,
+        // `transfer` function such as:
+        // {
+        //   "inputs": [
+        //     {"internalType": "address", "name": "to", "type": "address"},
+        //     {"internalType": "uint256", "name": "value", "type": "uint256"}
+        //   ],
+        //   "name": "transfer",
+        //   "outputs": [
+        //     {"internalType": "bool", "name": "", "type": "bool"}
+        //   ],
+        //   "stateMutability": "nonpayable",
+        //   "type": "function"
+        // },
+        return w3mService.requestWriteContract(
           topic: w3mService.session?.topic ?? '',
           chainId: 'eip155:11155111',
-          contract: deployedContract,
+          rpcUrl: 'https://ethereum-sepolia.publicnode.com',
+          deployedContract: deployedContract,
+          functionName: 'transfer',
           transaction: Transaction(
             from: EthereumAddress.fromHex(w3mService.session!.address!),
-            to: EthereumAddress.fromHex(
-                '0x59e2f66C0E96803206B6486cDb39029abAE834c0'),
-            value: EtherAmount.fromInt(EtherUnit.finney, 10), // == 0.010
           ),
+          parameters: [
+            EthereumAddress.fromHex(
+              '0x59e2f66C0E96803206B6486cDb39029abAE834c0',
+            ),
+            EtherAmount.fromInt(EtherUnit.finney, 10).getInWei, // == 0.010
+          ],
         );
+      // payable function with no parameters such as:
+      // {
+      //   "inputs": [],
+      //   "name": "functionName",
+      //   "outputs": [],
+      //   "stateMutability": "payable",
+      //   "type": "function"
+      // },
+      // return w3mService.requestWriteContract(
+      //   topic: w3mService.session?.topic ?? '',
+      //   chainId: 'eip155:11155111',
+      //   rpcUrl: 'https://ethereum-sepolia.publicnode.com',
+      //   deployedContract: deployedContract,
+      //   functionName: 'functionName',
+      //   transaction: Transaction(
+      //     from: EthereumAddress.fromHex(w3mService.session!.address!),
+      //     value: EtherAmount.fromInt(EtherUnit.finney, 1),
+      //   ),
+      //   parameters: [],
+      // );
       default:
         return Future.value();
     }
@@ -333,24 +368,5 @@ class EIP155 {
       'totalSupply': oCcy.format(total),
       'balance': oCcy.format(balance),
     };
-  }
-
-  static Future<dynamic> _writeToSmartContract({
-    required W3MService w3mService,
-    required String rpcUrl,
-    required String topic,
-    required String chainId,
-    required String address,
-    required DeployedContract contract,
-    required Transaction transaction,
-  }) async {
-    return await w3mService.requestWriteContract(
-      topic: topic,
-      chainId: chainId,
-      rpcUrl: rpcUrl,
-      deployedContract: contract,
-      functionName: 'transfer',
-      transaction: transaction,
-    );
   }
 }

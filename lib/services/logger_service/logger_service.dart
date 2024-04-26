@@ -33,7 +33,7 @@ class LoggerService implements ILoggerService {
     Object? error,
     StackTrace? stackTrace,
   }) {
-    // TODO fix this
+    // TODO [LoggerService] fix this
     if (_projectId == 'cad4956f31a5e40a00b62865b030c6f8') {
       _logger.i(message, time: time, error: error, stackTrace: stackTrace);
     }

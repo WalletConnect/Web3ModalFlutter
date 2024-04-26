@@ -48,13 +48,9 @@ class _EditEmailPageState extends State<EditEmailPage> {
   void _onMagicErrorEvent(MagicErrorEvent? event) {
     toastUtils.instance.show(ToastMessage(
       type: ToastType.error,
-      text: event?.error ?? 'Something went wrong.',
+      text: event?.error ?? 'An error occurred.',
     ));
-    // if (event is UpdateEmailErrorEvent) {
-    //   _goBack();
-    // } else {
     setState(() {});
-    // }
   }
 
   void _goBack() {

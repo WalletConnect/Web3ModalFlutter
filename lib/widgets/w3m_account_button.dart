@@ -5,6 +5,7 @@ import 'package:web3modal_flutter/services/explorer_service/explorer_service_sin
 import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -12,6 +13,7 @@ import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_account_avatar.dart';
 import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
+import 'package:web3modal_flutter/widgets/loader.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
 
 class W3MAccountButton extends StatefulWidget {
@@ -45,7 +47,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     super.initState();
     _w3mServiceUpdated();
     widget.service.addListener(_w3mServiceUpdated);
-    // TODO this should go in W3MService but for that, init() method of W3MService should receive a BuildContext, which would be a breaking change
+    // TODO [W3MAccountButton] this should go in W3MService but for that, init() method of W3MService should receive a BuildContext, which would be a breaking change
     magicService.instance.onMagicRpcRequest.subscribe(_approveSign);
     magicService.instance.onMagicLoginRequest.subscribe(_loginRequested);
   }
@@ -63,9 +65,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
       _address = widget.service.session?.address ?? '';
       final chainId = widget.service.selectedChain?.chainId ?? '';
       final imageId = AssetUtil.getChainIconId(chainId) ?? '';
-      _tokenImage = imageId.isEmpty
-          ? ''
-          : explorerService.instance.getAssetImageUrl(imageId);
+      _tokenImage = explorerService.instance.getAssetImageUrl(imageId);
       _balance = widget.service.chainBalance;
       _tokenName = widget.service.selectedChain?.tokenName;
     });
@@ -103,7 +103,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final borderRadius = radiuses.isSquare() ? 0.0 : widget.size.height / 2;
     final enabled = _address.isNotEmpty && widget.service.status.isInitialized;
-    // TODO this button should be able to be disable by passing a null onTap action
+    // TODO [W3MAccountButton] this button should be able to be disable by passing a null onTap action
     // I should decouple an AccountButton from W3MAccountButton like on ConnectButton and NetworkButton
     return BaseButton(
       size: widget.size,
@@ -316,10 +316,15 @@ class _BalanceButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           isLoading
-              ? SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 1.5),
+              ? Row(
+                  children: [
+                    const SizedBox.square(dimension: kPadding6),
+                    CircularLoader(
+                      size: 16.0,
+                      strokeWidth: 1.5,
+                    ),
+                    const SizedBox.square(dimension: kPadding6),
+                  ],
                 )
               : (tokenImage ?? '').isEmpty
                   ? RoundedIcon(

@@ -174,6 +174,18 @@ class W3MChainPresets {
         url: 'https://mumbai.polygonscan.com',
       ),
     ),
+    '80002': W3MChainInfo(
+      chainName: 'Amoy',
+      namespace: 'eip155:80002',
+      chainId: '80002',
+      tokenName: 'MATIC',
+      rpcUrl: 'https://rpc-amoy.polygon.technology/',
+      extraRpcUrls: [],
+      blockExplorer: W3MBlockExplorer(
+        name: 'Explorer',
+        url: 'https://amoy.polygonscan.com',
+      ),
+    ),
   };
 
   static Map<String, W3MChainInfo> extraChains = {
