@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -127,6 +128,7 @@ class EIP155 {
               '0x59e2f66C0E96803206B6486cDb39029abAE834c0',
             ),
             value: EtherAmount.fromInt(EtherUnit.finney, 11), // == 0.011
+            nonce: Random().nextInt(10000),
           ),
         );
       case EIP155UIMethods.walletWatchAsset:

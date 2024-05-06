@@ -38,7 +38,6 @@ class MagicService implements IMagicService {
     'wallet_addEthereumChain',
   ];
   //
-  // late final Key _key;
   final IWeb3App _web3app;
   Web3ModalTheme? _currentTheme;
   Timer? _timeOutTimer;
@@ -55,7 +54,7 @@ class MagicService implements IMagicService {
   late Completer<bool> _initialized;
   late Completer<bool> _connected;
   late Completer<dynamic> _response;
-  late Completer<dynamic> _disconnect;
+  late Completer<bool> _disconnect;
 
   @override
   Event<MagicSessionEvent> onMagicLoginRequest = Event<MagicSessionEvent>();
@@ -84,17 +83,11 @@ class MagicService implements IMagicService {
   final newEmail = ValueNotifier<String>('');
   final step = ValueNotifier<EmailLoginStep>(EmailLoginStep.idle);
 
-  MagicService({
-    required IWeb3App web3app,
-    bool enabled = false,
-    // Key? key,
-  }) : _web3app = web3app //,
-  // _key = key ?? Key('magic_service')
-  {
+  MagicService({required IWeb3App web3app, bool enabled = false})
+      : _web3app = web3app {
     isEnabled.value = enabled;
     if (isEnabled.value) {
       _webViewController = WebViewController();
-      // key: Key('${_key.hashCode}'),
       _webview = WebViewWidget(controller: _webViewController);
       isReady.addListener(_readyListener);
     }
@@ -291,17 +284,17 @@ class MagicService implements IMagicService {
   }
 
   @override
-  Future<dynamic> disconnect() async {
-    if (!isEnabled.value || !isReady.value) return;
-    _disconnect = Completer<dynamic>();
+  Future<bool> disconnect() async {
+    if (!isEnabled.value || !isReady.value) return false;
+    _disconnect = Completer<bool>();
     if (!isConnected.value) {
       _resetTimeOut();
       _disconnect.complete(true);
-      return await _disconnect.future;
+      return (await _disconnect.future);
     }
     final message = SignOut().toString();
     await _webViewController.runJavaScript('sendW3Message($message)');
-    return await _disconnect.future;
+    return (await _disconnect.future);
   }
 
   // ****** Private Methods ******* //
@@ -546,12 +539,12 @@ class MagicService implements IMagicService {
       const iframeFL = document.getElementById('frame-mobile-sdk')
       
       window.addEventListener('message', ({ data, origin }) => {
-        // console.log('w3mMessage received <=== ' + JSON.stringify({data,origin}))
+        console.log('w3mMessage received <=== ' + JSON.stringify({data,origin}))
         window.w3mWebview.postMessage(JSON.stringify({data,origin}))
       })
 
       const sendW3Message = async (message) => {
-        // console.log('w3mMessage posted =====> ' + JSON.stringify(message))
+        console.log('w3mMessage posted =====> ' + JSON.stringify(message))
         iframeFL.contentWindow.postMessage(message, '*')
       }
 

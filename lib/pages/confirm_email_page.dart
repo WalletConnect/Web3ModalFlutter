@@ -31,7 +31,7 @@ class _ConfirmEmailPageState extends State<ConfirmEmailPage> {
   @override
   void dispose() {
     magicService.instance.onMagicError.unsubscribe(_onMagicErrorEvent);
-    _dispose();
+    magicService.instance.step.value = EmailLoginStep.idle;
     super.dispose();
   }
 
@@ -47,13 +47,9 @@ class _ConfirmEmailPageState extends State<ConfirmEmailPage> {
     }
   }
 
-  void _dispose() {
-    magicService.instance.setEmail('');
-    magicService.instance.step.value = EmailLoginStep.idle;
-  }
-
   void _goBack() {
-    _dispose();
+    magicService.instance.step.value = EmailLoginStep.idle;
+    magicService.instance.setEmail('');
     FocusManager.instance.primaryFocus?.unfocus();
     widgetStack.instance.pop();
   }

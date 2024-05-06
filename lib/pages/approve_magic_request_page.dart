@@ -22,9 +22,7 @@ class _ApproveTransactionPageState extends State<ApproveTransactionPage> {
       noClose: true,
       safeAreaLeft: true,
       safeAreaRight: true,
-      body: SafeArea(
-        child: magicService.instance.webview,
-      ),
+      body: magicService.instance.webview,
     );
   }
 }
