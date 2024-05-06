@@ -216,8 +216,12 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         _currentSelectedChain = W3MChainPresets.chains[chainId];
         await _setSesionAndChainData(_currentSession!);
       }
+      if (_currentSession!.sessionService.isMagic) {
+        await magicService.instance.init();
+      }
+    } else {
+      magicService.instance.init();
     }
-    await magicService.instance.init();
 
     await expirePreviousInactivePairings();
 
@@ -243,7 +247,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       }
     } else {
       // Check for other type of sessions stored
-      // final storedSession = await _getStoredSession();
       if (_currentSession != null) {
         if (_currentSession!.sessionService.isCoinbase) {
           final isCbConnected = await cbIsConnected();
@@ -251,16 +254,13 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
             await _cleanSession();
           }
         } else if (_currentSession!.sessionService.isMagic) {
-          // Every time the app gets killed MAgic service will treat the user as disconnected
+          // Every time the app gets killed Magic service will treat the user as disconnected
           // So we will need to treat magic session differently
-          // await _storeSession(storedSession);
           final email = _currentSession!.email;
           magicService.instance.setEmail(email);
         } else {
           await _cleanSession();
         }
-      } else {
-        magicService.instance.disconnect();
       }
     }
 
@@ -764,6 +764,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     _status = W3MServiceStatus.initializing;
     _notify();
+
     if (_currentSession?.sessionService.isCoinbase == true) {
       try {
         await cbResetSession();
