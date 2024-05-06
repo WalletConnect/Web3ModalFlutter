@@ -134,18 +134,18 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       }
     }
 
-    loggerService.instance = LoggerService(
-      level: logLevel,
-      projectId: projectId ?? _web3App.core.projectId,
-      debugMode: kDebugMode,
-    );
-
     _web3App = web3App ??
         Web3App(
           core: Core(projectId: projectId!),
           metadata: metadata!,
         );
-    _projectId = projectId ?? _web3App.core.projectId;
+    _projectId = _web3App.core.projectId;
+
+    loggerService.instance = LoggerService(
+      level: logLevel,
+      projectId: _projectId,
+      debugMode: kDebugMode,
+    );
 
     _setRequiredNamespaces(requiredNamespaces);
     _setOptionalNamespaces(optionalNamespaces);

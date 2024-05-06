@@ -61,8 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
           universal: 'https://web3modal.com',
         ),
       ),
-      enableAnalytics: true, // Optional - null by default
-      enableEmail: true, // Optional - false by default
+      // enableAnalytics: true, // OPTIONAL - null by default
+      // enableEmail: true, // OPTIONAL - false by default
       // requiredNamespaces: {},
       // optionalNamespaces: {},
       // excludedWalletIds: {
