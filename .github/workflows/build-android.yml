@@ -81,7 +81,7 @@ jobs:
         NEXT_BUILD=$(grep 'versionCode' $GRADLE_FILE | cut -d'=' -f2)
 
         # Build Android app with flutter
-        flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release
+        flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --flavor stable --release
         
     # Setup Node
     - name: Setup Node

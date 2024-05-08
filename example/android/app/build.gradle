@@ -72,6 +72,9 @@ android {
             applicationIdSuffix ".internal"
             // versionNameSuffix "-beta"
         }
+        stable {
+            dimension "version"
+        }
     }
 
     buildTypes {
