@@ -1,7 +1,7 @@
-## 3.2.0-beta07
+## 3.2.0
 
-- Email Login support
-- Analytics API support
+- New feature: Email Wallet. Now you can create wallets by just using an email and graduate them to self-custodial if desired! Just toggle `enableEmail` on `W3MService` instance.
+- New feature: Analytics API support. Just toggle `enableAnalytics` flag on `W3MService` instance to support.
 
 ## 3.1.2
 
