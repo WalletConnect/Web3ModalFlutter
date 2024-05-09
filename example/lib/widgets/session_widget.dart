@@ -234,8 +234,21 @@ class SessionWidgetState extends State<SessionWidget> {
     children.add(const Divider());
     final onSepolia = chainMetadata.w3mChainInfo.chainId == '11155111';
     if (!onSepolia) {
-      children.add(const Text('Connect to Sepolia to Test'));
+      children.add(
+        const Text(
+          'Test USDT Contract on Ethereum \nor switch to Sepolia to try a test Contract',
+          textAlign: TextAlign.center,
+        ),
+      );
+    } else {
+      children.add(
+        const Text(
+          'Test AAVE Token Contract on Sepolia \nor switch to Ethereum to try USDT',
+          textAlign: TextAlign.center,
+        ),
+      );
     }
+    final onMainnet = chainMetadata.w3mChainInfo.chainId == '1';
 
     children.addAll([
       Container(
@@ -245,15 +258,33 @@ class SessionWidgetState extends State<SessionWidget> {
         child: ElevatedButton(
           onPressed: onSepolia
               ? () async {
-                  final future = EIP155.callSmartContract(
+                  final future = EIP155.callTestSmartContract(
                     w3mService: widget.w3mService,
                     action: 'read',
                   );
-                  MethodDialog.show(context, 'Test Contract (Read)', future);
+                  MethodDialog.show(
+                    context,
+                    'Test Contract (Read)',
+                    future,
+                  );
                 }
-              : null,
+              : onMainnet
+                  ? () async {
+                      final future = EIP155.callUSDTSmartContract(
+                        w3mService: widget.w3mService,
+                        action: 'read',
+                      );
+                      MethodDialog.show(
+                        context,
+                        'Test Contract (Read)',
+                        future,
+                      );
+                    }
+                  : null,
           style: buttonStyle(context),
-          child: const Text('Test Contract (Read)'),
+          child: onMainnet
+              ? const Text('USDT Contract (Read)')
+              : const Text('AAVE Contract (Read)'),
         ),
       ),
       Container(
@@ -264,15 +295,27 @@ class SessionWidgetState extends State<SessionWidget> {
           onPressed: onSepolia
               ? () async {
                   widget.w3mService.launchConnectedWallet();
-                  final future = EIP155.callSmartContract(
+                  final future = EIP155.callTestSmartContract(
                     w3mService: widget.w3mService,
                     action: 'write',
                   );
                   MethodDialog.show(context, 'Test Contract (Write)', future);
                 }
-              : null,
+              : onMainnet
+                  ? () async {
+                      widget.w3mService.launchConnectedWallet();
+                      final future = EIP155.callUSDTSmartContract(
+                        w3mService: widget.w3mService,
+                        action: 'write',
+                      );
+                      MethodDialog.show(
+                          context, 'Test Contract (Write)', future);
+                    }
+                  : null,
           style: buttonStyle(context),
-          child: const Text('Test Contract (Write)'),
+          child: onMainnet
+              ? const Text('USDT Contract (Write)')
+              : const Text('AAVE Contract (Write)'),
         ),
       ),
     ]);

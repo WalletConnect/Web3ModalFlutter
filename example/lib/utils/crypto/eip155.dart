@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:intl/intl.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/smart_contracts/usdt_contract.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:convert/convert.dart';
 
-import 'package:walletconnect_flutter_dapp/utils/crypto/contract.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/smart_contracts/aave_contract.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/test_data.dart';
 
 enum EIP155UIMethods {
@@ -254,45 +255,39 @@ class EIP155 {
     );
   }
 
-  static Future<dynamic> callSmartContract({
+  static Future<dynamic> callTestSmartContract({
     required W3MService w3mService,
     required String action,
-  }) {
+  }) async {
     // Create DeployedContract object using contract's ABI and address
     final deployedContract = DeployedContract(
       ContractAbi.fromJson(
-        jsonEncode(SepoliaTestContract.readContractAbi),
-        'Alfreedoms',
+        jsonEncode(AAVESepoliaContract.contractABI),
+        'AAVE Token (Sepolia)',
       ),
-      EthereumAddress.fromHex(SepoliaTestContract.contractAddress),
+      EthereumAddress.fromHex(AAVESepoliaContract.contractAddress),
     );
 
     switch (action) {
       case 'read':
         return _readSmartContract(
           w3mService: w3mService,
-          rpcUrl: 'https://ethereum-sepolia.publicnode.com',
+          rpcUrl: w3mService.selectedChain!.rpcUrl,
           contract: deployedContract,
           address: w3mService.session!.address!,
         );
       case 'write':
-        // `transfer` function such as:
-        // {
-        //   "inputs": [
-        //     {"internalType": "address", "name": "to", "type": "address"},
-        //     {"internalType": "uint256", "name": "value", "type": "uint256"}
-        //   ],
-        //   "name": "transfer",
-        //   "outputs": [
-        //     {"internalType": "bool", "name": "", "type": "bool"}
-        //   ],
-        //   "stateMutability": "nonpayable",
-        //   "type": "function"
-        // },
+        final decimals = await w3mService.requestReadContract(
+          deployedContract: deployedContract,
+          functionName: 'decimals',
+          rpcUrl: w3mService.selectedChain!.rpcUrl,
+        );
+        final d = (decimals.first as BigInt);
+        final requestValue = _formatValue(0.12, decimals: d);
         return w3mService.requestWriteContract(
           topic: w3mService.session?.topic ?? '',
-          chainId: 'eip155:11155111',
-          rpcUrl: 'https://ethereum-sepolia.publicnode.com',
+          chainId: w3mService.selectedChain!.namespace,
+          rpcUrl: w3mService.selectedChain!.rpcUrl,
           deployedContract: deployedContract,
           functionName: 'transfer',
           transaction: Transaction(
@@ -302,7 +297,7 @@ class EIP155 {
             EthereumAddress.fromHex(
               '0x59e2f66C0E96803206B6486cDb39029abAE834c0',
             ),
-            EtherAmount.fromInt(EtherUnit.finney, 10).getInWei, // == 0.010
+            requestValue, // == 0.12
           ],
         );
       // payable function with no parameters such as:
@@ -325,6 +320,56 @@ class EIP155 {
       //   ),
       //   parameters: [],
       // );
+      default:
+        return Future.value();
+    }
+  }
+
+  static Future<dynamic> callUSDTSmartContract({
+    required W3MService w3mService,
+    required String action,
+  }) async {
+    // Create DeployedContract object using contract's ABI and address
+    final deployedContract = DeployedContract(
+      ContractAbi.fromJson(
+        jsonEncode(USDTContract.contractABI),
+        'Tether USD',
+      ),
+      EthereumAddress.fromHex(USDTContract.contractAddress),
+    );
+
+    switch (action) {
+      case 'read':
+        return _readSmartContract(
+          w3mService: w3mService,
+          rpcUrl: w3mService.selectedChain!.rpcUrl,
+          contract: deployedContract,
+          address: w3mService.session!.address!,
+        );
+      case 'write':
+        final decimals = await w3mService.requestReadContract(
+          deployedContract: deployedContract,
+          functionName: 'decimals',
+          rpcUrl: w3mService.selectedChain!.rpcUrl,
+        );
+        final d = (decimals.first as BigInt);
+        final requestValue = _formatValue(0.23, decimals: d);
+        return w3mService.requestWriteContract(
+          topic: w3mService.session?.topic ?? '',
+          chainId: w3mService.selectedChain!.namespace,
+          rpcUrl: w3mService.selectedChain!.rpcUrl,
+          deployedContract: deployedContract,
+          functionName: 'transfer',
+          transaction: Transaction(
+            from: EthereumAddress.fromHex(w3mService.session!.address!),
+          ),
+          parameters: [
+            EthereumAddress.fromHex(
+              '0x59e2f66C0E96803206B6486cDb39029abAE834c0',
+            ),
+            requestValue, // == 0.23
+          ],
+        );
       default:
         return Future.value();
     }
@@ -358,17 +403,40 @@ class EIP155 {
           EthereumAddress.fromHex(address),
         ],
       ),
+      // results[4]
+      w3mService.requestReadContract(
+        deployedContract: contract,
+        functionName: 'decimals',
+        rpcUrl: rpcUrl,
+      ),
     ]);
 
-    final oCcy = NumberFormat("#,##0.00", "en_US");
-    final name = results[0].toString();
-    final total = results[1].first / BigInt.from(1000000000000000000);
-    final balance = results[2].first / BigInt.from(1000000000000000000);
+    //
+    final name = (results[0].first as String);
+    final multiplier = _multiplier(results[3].first);
+    final total = (results[1].first as BigInt) / BigInt.from(multiplier);
+    final balance = (results[2].first as BigInt) / BigInt.from(multiplier);
+    final formatter = NumberFormat("#,##0.00000", "en_US");
 
     return {
       'name': name,
-      'totalSupply': oCcy.format(total),
-      'balance': oCcy.format(balance),
+      'totalSupply': formatter.format(total),
+      'balance': formatter.format(balance),
     };
+  }
+
+  static BigInt _formatValue(num value, {required BigInt decimals}) {
+    final multiplier = _multiplier(decimals);
+    final result = EtherAmount.fromInt(
+      EtherUnit.ether,
+      (value * multiplier).toInt(),
+    );
+    return result.getInEther;
+  }
+
+  static int _multiplier(BigInt decimals) {
+    final d = decimals.toInt();
+    final pad = '1'.padRight(d + 1, '0');
+    return int.parse(pad);
   }
 }

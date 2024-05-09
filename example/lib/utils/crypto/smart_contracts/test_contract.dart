@@ -1,4 +1,4 @@
-class SepoliaTestContract {
+class TESTContract {
   // Alfreedoms2 ALF2 in Sepolia
   // DEPLOY https://sepolia.etherscan.io/tx/0xebf287281abbc976b7cf6956a7f5f66338935d324c6453a350e3bb42ff7bd4e2
   // MINT https://sepolia.etherscan.io/tx/0x04a015504be7420a40a59936bfcca9302e55700fd00129059444539770fed5e7
@@ -7,7 +7,7 @@ class SepoliaTestContract {
   // SOURCIFY https://repo.sourcify.dev/contracts/full_match/11155111/0xBe60D05C11BD1C365849C824E0C2D880d2466eAF/
   static const contractAddress = '0xBe60D05C11BD1C365849C824E0C2D880d2466eAF';
 
-  static const readContractAbi = [
+  static const contractABI = [
     {
       "inputs": [
         {"internalType": "address", "name": "initialOwner", "type": "address"}
