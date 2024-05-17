@@ -887,23 +887,27 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     List parameters = const [],
   }) async {
     try {
-      // TODO [W3MService] Support Smart Contract with email if possible
-      if (_currentSession!.sessionService.isMagic) {
-        throw 'Write to Smart Contract is currently not supported with Email Wallet';
-      }
-      // TODO [W3MService] Support Smart Contract with Coinbase if possible
-      if (_currentSession!.sessionService.isCoinbase) {
-        throw 'Write to Smart Contract is currently not supported with Coinbase Wallet';
-      }
-      return await _web3App.requestWriteContract(
+      final requestParams = SessionRequestParams(
+        method: 'eth_sendTransaction',
+        params: [
+          Transaction.callContract(
+            contract: deployedContract,
+            function: deployedContract.function(functionName),
+            from: transaction.from,
+            value: transaction.value,
+            maxGas: transaction.maxGas,
+            gasPrice: transaction.gasPrice,
+            nonce: transaction.nonce,
+            maxFeePerGas: transaction.maxFeePerGas,
+            maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+            parameters: parameters,
+          ).toJson(),
+        ],
+      );
+      return request(
         topic: topic,
         chainId: chainId,
-        rpcUrl: rpcUrl,
-        deployedContract: deployedContract,
-        functionName: functionName,
-        transaction: transaction,
-        method: method,
-        parameters: parameters,
+        request: requestParams,
       );
     } catch (e) {
       rethrow;
@@ -929,7 +933,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       }
       if (_currentSession!.sessionService.isCoinbase) {
         return await cbRequest(
-          chainId: switchToChainId ?? chainId.split(':').last,
+          chainId: switchToChainId ?? chainId,
           request: request,
         );
       }

@@ -115,8 +115,12 @@ class CoinbaseService implements ICoinbaseService {
     required SessionRequestParams request,
   }) async {
     await _checkInstalled();
+    String? cid;
+    if (chainId != null) {
+      cid = chainId.contains(':') ? chainId.split(':').last : chainId;
+    }
     try {
-      final req = Request(actions: [request.toCoinbaseRequest(chainId)]);
+      final req = Request(actions: [request.toCoinbaseRequest(cid)]);
       final result = (await CoinbaseWalletSDK.shared.makeRequest(req)).first;
       if (result.error != null) {
         final errorCode = result.error?.code;
@@ -128,7 +132,7 @@ class CoinbaseService implements ICoinbaseService {
       switch (req.actions.first.method) {
         case 'wallet_switchEthereumChain':
         case 'wallet_addEthereumChain':
-          final event = CoinbaseSessionEvent(chainId: chainId);
+          final event = CoinbaseSessionEvent(chainId: cid);
           onCoinbaseSessionUpdate.broadcast(event);
           break;
         case 'eth_requestAccounts':
@@ -220,14 +224,19 @@ extension on SessionRequestParams {
         );
       case MethodsConstants.ethSendTransaction:
         final jsonData = _getTransactionFromParams(params);
-        final hexValue = jsonData['value'].toString().replaceFirst('0x', '');
-        final value = int.parse(hexValue, radix: 16);
+        String? weiValue;
+        if (jsonData.containsKey('value')) {
+          final hexValue = jsonData['value'].toString().replaceFirst('0x', '');
+          final value = int.parse(hexValue, radix: 16);
+          weiValue = BigInt.from(value).toString();
+        }
+        final data = jsonData['data']?.toString() ?? '';
         return SendTransaction(
-          fromAddress: jsonData['from'],
-          toAddress: jsonData['to'],
+          fromAddress: jsonData['from'].toString(),
+          toAddress: jsonData['to'].toString(),
           chainId: chainId!,
-          weiValue: BigInt.from(value).toString(),
-          data: jsonData['data'] ?? '',
+          weiValue: weiValue,
+          data: data,
         );
       case MethodsConstants.walletSwitchEthChain:
       case MethodsConstants.walletAddEthChain:
