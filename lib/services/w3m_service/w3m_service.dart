@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+// import 'package:http/http.dart' as http;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -1017,7 +1018,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         (key, value) => MapEntry(
           key,
           RequiredNamespace(
-            chains: value.chains ?? [W3MChainPresets.chains['1']!.namespace],
+            chains: value.chains,
             methods: value.methods,
             events: value.events,
           ),
@@ -1036,8 +1037,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         (key, value) => MapEntry(
           key,
           RequiredNamespace(
-            chains: value.chains ??
-                W3MChainPresets.chains.values.map((e) => e.namespace).toList(),
+            chains: value.chains,
             methods: value.methods,
             events: value.events,
           ),
