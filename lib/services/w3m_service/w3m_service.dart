@@ -886,7 +886,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }) async {
     try {
       final requestParams = SessionRequestParams(
-        method: 'eth_sendTransaction',
+        method: MethodsConstants.ethSendTransaction,
         params: [
           Transaction.callContract(
             contract: deployedContract,
