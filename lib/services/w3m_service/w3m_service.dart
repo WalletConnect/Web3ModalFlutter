@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-// import 'package:http/http.dart' as http;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -210,14 +209,13 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     await _web3App.init();
 
     _currentSession = await _getStoredSession();
-    if (_currentSession != null) {
-      if (_currentSession!.sessionService.isMagic ||
-          _currentSession!.sessionService.isCoinbase) {
-        final chainId = _currentSession!.chainId;
-        _currentSelectedChain = W3MChainPresets.chains[chainId];
-        await _setSesionAndChainData(_currentSession!);
-      }
-      if (_currentSession!.sessionService.isMagic) {
+    final isMagic = _currentSession?.sessionService.isMagic == true;
+    final isCoinbase = _currentSession?.sessionService.isCoinbase == true;
+    if (isMagic || isCoinbase) {
+      final chainId = _currentSession!.chainId;
+      _currentSelectedChain = W3MChainPresets.chains[chainId];
+      await _setSesionAndChainData(_currentSession!);
+      if (isMagic) {
         await magicService.instance.init();
       }
     } else {
