@@ -1,3 +1,9 @@
+## 3.2.1
+
+- Email Wallet improvements:
+  - Smart Contract interaction
+  - Enhanced theming
+
 ## 3.2.0
 
 - New feature: Email Wallet. Now you can create wallets by just using an email and graduate them to self-custodial if desired! Just toggle `enableEmail` on `W3MService` instance.
