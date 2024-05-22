@@ -111,14 +111,11 @@ class CoinbaseService implements ICoinbaseService {
   @protected
   @override
   Future<dynamic> cbRequest({
-    String? chainId,
+    required String chainId,
     required SessionRequestParams request,
   }) async {
     await _checkInstalled();
-    String? cid;
-    if (chainId != null) {
-      cid = chainId.contains(':') ? chainId.split(':').last : chainId;
-    }
+    final cid = chainId.contains(':') ? chainId.split(':').last : chainId;
     try {
       final req = Request(actions: [request.toCoinbaseRequest(cid)]);
       final result = (await CoinbaseWalletSDK.shared.makeRequest(req)).first;
