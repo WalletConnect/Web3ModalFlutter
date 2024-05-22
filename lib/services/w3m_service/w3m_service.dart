@@ -209,14 +209,13 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     await _web3App.init();
 
     _currentSession = await _getStoredSession();
-    if (_currentSession != null) {
-      if (_currentSession!.sessionService.isMagic ||
-          _currentSession!.sessionService.isCoinbase) {
-        final chainId = _currentSession!.chainId;
-        _currentSelectedChain = W3MChainPresets.chains[chainId];
-        await _setSesionAndChainData(_currentSession!);
-      }
-      if (_currentSession!.sessionService.isMagic) {
+    final isMagic = _currentSession?.sessionService.isMagic == true;
+    final isCoinbase = _currentSession?.sessionService.isCoinbase == true;
+    if (isMagic || isCoinbase) {
+      final chainId = _currentSession!.chainId;
+      _currentSelectedChain = W3MChainPresets.chains[chainId];
+      await _setSesionAndChainData(_currentSession!);
+      if (isMagic) {
         await magicService.instance.init();
       }
     } else {
@@ -886,23 +885,27 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     List parameters = const [],
   }) async {
     try {
-      // TODO [W3MService] Support Smart Contract with email if possible
-      if (_currentSession!.sessionService.isMagic) {
-        throw 'Write to Smart Contract is currently not supported with Email Wallet';
-      }
-      // TODO [W3MService] Support Smart Contract with Coinbase if possible
-      if (_currentSession!.sessionService.isCoinbase) {
-        throw 'Write to Smart Contract is currently not supported with Coinbase Wallet';
-      }
-      return await _web3App.requestWriteContract(
+      final requestParams = SessionRequestParams(
+        method: MethodsConstants.ethSendTransaction,
+        params: [
+          Transaction.callContract(
+            contract: deployedContract,
+            function: deployedContract.function(functionName),
+            from: transaction.from,
+            value: transaction.value,
+            maxGas: transaction.maxGas,
+            gasPrice: transaction.gasPrice,
+            nonce: transaction.nonce,
+            maxFeePerGas: transaction.maxFeePerGas,
+            maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+            parameters: parameters,
+          ).toJson(),
+        ],
+      );
+      return request(
         topic: topic,
         chainId: chainId,
-        rpcUrl: rpcUrl,
-        deployedContract: deployedContract,
-        functionName: functionName,
-        transaction: transaction,
-        method: method,
-        parameters: parameters,
+        request: requestParams,
       );
     } catch (e) {
       rethrow;
@@ -928,7 +931,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       }
       if (_currentSession!.sessionService.isCoinbase) {
         return await cbRequest(
-          chainId: switchToChainId ?? chainId.split(':').last,
+          chainId: switchToChainId ?? chainId,
           request: request,
         );
       }
@@ -1017,7 +1020,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         (key, value) => MapEntry(
           key,
           RequiredNamespace(
-            chains: value.chains ?? [W3MChainPresets.chains['1']!.namespace],
+            chains: value.chains,
             methods: value.methods,
             events: value.events,
           ),
@@ -1036,8 +1039,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         (key, value) => MapEntry(
           key,
           RequiredNamespace(
-            chains: value.chains ??
-                W3MChainPresets.chains.values.map((e) => e.namespace).toList(),
+            chains: value.chains,
             methods: value.methods,
             events: value.events,
           ),

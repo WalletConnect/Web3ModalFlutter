@@ -244,7 +244,6 @@ class SyncTheme extends MessageData {
   @override
   String toString() {
     final mode = theme?.isDarkMode == true ? 'dark' : 'light';
-    final tm = 'themeMode:\'$mode\'';
     final themeData = theme?.themeData ?? Web3ModalThemeData();
     late Web3ModalColors colors;
     if (mode == 'dark') {
@@ -253,22 +252,20 @@ class SyncTheme extends MessageData {
       colors = themeData.lightColors;
     }
 
-    // Available keys:
-    // '--w3m-accent'?: string
-    // '--w3m-color-mix'?: string
-    // '--w3m-color-mix-strength'?: number
-    // '--w3m-font-family'?: string
-    // '--w3m-font-size-master'?: string
-    // '--w3m-border-radius-master'?: string
-    // '--w3m-z-index'?: number
+    final tm = 'themeMode:\'$mode\'';
 
-    final c1 = '\'--w3m-accent\':\'${Util.colorToRGBA(colors.accent100)}\'';
-    // final c2 = '\'--w3m-color-mix\':\'${Util.colorToRGBA(colors.background125)}\'';
-    // final c3 = '\'--w3m-color-mix-strength\':100';
-    // final c4 = '\'--w3m-z-index\':100000000';
-    final tv = 'themeVariables:{$c1}';
+    final mix = Util.colorToRGBA(colors.background125);
+    final tv1 = '\'--w3m-color-mix\':\'$mix\'';
+    // final tv2 = '\'--w3m-color-mix-strength\':\'0%\'';
+    final tv = 'themeVariables:{$tv1}';
 
-    return '{type:\'${super.type}\',payload:{$tm,$tv}}';
+    final accent = Util.colorToRGBA(colors.accent100);
+    final wtv1 = '\'--w3m-accent\':\'$accent\'';
+    final background = Util.colorToRGBA(colors.background125);
+    final wtv2 = '\'--w3m-background\':\'$background\'';
+    final w3mtv = 'w3mThemeVariables:{$wtv1,$wtv2}';
+
+    return '{type:\'${super.type}\',payload:{$tm, $tv,$w3mtv}}';
   }
 }
 

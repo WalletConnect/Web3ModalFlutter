@@ -283,7 +283,7 @@ class EIP155 {
           rpcUrl: w3mService.selectedChain!.rpcUrl,
         );
         final d = (decimals.first as BigInt);
-        final requestValue = _formatValue(0.12, decimals: d);
+        final requestValue = _formatValue(0.01, decimals: d);
         return w3mService.requestWriteContract(
           topic: w3mService.session?.topic ?? '',
           chainId: w3mService.selectedChain!.namespace,

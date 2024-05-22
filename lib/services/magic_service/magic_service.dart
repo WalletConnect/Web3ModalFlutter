@@ -14,7 +14,6 @@ import 'package:web3modal_flutter/services/magic_service/i_magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/magic_service/models/frame_message.dart';
-import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -39,7 +38,6 @@ class MagicService implements IMagicService {
   ];
   //
   final IWeb3App _web3app;
-  Web3ModalTheme? _currentTheme;
   Timer? _timeOutTimer;
   String? _connectionChainId;
   int _onLoadCount = 0;
@@ -223,7 +221,6 @@ class MagicService implements IMagicService {
   @override
   Future<void> syncTheme(Web3ModalTheme? theme) async {
     if (!isEnabled.value || !isReady.value) return;
-    _currentTheme = theme;
     final message = SyncTheme(theme: theme).toString();
     await _webViewController.runJavaScript('sendW3Message($message)');
   }
@@ -547,17 +544,6 @@ class MagicService implements IMagicService {
         console.log('w3mMessage posted =====> ' + JSON.stringify(message))
         iframeFL.contentWindow.postMessage(message, '*')
       }
-
-      // TODO this would have to be removed after proper implementation of syncTheme()
-      // const setModalColor = (color) => {
-      //   console.log('setModalColor =====> ' + color)
-      //   iframeFL.style.background = color
-      //   iframeFL.style.backgroundColor = color
-      //   iframeFL.contentWindow.document.body.style.backgroundColor = color
-      //   document.body.style.backgroundColor = color
-      //   const buttons = document.getElementsByClassName("signWrapper")
-      //   buttons[0].style.backgroundColor = color
-      // }
     ''');
   }
 
@@ -579,18 +565,6 @@ class MagicService implements IMagicService {
               url: ${error.url}
             ''');
     }
-  }
-
-  // ignore: unused_element
-  Future<void> _setModalColor() async {
-    await Future.delayed(Duration(milliseconds: 50));
-    final isDarkMode = _currentTheme?.isDarkMode ?? false;
-    final themeData = _currentTheme?.themeData ?? Web3ModalThemeData();
-    final rbgColor = isDarkMode
-        ? themeData.darkColors.background125
-        : themeData.lightColors.background125;
-    final jsColor = Util.colorToRGBA(rbgColor);
-    return await _webViewController.runJavaScript('setModalColor("$jsColor")');
   }
 
   bool _isAllowedDomain(String domain) {

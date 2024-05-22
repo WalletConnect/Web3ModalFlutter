@@ -61,8 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
           universal: 'https://web3modal.com',
         ),
       ),
-      // enableAnalytics: true, // OPTIONAL - null by default
-      // enableEmail: true, // OPTIONAL - false by default
+      enableAnalytics: true, // OPTIONAL - null by default
+      enableEmail: true, // OPTIONAL - false by default
       // requiredNamespaces: {},
       // optionalNamespaces: {},
       // excludedWalletIds: {
@@ -410,7 +410,7 @@ ButtonStyle buttonStyle(BuildContext context) {
         return Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
               color: (states.contains(MaterialState.disabled))
                   ? Web3ModalTheme.colorsOf(context).foreground300
-                  : Web3ModalTheme.colorsOf(context).background100,
+                  : Web3ModalTheme.colorsOf(context).inverse100,
             );
       },
     ),
@@ -418,7 +418,7 @@ ButtonStyle buttonStyle(BuildContext context) {
       (states) {
         return (states.contains(MaterialState.disabled))
             ? Web3ModalTheme.colorsOf(context).foreground300
-            : Web3ModalTheme.colorsOf(context).background100;
+            : Web3ModalTheme.colorsOf(context).inverse100;
       },
     ),
   );

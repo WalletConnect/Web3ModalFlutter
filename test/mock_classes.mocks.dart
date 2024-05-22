@@ -939,7 +939,7 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
       ) as _i14.Future<void>);
   @override
   _i14.Future<dynamic> cbRequest({
-    String? chainId,
+    required String? chainId,
     required _i3.SessionRequestParams? request,
   }) =>
       (super.noSuchMethod(
