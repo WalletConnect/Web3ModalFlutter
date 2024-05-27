@@ -787,7 +787,7 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
   _i14.Future<List<dynamic>> requestReadContract({
     required _i3.DeployedContract? deployedContract,
     required String? functionName,
-    required String? rpcUrl,
+    String? rpcUrl,
     List<dynamic>? parameters = const [],
   }) =>
       (super.noSuchMethod(
@@ -807,7 +807,7 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
   _i14.Future<dynamic> requestWriteContract({
     required String? topic,
     required String? chainId,
-    required String? rpcUrl,
+    String? rpcUrl,
     required _i3.DeployedContract? deployedContract,
     required String? functionName,
     required _i3.Transaction? transaction,
