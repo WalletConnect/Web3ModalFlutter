@@ -858,14 +858,14 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   Future<List<dynamic>> requestReadContract({
     required DeployedContract deployedContract,
     required String functionName,
-    required String rpcUrl,
+    @Deprecated('This is not needed anymore') String? rpcUrl,
     List parameters = const [],
   }) async {
     try {
       return await _web3App.requestReadContract(
         deployedContract: deployedContract,
         functionName: functionName,
-        rpcUrl: rpcUrl,
+        rpcUrl: selectedChain!.rpcUrl,
         parameters: parameters,
       );
     } catch (e) {
@@ -875,9 +875,9 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   @override
   Future<dynamic> requestWriteContract({
-    required String topic,
+    required String? topic,
     required String chainId,
-    required String rpcUrl,
+    @Deprecated('This is not needed anymore') String? rpcUrl,
     required DeployedContract deployedContract,
     required String functionName,
     required Transaction transaction,
@@ -914,7 +914,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   @override
   Future<dynamic> request({
-    required String topic,
+    required String? topic,
     required String chainId,
     required SessionRequestParams request,
     String? switchToChainId,
@@ -922,22 +922,38 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     if (_currentSession == null) {
       throw W3MServiceException('Session is null');
     }
+    String requestChainId = chainId;
+
+    final isValidChainId = NamespaceUtils.isValidChainId(chainId);
+    if (!isValidChainId) {
+      if (selectedChain!.namespace.contains(chainId)) {
+        requestChainId = selectedChain!.namespace;
+      } else {
+        throw Errors.getSdkError(
+          Errors.UNSUPPORTED_CHAINS,
+          context: 'chainId should conform to "namespace:chainId" format',
+        );
+      }
+    }
+    //
+    _logger.d(
+        '[$runtimeType] request, chainId: $requestChainId, ${jsonEncode(request.toJson())}');
     try {
       if (_currentSession!.sessionService.isMagic) {
         return await magicService.instance.request(
-          chainId: chainId,
+          chainId: requestChainId,
           request: request,
         );
       }
       if (_currentSession!.sessionService.isCoinbase) {
         return await cbRequest(
-          chainId: switchToChainId ?? chainId,
+          chainId: switchToChainId ?? requestChainId,
           request: request,
         );
       }
       return await _web3App.request(
-        topic: topic,
-        chainId: chainId,
+        topic: topic!,
+        chainId: requestChainId,
         request: request,
       );
     } catch (e) {
@@ -1096,15 +1112,14 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     if (_currentSession?.sessionService.isMagic == true) {
       return selectChain(newChain);
     }
-    final chainId = _currentSelectedChain?.chainId;
-    final currentChainId = '${StringConstants.namespace}:$chainId';
-    final newChainId = '${StringConstants.namespace}:${newChain.chainId}';
+    final currentChainId = _currentSelectedChain!.namespace;
+    final newChainId = newChain.namespace;
     _logger.i('[$runtimeType] requesting switch to chain $newChainId');
     try {
       final response = await request(
         topic: _currentSession?.topic ?? '',
         chainId: currentChainId,
-        switchToChainId: newChain.chainId,
+        switchToChainId: newChainId,
         request: SessionRequestParams(
           method: MethodsConstants.walletSwitchEthChain,
           params: [
@@ -1132,14 +1147,14 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   @override
   Future<dynamic> requestAddChain(W3MChainInfo newChain) async {
     final topic = _currentSession?.topic ?? '';
-    final currentId = _currentSelectedChain!.chainId;
-    final currentChainId = '${StringConstants.namespace}:$currentId';
-    _logger.i('[$runtimeType] requesting add chain ${newChain.namespace}');
+    final currentChainId = _currentSelectedChain!.namespace;
+    final newChainId = newChain.namespace;
+    _logger.i('[$runtimeType] requesting switch to chain $newChainId');
     try {
       final response = await request(
         topic: topic,
         chainId: currentChainId,
-        switchToChainId: newChain.chainId,
+        switchToChainId: newChainId,
         request: SessionRequestParams(
           method: MethodsConstants.walletAddEthChain,
           params: [newChain.toJson()],

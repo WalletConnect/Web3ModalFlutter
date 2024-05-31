@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/smart_contracts/usdt_contract.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -76,171 +75,158 @@ class EIP155 {
     final cid = int.parse(chainId.split(':')[1]);
     switch (method) {
       case EIP155UIMethods.requestAccounts:
-        return w3mService.request(
-          topic: topic,
-          chainId: chainId,
-          request: SessionRequestParams(
-            method: method.name,
-            params: [],
-          ),
+        return requestAccounts(
+          w3mService: w3mService,
         );
       case EIP155UIMethods.personalSign:
         return personalSign(
           w3mService: w3mService,
-          topic: topic,
-          chainId: chainId,
-          address: address,
           message: testSignData,
         );
       case EIP155UIMethods.ethSignTypedDataV3:
         return ethSignTypedDataV3(
           w3mService: w3mService,
-          topic: topic,
-          chainId: chainId,
-          address: address,
           data: jsonEncode(typeDataV3(cid)),
         );
       case EIP155UIMethods.ethSignTypedData:
         return ethSignTypedData(
           w3mService: w3mService,
-          topic: topic,
-          chainId: chainId,
-          address: address,
           data: jsonEncode(typedData()),
         );
       case EIP155UIMethods.ethSignTypedDataV4:
         return ethSignTypedDataV4(
           w3mService: w3mService,
-          topic: topic,
-          chainId: chainId,
-          address: address,
           data: jsonEncode(typeDataV4(cid)),
         );
       case EIP155UIMethods.ethSignTransaction:
       case EIP155UIMethods.ethSendTransaction:
         return ethSendTransaction(
           w3mService: w3mService,
-          topic: topic,
-          chainId: chainId,
-          method: method.name,
           transaction: Transaction(
             from: EthereumAddress.fromHex(address),
             to: EthereumAddress.fromHex(
               '0x59e2f66C0E96803206B6486cDb39029abAE834c0',
             ),
             value: EtherAmount.fromInt(EtherUnit.finney, 11), // == 0.011
-            nonce: Random().nextInt(10000),
           ),
+          method: method,
         );
       case EIP155UIMethods.walletWatchAsset:
         return walletWatchAsset(
           w3mService: w3mService,
-          topic: topic,
-          chainId: chainId,
-          method: method.name,
         );
     }
   }
 
+  static Future<dynamic> requestAccounts({
+    required W3MService w3mService,
+  }) async {
+    return await w3mService.request(
+      topic: w3mService.session!.topic,
+      chainId: w3mService.selectedChain!.chainId,
+      request: SessionRequestParams(
+        method: EIP155UIMethods.requestAccounts.name,
+        params: [],
+      ),
+    );
+  }
+
   static Future<dynamic> personalSign({
     required W3MService w3mService,
-    required String topic,
-    required String chainId,
-    required String address,
     required String message,
   }) async {
     final bytes = utf8.encode(message);
     final encoded = hex.encode(bytes);
 
     return await w3mService.request(
-      topic: topic,
-      chainId: chainId,
+      topic: w3mService.session!.topic,
+      chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
         method: EIP155UIMethods.personalSign.name,
-        params: ['0x$encoded', address],
+        params: [
+          '0x$encoded',
+          w3mService.session!.address!,
+        ],
       ),
     );
   }
 
   static Future<dynamic> ethSignTypedData({
     required W3MService w3mService,
-    required String topic,
-    required String chainId,
-    required String address,
     required String data,
   }) async {
     return await w3mService.request(
-      topic: topic,
-      chainId: chainId,
+      topic: w3mService.session!.topic,
+      chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
         method: EIP155UIMethods.ethSignTypedData.name,
-        params: [data, address],
+        params: [
+          data,
+          w3mService.session!.address!,
+        ],
       ),
     );
   }
 
   static Future<dynamic> ethSignTypedDataV3({
     required W3MService w3mService,
-    required String topic,
-    required String chainId,
-    required String address,
     required String data,
   }) async {
     return await w3mService.request(
-      topic: topic,
-      chainId: chainId,
+      topic: w3mService.session!.topic,
+      chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
         method: EIP155UIMethods.ethSignTypedDataV3.name,
-        params: [data, address],
+        params: [
+          data,
+          w3mService.session!.address!,
+        ],
       ),
     );
   }
 
   static Future<dynamic> ethSignTypedDataV4({
     required W3MService w3mService,
-    required String topic,
-    required String chainId,
-    required String address,
     required String data,
   }) async {
     return await w3mService.request(
-      topic: topic,
-      chainId: chainId,
+      topic: w3mService.session!.topic,
+      chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
         method: EIP155UIMethods.ethSignTypedDataV4.name,
-        params: [data, address],
+        params: [
+          data,
+          w3mService.session!.address!,
+        ],
       ),
     );
   }
 
   static Future<dynamic> ethSendTransaction({
     required W3MService w3mService,
-    required String topic,
-    required String chainId,
-    required String method,
     required Transaction transaction,
+    required EIP155UIMethods method,
   }) async {
     return await w3mService.request(
-      topic: topic,
-      chainId: chainId,
+      topic: w3mService.session!.topic,
+      chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
-        method: method,
-        params: [transaction.toJson()],
+        method: method.name,
+        params: [
+          transaction.toJson(),
+        ],
       ),
     );
   }
 
   static Future<dynamic> walletWatchAsset({
     required W3MService w3mService,
-    required String topic,
-    required String chainId,
-    required String method,
   }) async {
     return await w3mService.request(
-      topic: topic,
-      chainId: chainId,
+      topic: w3mService.session!.topic,
+      chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
-        method: method,
+        method: EIP155UIMethods.walletWatchAsset.name,
         params: {
           "type": "ERC20",
           "options": {
@@ -255,6 +241,7 @@ class EIP155 {
     );
   }
 
+  // Example of calling `transfer` function from AAVE token Smart Contract
   static Future<dynamic> callTestSmartContract({
     required W3MService w3mService,
     required String action,
@@ -272,22 +259,21 @@ class EIP155 {
       case 'read':
         return _readSmartContract(
           w3mService: w3mService,
-          rpcUrl: w3mService.selectedChain!.rpcUrl,
           contract: deployedContract,
-          address: w3mService.session!.address!,
         );
       case 'write':
+        // we first call `decimals` function, which is a read function,
+        // to check how much decimal we need to use to parse the amount value
         final decimals = await w3mService.requestReadContract(
           deployedContract: deployedContract,
           functionName: 'decimals',
-          rpcUrl: w3mService.selectedChain!.rpcUrl,
         );
         final d = (decimals.first as BigInt);
         final requestValue = _formatValue(0.01, decimals: d);
+        // now we call `transfer` write function with the parsed value.
         return w3mService.requestWriteContract(
-          topic: w3mService.session?.topic ?? '',
+          topic: w3mService.session!.topic,
           chainId: w3mService.selectedChain!.namespace,
-          rpcUrl: w3mService.selectedChain!.rpcUrl,
           deployedContract: deployedContract,
           functionName: 'transfer',
           transaction: Transaction(
@@ -325,6 +311,7 @@ class EIP155 {
     }
   }
 
+  // Example of calling `transfer` function from USDT token Smart Contract
   static Future<dynamic> callUSDTSmartContract({
     required W3MService w3mService,
     required String action,
@@ -342,22 +329,21 @@ class EIP155 {
       case 'read':
         return _readSmartContract(
           w3mService: w3mService,
-          rpcUrl: w3mService.selectedChain!.rpcUrl,
           contract: deployedContract,
-          address: w3mService.session!.address!,
         );
       case 'write':
+        // we first call `decimals` function, which is a read function,
+        // to check how much decimal we need to use to parse the amount value
         final decimals = await w3mService.requestReadContract(
           deployedContract: deployedContract,
           functionName: 'decimals',
-          rpcUrl: w3mService.selectedChain!.rpcUrl,
         );
         final d = (decimals.first as BigInt);
         final requestValue = _formatValue(0.23, decimals: d);
+        // now we call `transfer` write function with the parsed value.
         return w3mService.requestWriteContract(
-          topic: w3mService.session?.topic ?? '',
+          topic: w3mService.session!.topic,
           chainId: w3mService.selectedChain!.namespace,
-          rpcUrl: w3mService.selectedChain!.rpcUrl,
           deployedContract: deployedContract,
           functionName: 'transfer',
           transaction: Transaction(
@@ -377,8 +363,6 @@ class EIP155 {
 
   static Future<dynamic> _readSmartContract({
     required W3MService w3mService,
-    required String rpcUrl,
-    required String address,
     required DeployedContract contract,
   }) async {
     final results = await Future.wait([
@@ -386,28 +370,24 @@ class EIP155 {
       w3mService.requestReadContract(
         deployedContract: contract,
         functionName: 'name',
-        rpcUrl: rpcUrl,
       ),
       // results[1]
       w3mService.requestReadContract(
         deployedContract: contract,
         functionName: 'totalSupply',
-        rpcUrl: rpcUrl,
       ),
       // results[2]
       w3mService.requestReadContract(
         deployedContract: contract,
         functionName: 'balanceOf',
-        rpcUrl: rpcUrl,
         parameters: [
-          EthereumAddress.fromHex(address),
+          EthereumAddress.fromHex(w3mService.session!.address!),
         ],
       ),
       // results[4]
       w3mService.requestReadContract(
         deployedContract: contract,
         functionName: 'decimals',
-        rpcUrl: rpcUrl,
       ),
     ]);
 
