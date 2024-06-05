@@ -10,6 +10,7 @@ on:
 
 jobs:
   build_with_signing:
+    name: Build Android App Internal (beta)
     runs-on: macos-latest
     
     steps:
@@ -71,10 +72,6 @@ jobs:
 
         VERSION=`echo $(cat $VERSION_FILE) | sed "s/[^']*'\([^']*\)'.*/\1/"`
 
-        # # Change packageName in build.gradle
-        # sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.internal/g' android/app/build.gradle
-        # sed -i '' 's/com.web3modal.flutterExample/com.web3modal.flutterExample.internal/g' android/app/src/main/kotlin/com/example/sign/MainActivity.kt
-
         # Set versionName on gradle.properties
         awk -F"=" -v newval="$VERSION" 'BEGIN{OFS=FS} $1=="versionName"{$2=newval}1' $GRADLE_FILE > "$GRADLE_FILE.tmp" && mv "$GRADLE_FILE.tmp" $GRADLE_FILE
 
@@ -86,6 +83,7 @@ jobs:
 
         # Build Android app with flutter
         flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release --flavor beta
+
     # Setup Node
     - name: Setup Node
       uses: actions/setup-node@v3
