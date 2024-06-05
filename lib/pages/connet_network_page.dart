@@ -39,22 +39,25 @@ class _ConnectNetworkPageState extends State<ConnectNetworkPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _service = Web3ModalProvider.of(context).service;
       _service?.onModalError.subscribe(_errorListener);
-      _service!.web3App!.onSessionEvent.subscribe(_onSessionEvent);
-      _service!.web3App!.core.relayClient.onRelayClientMessage.subscribe(
-        _onRelayClientMessage,
-      );
       setState(() {});
-      Future.delayed(const Duration(milliseconds: 300), () {
-        _connect();
-      });
+      Future.delayed(const Duration(milliseconds: 300), () => _connect());
     });
   }
 
-  void _connect() {
+  void _connect() async {
     errorEvent = null;
     _service!.launchConnectedWallet();
-    _service!.requestSwitchToChain(widget.chainInfo);
-    setState(() {});
+    try {
+      await _service!.requestSwitchToChain(widget.chainInfo);
+      final chainId = widget.chainInfo.chainId;
+      if (W3MChainPresets.chains.containsKey(chainId)) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          widgetStack.instance.pop();
+        });
+      }
+    } catch (e) {
+      setState(() {});
+    }
   }
 
   @override
@@ -68,38 +71,10 @@ class _ConnectNetworkPageState extends State<ConnectNetworkPage>
     }
   }
 
-  void _onSessionEvent(SessionEvent? event) async {
-    if (!mounted) return;
-    if (event?.name == EventsConstants.chainChanged) {
-      debugPrint('[$runtimeType] _onSessionEvent $event');
-      final chainId = event?.data.toString() ?? '';
-      if (W3MChainPresets.chains.containsKey(chainId)) {
-        _service?.web3App?.onSessionEvent.unsubscribe(_onSessionEvent);
-        widgetStack.instance.pop();
-      }
-    }
-  }
-
-  void _onRelayClientMessage(MessageEvent? event) async {
-    if (!mounted) return;
-    if (event != null) {
-      final payloadString = await _service!.web3App!.core.crypto.decode(
-        event.topic,
-        event.message,
-      );
-      if (payloadString == null) return;
-      debugPrint('[$runtimeType] payloadString $payloadString');
-    }
-  }
-
   void _errorListener(ModalError? event) => setState(() => errorEvent = event);
 
   @override
   void dispose() {
-    _service?.web3App?.core.relayClient.onRelayClientMessage.unsubscribe(
-      _onRelayClientMessage,
-    );
-    _service?.web3App?.onSessionEvent.unsubscribe(_onSessionEvent);
     _service?.onModalError.unsubscribe(_errorListener);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();

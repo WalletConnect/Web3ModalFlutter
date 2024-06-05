@@ -1108,15 +1108,16 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   @override
-  Future<dynamic> requestSwitchToChain(W3MChainInfo newChain) async {
+  Future<void> requestSwitchToChain(W3MChainInfo newChain) async {
     if (_currentSession?.sessionService.isMagic == true) {
-      return selectChain(newChain);
+      await selectChain(newChain);
+      return;
     }
     final currentChainId = _currentSelectedChain!.namespace;
     final newChainId = newChain.namespace;
     _logger.i('[$runtimeType] requesting switch to chain $newChainId');
     try {
-      final response = await request(
+      await request(
         topic: _currentSession?.topic ?? '',
         chainId: currentChainId,
         switchToChainId: newChainId,
@@ -1129,29 +1130,32 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       );
       _currentSelectedChain = newChain;
       await _setSesionAndChainData(_currentSession!);
-      return response ?? true;
+      return;
     } catch (e) {
-      _logger.i('[$runtimeType] requesting switchChain error $e');
+      _logger.i('[$runtimeType] requestSwitchToChain error $e');
       // if request errors due to user rejection then set the previous chain
       if (_isUserRejectedError(e)) {
-        loggerService.instance.i('[$runtimeType] User declined connection');
         await _setLocalEthChain(_currentSelectedChain!);
-        return null;
+        throw JsonRpcError(code: 5002, message: 'User rejected methods.');
       } else {
-        // Otherwise it meas chain has to be added.
-        return await requestAddChain(newChain);
+        try {
+          // Otherwise it meas chain has to be added.
+          return await requestAddChain(newChain);
+        } catch (e) {
+          rethrow;
+        }
       }
     }
   }
 
   @override
-  Future<dynamic> requestAddChain(W3MChainInfo newChain) async {
+  Future<void> requestAddChain(W3MChainInfo newChain) async {
     final topic = _currentSession?.topic ?? '';
     final currentChainId = _currentSelectedChain!.namespace;
     final newChainId = newChain.namespace;
-    _logger.i('[$runtimeType] requesting switch to chain $newChainId');
+    _logger.i('[$runtimeType] requesting switch to add chain $newChainId');
     try {
-      final response = await request(
+      await request(
         topic: topic,
         chainId: currentChainId,
         switchToChainId: newChainId,
@@ -1162,11 +1166,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       );
       _currentSelectedChain = newChain;
       await _setSesionAndChainData(_currentSession!);
-      return response ?? true;
+      return;
     } catch (e) {
-      _logger.i('[$runtimeType] requesting addChain error $e');
+      _logger.i('[$runtimeType] requestAddChain error $e');
       await _setLocalEthChain(_currentSelectedChain!);
-      return null;
+      throw JsonRpcError(code: 5002, message: 'User rejected methods.');
     }
   }
 

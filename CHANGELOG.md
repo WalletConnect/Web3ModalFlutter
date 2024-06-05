@@ -1,3 +1,7 @@
+## 3.2.2
+
+- Network change improvements
+
 ## 3.2.1
 
 - Email Wallet improvements:

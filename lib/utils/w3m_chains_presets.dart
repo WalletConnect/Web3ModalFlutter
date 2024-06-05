@@ -33,7 +33,12 @@ class W3MChainPresets {
       chainId: '137',
       chainIcon: chainImagesId['137'],
       tokenName: 'MATIC',
-      rpcUrl: 'https://rpc-mainnet.maticvigil.com',
+      rpcUrl: 'https://polygon-bor-rpc.publicnode.com',
+      extraRpcUrls: [
+        'https://polygon.drpc.org',
+        'https://1rpc.io/matic',
+        'https://endpoints.omniatech.io/v1/matic/mainnet/public',
+      ],
       blockExplorer: W3MBlockExplorer(
         name: 'Explorer',
         url: 'https://polygonscan.com',

@@ -171,13 +171,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 ElevatedButton(
                   onPressed: () async {
                     _w3mService.launchConnectedWallet();
-                    _w3mService.requestAddChain(polygon).then(
-                      (value) {
-                        final success = value == true;
-                        debugPrint('[ExampleApp] then success $success');
-                        Navigator.of(context).pop();
-                      },
-                    );
+                    try {
+                      await _w3mService.requestSwitchToChain(polygon);
+                    } catch (e) {
+                      debugPrint('[ExampleApp] requestSwitchToChain $e');
+                    }
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
                   },
                   child: const Text('Switch'),
                 ),

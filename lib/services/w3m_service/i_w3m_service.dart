@@ -131,8 +131,8 @@ abstract class IW3MService with ChangeNotifier {
     required SessionRequestParams request,
   });
 
-  Future<dynamic> requestSwitchToChain(W3MChainInfo newChain);
-  Future<dynamic> requestAddChain(W3MChainInfo newChain);
+  Future<void> requestSwitchToChain(W3MChainInfo newChain);
+  Future<void> requestAddChain(W3MChainInfo newChain);
 
   /// Closes the modal.
   void closeModal();
