@@ -870,23 +870,25 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
-  _i14.Future<dynamic> requestSwitchToChain(_i3.W3MChainInfo? newChain) =>
+  _i14.Future<void> requestSwitchToChain(_i3.W3MChainInfo? newChain) =>
       (super.noSuchMethod(
         Invocation.method(
           #requestSwitchToChain,
           [newChain],
         ),
-        returnValue: _i14.Future<dynamic>.value(),
-      ) as _i14.Future<dynamic>);
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
   @override
-  _i14.Future<dynamic> requestAddChain(_i3.W3MChainInfo? newChain) =>
+  _i14.Future<void> requestAddChain(_i3.W3MChainInfo? newChain) =>
       (super.noSuchMethod(
         Invocation.method(
           #requestAddChain,
           [newChain],
         ),
-        returnValue: _i14.Future<dynamic>.value(),
-      ) as _i14.Future<dynamic>);
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
   @override
   void addListener(_i17.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
