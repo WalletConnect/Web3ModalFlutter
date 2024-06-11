@@ -157,7 +157,7 @@ class ExplorerService implements IExplorerService {
         sampleWallets.add(sampleWallet);
       }
     }
-    loggerService.instance.p(
+    loggerService.instance.d(
       '[$runtimeType] sample wallets: ${sampleWallets.length}',
     );
     return sampleWallets;
@@ -399,7 +399,7 @@ class ExplorerService implements IExplorerService {
     final excludedIds = (excludedWalletIds ?? <String>{});
     final exclude = excludedIds.isNotEmpty ? excludedIds.join(',') : null;
 
-    loggerService.instance.p('[$runtimeType] search $query');
+    loggerService.instance.d('[$runtimeType] search $query');
     _currentSearchValue = query;
     final newListins = await _fetchListings(
       params: RequestParams(

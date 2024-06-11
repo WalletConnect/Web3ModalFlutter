@@ -122,19 +122,9 @@ class _FakeISignEngine_4 extends _i1.SmartFake implements _i3.ISignEngine {
         );
 }
 
-class _FakeIAuthEngine_5 extends _i1.SmartFake implements _i3.IAuthEngine {
-  _FakeIAuthEngine_5(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeIGenericStore_6<T> extends _i1.SmartFake
+class _FakeIGenericStore_5<T> extends _i1.SmartFake
     implements _i4.IGenericStore<T> {
-  _FakeIGenericStore_6(
+  _FakeIGenericStore_5(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -143,8 +133,8 @@ class _FakeIGenericStore_6<T> extends _i1.SmartFake
         );
 }
 
-class _FakeISessions_7 extends _i1.SmartFake implements _i5.ISessions {
-  _FakeISessions_7(
+class _FakeISessions_6 extends _i1.SmartFake implements _i5.ISessions {
+  _FakeISessions_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -153,8 +143,8 @@ class _FakeISessions_7 extends _i1.SmartFake implements _i5.ISessions {
         );
 }
 
-class _FakeIPairingStore_8 extends _i1.SmartFake implements _i3.IPairingStore {
-  _FakeIPairingStore_8(
+class _FakeIPairingStore_7 extends _i1.SmartFake implements _i3.IPairingStore {
+  _FakeIPairingStore_7(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -163,9 +153,9 @@ class _FakeIPairingStore_8 extends _i1.SmartFake implements _i3.IPairingStore {
         );
 }
 
-class _FakeConnectResponse_9 extends _i1.SmartFake
+class _FakeConnectResponse_8 extends _i1.SmartFake
     implements _i3.ConnectResponse {
-  _FakeConnectResponse_9(
+  _FakeConnectResponse_8(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -174,9 +164,20 @@ class _FakeConnectResponse_9 extends _i1.SmartFake
         );
 }
 
-class _FakeAuthRequestResponse_10 extends _i1.SmartFake
+class _FakeAuthRequestResponse_9 extends _i1.SmartFake
     implements _i3.AuthRequestResponse {
-  _FakeAuthRequestResponse_10(
+  _FakeAuthRequestResponse_9(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeOCARequestResponse_10 extends _i1.SmartFake
+    implements _i3.OCARequestResponse {
+  _FakeOCARequestResponse_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -1211,22 +1212,6 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
         returnValueForMissingStub: null,
       );
   @override
-  _i3.IAuthEngine get authEngine => (super.noSuchMethod(
-        Invocation.getter(#authEngine),
-        returnValue: _FakeIAuthEngine_5(
-          this,
-          Invocation.getter(#authEngine),
-        ),
-      ) as _i3.IAuthEngine);
-  @override
-  set authEngine(_i3.IAuthEngine? _authEngine) => super.noSuchMethod(
-        Invocation.setter(
-          #authEngine,
-          _authEngine,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
   _i3.Event<_i3.SessionConnect> get onSessionConnect => (super.noSuchMethod(
         Invocation.getter(#onSessionConnect),
         returnValue: _FakeEvent_1<_i3.SessionConnect>(
@@ -1294,7 +1279,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   @override
   _i4.IGenericStore<_i3.ProposalData> get proposals => (super.noSuchMethod(
         Invocation.getter(#proposals),
-        returnValue: _FakeIGenericStore_6<_i3.ProposalData>(
+        returnValue: _FakeIGenericStore_5<_i3.ProposalData>(
           this,
           Invocation.getter(#proposals),
         ),
@@ -1302,7 +1287,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   @override
   _i5.ISessions get sessions => (super.noSuchMethod(
         Invocation.getter(#sessions),
-        returnValue: _FakeISessions_7(
+        returnValue: _FakeISessions_6(
           this,
           Invocation.getter(#sessions),
         ),
@@ -1311,7 +1296,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   _i4.IGenericStore<_i3.SessionRequest> get pendingRequests =>
       (super.noSuchMethod(
         Invocation.getter(#pendingRequests),
-        returnValue: _FakeIGenericStore_6<_i3.SessionRequest>(
+        returnValue: _FakeIGenericStore_5<_i3.SessionRequest>(
           this,
           Invocation.getter(#pendingRequests),
         ),
@@ -1319,7 +1304,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   @override
   _i3.IPairingStore get pairings => (super.noSuchMethod(
         Invocation.getter(#pairings),
-        returnValue: _FakeIPairingStore_8(
+        returnValue: _FakeIPairingStore_7(
           this,
           Invocation.getter(#pairings),
         ),
@@ -1333,9 +1318,17 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
         ),
       ) as _i3.Event<_i3.AuthResponse>);
   @override
+  _i3.Event<_i3.OCAuthResponse> get onOCAuthResponse => (super.noSuchMethod(
+        Invocation.getter(#onOCAuthResponse),
+        returnValue: _FakeEvent_1<_i3.OCAuthResponse>(
+          this,
+          Invocation.getter(#onOCAuthResponse),
+        ),
+      ) as _i3.Event<_i3.OCAuthResponse>);
+  @override
   _i4.IGenericStore<_i3.AuthPublicKey> get authKeys => (super.noSuchMethod(
         Invocation.getter(#authKeys),
-        returnValue: _FakeIGenericStore_6<_i3.AuthPublicKey>(
+        returnValue: _FakeIGenericStore_5<_i3.AuthPublicKey>(
           this,
           Invocation.getter(#authKeys),
         ),
@@ -1343,7 +1336,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   @override
   _i4.IGenericStore<String> get pairingTopics => (super.noSuchMethod(
         Invocation.getter(#pairingTopics),
-        returnValue: _FakeIGenericStore_6<String>(
+        returnValue: _FakeIGenericStore_5<String>(
           this,
           Invocation.getter(#pairingTopics),
         ),
@@ -1352,7 +1345,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   _i4.IGenericStore<_i3.StoredCacao> get completeRequests =>
       (super.noSuchMethod(
         Invocation.getter(#completeRequests),
-        returnValue: _FakeIGenericStore_6<_i3.StoredCacao>(
+        returnValue: _FakeIGenericStore_5<_i3.StoredCacao>(
           this,
           Invocation.getter(#completeRequests),
         ),
@@ -1395,7 +1388,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
           },
         ),
         returnValue:
-            _i14.Future<_i3.ConnectResponse>.value(_FakeConnectResponse_9(
+            _i14.Future<_i3.ConnectResponse>.value(_FakeConnectResponse_8(
           this,
           Invocation.method(
             #connect,
@@ -1576,7 +1569,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
           },
         ),
         returnValue: _i14.Future<_i3.AuthRequestResponse>.value(
-            _FakeAuthRequestResponse_10(
+            _FakeAuthRequestResponse_9(
           this,
           Invocation.method(
             #requestAuth,
@@ -1590,6 +1583,38 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
         )),
       ) as _i14.Future<_i3.AuthRequestResponse>);
   @override
+  _i14.Future<_i3.OCARequestResponse> authenticate({
+    required _i3.OCARequestParams? params,
+    String? pairingTopic,
+    List<List<String>>? methods = const [
+      [r'wc_sessionAuthenticate']
+    ],
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #authenticate,
+          [],
+          {
+            #params: params,
+            #pairingTopic: pairingTopic,
+            #methods: methods,
+          },
+        ),
+        returnValue: _i14.Future<_i3.OCARequestResponse>.value(
+            _FakeOCARequestResponse_10(
+          this,
+          Invocation.method(
+            #authenticate,
+            [],
+            {
+              #params: params,
+              #pairingTopic: pairingTopic,
+              #methods: methods,
+            },
+          ),
+        )),
+      ) as _i14.Future<_i3.OCARequestResponse>);
+  @override
   Map<int, _i3.StoredCacao> getCompletedRequestsForPairing(
           {required String? pairingTopic}) =>
       (super.noSuchMethod(
@@ -1600,6 +1625,22 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
         ),
         returnValue: <int, _i3.StoredCacao>{},
       ) as Map<int, _i3.StoredCacao>);
+  @override
+  _i14.Future<bool> validateSignedCacao({
+    required _i3.Cacao? cacao,
+    required String? projectId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #validateSignedCacao,
+          [],
+          {
+            #cacao: cacao,
+            #projectId: projectId,
+          },
+        ),
+        returnValue: _i14.Future<bool>.value(false),
+      ) as _i14.Future<bool>);
   @override
   String formatAuthMessage({
     required String? iss,
@@ -1944,7 +1985,7 @@ class MockRelayClient extends _i1.Mock implements _i25.RelayClient {
   @override
   _i4.IGenericStore<String> get topicMap => (super.noSuchMethod(
         Invocation.getter(#topicMap),
-        returnValue: _FakeIGenericStore_6<String>(
+        returnValue: _FakeIGenericStore_5<String>(
           this,
           Invocation.getter(#topicMap),
         ),
