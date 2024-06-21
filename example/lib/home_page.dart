@@ -52,13 +52,13 @@ class _MyHomePageState extends State<MyHomePage> {
       metadata: const PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
-        url: 'https://web3modal.com/',
+        url: 'https://walletconnect.com/appkit',
         icons: [
           'https://docs.walletconnect.com/assets/images/web3modalLogo-2cee77e07851ba0a710b56d03d4d09dd.png'
         ],
         redirect: Redirect(
           native: 'web3modalflutter://',
-          universal: 'https://web3modal.com',
+          universal: 'https://walletconnect.com/appkit',
         ),
       ),
       enableAnalytics: true, // OPTIONAL - null by default
