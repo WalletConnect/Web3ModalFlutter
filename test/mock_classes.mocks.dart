@@ -122,9 +122,19 @@ class _FakeISignEngine_4 extends _i1.SmartFake implements _i3.ISignEngine {
         );
 }
 
-class _FakeIGenericStore_5<T> extends _i1.SmartFake
+class _FakeIAuthEngine_5 extends _i1.SmartFake implements _i3.IAuthEngine {
+  _FakeIAuthEngine_5(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeIGenericStore_6<T> extends _i1.SmartFake
     implements _i4.IGenericStore<T> {
-  _FakeIGenericStore_5(
+  _FakeIGenericStore_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -133,8 +143,8 @@ class _FakeIGenericStore_5<T> extends _i1.SmartFake
         );
 }
 
-class _FakeISessions_6 extends _i1.SmartFake implements _i5.ISessions {
-  _FakeISessions_6(
+class _FakeISessions_7 extends _i1.SmartFake implements _i5.ISessions {
+  _FakeISessions_7(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -143,8 +153,8 @@ class _FakeISessions_6 extends _i1.SmartFake implements _i5.ISessions {
         );
 }
 
-class _FakeIPairingStore_7 extends _i1.SmartFake implements _i3.IPairingStore {
-  _FakeIPairingStore_7(
+class _FakeIPairingStore_8 extends _i1.SmartFake implements _i3.IPairingStore {
+  _FakeIPairingStore_8(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -153,9 +163,9 @@ class _FakeIPairingStore_7 extends _i1.SmartFake implements _i3.IPairingStore {
         );
 }
 
-class _FakeConnectResponse_8 extends _i1.SmartFake
+class _FakeConnectResponse_9 extends _i1.SmartFake
     implements _i3.ConnectResponse {
-  _FakeConnectResponse_8(
+  _FakeConnectResponse_9(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -164,9 +174,9 @@ class _FakeConnectResponse_8 extends _i1.SmartFake
         );
 }
 
-class _FakeAuthRequestResponse_9 extends _i1.SmartFake
+class _FakeAuthRequestResponse_10 extends _i1.SmartFake
     implements _i3.AuthRequestResponse {
-  _FakeAuthRequestResponse_9(
+  _FakeAuthRequestResponse_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -175,9 +185,9 @@ class _FakeAuthRequestResponse_9 extends _i1.SmartFake
         );
 }
 
-class _FakeOCARequestResponse_10 extends _i1.SmartFake
-    implements _i3.OCARequestResponse {
-  _FakeOCARequestResponse_10(
+class _FakeSessionAuthRequestResponse_11 extends _i1.SmartFake
+    implements _i3.SessionAuthRequestResponse {
+  _FakeSessionAuthRequestResponse_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -186,8 +196,8 @@ class _FakeOCARequestResponse_10 extends _i1.SmartFake
         );
 }
 
-class _FakeIStore_11<T> extends _i1.SmartFake implements _i6.IStore<T> {
-  _FakeIStore_11(
+class _FakeIStore_12<T> extends _i1.SmartFake implements _i6.IStore<T> {
+  _FakeIStore_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -196,8 +206,8 @@ class _FakeIStore_11<T> extends _i1.SmartFake implements _i6.IStore<T> {
         );
 }
 
-class _FakeSessionData_12 extends _i1.SmartFake implements _i3.SessionData {
-  _FakeSessionData_12(
+class _FakeSessionData_13 extends _i1.SmartFake implements _i3.SessionData {
+  _FakeSessionData_13(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -206,9 +216,9 @@ class _FakeSessionData_12 extends _i1.SmartFake implements _i3.SessionData {
         );
 }
 
-class _FakeIMessageTracker_13 extends _i1.SmartFake
+class _FakeIMessageTracker_14 extends _i1.SmartFake
     implements _i7.IMessageTracker {
-  _FakeIMessageTracker_13(
+  _FakeIMessageTracker_14(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -217,9 +227,9 @@ class _FakeIMessageTracker_13 extends _i1.SmartFake
         );
 }
 
-class _FakeIWebSocketHandler_14 extends _i1.SmartFake
+class _FakeIWebSocketHandler_15 extends _i1.SmartFake
     implements _i8.IWebSocketHandler {
-  _FakeIWebSocketHandler_14(
+  _FakeIWebSocketHandler_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -228,8 +238,8 @@ class _FakeIWebSocketHandler_14 extends _i1.SmartFake
         );
 }
 
-class _FakeResponse_15 extends _i1.SmartFake implements _i9.Response {
-  _FakeResponse_15(
+class _FakeResponse_16 extends _i1.SmartFake implements _i9.Response {
+  _FakeResponse_16(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -238,9 +248,9 @@ class _FakeResponse_15 extends _i1.SmartFake implements _i9.Response {
         );
 }
 
-class _FakeStreamedResponse_16 extends _i1.SmartFake
+class _FakeStreamedResponse_17 extends _i1.SmartFake
     implements _i9.StreamedResponse {
-  _FakeStreamedResponse_16(
+  _FakeStreamedResponse_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -249,9 +259,9 @@ class _FakeStreamedResponse_16 extends _i1.SmartFake
         );
 }
 
-class _FakeBlockchainIdentity_17 extends _i1.SmartFake
+class _FakeBlockchainIdentity_18 extends _i1.SmartFake
     implements _i10.BlockchainIdentity {
-  _FakeBlockchainIdentity_17(
+  _FakeBlockchainIdentity_18(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -260,8 +270,8 @@ class _FakeBlockchainIdentity_17 extends _i1.SmartFake
         );
 }
 
-class _FakeWidget_18 extends _i1.SmartFake implements _i11.Widget {
-  _FakeWidget_18(
+class _FakeWidget_19 extends _i1.SmartFake implements _i11.Widget {
+  _FakeWidget_19(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -1212,6 +1222,22 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
         returnValueForMissingStub: null,
       );
   @override
+  _i3.IAuthEngine get authEngine => (super.noSuchMethod(
+        Invocation.getter(#authEngine),
+        returnValue: _FakeIAuthEngine_5(
+          this,
+          Invocation.getter(#authEngine),
+        ),
+      ) as _i3.IAuthEngine);
+  @override
+  set authEngine(_i3.IAuthEngine? _authEngine) => super.noSuchMethod(
+        Invocation.setter(
+          #authEngine,
+          _authEngine,
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
   _i3.Event<_i3.SessionConnect> get onSessionConnect => (super.noSuchMethod(
         Invocation.getter(#onSessionConnect),
         returnValue: _FakeEvent_1<_i3.SessionConnect>(
@@ -1279,7 +1305,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   @override
   _i4.IGenericStore<_i3.ProposalData> get proposals => (super.noSuchMethod(
         Invocation.getter(#proposals),
-        returnValue: _FakeIGenericStore_5<_i3.ProposalData>(
+        returnValue: _FakeIGenericStore_6<_i3.ProposalData>(
           this,
           Invocation.getter(#proposals),
         ),
@@ -1287,7 +1313,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   @override
   _i5.ISessions get sessions => (super.noSuchMethod(
         Invocation.getter(#sessions),
-        returnValue: _FakeISessions_6(
+        returnValue: _FakeISessions_7(
           this,
           Invocation.getter(#sessions),
         ),
@@ -1296,7 +1322,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   _i4.IGenericStore<_i3.SessionRequest> get pendingRequests =>
       (super.noSuchMethod(
         Invocation.getter(#pendingRequests),
-        returnValue: _FakeIGenericStore_5<_i3.SessionRequest>(
+        returnValue: _FakeIGenericStore_6<_i3.SessionRequest>(
           this,
           Invocation.getter(#pendingRequests),
         ),
@@ -1304,7 +1330,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   @override
   _i3.IPairingStore get pairings => (super.noSuchMethod(
         Invocation.getter(#pairings),
-        returnValue: _FakeIPairingStore_7(
+        returnValue: _FakeIPairingStore_8(
           this,
           Invocation.getter(#pairings),
         ),
@@ -1318,17 +1344,9 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
         ),
       ) as _i3.Event<_i3.AuthResponse>);
   @override
-  _i3.Event<_i3.OCAuthResponse> get onOCAuthResponse => (super.noSuchMethod(
-        Invocation.getter(#onOCAuthResponse),
-        returnValue: _FakeEvent_1<_i3.OCAuthResponse>(
-          this,
-          Invocation.getter(#onOCAuthResponse),
-        ),
-      ) as _i3.Event<_i3.OCAuthResponse>);
-  @override
   _i4.IGenericStore<_i3.AuthPublicKey> get authKeys => (super.noSuchMethod(
         Invocation.getter(#authKeys),
-        returnValue: _FakeIGenericStore_5<_i3.AuthPublicKey>(
+        returnValue: _FakeIGenericStore_6<_i3.AuthPublicKey>(
           this,
           Invocation.getter(#authKeys),
         ),
@@ -1336,7 +1354,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   @override
   _i4.IGenericStore<String> get pairingTopics => (super.noSuchMethod(
         Invocation.getter(#pairingTopics),
-        returnValue: _FakeIGenericStore_5<String>(
+        returnValue: _FakeIGenericStore_6<String>(
           this,
           Invocation.getter(#pairingTopics),
         ),
@@ -1345,11 +1363,20 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   _i4.IGenericStore<_i3.StoredCacao> get completeRequests =>
       (super.noSuchMethod(
         Invocation.getter(#completeRequests),
-        returnValue: _FakeIGenericStore_5<_i3.StoredCacao>(
+        returnValue: _FakeIGenericStore_6<_i3.StoredCacao>(
           this,
           Invocation.getter(#completeRequests),
         ),
       ) as _i4.IGenericStore<_i3.StoredCacao>);
+  @override
+  _i3.Event<_i3.SessionAuthResponse> get onSessionAuthResponse =>
+      (super.noSuchMethod(
+        Invocation.getter(#onSessionAuthResponse),
+        returnValue: _FakeEvent_1<_i3.SessionAuthResponse>(
+          this,
+          Invocation.getter(#onSessionAuthResponse),
+        ),
+      ) as _i3.Event<_i3.SessionAuthResponse>);
   @override
   _i14.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
@@ -1388,7 +1415,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
           },
         ),
         returnValue:
-            _i14.Future<_i3.ConnectResponse>.value(_FakeConnectResponse_8(
+            _i14.Future<_i3.ConnectResponse>.value(_FakeConnectResponse_9(
           this,
           Invocation.method(
             #connect,
@@ -1569,7 +1596,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
           },
         ),
         returnValue: _i14.Future<_i3.AuthRequestResponse>.value(
-            _FakeAuthRequestResponse_9(
+            _FakeAuthRequestResponse_10(
           this,
           Invocation.method(
             #requestAuth,
@@ -1583,8 +1610,19 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
         )),
       ) as _i14.Future<_i3.AuthRequestResponse>);
   @override
-  _i14.Future<_i3.OCARequestResponse> authenticate({
-    required _i3.OCARequestParams? params,
+  Map<int, _i3.StoredCacao> getCompletedRequestsForPairing(
+          {required String? pairingTopic}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getCompletedRequestsForPairing,
+          [],
+          {#pairingTopic: pairingTopic},
+        ),
+        returnValue: <int, _i3.StoredCacao>{},
+      ) as Map<int, _i3.StoredCacao>);
+  @override
+  _i14.Future<_i3.SessionAuthRequestResponse> authenticate({
+    required _i3.SessionAuthRequestParams? params,
     String? pairingTopic,
     List<List<String>>? methods = const [
       [r'wc_sessionAuthenticate']
@@ -1600,8 +1638,8 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
             #methods: methods,
           },
         ),
-        returnValue: _i14.Future<_i3.OCARequestResponse>.value(
-            _FakeOCARequestResponse_10(
+        returnValue: _i14.Future<_i3.SessionAuthRequestResponse>.value(
+            _FakeSessionAuthRequestResponse_11(
           this,
           Invocation.method(
             #authenticate,
@@ -1613,18 +1651,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
             },
           ),
         )),
-      ) as _i14.Future<_i3.OCARequestResponse>);
-  @override
-  Map<int, _i3.StoredCacao> getCompletedRequestsForPairing(
-          {required String? pairingTopic}) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getCompletedRequestsForPairing,
-          [],
-          {#pairingTopic: pairingTopic},
-        ),
-        returnValue: <int, _i3.StoredCacao>{},
-      ) as Map<int, _i3.StoredCacao>);
+      ) as _i14.Future<_i3.SessionAuthRequestResponse>);
   @override
   _i14.Future<bool> validateSignedCacao({
     required _i3.Cacao? cacao,
@@ -1696,7 +1723,7 @@ class MockSessions extends _i1.Mock implements _i3.Sessions {
   @override
   _i6.IStore<dynamic> get storage => (super.noSuchMethod(
         Invocation.getter(#storage),
-        returnValue: _FakeIStore_11<dynamic>(
+        returnValue: _FakeIStore_12<dynamic>(
           this,
           Invocation.getter(#storage),
         ),
@@ -1752,7 +1779,7 @@ class MockSessions extends _i1.Mock implements _i3.Sessions {
   @override
   _i3.SessionData Function(dynamic) get fromJson => (super.noSuchMethod(
         Invocation.getter(#fromJson),
-        returnValue: (dynamic __p0) => _FakeSessionData_12(
+        returnValue: (dynamic __p0) => _FakeSessionData_13(
           this,
           Invocation.getter(#fromJson),
         ),
@@ -1968,7 +1995,7 @@ class MockRelayClient extends _i1.Mock implements _i25.RelayClient {
   @override
   _i7.IMessageTracker get messageTracker => (super.noSuchMethod(
         Invocation.getter(#messageTracker),
-        returnValue: _FakeIMessageTracker_13(
+        returnValue: _FakeIMessageTracker_14(
           this,
           Invocation.getter(#messageTracker),
         ),
@@ -1985,7 +2012,7 @@ class MockRelayClient extends _i1.Mock implements _i25.RelayClient {
   @override
   _i4.IGenericStore<String> get topicMap => (super.noSuchMethod(
         Invocation.getter(#topicMap),
-        returnValue: _FakeIGenericStore_5<String>(
+        returnValue: _FakeIGenericStore_6<String>(
           this,
           Invocation.getter(#topicMap),
         ),
@@ -2001,7 +2028,7 @@ class MockRelayClient extends _i1.Mock implements _i25.RelayClient {
   @override
   _i8.IWebSocketHandler get socketHandler => (super.noSuchMethod(
         Invocation.getter(#socketHandler),
-        returnValue: _FakeIWebSocketHandler_14(
+        returnValue: _FakeIWebSocketHandler_15(
           this,
           Invocation.getter(#socketHandler),
         ),
@@ -2140,7 +2167,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #head,
@@ -2160,7 +2187,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #get,
@@ -2186,7 +2213,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #post,
@@ -2216,7 +2243,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #put,
@@ -2246,7 +2273,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #patch,
@@ -2276,7 +2303,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #delete,
@@ -2330,7 +2357,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
           [request],
         ),
         returnValue:
-            _i14.Future<_i9.StreamedResponse>.value(_FakeStreamedResponse_16(
+            _i14.Future<_i9.StreamedResponse>.value(_FakeStreamedResponse_17(
           this,
           Invocation.method(
             #send,
@@ -2460,7 +2487,7 @@ class MockBlockchainApiUtils extends _i1.Mock
           ],
         ),
         returnValue: _i14.Future<_i10.BlockchainIdentity>.value(
-            _FakeBlockchainIdentity_17(
+            _FakeBlockchainIdentity_18(
           this,
           Invocation.method(
             #getIdentity,
@@ -2634,7 +2661,7 @@ class MockWidgetStack extends _i1.Mock implements _i34.WidgetStack {
           #getCurrent,
           [],
         ),
-        returnValue: _FakeWidget_18(
+        returnValue: _FakeWidget_19(
           this,
           Invocation.method(
             #getCurrent,

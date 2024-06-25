@@ -48,12 +48,12 @@ class _MyHomePageState extends State<MyHomePage> {
     final sortedChains = W3MChainPresets.chains.keys.toList()
       ..sort((e1, e2) => e1.compareTo(e2));
 
-    final ocaRequestParams = OCARequestParams(
+    final authRequestParams = SessionAuthRequestParams(
       chains: sortedChains.map((e) => 'eip155:$e').toList(),
-      domain: 'web3modal.com',
+      domain: 'walletconnect.com',
       nonce: AuthUtils.generateNonce(),
-      uri: 'https://web3modal.com/login',
-      statement: 'Welcome to Web3Modal for Flutter.',
+      uri: 'https://walletconnect.com/login',
+      statement: 'Welcome to AppKit for Flutter.',
       methods: MethodsConstants.allMethods,
     );
 
@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       metadata: PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
-        url: 'https://${ocaRequestParams.domain}/',
+        url: 'https://${authRequestParams.domain}/',
         icons: [
           'https://docs.walletconnect.com/assets/images/web3modalLogo-2cee77e07851ba0a710b56d03d4d09dd.png'
         ],
@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
           native: 'web3modalflutter://',
         ),
       ),
-      ocaRequestParams: ocaRequestParams,
+      authRequestParams: authRequestParams,
       // enableAnalytics: true, // OPTIONAL - null by default
       // enableEmail: true, // OPTIONAL - false by default
       // requiredNamespaces: {},

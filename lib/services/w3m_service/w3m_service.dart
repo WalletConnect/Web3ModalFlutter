@@ -66,7 +66,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
   Map<String, RequiredNamespace> _requiredNamespaces = {};
   Map<String, RequiredNamespace> _optionalNamespaces = {};
-  OCARequestParams? _ocaRequestParams;
+  SessionAuthRequestParams? _authRequestParams;
 
   @override
   bool get hasNamespaces =>
@@ -113,7 +113,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     IWeb3App? web3App,
     String? projectId,
     PairingMetadata? metadata,
-    OCARequestParams? ocaRequestParams,
+    SessionAuthRequestParams? authRequestParams,
     Map<String, W3MNamespace>? requiredNamespaces,
     Map<String, W3MNamespace>? optionalNamespaces,
     Set<String>? featuredWalletIds,
@@ -142,7 +142,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
           metadata: metadata!,
         );
     _projectId = _web3App.core.projectId;
-    _ocaRequestParams = ocaRequestParams;
+    _authRequestParams = authRequestParams;
 
     loggerService.instance = LoggerService(
       level: logLevel,
@@ -647,15 +647,15 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   @override
   Future<void> buildConnectionUri() async {
     if (!_isConnected) {
-      if (_ocaRequestParams != null) {
+      if (_authRequestParams != null) {
         // One-Click Auth
         loggerService.instance.d(
           '[$runtimeType] Sending One-Click Auth request to '
           '${_selectedWallet?.listing.name} with params '
-          '${jsonEncode(_ocaRequestParams!.toJson())}',
+          '${jsonEncode(_authRequestParams!.toJson())}',
         );
         final authResponse = await _web3App.authenticate(
-          params: _ocaRequestParams!,
+          params: _authRequestParams!,
         );
         _wcUri = authResponse.uri?.toString() ?? '';
         _notify();
@@ -720,7 +720,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     return await expirePreviousInactivePairings();
   }
 
-  void _awaitOCAuthCallback(OCARequestResponse authResponse) async {
+  void _awaitOCAuthCallback(SessionAuthRequestResponse authResponse) async {
     try {
       final response = await authResponse.completer.future;
       if (response.session != null) {
