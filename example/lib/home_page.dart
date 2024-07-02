@@ -44,25 +44,36 @@ class _MyHomePageState extends State<MyHomePage> {
     // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
     W3MChainPresets.chains.addAll(W3MChainPresets.extraChains);
     W3MChainPresets.chains.addAll(W3MChainPresets.testChains);
-    // W3MChainPresets.chains.removeWhere((key, _) => key != '137');
+
+    final sortedChains = W3MChainPresets.chains.keys.toList()
+      ..sort((e1, e2) => e1.compareTo(e2));
+
+    final authRequestParams = SessionAuthRequestParams(
+      chains: sortedChains.map((e) => 'eip155:$e').toList(),
+      domain: 'walletconnect.com',
+      nonce: AuthUtils.generateNonce(),
+      uri: 'https://walletconnect.com/login',
+      statement: 'Welcome to AppKit for Flutter.',
+      methods: MethodsConstants.allMethods,
+    );
 
     _w3mService = W3MService(
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
-      metadata: const PairingMetadata(
+      metadata: PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
-        url: 'https://walletconnect.com/appkit',
+        url: 'https://${authRequestParams.domain}/',
         icons: [
           'https://docs.walletconnect.com/assets/images/web3modalLogo-2cee77e07851ba0a710b56d03d4d09dd.png'
         ],
-        redirect: Redirect(
+        redirect: const Redirect(
           native: 'web3modalflutter://',
-          universal: 'https://walletconnect.com/appkit',
         ),
       ),
-      enableAnalytics: true, // OPTIONAL - null by default
-      enableEmail: true, // OPTIONAL - false by default
+      authRequestParams: authRequestParams,
+      // enableAnalytics: true, // OPTIONAL - null by default
+      // enableEmail: true, // OPTIONAL - false by default
       // requiredNamespaces: {},
       // optionalNamespaces: {},
       // excludedWalletIds: {

@@ -45,9 +45,9 @@ class AnalyticsService implements IAnalyticsService {
       _endpoint = kDebugMode
           ? _debugApiEndpoint
           : await coreUtils.instance.getAnalyticsUrl();
-      loggerService.instance.p('[$runtimeType] enabled: $_isEnabled');
+      loggerService.instance.d('[$runtimeType] enabled: $_isEnabled');
     } catch (e, s) {
-      loggerService.instance.p(
+      loggerService.instance.d(
         '[$runtimeType] init error',
         error: e,
         stackTrace: s,
@@ -68,7 +68,7 @@ class AnalyticsService implements IAnalyticsService {
       final enabled = json['isAnalyticsEnabled'] as bool?;
       return enabled ?? false;
     } catch (e, s) {
-      loggerService.instance.p(
+      loggerService.instance.d(
         '[$runtimeType] fetch remote configuration error',
         error: e,
         stackTrace: s,
@@ -101,9 +101,9 @@ class AnalyticsService implements IAnalyticsService {
       if (code == 200 || code == 202) {
         _eventsController.sink.add(analyticsEvent.toMap());
       }
-      loggerService.instance.p('[$runtimeType] send event $code: $body');
+      loggerService.instance.d('[$runtimeType] send event $code: $body');
     } catch (e, s) {
-      loggerService.instance.p(
+      loggerService.instance.d(
         '[$runtimeType] send event error',
         error: e,
         stackTrace: s,

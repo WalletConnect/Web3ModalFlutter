@@ -16,7 +16,7 @@ class SecondaryButton extends StatelessWidget {
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
     return BaseButton(
-      size: BaseButtonSize.regular,
+      size: BaseButtonSize.big,
       child: Text(title),
       onTap: onTap,
       buttonStyle: ButtonStyle(
@@ -35,7 +35,7 @@ class SecondaryButton extends StatelessWidget {
               ),
               borderRadius: radiuses.isSquare()
                   ? BorderRadius.all(Radius.zero)
-                  : BorderRadius.circular(100.0),
+                  : BorderRadius.circular(16.0),
             );
           },
         ),

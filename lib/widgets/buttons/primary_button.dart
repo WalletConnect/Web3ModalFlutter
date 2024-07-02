@@ -5,10 +5,12 @@ import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 class PrimaryButton extends StatelessWidget {
   final String title;
   final VoidCallback? onTap;
+  final bool loading;
   const PrimaryButton({
     super.key,
     required this.title,
     this.onTap,
+    this.loading = false,
   });
 
   @override
@@ -16,9 +18,18 @@ class PrimaryButton extends StatelessWidget {
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
     return BaseButton(
-      size: BaseButtonSize.regular,
-      child: Text(title),
-      onTap: onTap,
+      size: BaseButtonSize.big,
+      child: loading
+          ? SizedBox(
+              height: BaseButtonSize.big.height * 0.4,
+              width: BaseButtonSize.big.height * 0.4,
+              child: CircularProgressIndicator(
+                color: themeColors.accent100,
+                strokeWidth: 2.0,
+              ),
+            )
+          : Text(title),
+      onTap: loading ? null : onTap,
       buttonStyle: ButtonStyle(
         backgroundColor: MaterialStateProperty.resolveWith<Color>(
           (states) {
@@ -45,7 +56,7 @@ class PrimaryButton extends StatelessWidget {
               ),
               borderRadius: radiuses.isSquare()
                   ? BorderRadius.all(Radius.zero)
-                  : BorderRadius.circular(100.0),
+                  : BorderRadius.circular(16.0),
             );
           },
         ),

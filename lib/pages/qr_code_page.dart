@@ -51,8 +51,14 @@ class _QRCodePageState extends State<QRCodePage> {
     setState(() {});
   }
 
-  void _onError(EventArgs? args) {
-    _showUserRejection();
+  void _onError(ModalError? args) {
+    final event = args ?? ModalError('An error occurred');
+    toastUtils.instance.show(
+      ToastMessage(
+        type: ToastType.error,
+        text: event.message,
+      ),
+    );
   }
 
   @override
@@ -144,8 +150,4 @@ class _QRCodePageState extends State<QRCodePage> {
       ToastMessage(type: ToastType.success, text: 'Link copied'),
     );
   }
-
-  void _showUserRejection() => toastUtils.instance.show(
-        ToastMessage(type: ToastType.error, text: 'User rejected'),
-      );
 }

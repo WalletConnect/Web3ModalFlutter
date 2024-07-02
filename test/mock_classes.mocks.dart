@@ -29,9 +29,9 @@ import 'package:walletconnect_flutter_v2/apis/sign_api/i_sessions.dart' as _i5;
 import 'package:web3modal_flutter/models/grid_item.dart' as _i30;
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart'
     as _i35;
-import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart'
+import 'package:web3modal_flutter/services/blockchain_service/blockchain_service.dart'
     as _i31;
-import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart'
+import 'package:web3modal_flutter/services/blockchain_service/models/blockchain_identity.dart'
     as _i10;
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart'
     as _i16;
@@ -185,8 +185,9 @@ class _FakeAuthRequestResponse_10 extends _i1.SmartFake
         );
 }
 
-class _FakeIStore_11<T> extends _i1.SmartFake implements _i6.IStore<T> {
-  _FakeIStore_11(
+class _FakeSessionAuthRequestResponse_11 extends _i1.SmartFake
+    implements _i3.SessionAuthRequestResponse {
+  _FakeSessionAuthRequestResponse_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -195,8 +196,8 @@ class _FakeIStore_11<T> extends _i1.SmartFake implements _i6.IStore<T> {
         );
 }
 
-class _FakeSessionData_12 extends _i1.SmartFake implements _i3.SessionData {
-  _FakeSessionData_12(
+class _FakeIStore_12<T> extends _i1.SmartFake implements _i6.IStore<T> {
+  _FakeIStore_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -205,9 +206,19 @@ class _FakeSessionData_12 extends _i1.SmartFake implements _i3.SessionData {
         );
 }
 
-class _FakeIMessageTracker_13 extends _i1.SmartFake
+class _FakeSessionData_13 extends _i1.SmartFake implements _i3.SessionData {
+  _FakeSessionData_13(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeIMessageTracker_14 extends _i1.SmartFake
     implements _i7.IMessageTracker {
-  _FakeIMessageTracker_13(
+  _FakeIMessageTracker_14(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -216,9 +227,9 @@ class _FakeIMessageTracker_13 extends _i1.SmartFake
         );
 }
 
-class _FakeIWebSocketHandler_14 extends _i1.SmartFake
+class _FakeIWebSocketHandler_15 extends _i1.SmartFake
     implements _i8.IWebSocketHandler {
-  _FakeIWebSocketHandler_14(
+  _FakeIWebSocketHandler_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -227,8 +238,8 @@ class _FakeIWebSocketHandler_14 extends _i1.SmartFake
         );
 }
 
-class _FakeResponse_15 extends _i1.SmartFake implements _i9.Response {
-  _FakeResponse_15(
+class _FakeResponse_16 extends _i1.SmartFake implements _i9.Response {
+  _FakeResponse_16(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -237,9 +248,9 @@ class _FakeResponse_15 extends _i1.SmartFake implements _i9.Response {
         );
 }
 
-class _FakeStreamedResponse_16 extends _i1.SmartFake
+class _FakeStreamedResponse_17 extends _i1.SmartFake
     implements _i9.StreamedResponse {
-  _FakeStreamedResponse_16(
+  _FakeStreamedResponse_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -248,9 +259,9 @@ class _FakeStreamedResponse_16 extends _i1.SmartFake
         );
 }
 
-class _FakeBlockchainIdentity_17 extends _i1.SmartFake
+class _FakeBlockchainIdentity_18 extends _i1.SmartFake
     implements _i10.BlockchainIdentity {
-  _FakeBlockchainIdentity_17(
+  _FakeBlockchainIdentity_18(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -259,8 +270,8 @@ class _FakeBlockchainIdentity_17 extends _i1.SmartFake
         );
 }
 
-class _FakeWidget_18 extends _i1.SmartFake implements _i11.Widget {
-  _FakeWidget_18(
+class _FakeWidget_19 extends _i1.SmartFake implements _i11.Widget {
+  _FakeWidget_19(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -723,6 +734,21 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
+  String formatMessage(_i3.SIWECreateMessageArgs? params) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #formatMessage,
+          [params],
+        ),
+        returnValue: _i13.dummyValue<String>(
+          this,
+          Invocation.method(
+            #formatMessage,
+            [params],
+          ),
+        ),
+      ) as String);
+  @override
   _i14.Future<void> buildConnectionUri() => (super.noSuchMethod(
         Invocation.method(
           #buildConnectionUri,
@@ -760,10 +786,11 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
-  void closeModal() => super.noSuchMethod(
+  void closeModal({bool? disconnectModal = false}) => super.noSuchMethod(
         Invocation.method(
           #closeModal,
           [],
+          {#disconnectModal: disconnectModal},
         ),
         returnValueForMissingStub: null,
       );
@@ -1358,6 +1385,15 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
         ),
       ) as _i4.IGenericStore<_i3.StoredCacao>);
   @override
+  _i3.Event<_i3.SessionAuthResponse> get onSessionAuthResponse =>
+      (super.noSuchMethod(
+        Invocation.getter(#onSessionAuthResponse),
+        returnValue: _FakeEvent_1<_i3.SessionAuthResponse>(
+          this,
+          Invocation.getter(#onSessionAuthResponse),
+        ),
+      ) as _i3.Event<_i3.SessionAuthResponse>);
+  @override
   _i14.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
           #init,
@@ -1601,6 +1637,54 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
         returnValue: <int, _i3.StoredCacao>{},
       ) as Map<int, _i3.StoredCacao>);
   @override
+  _i14.Future<_i3.SessionAuthRequestResponse> authenticate({
+    required _i3.SessionAuthRequestParams? params,
+    String? pairingTopic,
+    List<List<String>>? methods = const [
+      [r'wc_sessionAuthenticate']
+    ],
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #authenticate,
+          [],
+          {
+            #params: params,
+            #pairingTopic: pairingTopic,
+            #methods: methods,
+          },
+        ),
+        returnValue: _i14.Future<_i3.SessionAuthRequestResponse>.value(
+            _FakeSessionAuthRequestResponse_11(
+          this,
+          Invocation.method(
+            #authenticate,
+            [],
+            {
+              #params: params,
+              #pairingTopic: pairingTopic,
+              #methods: methods,
+            },
+          ),
+        )),
+      ) as _i14.Future<_i3.SessionAuthRequestResponse>);
+  @override
+  _i14.Future<bool> validateSignedCacao({
+    required _i3.Cacao? cacao,
+    required String? projectId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #validateSignedCacao,
+          [],
+          {
+            #cacao: cacao,
+            #projectId: projectId,
+          },
+        ),
+        returnValue: _i14.Future<bool>.value(false),
+      ) as _i14.Future<bool>);
+  @override
   String formatAuthMessage({
     required String? iss,
     required _i3.CacaoRequestPayload? cacaoPayload,
@@ -1655,7 +1739,7 @@ class MockSessions extends _i1.Mock implements _i3.Sessions {
   @override
   _i6.IStore<dynamic> get storage => (super.noSuchMethod(
         Invocation.getter(#storage),
-        returnValue: _FakeIStore_11<dynamic>(
+        returnValue: _FakeIStore_12<dynamic>(
           this,
           Invocation.getter(#storage),
         ),
@@ -1711,7 +1795,7 @@ class MockSessions extends _i1.Mock implements _i3.Sessions {
   @override
   _i3.SessionData Function(dynamic) get fromJson => (super.noSuchMethod(
         Invocation.getter(#fromJson),
-        returnValue: (dynamic __p0) => _FakeSessionData_12(
+        returnValue: (dynamic __p0) => _FakeSessionData_13(
           this,
           Invocation.getter(#fromJson),
         ),
@@ -1927,7 +2011,7 @@ class MockRelayClient extends _i1.Mock implements _i25.RelayClient {
   @override
   _i7.IMessageTracker get messageTracker => (super.noSuchMethod(
         Invocation.getter(#messageTracker),
-        returnValue: _FakeIMessageTracker_13(
+        returnValue: _FakeIMessageTracker_14(
           this,
           Invocation.getter(#messageTracker),
         ),
@@ -1960,7 +2044,7 @@ class MockRelayClient extends _i1.Mock implements _i25.RelayClient {
   @override
   _i8.IWebSocketHandler get socketHandler => (super.noSuchMethod(
         Invocation.getter(#socketHandler),
-        returnValue: _FakeIWebSocketHandler_14(
+        returnValue: _FakeIWebSocketHandler_15(
           this,
           Invocation.getter(#socketHandler),
         ),
@@ -2099,7 +2183,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #head,
@@ -2119,7 +2203,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #get,
@@ -2145,7 +2229,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #post,
@@ -2175,7 +2259,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #put,
@@ -2205,7 +2289,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #patch,
@@ -2235,7 +2319,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #delete,
@@ -2289,7 +2373,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
           [request],
         ),
         returnValue:
-            _i14.Future<_i9.StreamedResponse>.value(_FakeStreamedResponse_16(
+            _i14.Future<_i9.StreamedResponse>.value(_FakeStreamedResponse_17(
           this,
           Invocation.method(
             #send,
@@ -2388,12 +2472,11 @@ class MockNetworkService extends _i1.Mock implements _i29.NetworkService {
       );
 }
 
-/// A class which mocks [BlockchainApiUtils].
+/// A class which mocks [BlockChainService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBlockchainApiUtils extends _i1.Mock
-    implements _i31.BlockchainApiUtils {
-  MockBlockchainApiUtils() {
+class MockBlockChainService extends _i1.Mock implements _i31.BlockChainService {
+  MockBlockChainService() {
     _i1.throwOnMissingStub(this);
   }
 
@@ -2419,7 +2502,7 @@ class MockBlockchainApiUtils extends _i1.Mock
           ],
         ),
         returnValue: _i14.Future<_i10.BlockchainIdentity>.value(
-            _FakeBlockchainIdentity_17(
+            _FakeBlockchainIdentity_18(
           this,
           Invocation.method(
             #getIdentity,
@@ -2593,7 +2676,7 @@ class MockWidgetStack extends _i1.Mock implements _i34.WidgetStack {
           #getCurrent,
           [],
         ),
-        returnValue: _FakeWidget_18(
+        returnValue: _FakeWidget_19(
           this,
           Invocation.method(
             #getCurrent,

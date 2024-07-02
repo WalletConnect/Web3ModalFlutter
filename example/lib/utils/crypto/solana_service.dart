@@ -7,6 +7,7 @@ enum SolanaEvents {
   none,
 }
 
+// TODO to be implement when non-EVM chain support is added.
 class SolanaData {
   static final Map<SolanaMethods, String> methods = {
     SolanaMethods.solanaSignTransaction: 'solana_signTransaction',

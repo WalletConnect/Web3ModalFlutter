@@ -6,13 +6,10 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class LoggerService implements ILoggerService {
   late Logger _logger;
-  late String _projectId;
   LoggerService({
     required LogLevel level,
-    required String projectId,
-    bool debugMode = true,
+    bool debugMode = kDebugMode,
   }) {
-    _projectId = projectId;
     _logger = Logger(
       level: level.toLevel(),
       printer: PrettyPrinter(methodCount: null),
@@ -22,22 +19,7 @@ class LoggerService implements ILoggerService {
     }
   }
 
-  void _logListener(LogEvent event) {
-    debugPrint('${event.message}');
-  }
-
-  @override
-  void p(
-    message, {
-    DateTime? time,
-    Object? error,
-    StackTrace? stackTrace,
-  }) {
-    // TODO [LoggerService] fix this
-    if (_projectId == 'cad4956f31a5e40a00b62865b030c6f8') {
-      _logger.i(message, time: time, error: error, stackTrace: stackTrace);
-    }
-  }
+  void _logListener(LogEvent event) => debugPrint('${event.message}');
 
   @override
   void d(
@@ -60,16 +42,6 @@ class LoggerService implements ILoggerService {
   }
 
   @override
-  void f(
-    message, {
-    DateTime? time,
-    Object? error,
-    StackTrace? stackTrace,
-  }) {
-    _logger.f(message, time: time, error: error, stackTrace: stackTrace);
-  }
-
-  @override
   void i(
     message, {
     DateTime? time,
@@ -77,18 +49,6 @@ class LoggerService implements ILoggerService {
     StackTrace? stackTrace,
   }) {
     _logger.i(message, time: time, error: error, stackTrace: stackTrace);
-  }
-
-  @override
-  void log(
-    Level level,
-    message, {
-    DateTime? time,
-    Object? error,
-    StackTrace? stackTrace,
-  }) {
-    _logger.log(level, message,
-        time: time, error: error, stackTrace: stackTrace);
   }
 
   @override
@@ -102,18 +62,10 @@ class LoggerService implements ILoggerService {
   }
 
   @override
-  void w(
-    message, {
-    DateTime? time,
-    Object? error,
-    StackTrace? stackTrace,
-  }) {
-    _logger.w(message, time: time, error: error, stackTrace: stackTrace);
-  }
-
-  @override
   Future<void> close() async {
-    Logger.removeLogListener(_logListener);
+    try {
+      Logger.removeLogListener(_logListener);
+    } catch (_) {}
     return await _logger.close();
   }
 }

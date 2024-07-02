@@ -3,14 +3,17 @@ import 'package:web3modal_flutter/theme/w3m_theme.dart';
 
 enum BaseButtonSize {
   small,
-  regular;
+  regular,
+  big;
 
   double get height {
     switch (this) {
       case small:
         return 32.0;
-      default:
+      case regular:
         return 40.0;
+      default:
+        return 48.0;
     }
   }
 
@@ -18,8 +21,10 @@ enum BaseButtonSize {
     switch (this) {
       case small:
         return 16.0;
-      default:
+      case regular:
         return 20.0;
+      default:
+        return 24.0;
     }
   }
 }

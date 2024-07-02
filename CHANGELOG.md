@@ -1,3 +1,7 @@
+## 3.2.3-alpha01
+
+- One-Click Auth implementation
+
 ## 3.2.2
 
 - Network change improvements
