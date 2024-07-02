@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/constants/url_constants.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
@@ -21,10 +22,7 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 class MagicService implements IMagicService {
-  static const _url = 'secure-mobile.walletconnect.com';
   static const _safeDomains = [
-    _url,
-    'secure.walletconnect.com',
     'auth.magic.link',
     'launchdarkly.com',
   ];
@@ -304,7 +302,7 @@ class MagicService implements IMagicService {
         'referer': _web3app.metadata.url,
         'x-bundle-id': _packageName,
       };
-      final uri = Uri.parse('https://$_url/mobile-sdk');
+      final uri = Uri.parse(UrlConstants.secureService);
       final queryParams = {
         'projectId': _web3app.core.projectId,
         'bundleId': _packageName,
@@ -569,7 +567,11 @@ class MagicService implements IMagicService {
   }
 
   bool _isAllowedDomain(String domain) {
-    final domains = _safeDomains.join('|');
+    final domains = [
+      Uri.parse(UrlConstants.secureService).authority,
+      Uri.parse(UrlConstants.secureDashboard).authority,
+      ..._safeDomains,
+    ].join('|');
     return RegExp(r'' + domains).hasMatch(domain);
   }
 
@@ -581,7 +583,7 @@ class MagicService implements IMagicService {
       loggerService.instance.e(
         '[EmailLogin] initialization timed out. Please check if your '
         'bundleId/packageName $_packageName is whitelisted in your cloud '
-        'configuration at https://cloud.walletconnect.com/ for project id ${_web3app.core.projectId}',
+        'configuration at ${UrlConstants.cloudService} for project id ${_web3app.core.projectId}',
       );
     }
   }

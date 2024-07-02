@@ -101,6 +101,8 @@ abstract class IW3MService with ChangeNotifier {
 
   Future<void> loadAccountData();
 
+  String formatMessage(SIWECreateMessageArgs params);
+
   /// Disconnects the session and pairing, if any.
   /// If there is no session, this does nothing.
   Future<void> disconnect({bool disconnectAllSessions = true});
@@ -135,7 +137,7 @@ abstract class IW3MService with ChangeNotifier {
   Future<void> requestAddChain(W3MChainInfo newChain);
 
   /// Closes the modal.
-  void closeModal();
+  void closeModal({bool disconnectSession = false});
 
   @override
   Future<void> dispose();

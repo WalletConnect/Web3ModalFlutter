@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:web3modal_flutter/constants/url_constants.dart';
 import 'package:web3modal_flutter/models/listing.dart';
 import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/native_app_data.dart';
@@ -26,8 +27,6 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 const int _defaultEntriesCount = 48;
 
 class ExplorerService implements IExplorerService {
-  String? _apiUrl;
-
   final http.Client _client;
   final String _referer;
 
@@ -105,8 +104,6 @@ class ExplorerService implements IExplorerService {
     if (initialized.value) {
       return;
     }
-
-    _apiUrl = await coreUtils.instance.getApiUrl();
 
     await _setInstalledWalletIdsParam();
     await _fetchInitialWallets();
@@ -200,11 +197,10 @@ class ExplorerService implements IExplorerService {
   }
 
   Future<List<NativeAppData>> _fetchNativeAppData() async {
-    final apiUrl = await coreUtils.instance.getApiUrl();
     final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
     final uri = Platform.isIOS
-        ? Uri.parse('$apiUrl/getIosData')
-        : Uri.parse('$apiUrl/getAndroidData');
+        ? Uri.parse('${UrlConstants.apiService}/getIosData')
+        : Uri.parse('${UrlConstants.apiService}/getAndroidData');
     try {
       final response = await _client.get(uri, headers: headers);
       if (response.statusCode == 200 || response.statusCode == 202) {
@@ -281,10 +277,11 @@ class ExplorerService implements IExplorerService {
     RequestParams? params,
     bool updateCount = true,
   }) async {
-    final p = params?.toJson() ?? {};
-    final apiUrl = await coreUtils.instance.getApiUrl();
+    final queryParams = params?.toJson() ?? {};
     final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
-    final uri = Uri.parse('$apiUrl/getWallets').replace(queryParameters: p);
+    final uri = Uri.parse('${UrlConstants.apiService}/getWallets').replace(
+      queryParameters: queryParams,
+    );
     loggerService.instance.d('[$runtimeType] fetching $uri');
     try {
       final response = await _client.get(uri, headers: headers);
@@ -453,8 +450,7 @@ class ExplorerService implements IExplorerService {
     if (imageId.startsWith('http')) {
       return imageId;
     }
-    final apiUrl = _apiUrl ?? 'https://api.web3modal.com';
-    return '$apiUrl/getWalletImage/$imageId';
+    return '${UrlConstants.apiService}/getWalletImage/$imageId';
   }
 
   @override
@@ -465,8 +461,7 @@ class ExplorerService implements IExplorerService {
     if (imageId.startsWith('http')) {
       return imageId;
     }
-    final apiUrl = _apiUrl ?? 'https://api.web3modal.com';
-    return '$apiUrl/public/getAssetImage/$imageId';
+    return '${UrlConstants.apiService}/public/getAssetImage/$imageId';
   }
 
   @override

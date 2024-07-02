@@ -786,11 +786,11 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
-  void closeModal({bool? disconnectModal = false}) => super.noSuchMethod(
+  void closeModal({bool? disconnectSession = false}) => super.noSuchMethod(
         Invocation.method(
           #closeModal,
           [],
-          {#disconnectModal: disconnectModal},
+          {#disconnectSession: disconnectSession},
         ),
         returnValueForMissingStub: null,
       );

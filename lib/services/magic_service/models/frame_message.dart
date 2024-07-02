@@ -2,12 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/constants/url_constants.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class FrameMessage {
-  static const _origin = 'secure.walletconnect.com';
-
   final MessageData? data;
   final String? origin;
 
@@ -35,7 +34,8 @@ class FrameMessage {
       };
 
   bool get isValidOrigin {
-    return Uri.parse(origin ?? '').authority == _origin;
+    return Uri.parse(origin ?? '').authority ==
+        Uri.parse(UrlConstants.secureDashboard).authority;
   }
 
   bool get isValidData {

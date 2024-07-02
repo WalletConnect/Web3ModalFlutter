@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
+import 'package:web3modal_flutter/constants/url_constants.dart';
 
 import 'package:web3modal_flutter/services/analytics_service/i_analytics_service.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
@@ -15,9 +16,11 @@ class AnalyticsService implements IAnalyticsService {
   static const _debugApiEndpoint =
       'https://analytics-api-cf-workers-staging.walletconnect-v1-bridge.workers.dev';
   static const _debugProjectId = 'e087b4b0503b860119be49d906717c12';
+  //
   bool _isEnabled = false;
   late final String _bundleId;
   late final String _endpoint;
+  late final Map<String, String> _headers;
 
   @override
   final Stream<dynamic> events = _eventsController.stream;
@@ -31,7 +34,12 @@ class AnalyticsService implements IAnalyticsService {
   AnalyticsService({
     required this.projectId,
     this.enableAnalytics,
-  });
+  }) {
+    _endpoint = kDebugMode ? _debugApiEndpoint : UrlConstants.analyticsService;
+    _headers = kDebugMode
+        ? coreUtils.instance.getAPIHeaders(_debugProjectId)
+        : coreUtils.instance.getAPIHeaders(projectId);
+  }
 
   @override
   Future<void> init() async {
@@ -42,9 +50,6 @@ class AnalyticsService implements IAnalyticsService {
         _isEnabled = enableAnalytics!;
       }
       _bundleId = await WalletConnectUtils.getPackageName();
-      _endpoint = kDebugMode
-          ? _debugApiEndpoint
-          : await coreUtils.instance.getAnalyticsUrl();
       loggerService.instance.d('[$runtimeType] enabled: $_isEnabled');
     } catch (e, s) {
       loggerService.instance.d(
@@ -58,11 +63,9 @@ class AnalyticsService implements IAnalyticsService {
   @override
   Future<bool> fetchAnalyticsConfig() async {
     try {
-      final apiUrl = await coreUtils.instance.getApiUrl();
-      final headers = coreUtils.instance.getAPIHeaders(projectId);
       final response = await http.get(
-        Uri.parse('$apiUrl/getAnalyticsConfig'),
-        headers: headers,
+        Uri.parse('${UrlConstants.apiService}/getAnalyticsConfig'),
+        headers: _headers,
       );
       final json = jsonDecode(response.body) as Map<String, dynamic>;
       final enabled = json['isAnalyticsEnabled'] as bool?;
@@ -81,10 +84,6 @@ class AnalyticsService implements IAnalyticsService {
   void sendEvent(AnalyticsEvent analyticsEvent) async {
     if (!_isEnabled) return;
     try {
-      final headers = kDebugMode
-          ? coreUtils.instance.getAPIHeaders(_debugProjectId)
-          : coreUtils.instance.getAPIHeaders(projectId);
-
       final body = jsonEncode({
         'eventId': Uuid().v4(),
         'bundleId': _bundleId,
@@ -94,7 +93,7 @@ class AnalyticsService implements IAnalyticsService {
 
       final response = await http.post(
         Uri.parse('$_endpoint/e'),
-        headers: headers,
+        headers: _headers,
         body: body,
       );
       final code = response.statusCode;

@@ -1105,10 +1105,10 @@ packages:
     dependency: transitive
     description:
       name: walletconnect_flutter_v2
-      sha256: "6bfd9e700f5fc712edf487e49842ba682a5e7ba0570f7299c9162e7dd7b5d549"
+      sha256: "7f6f66038ce0f559c5661c21b6485f0abfe42354605a628c2fb571a02ec1386e"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.0-alpha01"
+    version: "2.3.0-beta03"
   watcher:
     dependency: transitive
     description:
