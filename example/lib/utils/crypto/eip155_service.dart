@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:walletconnect_flutter_dapp/utils/crypto/smart_contracts/usdt_contract.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/test_data/usdt_contract.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:convert/convert.dart';
 
-import 'package:walletconnect_flutter_dapp/utils/crypto/smart_contracts/aave_contract.dart';
-import 'package:walletconnect_flutter_dapp/utils/crypto/test_data.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/test_data/aave_contract.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/test_data/test_data.dart';
 
 enum EIP155UIMethods {
   personalSign,

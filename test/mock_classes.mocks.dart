@@ -29,9 +29,9 @@ import 'package:walletconnect_flutter_v2/apis/sign_api/i_sessions.dart' as _i5;
 import 'package:web3modal_flutter/models/grid_item.dart' as _i30;
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart'
     as _i35;
-import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart'
+import 'package:web3modal_flutter/services/blockchain_service/blockchain_service.dart'
     as _i31;
-import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart'
+import 'package:web3modal_flutter/services/blockchain_service/models/blockchain_identity.dart'
     as _i10;
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart'
     as _i16;
@@ -734,6 +734,21 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
+  String formatMessage(_i3.SIWECreateMessageArgs? params) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #formatMessage,
+          [params],
+        ),
+        returnValue: _i13.dummyValue<String>(
+          this,
+          Invocation.method(
+            #formatMessage,
+            [params],
+          ),
+        ),
+      ) as String);
+  @override
   _i14.Future<void> buildConnectionUri() => (super.noSuchMethod(
         Invocation.method(
           #buildConnectionUri,
@@ -771,10 +786,11 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
-  void closeModal() => super.noSuchMethod(
+  void closeModal({bool? disconnectModal = false}) => super.noSuchMethod(
         Invocation.method(
           #closeModal,
           [],
+          {#disconnectModal: disconnectModal},
         ),
         returnValueForMissingStub: null,
       );
@@ -2456,12 +2472,11 @@ class MockNetworkService extends _i1.Mock implements _i29.NetworkService {
       );
 }
 
-/// A class which mocks [BlockchainApiUtils].
+/// A class which mocks [BlockChainService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBlockchainApiUtils extends _i1.Mock
-    implements _i31.BlockchainApiUtils {
-  MockBlockchainApiUtils() {
+class MockBlockChainService extends _i1.Mock implements _i31.BlockChainService {
+  MockBlockChainService() {
     _i1.throwOnMissingStub(this);
   }
 
