@@ -6,6 +6,10 @@ import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 part 'w3m_siwe.g.dart';
 part 'w3m_siwe.freezed.dart';
 
+// TODO work to do
+// context parameter
+// disconnect when closing modal
+// siwe with email
 class SIWEConfig {
   final Future<String> Function() getNonce;
   final Future<SIWEMessageArgs> Function() getMessageParams;

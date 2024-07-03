@@ -50,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         redirect: Redirect(
           native: 'web3modalflutter://',
+          universal: 'https://walletconnect.com/appkit',
         ),
       );
 
@@ -60,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
           try {
             debugPrint('[SIWEConfig] getNonce()');
             final response = await _siweTestService.getNonce();
-            return response!['nonce'] as String;
+            return response['nonce'] as String;
           } catch (error) {
             debugPrint('[SIWEConfig] getNonce error: $error');
             // Fallback patch for testing purposes in case SIWE backend has issues
@@ -70,8 +71,9 @@ class _MyHomePageState extends State<MyHomePage> {
         getMessageParams: () async {
           // Provide everything that is needed to construct the SIWE message
           debugPrint('[SIWEConfig] getMessageParams()');
+          final uri = Uri.parse(_pairingMetadata.redirect!.universal!);
           return SIWEMessageArgs(
-            domain: _pairingMetadata.redirect!.native!,
+            domain: uri.authority,
             uri: 'https://walletconnect.com/login',
             statement: 'Welcome to AppKit for Flutter.',
             methods: MethodsConstants.allMethods,
@@ -88,11 +90,12 @@ class _MyHomePageState extends State<MyHomePage> {
           try {
             debugPrint('[SIWEConfig] verifyMessage()');
             final payload = args.toJson();
+            final uri = Uri.parse(_pairingMetadata.redirect!.universal!);
             final result = await _siweTestService.authenticate(
               payload,
-              domain: 'walletconnect.com',
+              domain: uri.authority,
             );
-            return result!['token'] != null;
+            return result['token'] != null;
           } catch (error) {
             debugPrint('[SIWEConfig] verifyMessage error: $error');
             // Fallback patch for testing purposes in case SIWE backend has issues
@@ -118,8 +121,8 @@ class _MyHomePageState extends State<MyHomePage> {
           try {
             debugPrint('[SIWEConfig] getSession()');
             final session = await _siweTestService.getAppKitAuthSession();
-            final address = session!['address'].toString();
-            final chainId = session['chainId'].toString();
+            final address = session['address']!.toString();
+            final chainId = session['chainId']!.toString();
             return SIWESession(address: address, chains: [chainId]);
           } catch (error) {
             debugPrint('[SIWEConfig] getSession error: $error');
@@ -137,8 +140,8 @@ class _MyHomePageState extends State<MyHomePage> {
           // Called when user taps on disconnect button
           try {
             debugPrint('[SIWEConfig] signOut()');
-            final result = await _siweTestService.appKitAuthSignOut();
-            return result != null;
+            final _ = await _siweTestService.appKitAuthSignOut();
+            return true;
           } catch (error) {
             debugPrint('[SIWEConfig] signOut error: $error');
             // Fallback patch for testing purposes in case SIWE backend has issues
@@ -171,7 +174,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // enableEmail: true, // OPTIONAL - false by default
       // requiredNamespaces: {},
       // optionalNamespaces: {},
-      // MORE WALLETS https://explorer.walletconnect.com/?type=wallet&chains=eip155%3A1
       // includedWalletIds: {},
       featuredWalletIds: {
         'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase
@@ -182,11 +184,13 @@ class _MyHomePageState extends State<MyHomePage> {
         '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', // Bitget
       },
       // excludedWalletIds: {
-      //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
+      //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase
       // },
+      // MORE WALLETS https://explorer.walletconnect.com/?type=wallet&chains=eip155%3A1
     );
     // modal specific subscriptions
     _w3mService.onModalConnect.subscribe(_onModalConnect);
+    _w3mService.onModalUpdate.subscribe(_onModalUpdate);
     _w3mService.onModalNetworkChange.subscribe(_onModalNetworkChange);
     _w3mService.onModalDisconnect.subscribe(_onModalDisconnect);
     _w3mService.onModalError.subscribe(_onModalError);
@@ -223,6 +227,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     //
     _w3mService.onModalConnect.unsubscribe(_onModalConnect);
+    _w3mService.onModalUpdate.unsubscribe(_onModalUpdate);
     _w3mService.onModalNetworkChange.unsubscribe(_onModalNetworkChange);
     _w3mService.onModalDisconnect.unsubscribe(_onModalDisconnect);
     _w3mService.onModalError.unsubscribe(_onModalError);
@@ -247,6 +252,10 @@ class _MyHomePageState extends State<MyHomePage> {
     if (walletName.toLowerCase().contains('metamask')) {
       _switchToPolygonIfNeeded();
     }
+  }
+
+  void _onModalUpdate(ModalConnect? event) {
+    setState(() {});
   }
 
   void _switchToPolygonIfNeeded() {

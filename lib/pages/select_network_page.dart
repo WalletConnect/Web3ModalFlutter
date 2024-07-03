@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/pages/about_networks.dart';
-import 'package:web3modal_flutter/pages/approve_siwe.dart';
 import 'package:web3modal_flutter/pages/connet_network_page.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
-import 'package:web3modal_flutter/services/siwe_service/siwe_service_singleton.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
@@ -33,14 +31,7 @@ class SelectNetworkPage extends StatelessWidget {
         widgetStack.instance.pop();
       } else if (isChainApproved || service.session!.sessionService.isMagic) {
         await service.selectChain(chainInfo, switchChain: true);
-        try {
-          if (siweService.instance!.signOutOnNetworkChange) {
-            await siweService.instance!.signOut();
-            widgetStack.instance.push(ApproveSIWEPage());
-          }
-        } catch (_) {
-          widgetStack.instance.pop();
-        }
+        widgetStack.instance.pop();
       } else {
         widgetStack.instance.push(ConnectNetworkPage(chainInfo: chainInfo));
       }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/services/siwe_service/siwe_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
@@ -52,7 +53,9 @@ class _ConnectNetworkPageState extends State<ConnectNetworkPage>
       final chainId = widget.chainInfo.chainId;
       if (W3MChainPresets.chains.containsKey(chainId)) {
         Future.delayed(const Duration(milliseconds: 300), () {
-          widgetStack.instance.pop();
+          if (!siweService.instance!.enabled) {
+            widgetStack.instance.pop();
+          }
         });
       }
     } catch (e) {
@@ -65,7 +68,9 @@ class _ConnectNetworkPageState extends State<ConnectNetworkPage>
     if (state == AppLifecycleState.resumed) {
       if (_service?.session?.sessionService.isCoinbase == true) {
         if (_service?.selectedChain?.chainId == widget.chainInfo.chainId) {
-          widgetStack.instance.pop();
+          if (!siweService.instance!.enabled) {
+            widgetStack.instance.pop();
+          }
         }
       }
     }

@@ -23,7 +23,6 @@ class W3MSession {
   CoinbaseData? _coinbaseData;
   MagicData? _magicData;
   SIWESession? _siweSession;
-  List<Cacao>? _cacaos; // TODO check if it's save to store this
 
   W3MSession({
     SessionData? sessionData,
@@ -34,9 +33,9 @@ class W3MSession {
   })  : _sessionData = sessionData,
         _coinbaseData = coinbaseData,
         _magicData = magicData,
-        _siweSession = siweSession,
-        _cacaos = cacaos;
+        _siweSession = siweSession;
 
+  /// USED TO READ THE SESSION FROM LOCAL STORAGE
   factory W3MSession.fromMap(Map<String, dynamic> map) {
     final sessionDataString = map['sessionData'];
     final coinbaseDataString = map['coinbaseData'];
@@ -70,7 +69,6 @@ class W3MSession {
       coinbaseData: coinbaseData ?? _coinbaseData,
       magicData: magicData ?? _magicData,
       siweSession: siweSession ?? _siweSession,
-      cacaos: cacaos ?? _cacaos,
     );
   }
 
@@ -166,20 +164,6 @@ class W3MSession {
     return sessionNamespaces[StringConstants.namespace]?.accounts ?? [];
   }
 
-  List<Cacao>? getCacaos() {
-    if (sessionService.noSession) {
-      return null;
-    }
-    if (sessionService.isCoinbase) {
-      return null;
-    }
-    if (sessionService.isMagic) {
-      return null;
-    }
-
-    return _cacaos;
-  }
-
   Redirect? getSessionRedirect() {
     if (sessionService.noSession) {
       return null;
@@ -223,45 +207,20 @@ extension W3MSessionExtension on W3MSession {
 
   ConnectionMetadata? get self {
     if (sessionService.isCoinbase) {
-      // return ConnectionMetadata(
-      //   metadata: _sessionData?.self.metadata,
-      //   publicKey: '',
-      // );
+      return _coinbaseData?.self;
     }
     if (sessionService.isMagic) {
-      // return ConnectionMetadata(
-      //   metadata: _sessionData?.self.metadata,
-      //   publicKey: '',
-      // );
+      // return _magicData?.self; // TODO
     }
     return _sessionData?.self;
   }
 
   ConnectionMetadata? get peer {
     if (sessionService.isCoinbase) {
-      return ConnectionMetadata(
-        metadata: PairingMetadata(
-          name: connectedWalletName!,
-          description: '',
-          url: '',
-          icons: [],
-          redirect: Redirect(
-            native: CoinbaseService.coinbaseSchema,
-          ),
-        ),
-        publicKey: '',
-      );
+      return _coinbaseData?.peer;
     }
     if (sessionService.isMagic) {
-      return ConnectionMetadata(
-        metadata: PairingMetadata(
-          name: connectedWalletName!,
-          description: '',
-          url: '',
-          icons: [],
-        ),
-        publicKey: '',
-      );
+      // return _magicData?.peer; // TODO
     }
     return _sessionData?.peer;
   }
@@ -313,7 +272,7 @@ extension W3MSessionExtension on W3MSession {
 
   String? get connectedWalletName {
     if (sessionService.isCoinbase) {
-      return CoinbaseService.coinbaseWalletName;
+      return CoinbaseService.defaultWalletData.listing.name;
     }
     if (sessionService.isMagic) {
       return 'Email Wallet';
@@ -336,6 +295,7 @@ extension W3MSessionExtension on W3MSession {
     if (sessionService.isCoinbase) {
       return {
         'eip155': Namespace(
+          chains: ['eip155:$chainId'],
           accounts: ['eip155:$chainId:$address'],
           methods: [...CoinbaseService.supportedMethods],
           events: [],
@@ -345,6 +305,7 @@ extension W3MSessionExtension on W3MSession {
     if (sessionService.isMagic) {
       return {
         'eip155': Namespace(
+          chains: ['eip155:$chainId'],
           accounts: ['eip155:$chainId:$address'],
           methods: [...MagicService.supportedMethods],
           events: [],
@@ -354,14 +315,13 @@ extension W3MSessionExtension on W3MSession {
     return namespaces;
   }
 
-  // USED TO STORE THE SESSION IN LOCAL STORAGE
+  /// USED TO STORE THE SESSION IN LOCAL STORAGE
   Map<String, dynamic> toMap() {
     return {
       if (_sessionData != null) 'sessionData': _sessionData!.toJson(),
       if (_coinbaseData != null) 'coinbaseData': _coinbaseData?.toJson(),
       if (_magicData != null) 'magicData': _magicData?.toJson(),
       if (_siweSession != null) 'siweSession': _siweSession?.toJson(),
-      if (_cacaos != null) 'cacaos': _cacaos?.map((c) => c.toJson()).toList(),
     };
   }
 }

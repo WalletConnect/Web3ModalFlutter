@@ -1,5 +1,6 @@
 import 'package:walletconnect_flutter_v2/apis/sign_api/models/auth/common_auth_models.dart';
 import 'package:web3modal_flutter/services/siwe_service/models/w3m_siwe.dart';
+import 'package:web3modal_flutter/services/w3m_service/models/w3m_session.dart';
 
 abstract class ISiweService {
   SIWEConfig? get config;
@@ -20,7 +21,7 @@ abstract class ISiweService {
 
   Future<String> signMessageRequest(
     String message, {
-    required String topic,
+    required W3MSession session,
   });
 
   Future<bool> verifyMessage({

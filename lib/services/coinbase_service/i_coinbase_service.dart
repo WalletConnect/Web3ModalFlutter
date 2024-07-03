@@ -16,23 +16,28 @@ class W3MCoinbaseNotInstalledException extends W3MCoinbaseException {
   W3MCoinbaseNotInstalledException() : super('App not installed');
 }
 
+class W3MCoinbaseNotEnabled extends W3MCoinbaseException {
+  W3MCoinbaseNotEnabled() : super('Coinbase is disabled');
+}
+
 abstract class ICoinbaseService {
-  Future<void> cbInit({required PairingMetadata metadata});
-  Future<bool> cbIsConnected();
-  Future<void> cbGetAccount();
-  Future<dynamic> cbRequest({
+  Future<void> init();
+  Future<bool> isConnected();
+  Future<void> getAccount();
+  Future<dynamic> request({
     required String chainId,
     required SessionRequestParams request,
   });
-  Future<void> cbResetSession();
-  Future<bool> cbIsInstalled();
+  Future<void> resetSession();
+  Future<bool> isInstalled();
 
-  @Deprecated('Use onModalConnect')
+  Future<String> get ownPublicKey;
+  Future<String> get peerPublicKey;
+
+  ConnectionMetadata get metadata;
+
   abstract final Event<CoinbaseConnectEvent> onCoinbaseConnect;
-  @Deprecated('Use onModalError')
   abstract final Event<CoinbaseErrorEvent> onCoinbaseError;
-  @Deprecated('Use onModalSessionUpdate')
   abstract final Event<CoinbaseSessionEvent> onCoinbaseSessionUpdate;
-  @Deprecated('Do no use')
   abstract final Event<CoinbaseResponseEvent> onCoinbaseResponse;
 }

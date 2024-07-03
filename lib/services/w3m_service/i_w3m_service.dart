@@ -145,6 +145,7 @@ abstract class IW3MService with ChangeNotifier {
   /* EVENTS DECLARATIONS */
 
   abstract final Event<ModalConnect> onModalConnect;
+  abstract final Event<ModalConnect> onModalUpdate;
   abstract final Event<ModalNetworkChange> onModalNetworkChange;
   abstract final Event<ModalDisconnect> onModalDisconnect;
   abstract final Event<ModalError> onModalError;

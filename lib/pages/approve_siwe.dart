@@ -19,7 +19,10 @@ import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class ApproveSIWEPage extends StatefulWidget {
-  const ApproveSIWEPage() : super(key: KeyConstants.approveSiwePageKey);
+  final Function(W3MSession session) onSiweFinish;
+  const ApproveSIWEPage({
+    required this.onSiweFinish,
+  }) : super(key: KeyConstants.approveSiwePageKey);
 
   @override
   State<ApproveSIWEPage> createState() => _ApproveSIWEPageState();
@@ -72,7 +75,7 @@ class _ApproveSIWEPageState extends State<ApproveSIWEPage> {
       _service!.launchConnectedWallet();
       final signature = await siweService.instance!.signMessageRequest(
         message,
-        topic: _service!.session!.topic ?? '',
+        session: _service!.session!,
       );
       //
       final clientId = await _service!.web3App!.core.crypto.getClientId();
@@ -85,8 +88,7 @@ class _ApproveSIWEPageState extends State<ApproveSIWEPage> {
       final siweSession = await siweService.instance!.getSession();
       final newSession = _service!.session!.copyWith(siweSession: siweSession);
       //
-      _service!.onModalConnect.broadcast(ModalConnect(newSession));
-      _service!.closeModal();
+      widget.onSiweFinish(newSession);
       //
     } on JsonRpcError catch (e) {
       _handleError(e.message);

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:walletconnect_flutter_dapp/home_page.dart';
 import 'package:walletconnect_flutter_dapp/utils/chain_data_wrapper.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -39,7 +40,12 @@ class SessionWidgetState extends State<SessionWidget> {
               children: [
                 CircleAvatar(
                   radius: 25.0,
-                  backgroundImage: NetworkImage(iconImage),
+                  backgroundImage: NetworkImage(
+                    iconImage,
+                    headers: coreUtils.instance.getAPIHeaders(
+                      widget.w3mService.web3App!.core.projectId,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 10.0),
               ],
@@ -119,7 +125,6 @@ class SessionWidgetState extends State<SessionWidget> {
     } catch (e) {
       debugPrint('[ExampleApp] ${e.toString()}');
     }
-
     children.add(
       Column(
         children: [
@@ -143,7 +148,8 @@ class SessionWidgetState extends State<SessionWidget> {
               ),
             ),
             child: Text(
-              jsonEncode(widget.w3mService.session?.toJson()),
+              const JsonEncoder.withIndent("     ")
+                  .convert(widget.w3mService.session?.toMap()),
               style: Web3ModalTheme.getDataOf(context)
                   .textStyles
                   .small400

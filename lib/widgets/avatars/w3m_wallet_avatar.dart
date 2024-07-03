@@ -33,7 +33,6 @@ class W3MListAvatar extends StatelessWidget {
           child: Container(
             decoration: isNetwork
                 ? ShapeDecoration(
-                    color: themeColors.background125,
                     shape: StarBorder.polygon(
                       side: BorderSide(
                         color: color ?? themeColors.grayGlass010,
@@ -46,7 +45,6 @@ class W3MListAvatar extends StatelessWidget {
                   )
                 : BoxDecoration(
                     borderRadius: BorderRadius.circular(radius),
-                    color: themeColors.background125,
                     border: Border.all(
                       color: color ?? themeColors.grayGlass010,
                       width: 1.0,

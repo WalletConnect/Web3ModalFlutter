@@ -10,10 +10,12 @@ class SIWESampleWebService {
   late Map<String, String> _headers;
 
   SIWESampleWebService() {
-    _headers = coreUtils.instance.getAPIHeaders(DartDefines.appKitProjectId);
+    _headers = coreUtils.instance.getAPIHeaders(
+      DartDefines.appKitProjectId,
+    );
   }
 
-  Future<Map<String, dynamic>?> getNonce() async {
+  Future<Map<String, dynamic>> getNonce() async {
     try {
       final res = await http.get(
         Uri.parse('${DartDefines.authApiUrl}/auth/v1/nonce'),
@@ -26,11 +28,11 @@ class SIWESampleWebService {
       return nonceRes;
     } catch (error) {
       debugPrint('[SIWESERVICE] ⛔️ getNonce() => ${error.toString()}');
-      return null;
+      rethrow;
     }
   }
 
-  Future<Map<String, dynamic>?> getAppKitAuthSession() async {
+  Future<Map<String, dynamic>> getAppKitAuthSession() async {
     try {
       final response = await http.get(
         Uri.parse('${DartDefines.authApiUrl}/auth/v1/me'),
@@ -39,36 +41,44 @@ class SIWESampleWebService {
       if (response.statusCode == 200) {
         return json.decode(response.body);
       }
+      throw Exception(response.statusCode.toString());
     } catch (error) {
       debugPrint(
           '[SIWESERVICE] ⛔️ getAppKitAuthSession() => ${error.toString()}');
+      rethrow;
     }
-    return null;
   }
 
-  Future<Map<String, dynamic>?> authenticate(
+  Future<Map<String, dynamic>> authenticate(
     Map<String, dynamic> payload, {
-    String? domain,
+    required String domain,
   }) async {
     try {
       final uri = Uri.parse('${DartDefines.authApiUrl}/auth/v1/authenticate');
       final res = await http.post(
         uri.replace(queryParameters: {'domain': domain}),
-        headers: _headers,
-        body: json.encode(payload),
+        headers: {
+          ..._headers,
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(payload),
       );
-      final authenticateRes = json.decode(res.body);
+      debugPrint(jsonEncode(payload));
+      debugPrint(res.request?.url.toString());
+      debugPrint(jsonEncode(res.request?.headers));
+      debugPrint(res.body);
+      final authenticateRes = jsonDecode(res.body);
       final newToken = authenticateRes['token'] as String;
       _headers['Authorization'] = 'Bearer $newToken';
       // Persist the newToken so it can be used again with getSession() even if the user terminated the app
       return authenticateRes;
     } catch (error) {
       debugPrint('[SIWESERVICE] ⛔️ authenticate() => ${error.toString()}');
-      return null;
+      rethrow;
     }
   }
 
-  Future<Map<String, dynamic>?> updateUser(Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> updateUser(Map<String, dynamic> data) async {
     try {
       final res = await http.post(
         Uri.parse('${DartDefines.authApiUrl}/auth/v1/update-user'),
@@ -79,11 +89,11 @@ class SIWESampleWebService {
       return updateUserRes;
     } catch (error) {
       debugPrint('[SIWESERVICE] ⛔️ updateUser() => ${error.toString()}');
-      return null;
+      rethrow;
     }
   }
 
-  Future<Map<String, dynamic>?> appKitAuthSignOut() async {
+  Future<Map<String, dynamic>> appKitAuthSignOut() async {
     try {
       final res = await http.post(
         Uri.parse('${DartDefines.authApiUrl}/auth/v1/sign-out'),
@@ -93,7 +103,7 @@ class SIWESampleWebService {
       return signOutRes;
     } catch (error) {
       debugPrint('[SIWESERVICE] ⛔️ appKitAuthSignOut() => ${error.toString()}');
-      return null;
+      rethrow;
     }
   }
 }

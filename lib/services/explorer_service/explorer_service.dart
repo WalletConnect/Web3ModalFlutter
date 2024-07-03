@@ -429,13 +429,10 @@ class ExplorerService implements IExplorerService {
 
     if (results.isNotEmpty) {
       final wallet = W3MWalletInfo.fromJson(results.first.toJson());
-      bool installed = await urlUtils.instance.isInstalled(
-        CoinbaseService.coinbaseSchema,
-      );
+      final mobileLink = CoinbaseService.defaultWalletData.listing.mobileLink;
+      bool installed = await urlUtils.instance.isInstalled(mobileLink);
       return wallet.copyWith(
-        listing: wallet.listing.copyWith(
-          mobileLink: CoinbaseService.coinbaseSchema,
-        ),
+        listing: wallet.listing.copyWith(mobileLink: mobileLink),
         installed: installed,
       );
     }
@@ -467,9 +464,9 @@ class ExplorerService implements IExplorerService {
   @override
   WalletRedirect? getWalletRedirect(W3MWalletInfo? walletInfo) {
     if (walletInfo == null) return null;
-    if (walletInfo.listing.id == CoinbaseService.coinbaseWalletId) {
+    if (walletInfo.listing.id == CoinbaseService.defaultWalletData.listing.id) {
       return WalletRedirect(
-        mobile: CoinbaseService.coinbaseSchema,
+        mobile: CoinbaseService.defaultWalletData.listing.mobileLink,
         desktop: null,
         web: null,
       );

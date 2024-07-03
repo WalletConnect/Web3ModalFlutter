@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:convert/convert.dart';
+import 'package:web3modal_flutter/services/coinbase_service/coinbase_service_singleton.dart';
+import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
 import 'package:web3modal_flutter/services/siwe_service/i_siwe_service.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -70,7 +72,7 @@ class SiweService implements ISiweService {
   @override
   Future<String> signMessageRequest(
     String message, {
-    required String topic,
+    required W3MSession session,
   }) async {
     if (!enabled) throw Exception('siweConfig not enabled');
     //
@@ -79,8 +81,27 @@ class SiweService implements ISiweService {
     final address = AuthSignature.getAddressFromMessage(message);
     final bytes = utf8.encode(message);
     final encoded = hex.encode(bytes);
+    //
+    if (session.sessionService.isMagic) {
+      return await magicService.instance.request(
+        chainId: chain,
+        request: SessionRequestParams(
+          method: 'personal_sign',
+          params: ['0x$encoded', address],
+        ),
+      );
+    }
+    if (session.sessionService.isCoinbase) {
+      return await coinbaseService.instance.request(
+        chainId: chain,
+        request: SessionRequestParams(
+          method: 'personal_sign',
+          params: ['0x$encoded', address],
+        ),
+      );
+    }
     return await _web3app.request(
-      topic: topic,
+      topic: session.topic!,
       chainId: chain,
       request: SessionRequestParams(
         method: 'personal_sign',
