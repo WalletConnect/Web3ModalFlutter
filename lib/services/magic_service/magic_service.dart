@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/constants/url_constants.dart';
+import 'package:web3modal_flutter/models/listing.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
@@ -34,6 +35,31 @@ class MagicService implements IMagicService {
     'wallet_switchEthereumChain',
     'wallet_addEthereumChain',
   ];
+  static const defaultWalletData = W3MWalletInfo(
+    listing: Listing(
+      id: '',
+      name: 'Email Wallet',
+      homepage: '',
+      imageId: '',
+      order: 10000,
+    ),
+    installed: false,
+    recent: false,
+  );
+
+  @override
+  ConnectionMetadata get metadata => ConnectionMetadata(
+        metadata: PairingMetadata(
+          name: defaultWalletData.listing.name,
+          description: '',
+          url: defaultWalletData.listing.homepage,
+          icons: [
+            '',
+          ],
+        ),
+        publicKey: '',
+      );
+
   //
   final IWeb3App _web3app;
   Timer? _timeOutTimer;
@@ -428,7 +454,14 @@ class MagicService implements IMagicService {
           onMagicUpdate.broadcast(event);
           _connected.complete(isConnected.value);
         } else {
-          onMagicLoginSuccess.broadcast(MagicLoginEvent(data));
+          final session = data.copytWith(
+            peer: metadata,
+            self: ConnectionMetadata(
+              metadata: _web3app.metadata,
+              publicKey: '',
+            ),
+          );
+          onMagicLoginSuccess.broadcast(MagicLoginEvent(session));
         }
       }
       // ****** SIGN_OUT

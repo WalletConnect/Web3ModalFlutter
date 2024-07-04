@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
 
-  SIWEConfig _siweConfig(BuildContext context) => SIWEConfig(
+  SIWEConfig get _siweConfig => SIWEConfig(
         context: context,
         getNonce: () async {
           // this has to be called at the very moment of creating the pairing uri
@@ -169,9 +169,9 @@ class _MyHomePageState extends State<MyHomePage> {
       projectId: DartDefines.projectId,
       logLevel: LogLevel.error,
       metadata: _pairingMetadata,
-      siweConfig: _siweConfig(context),
-      // enableAnalytics: true, // OPTIONAL - null by default
-      // enableEmail: true, // OPTIONAL - false by default
+      siweConfig: _siweConfig,
+      enableAnalytics: true, // OPTIONAL - null by default
+      enableEmail: true, // OPTIONAL - false by default
       // requiredNamespaces: {},
       // optionalNamespaces: {},
       // includedWalletIds: {},

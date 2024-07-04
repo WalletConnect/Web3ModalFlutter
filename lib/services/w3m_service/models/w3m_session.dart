@@ -3,7 +3,6 @@ import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dar
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart';
-import 'package:web3modal_flutter/utils/w3m_logger.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 enum W3MSessionService {
@@ -210,7 +209,7 @@ extension W3MSessionExtension on W3MSession {
       return _coinbaseData?.self;
     }
     if (sessionService.isMagic) {
-      // return _magicData?.self; // TODO
+      return _magicData?.self;
     }
     return _sessionData?.self;
   }
@@ -220,7 +219,7 @@ extension W3MSessionExtension on W3MSession {
       return _coinbaseData?.peer;
     }
     if (sessionService.isMagic) {
-      // return _magicData?.peer; // TODO
+      return _magicData?.peer;
     }
     return _sessionData?.peer;
   }
@@ -244,7 +243,6 @@ extension W3MSessionExtension on W3MSession {
     if (accounts.isNotEmpty) {
       return NamespaceUtils.getAccount(accounts.first);
     }
-    W3MLoggerUtil.logger.e('[$runtimeType] no address found');
     return null;
   }
 
@@ -275,7 +273,7 @@ extension W3MSessionExtension on W3MSession {
       return CoinbaseService.defaultWalletData.listing.name;
     }
     if (sessionService.isMagic) {
-      return 'Email Wallet';
+      return MagicService.defaultWalletData.listing.name;
     }
     if (sessionService.isWC) {
       return peer?.metadata.name;

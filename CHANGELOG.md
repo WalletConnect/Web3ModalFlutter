@@ -1,6 +1,8 @@
-## 3.2.3-alpha01
+## 3.3.0-beta01
 
-- One-Click Auth implementation
+- One-Click Auth + SIWE implementation
+- Coinbase Wallet dependency update
+- Bug fixes
 
 ## 3.2.2
 

@@ -6,4 +6,10 @@ abstract class IBlockChainService {
 
   /// Gets the name and avatar of a provided address on the given chain
   Future<BlockchainIdentity> getIdentity(String address, int chainId);
+
+  // Future<JsonRpcResponse?> getBalance(String chainId, String address);
+
+  // Future<String> fetchEnsName(String rpcUrl, String address);
+
+  // Future<String> fetchEnsAvatar(String rpcUrl, String address);
 }

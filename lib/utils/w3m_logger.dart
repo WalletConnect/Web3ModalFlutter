@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
-// @Deprecated('W3MLoggerUtil is going to be deprecated soon. Don\'t use it')
+@Deprecated('W3MLoggerUtil is going to be deprecated soon. Don\'t use it')
 class W3MLoggerUtil {
   static Logger logger = Logger(
     level: Level.off,

@@ -11,6 +11,7 @@ import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/utils/toast/toast_message.dart';
 import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
+import 'package:web3modal_flutter/widgets/avatars/w3m_account_avatar.dart';
 import 'package:web3modal_flutter/widgets/buttons/primary_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/secondary_button.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
@@ -145,17 +146,25 @@ class _ApproveSIWEPageState extends State<ApproveSIWEPage> {
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(radiuses.radiusM),
+                      borderRadius: _service!.session!.sessionService.isMagic
+                          ? BorderRadius.circular(60.0)
+                          : BorderRadius.circular(radiuses.radiusM),
                       color: themeColors.background150,
                     ),
-                    child: SizedBox(
-                      width: 60.0,
-                      height: 60.0,
-                      child: W3MListAvatar(
-                        imageUrl: _service?.session?.peer?.metadata.icons.first,
-                        borderRadius: radiuses.radiusS,
-                      ),
-                    ),
+                    child: _service!.session!.sessionService.isMagic
+                        ? W3MAccountAvatar(
+                            service: _service!,
+                            size: 60.0,
+                          )
+                        : SizedBox(
+                            width: 60.0,
+                            height: 60.0,
+                            child: W3MListAvatar(
+                              imageUrl:
+                                  _service?.session?.peer?.metadata.icons.first,
+                              borderRadius: radiuses.radiusS,
+                            ),
+                          ),
                   ),
                 ),
                 AnimatedPositioned(

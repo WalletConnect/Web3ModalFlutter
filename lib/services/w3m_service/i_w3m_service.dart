@@ -110,14 +110,12 @@ abstract class IW3MService with ChangeNotifier {
   Future<List<dynamic>> requestReadContract({
     required DeployedContract deployedContract,
     required String functionName,
-    @Deprecated('This is not needed anymore') String? rpcUrl,
     List parameters = const [],
   });
 
   Future<dynamic> requestWriteContract({
     required String? topic,
     required String chainId,
-    @Deprecated('This is not needed anymore') String? rpcUrl,
     required DeployedContract deployedContract,
     required String functionName,
     required Transaction transaction,
