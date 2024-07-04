@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_dapp/home_page.dart';
-import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/constants.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 void main() {

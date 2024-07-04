@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'dart:developer' as dev;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +9,16 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/constants/url_constants.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/pages/approve_magic_request_page.dart';
+import 'package:web3modal_flutter/pages/approve_siwe.dart';
 import 'package:web3modal_flutter/pages/select_network_page.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/coinbase_service/coinbase_service.dart';
+import 'package:web3modal_flutter/services/coinbase_service/coinbase_service_singleton.dart';
 import 'package:web3modal_flutter/services/coinbase_service/i_coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart';
@@ -29,13 +33,15 @@ import 'package:web3modal_flutter/services/magic_service/models/magic_data.dart'
 import 'package:web3modal_flutter/services/magic_service/models/magic_events.dart';
 import 'package:web3modal_flutter/services/logger_service/logger_service.dart';
 import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
+import 'package:web3modal_flutter/services/siwe_service/siwe_service.dart';
+import 'package:web3modal_flutter/services/siwe_service/siwe_service_singleton.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/url/launch_url_exception.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
-import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart';
-import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils_singleton.dart';
+import 'package:web3modal_flutter/services/blockchain_service/blockchain_service.dart';
+import 'package:web3modal_flutter/services/blockchain_service/blockchain_service_singleton.dart';
 import 'package:web3modal_flutter/services/network_service/network_service_singleton.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
@@ -47,10 +53,13 @@ import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
 /// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
-class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
-  var _projectId = '';
-
+class W3MService with ChangeNotifier implements IW3MService {
+  String _projectId = '';
   BuildContext? _context;
+  Map<String, RequiredNamespace> _requiredNamespaces = {};
+  Map<String, RequiredNamespace> _optionalNamespaces = {};
+  String? _lastChainEmitted;
+  bool _supportsOneClickAuth = true;
 
   W3MServiceStatus _status = W3MServiceStatus.idle;
   @override
@@ -63,9 +72,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   W3MWalletInfo? _selectedWallet;
   @override
   W3MWalletInfo? get selectedWallet => _selectedWallet;
-
-  Map<String, RequiredNamespace> _requiredNamespaces = {};
-  Map<String, RequiredNamespace> _optionalNamespaces = {};
 
   @override
   bool get hasNamespaces =>
@@ -84,8 +90,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   String? get avatarUrl => _avatarUrl;
 
   double? _chainBalance;
-  String? _lastChainEmitted;
-
   @override
   String get chainBalance {
     return coreUtils.instance.formatChainBalance(_chainBalance);
@@ -112,6 +116,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     IWeb3App? web3App,
     String? projectId,
     PairingMetadata? metadata,
+    SIWEConfig? siweConfig,
     Map<String, W3MNamespace>? requiredNamespaces,
     Map<String, W3MNamespace>? optionalNamespaces,
     Set<String>? featuredWalletIds,
@@ -143,7 +148,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     loggerService.instance = LoggerService(
       level: logLevel,
-      projectId: _projectId,
       debugMode: kDebugMode,
     );
 
@@ -165,13 +169,24 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       excludedWalletIds: excludedWalletIds,
     );
 
-    blockchainApiUtils.instance = BlockchainApiUtils(
+    blockchainService.instance = BlockChainService(
+      web3app: _web3App,
       projectId: _projectId,
+    );
+
+    siweService.instance = SiweService(
+      web3app: _web3App,
+      siweConfig: siweConfig,
     );
 
     magicService.instance = MagicService(
       web3app: _web3App,
       enabled: enableEmail,
+    );
+
+    coinbaseService.instance = CoinbaseService(
+      web3app: _web3App,
+      enabled: _initializeCoinbaseSDK,
     );
   }
 
@@ -183,9 +198,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   Future<void> init() async {
     _serviceInitialized = false;
     if (!coreUtils.instance.isValidProjectID(_projectId)) {
-      loggerService.instance.e(
-          '[$runtimeType] projectId $_projectId is invalid. Please provide a valid projectId. '
-          'See https://docs.walletconnect.com/web3modal/flutter/options for details.');
+      _logger.e(
+        '[$runtimeType] projectId $_projectId is invalid. '
+        'Please provide a valid projectId. '
+        'See ${UrlConstants.docsUrl}/appkit/flutter/core/options for details.',
+      );
       return;
     }
     if (_status == W3MServiceStatus.initializing ||
@@ -200,12 +217,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     await storageService.instance.init();
     await networkService.instance.init();
     await explorerService.instance.init();
-    if (_initializeCoinbaseSDK) {
-      // final isInstalled = await cbIsInstalled();
-      // Fetch Coinbase Wallet object to get updated metadata
-      final cbWallet = await explorerService.instance.getCoinbaseWalletObject();
-      await cbInit(metadata: _web3App.metadata, cbWallet: cbWallet);
-    }
+    await coinbaseService.instance.init();
     await _web3App.init();
 
     _currentSession = await _getStoredSession();
@@ -243,12 +255,14 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       // session should not outlive the pairing
       if (wcPairings.isEmpty) {
         await disconnect();
+      } else {
+        await _checkSIWEStatus();
       }
     } else {
       // Check for other type of sessions stored
       if (_currentSession != null) {
         if (_currentSession!.sessionService.isCoinbase) {
-          final isCbConnected = await cbIsConnected();
+          final isCbConnected = await coinbaseService.instance.isConnected();
           if (!isCbConnected) {
             await _cleanSession();
           }
@@ -266,20 +280,45 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     // Get the chainId of the chain we are connected to.
     await _selectChainFromStoredId();
 
+    onModalNetworkChange.subscribe(_onNetworkChainRequireSIWE);
+
     _serviceInitialized = true;
     _status = W3MServiceStatus.initialized;
-    loggerService.instance.i('[$runtimeType] initialized');
+    _logger.i('[$runtimeType] initialized');
     _notify();
+  }
+
+  Future<void> _checkSIWEStatus() async {
+    // check if SIWE is enabled and should still sign the message
+    if (siweService.instance!.enabled) {
+      try {
+        // If getSession() throws it means message has not been signed and
+        // we should present modal with ApproveSIWEPage
+        final siweSession = await siweService.instance!.getSession();
+        final session = _currentSession!.copyWith(siweSession: siweSession);
+        await _setSesionAndChainData(session);
+        _notify();
+      } catch (_) {
+        final context = siweService.instance!.config!.context;
+        _showModalView(
+          context,
+          ApproveSIWEPage(onSiweFinish: _oneSIWEFinish),
+        );
+      }
+    }
   }
 
   Future<void> _setSesionAndChainData(W3MSession w3mSession) async {
     try {
       await _storeSession(w3mSession);
-      final chainId = _currentSelectedChain!.chainId;
+      final chainId = _currentSelectedChain?.chainId ?? w3mSession.chainId;
       final chainInfo = W3MChainPresets.chains[chainId]!;
       await _setLocalEthChain(chainInfo, logEvent: false);
-    } catch (e) {
-      _logger.e('[$runtimeType] _setSesionAndChainData error $e');
+    } catch (e, s) {
+      _logger.e(
+        '[$runtimeType] _setSesionAndChainData error $e',
+        stackTrace: s,
+      );
     }
   }
 
@@ -290,7 +329,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         defaultValue: '',
       );
       if (sessionString!.isNotEmpty) {
-        return W3MSession.fromJson(jsonDecode(sessionString));
+        return W3MSession.fromMap(jsonDecode(sessionString));
       }
     } catch (e) {
       await storageService.instance.setString(StringConstants.w3mSession, '');
@@ -342,9 +381,9 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     if (_currentSession?.sessionService.isMagic == true) {
       await magicService.instance.switchNetwork(chainId: chainInfo.chainId);
-      onModalNetworkChange.broadcast(ModalNetworkChange(
-        chainId: chainInfo.namespace,
-      ));
+      // onModalNetworkChange.broadcast(ModalNetworkChange(
+      //   chainId: chainInfo.namespace,
+      // ));
     } else {
       final hasValidSession = _isConnected && _currentSession != null;
       if (switchChain && hasValidSession && _currentSelectedChain != null) {
@@ -418,10 +457,12 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       analyticsService.instance.sendEvent(SwitchNetworkEvent(network: network));
     }
     if (_lastChainEmitted != chainInfo.namespace && _isConnected) {
+      if (_lastChainEmitted != null) {
+        onModalNetworkChange.broadcast(ModalNetworkChange(
+          chainId: chainInfo.namespace,
+        ));
+      }
       _lastChainEmitted = chainInfo.namespace;
-      onModalNetworkChange.broadcast(ModalNetworkChange(
-        chainId: _lastChainEmitted!,
-      ));
     }
     loadAccountData();
   }
@@ -496,6 +537,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       final mqData = MediaQueryData.fromView(View.of(_context!));
       final safeGap = mqData.viewPadding.bottom;
       final maxHeight = mqData.size.height - safeGap - 20.0;
+      final modalHeight = isApprovePage ? 600.0 : maxHeight;
       await showModalBottomSheet(
         backgroundColor: Colors.transparent,
         isDismissible: !isApprovePage,
@@ -503,9 +545,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
         enableDrag: false,
         elevation: 0.0,
         useRootNavigator: true,
-        constraints: BoxConstraints(
-          maxHeight: isApprovePage ? 600.0 : maxHeight,
-        ),
+        constraints: BoxConstraints(maxHeight: modalHeight),
         context: _context!,
         builder: (_) => rootWidget,
       );
@@ -521,15 +561,13 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
           final radiuses = Web3ModalTheme.radiusesOf(_context!);
           final maxRadius = min(radiuses.radiusM, 36.0);
           final borderRadius = BorderRadius.all(Radius.circular(maxRadius));
+          final constraints = BoxConstraints(maxWidth: 360, maxHeight: 600);
           return Dialog(
             backgroundColor: Web3ModalTheme.colorsOf(_context!).background125,
             shape: RoundedRectangleBorder(borderRadius: borderRadius),
             clipBehavior: Clip.hardEdge,
             child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: 360.0,
-                maxHeight: 600.0,
-              ),
+              constraints: constraints,
               child: rootWidget,
             ),
           );
@@ -560,18 +598,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       name: walletName,
       platform: inBrowser ? AnalyticsPlatform.web : AnalyticsPlatform.mobile,
     );
-    // if (walletRedirect?.mobileOnly == true) {
-    //   event = SelectWalletEvent(
-    //     name: walletName,
-    //     platform: AnalyticsPlatform.mobile.name,
-    //   );
-    // }
-    // if (walletRedirect?.webOnly == true) {
-    //   event = SelectWalletEvent(
-    //     name: walletName,
-    //     platform: AnalyticsPlatform.web.name,
-    //   );
-    // }
     analyticsService.instance.sendEvent(event);
   }
 
@@ -596,7 +622,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     }
     try {
       if (_selectedWallet!.isCoinbase) {
-        await cbGetAccount();
+        await coinbaseService.instance.getAccount();
         await explorerService.instance.storeConnectedWallet(_selectedWallet);
       } else {
         await buildConnectionUri();
@@ -625,7 +651,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
           onModalError.broadcast(WalletNotInstalled());
         } else {
           if (_isUserRejectedError(e)) {
-            loggerService.instance.i('[$runtimeType] User declined connection');
+            _logger.i('[$runtimeType] User declined connection');
             onModalError.broadcast(UserRejectedConnection());
             analyticsService.instance.sendEvent(ConnectErrorEvent(
               message: 'User declined connection',
@@ -638,13 +664,13 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
           }
         }
       } else if (_isUserRejectedError(e)) {
-        loggerService.instance.i('[$runtimeType] User declined connection');
+        _logger.i('[$runtimeType] User declined connection');
         onModalError.broadcast(UserRejectedConnection());
         analyticsService.instance.sendEvent(ConnectErrorEvent(
           message: 'User declined connection',
         ));
       } else {
-        loggerService.instance.e(
+        _logger.e(
           '[$runtimeType] Error connecting wallet',
           error: e,
           stackTrace: s,
@@ -655,55 +681,112 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   @override
+  String formatMessage(SIWECreateMessageArgs params) {
+    return siweService.instance!.formatMessage(
+      params,
+    );
+  }
+
+  @override
   Future<void> buildConnectionUri() async {
     if (!_isConnected) {
-      loggerService.instance.i(
-        '[$runtimeType] Connecting to WalletConnect, '
-        'required namespaces: $_requiredNamespaces, '
-        'optional namespaces: $_optionalNamespaces',
-      );
-
-      final connectResponse = await _web3App.connect(
-        requiredNamespaces: _requiredNamespaces,
-        optionalNamespaces: _optionalNamespaces,
-      );
-      _wcUri = connectResponse.uri?.toString() ?? '';
-      _notify();
-      _awaitConnectionCallback(connectResponse);
+      try {
+        if (siweService.instance!.enabled) {
+          final nonce = await siweService.instance!.getNonce();
+          final p1 = await siweService.instance!.config!.getMessageParams();
+          final chains =
+              W3MChainPresets.chains.values.map((e) => e.namespace).toList();
+          final methods = p1.methods ?? MethodsConstants.allMethods;
+          final p2 = {'nonce': nonce, 'chains': chains, 'methods': methods};
+          final authParams = SessionAuthRequestParams.fromJson({
+            ...p1.toJson(),
+            ...p2,
+          });
+          // One-Click Auth
+          final authResponse = await _web3App.authenticate(
+            params: authParams,
+          );
+          _wcUri = authResponse.uri?.toString() ?? '';
+          _notify();
+          _awaitOCAuthCallback(authResponse);
+        } else {
+          // Regular Session Proposal
+          final connectResponse = await _web3App.connect(
+            requiredNamespaces: _requiredNamespaces,
+            optionalNamespaces: _optionalNamespaces,
+          );
+          _wcUri = connectResponse.uri?.toString() ?? '';
+          _notify();
+          _awaitConnectionCallback(connectResponse);
+        }
+      } catch (e) {
+        _logger.e('[$runtimeType] buildConnectionUri $e');
+      }
     }
   }
 
-  Future<void> _awaitConnectionCallback(ConnectResponse connectResponse) async {
+  void _awaitConnectionCallback(ConnectResponse connectResponse) async {
     try {
-      final response = await connectResponse.session.future;
-      await explorerService.instance.storeConnectedWallet(_selectedWallet);
-      loggerService.instance.t(
-        '[$runtimeType] Connected with session ${response.toJson()}',
-      );
+      final _ = await connectResponse.session.future;
     } on TimeoutException {
-      loggerService.instance.i(
-        '[$runtimeType] Rebuilding session, ending future',
-      );
+      _logger.i('[$runtimeType] Rebuilding session, ending future');
       return;
-    } on JsonRpcError catch (e, s) {
-      if (_isUserRejectedError(e)) {
-        loggerService.instance.i('[$runtimeType] User declined connection');
-        onModalError.broadcast(UserRejectedConnection());
-        analyticsService.instance.sendEvent(ConnectErrorEvent(
-          message: 'User declined connection',
-        ));
-      } else {
-        final message = e.message ?? 'Error connecting to wallet';
-        loggerService.instance.e(
-          '[$runtimeType] $message',
-          error: e,
-          stackTrace: s,
-        );
+    } catch (e) {
+      await _connectionErrorHandler(e);
+    }
+  }
+
+  Future<void> _connectionErrorHandler(dynamic e) async {
+    if (_isUserRejectedError(e)) {
+      _logger.i('[$runtimeType] User declined connection');
+      onModalError.broadcast(UserRejectedConnection());
+      analyticsService.instance.sendEvent(ConnectErrorEvent(
+        message: 'User declined connection',
+      ));
+    } else {
+      if (e is JsonRpcError) {
+        final message = e.message ?? '';
+        if (e.code == 10001 &&
+            message.contains(MethodConstants.WC_SESSION_AUTHENTICATE)) {
+          // WILL HANDLE SESSION REQUEST
+          _supportsOneClickAuth = false;
+          return;
+        }
+        onModalError.broadcast(ModalError('Error connecting to wallet'));
         analyticsService.instance.sendEvent(ConnectErrorEvent(
           message: message,
         ));
+        _logger.e('[$runtimeType] $message', error: e);
       }
-      return await expirePreviousInactivePairings();
+      if (e is WalletConnectError) {
+        onModalError.broadcast(ModalError(e.message));
+        analyticsService.instance.sendEvent(ConnectErrorEvent(
+          message: e.message,
+        ));
+        _logger.e('[$runtimeType] ${e.message}', error: e);
+      }
+    }
+    return await expirePreviousInactivePairings();
+  }
+
+  void _awaitOCAuthCallback(SessionAuthRequestResponse authResponse) async {
+    try {
+      final response = await authResponse.completer.future;
+      if (response.session != null) {
+        _web3App.onSessionConnect.broadcast(SessionConnect(response.session!));
+      } else {
+        if (response.jsonRpcError != null) {
+          throw response.jsonRpcError!;
+        }
+        if (response.error != null) {
+          throw response.error!;
+        }
+      }
+    } on TimeoutException {
+      _logger.i('[$runtimeType] Rebuilding session, ending future');
+      return;
+    } catch (e) {
+      await _connectionErrorHandler(e);
     }
   }
 
@@ -766,7 +849,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     if (_currentSession?.sessionService.isCoinbase == true) {
       try {
-        await cbResetSession();
+        await coinbaseService.instance.resetSession();
       } catch (_) {
         _status = W3MServiceStatus.initialized;
         _notify();
@@ -795,6 +878,11 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
           _currentSession?.topic,
         );
       }
+      try {
+        if (siweService.instance!.signOutOnDisconnect) {
+          await siweService.instance!.signOut();
+        }
+      } catch (_) {}
 
       analyticsService.instance.sendEvent(DisconnectSuccessEvent());
       if (!(_currentSession?.sessionService.isWC == true)) {
@@ -810,17 +898,23 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   }
 
   @override
-  void closeModal() {
+  void closeModal({bool disconnectSession = false}) async {
+    if (disconnectSession) {
+      await disconnect();
+      selectWallet(null);
+    }
     // If we aren't open, then we can't and shouldn't close
     _close(event: false);
     if (_context != null) {
-      Navigator.of(_context!, rootNavigator: true).pop();
-      analyticsService.instance.sendEvent(ModalCloseEvent(
-        connected: _isConnected,
-      ));
-    } else {
-      _notify();
+      final canPop = Navigator.of(_context!, rootNavigator: true).canPop();
+      if (canPop) {
+        Navigator.of(_context!, rootNavigator: true).pop();
+        analyticsService.instance.sendEvent(ModalCloseEvent(
+          connected: _isConnected,
+        ));
+      }
     }
+    _notify();
   }
 
   void _close({bool event = true}) {
@@ -858,7 +952,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   Future<List<dynamic>> requestReadContract({
     required DeployedContract deployedContract,
     required String functionName,
-    @Deprecated('This is not needed anymore') String? rpcUrl,
     List parameters = const [],
   }) async {
     try {
@@ -877,7 +970,6 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   Future<dynamic> requestWriteContract({
     required String? topic,
     required String chainId,
-    @Deprecated('This is not needed anymore') String? rpcUrl,
     required DeployedContract deployedContract,
     required String functionName,
     required Transaction transaction,
@@ -922,12 +1014,12 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     if (_currentSession == null) {
       throw W3MServiceException('Session is null');
     }
-    String requestChainId = chainId;
+    String reqChainId = chainId;
 
     final isValidChainId = NamespaceUtils.isValidChainId(chainId);
     if (!isValidChainId) {
       if (selectedChain!.namespace.contains(chainId)) {
-        requestChainId = selectedChain!.namespace;
+        reqChainId = selectedChain!.namespace;
       } else {
         throw Errors.getSdkError(
           Errors.UNSUPPORTED_CHAINS,
@@ -937,28 +1029,30 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     }
     //
     _logger.d(
-        '[$runtimeType] request, chainId: $requestChainId, ${jsonEncode(request.toJson())}');
+      '[$runtimeType] request, chainId: $reqChainId, '
+      '${jsonEncode(request.toJson())}',
+    );
     try {
       if (_currentSession!.sessionService.isMagic) {
         return await magicService.instance.request(
-          chainId: requestChainId,
+          chainId: reqChainId,
           request: request,
         );
       }
       if (_currentSession!.sessionService.isCoinbase) {
-        return await cbRequest(
-          chainId: switchToChainId ?? requestChainId,
+        return await await coinbaseService.instance.request(
+          chainId: switchToChainId ?? reqChainId,
           request: request,
         );
       }
       return await _web3App.request(
         topic: topic!,
-        chainId: requestChainId,
+        chainId: reqChainId,
         request: request,
       );
     } catch (e) {
       if (_isUserRejectedError(e)) {
-        loggerService.instance.i('[$runtimeType] User declined request');
+        _logger.i('[$runtimeType] User declined request');
         onModalError.broadcast(UserRejectedConnection());
         if (request.method == MethodsConstants.walletSwitchEthChain ||
             request.method == MethodsConstants.walletAddEthChain) {
@@ -984,13 +1078,16 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
       await expirePreviousInactivePairings();
       _unregisterListeners();
       _status = W3MServiceStatus.idle;
-      loggerService.instance.d('[$runtimeType] dispose');
+      _logger.d('[$runtimeType] dispose');
     }
     super.dispose();
   }
 
   @override
   final Event<ModalConnect> onModalConnect = Event();
+
+  @override
+  final Event<ModalConnect> onModalUpdate = Event();
 
   @override
   final Event<ModalNetworkChange> onModalNetworkChange = Event();
@@ -1015,7 +1112,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
   void _notify() => notifyListeners();
 
   bool get _initializeCoinbaseSDK {
-    final cbId = CoinbaseService.coinbaseWalletId;
+    final cbId = CoinbaseService.defaultWalletData.listing.id;
     final included = (explorerService.instance.includedWalletIds ?? <String>{});
     final excluded = (explorerService.instance.excludedWalletIds ?? <String>{});
 
@@ -1095,14 +1192,14 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
     // Get the avatar, each chainId is just a number in string form.
     try {
-      final blockchainId = await blockchainApiUtils.instance!.getIdentity(
+      final blockchainId = await blockchainService.instance!.getIdentity(
         _currentSession!.address!,
         int.parse(_currentSelectedChain!.chainId),
       );
       _avatarUrl = blockchainId.avatar;
-      loggerService.instance.i('[$runtimeType] loadAccountData');
+      _logger.i('[$runtimeType] loadAccountData');
     } catch (e) {
-      loggerService.instance.e('[$runtimeType] loadAccountData $e');
+      _logger.e('[$runtimeType] loadAccountData $e');
     }
     _notify();
   }
@@ -1221,6 +1318,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     _isConnected = false;
     _currentSession = null;
     _lastChainEmitted = null;
+    _supportsOneClickAuth = true;
     _status = W3MServiceStatus.initialized;
     _notify();
   }
@@ -1243,10 +1341,17 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     magicService.instance.onMagicRpcRequest.subscribe(_onMagicRequest);
     //
     // Coinbase
-    onCoinbaseConnect.subscribe(_onCoinbaseConnectEvent);
-    onCoinbaseError.subscribe(_onCoinbaseErrorEvent);
-    onCoinbaseSessionUpdate.subscribe(_onCoinbaseSessionUpdateEvent);
+    coinbaseService.instance.onCoinbaseConnect.subscribe(
+      _onCoinbaseConnectEvent,
+    );
+    coinbaseService.instance.onCoinbaseError.subscribe(
+      _onCoinbaseErrorEvent,
+    );
+    coinbaseService.instance.onCoinbaseSessionUpdate.subscribe(
+      _onCoinbaseSessionUpdateEvent,
+    );
     //
+    _web3App.onSessionAuthResponse.subscribe(_onSessionAuthResponse);
     _web3App.onSessionConnect.subscribe(_onSessionConnect);
     _web3App.onSessionDelete.subscribe(_onSessionDelete);
     _web3App.onSessionExpire.subscribe(_onSessionExpire);
@@ -1264,6 +1369,17 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     );
   }
 
+  void _onNetworkChainRequireSIWE(ModalNetworkChange? args) async {
+    try {
+      if (siweService.instance!.signOutOnNetworkChange) {
+        await siweService.instance!.signOut();
+        widgetStack.instance.push(ApproveSIWEPage(
+          onSiweFinish: _oneSIWEFinish,
+        ));
+      }
+    } catch (_) {}
+  }
+
   void _unregisterListeners() {
     // Magic
     magicService.instance.onMagicLoginSuccess.unsubscribe(_onMagicLoginEvent);
@@ -1272,10 +1388,17 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     magicService.instance.onMagicRpcRequest.unsubscribe(_onMagicRequest);
     //
     // Coinbase
-    onCoinbaseConnect.unsubscribe(_onCoinbaseConnectEvent);
-    onCoinbaseError.unsubscribe(_onCoinbaseErrorEvent);
-    onCoinbaseSessionUpdate.unsubscribe(_onCoinbaseSessionUpdateEvent);
+    coinbaseService.instance.onCoinbaseConnect.unsubscribe(
+      _onCoinbaseConnectEvent,
+    );
+    coinbaseService.instance.onCoinbaseError.unsubscribe(
+      _onCoinbaseErrorEvent,
+    );
+    coinbaseService.instance.onCoinbaseSessionUpdate.unsubscribe(
+      _onCoinbaseSessionUpdateEvent,
+    );
     //
+    _web3App.onSessionAuthResponse.unsubscribe(_onSessionAuthResponse);
     _web3App.onSessionConnect.unsubscribe(_onSessionConnect);
     _web3App.onSessionDelete.unsubscribe(_onSessionDelete);
     _web3App.onSessionEvent.unsubscribe(_onSessionEvent);
@@ -1292,7 +1415,7 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
     );
   }
 
-  String? _savedChainId(String? defaultValue) {
+  String? _savedChainId(String defaultValue) {
     return storageService.instance.getString(
       StringConstants.selectedChainId,
       defaultValue: defaultValue,
@@ -1302,30 +1425,41 @@ class W3MService with ChangeNotifier, CoinbaseService implements IW3MService {
 
 extension _W3MMagicExtension on W3MService {
   Future<void> _onMagicLoginEvent(MagicLoginEvent? args) async {
-    _logger.p('[$runtimeType] _onMagicLoginEvent $args');
-    if (args != null) {
-      final chainId = args.data?.chainId.toString();
-      // final chainId = _savedChainId(args.data?.chainId.toString());
-      final newChainId = chainId ?? '1';
-      final newChain = W3MChainPresets.chains[chainId]!;
+    final debugString = jsonEncode(args?.data?.toJson());
+    _logger.i('[$runtimeType] _onMagicLoginEvent: $debugString');
+    if (args!.data != null) {
+      final newChainId = _savedChainId('${args.data!.chainId}')!;
+      final newChain = W3MChainPresets.chains[newChainId]!;
       _currentSelectedChain = newChain;
+      //
       final magicData = args.data?.copytWith(chainId: int.tryParse(newChainId));
       final session = W3MSession(magicData: magicData);
       await _setSesionAndChainData(session);
-      // magicService.instance.switchNetwork(chainId: newChainId);
       onModalConnect.broadcast(ModalConnect(session));
-      if (_isOpen) {
-        closeModal();
-      }
       if (_selectedWallet == null) {
         storageService.instance.clearKey(StringConstants.recentWalletId);
         storageService.instance.clearKey(StringConstants.connectedWalletData);
+      }
+      //
+      if (siweService.instance!.enabled) {
+        if (!_isOpen) {
+          await _checkSIWEStatus();
+          onModalUpdate.broadcast(ModalConnect(_currentSession!));
+        } else {
+          widgetStack.instance.push(ApproveSIWEPage(
+            onSiweFinish: _oneSIWEFinish,
+          ));
+        }
+      } else {
+        if (_isOpen) {
+          closeModal();
+        }
       }
     }
   }
 
   Future<void> _onMagicSessionUpdateEvent(MagicSessionEvent? args) async {
-    _logger.p('[$runtimeType] _onMagicUpdateEvent: $args');
+    _logger.d('[$runtimeType] _onMagicUpdateEvent: $args');
     if (args != null) {
       try {
         final newEmail = args.email ?? _currentSession!.email;
@@ -1333,15 +1467,22 @@ extension _W3MMagicExtension on W3MService {
         final chainId = args.chainId?.toString() ?? _currentSession!.chainId;
         final newChain = W3MChainPresets.chains[chainId]!;
         _currentSelectedChain = newChain;
-        final newData = MagicData(
-          email: newEmail,
-          address: address,
-          chainId: int.parse(chainId),
+        //
+        final session = _currentSession!.copyWith(
+          magicData: MagicData(
+            email: newEmail,
+            address: address,
+            chainId: int.parse(chainId),
+            peer: magicService.instance.metadata,
+            self: ConnectionMetadata(
+              metadata: _web3App.metadata,
+              publicKey: '',
+            ),
+          ),
         );
-        final session = _currentSession!.copyWith(magicData: newData);
         await _setSesionAndChainData(session);
       } catch (e, s) {
-        _logger.p(
+        _logger.d(
           '[$runtimeType] _onMagicUpdateEvent: $e',
           stackTrace: s,
         );
@@ -1350,7 +1491,7 @@ extension _W3MMagicExtension on W3MService {
   }
 
   Future<void> _onMagicErrorEvent(MagicErrorEvent? args) async {
-    _logger.p('[$runtimeType] _onMagicErrorEvent ${args?.error}');
+    _logger.d('[$runtimeType] _onMagicErrorEvent ${args?.error}');
     final errorMessage = args?.error ?? 'Something went wrong';
     if (!errorMessage.toLowerCase().contains('user denied')) {
       onModalError.broadcast(ModalError(errorMessage));
@@ -1359,7 +1500,7 @@ extension _W3MMagicExtension on W3MService {
   }
 
   void _onMagicRequest(MagicRequestEvent? args) {
-    _logger.p('[$runtimeType] _onMagicRequest ${args?.toString()}');
+    _logger.d('[$runtimeType] _onMagicRequest ${args?.toString()}');
     if (args?.result != null) {
       closeModal();
     }
@@ -1376,40 +1517,53 @@ extension _W3MMagicExtension on W3MService {
 
 extension _W3MCoinbaseExtension on W3MService {
   void _onCoinbaseConnectEvent(CoinbaseConnectEvent? args) async {
-    _logger.p('[$runtimeType] _onCoinbaseConnectEvent $args');
-    if (args != null) {
-      final chainId = _savedChainId(args.data?.chainId.toString());
-      final newChainId = chainId ?? '1';
-      // final chainId = args.data!.chainId.toString();
+    final debugString = jsonEncode(args?.data?.toJson());
+    _logger.i('[$runtimeType] _onCoinbaseConnectEvent: $debugString');
+    if (args?.data != null) {
+      final newChainId = _savedChainId('${args!.data!.chainId}')!;
       final newChain = W3MChainPresets.chains[newChainId]!;
       _currentSelectedChain = newChain;
-      final cbData = args.data?.copytWith(chainId: int.tryParse(newChainId));
-      final session = W3MSession(coinbaseData: cbData);
+      //
+      final session = W3MSession(coinbaseData: args.data!);
       await _setSesionAndChainData(session);
       onModalConnect.broadcast(ModalConnect(session));
-      if (_isOpen) {
-        closeModal();
+      //
+      if (siweService.instance!.enabled) {
+        widgetStack.instance.push(ApproveSIWEPage(
+          onSiweFinish: _oneSIWEFinish,
+        ));
+      } else {
+        if (_isOpen) {
+          closeModal();
+        }
       }
     }
   }
 
   void _onCoinbaseSessionUpdateEvent(CoinbaseSessionEvent? args) async {
-    _logger.p('[$runtimeType] _onCoinbaseSessionUpdateEvent $args');
+    _logger.d('[$runtimeType] _onCoinbaseSessionUpdateEvent $args');
     if (args != null) {
       try {
         final address = args.address ?? _currentSession!.address!;
         final chainId = args.chainId ?? _currentSession!.chainId;
         final newChain = W3MChainPresets.chains[chainId]!;
         _currentSelectedChain = newChain;
-        final newData = CoinbaseData(
-          address: address,
-          chainName: newChain.chainName,
-          chainId: int.parse(chainId),
+        //
+        final session = _currentSession!.copyWith(
+          coinbaseData: CoinbaseData(
+            address: address,
+            chainName: newChain.chainName,
+            chainId: int.parse(chainId),
+            peer: coinbaseService.instance.metadata,
+            self: ConnectionMetadata(
+              metadata: _web3App.metadata,
+              publicKey: await coinbaseService.instance.ownPublicKey,
+            ),
+          ),
         );
-        final session = _currentSession!.copyWith(coinbaseData: newData);
         await _setSesionAndChainData(session);
       } catch (e, s) {
-        _logger.p(
+        _logger.d(
           '[$runtimeType] _onCoinbaseSessionUpdateEvent: $e',
           stackTrace: s,
         );
@@ -1418,7 +1572,7 @@ extension _W3MCoinbaseExtension on W3MService {
   }
 
   void _onCoinbaseErrorEvent(CoinbaseErrorEvent? args) async {
-    _logger.p('[$runtimeType] _onCoinbaseErrorEvent ${args?.error}');
+    _logger.d('[$runtimeType] _onCoinbaseErrorEvent ${args?.error}');
     final errorMessage = args?.error ?? 'Something went wrong';
     if (!errorMessage.toLowerCase().contains('user denied')) {
       onModalError.broadcast(ModalError(errorMessage));
@@ -1427,37 +1581,106 @@ extension _W3MCoinbaseExtension on W3MService {
 }
 
 extension _W3MServiceExtension on W3MService {
-  void _onSessionConnect(SessionConnect? args) async {
-    _logger.i('[$runtimeType] session connect $args');
+  void _onSessionAuthResponse(SessionAuthResponse? args) async {
+    final debugString = jsonEncode(args?.toJson());
+    dev.log('[$runtimeType] _onSessionAuthResponse: $debugString');
     if (args != null) {
-      if (_currentSelectedChain == null) {
-        final chain = NamespaceUtils.getChainIdsFromNamespaces(
-          namespaces: args.session.namespaces,
-        ).first;
-        final chainId = chain.split(':').last.toString();
-        _currentSelectedChain = W3MChainPresets.chains[chainId];
-      }
-      final session = W3MSession(sessionData: args.session);
-      await _setSesionAndChainData(session);
-      if (_selectedWallet == null) {
-        analyticsService.instance.sendEvent(ConnectSuccessEvent(
-          name: 'WalletConnect',
-          method: AnalyticsPlatform.qrcode,
-        ));
-        storageService.instance.clearKey(StringConstants.recentWalletId);
-        storageService.instance.clearKey(StringConstants.connectedWalletData);
-      } else {
-        final walletName = _selectedWallet!.listing.name;
-        analyticsService.instance.sendEvent(ConnectSuccessEvent(
-          name: walletName,
-          method: AnalyticsPlatform.mobile,
-        ));
-      }
-      onModalConnect.broadcast(ModalConnect(session));
-      if (_isOpen) {
-        closeModal();
+      if (args.session != null) {
+        // IF 1-CA SUPPORTED WE SHOULD CALL SIWECONGIF METHODS HERE
+        final session = await _settleSession(args.session!);
+        final namespace = args.session!.namespaces[StringConstants.namespace]!;
+        final chains = namespace.chains!.map((c) => c.split(':').last).toList()
+          ..sort();
+        String chainId = _currentSelectedChain?.chainId ?? chains.first;
+        chainId = W3MChainPresets.chains[chainId]!.namespace;
+        //
+        try {
+          // Verify message with just the first cacao
+          final Cacao cacao = args.auths!.first;
+          final message = _web3App.formatAuthMessage(
+            iss: cacao.p.iss,
+            cacaoPayload: CacaoRequestPayload.fromCacaoPayload(cacao.p),
+          );
+          final clientId = await _web3App.core.crypto.getClientId();
+          await siweService.instance!.verifyMessage(
+            message: message,
+            signature: cacao.s.s,
+            clientId: clientId,
+          );
+        } catch (e) {
+          await disconnect();
+          return;
+        }
+        //
+        final siweSession = await siweService.instance!.getSession();
+        final newSession = session.copyWith(siweSession: siweSession);
+        //
+        onModalConnect.broadcast(ModalConnect(newSession));
+        await _storeSession(newSession);
+        _notify();
+        //
+        if (_isOpen) {
+          closeModal();
+        }
       }
     }
+  }
+
+  void _onSessionConnect(SessionConnect? args) async {
+    final siweEnabled = siweService.instance!.enabled;
+    if (_supportsOneClickAuth && siweEnabled) return;
+    final debugString = jsonEncode(args?.session.toJson());
+    _logger.i('[$runtimeType] _onSessionConnect: $debugString');
+    if (args != null) {
+      // IF SIWE CALLBACK (1-CA NOT SUPPORTED) SIWECONGIF METHODS ARE CALLED ON ApproveSIWEPage
+      final session = await _settleSession(args.session);
+      onModalConnect.broadcast(ModalConnect(session));
+      //
+      if (siweService.instance!.enabled) {
+        widgetStack.instance.push(ApproveSIWEPage(
+          onSiweFinish: _oneSIWEFinish,
+        ));
+      } else {
+        if (_isOpen) {
+          closeModal();
+        }
+      }
+    }
+  }
+
+  // HAS TO BE CALLED JUST ONCE ON CONNECTION
+  Future<W3MSession> _settleSession(SessionData sessionData) async {
+    if (_currentSelectedChain == null) {
+      final chains = NamespaceUtils.getChainIdsFromNamespaces(
+        namespaces: sessionData.namespaces,
+      )..sort((a, b) => a.compareTo(b));
+      final chainId = chains.first.split(':').last.toString();
+      _currentSelectedChain = W3MChainPresets.chains[chainId];
+    }
+    final session = W3MSession(sessionData: sessionData);
+    await _setSesionAndChainData(session);
+    if (_selectedWallet == null) {
+      analyticsService.instance.sendEvent(ConnectSuccessEvent(
+        name: 'WalletConnect',
+        method: AnalyticsPlatform.qrcode,
+      ));
+      storageService.instance.clearKey(StringConstants.recentWalletId);
+      storageService.instance.clearKey(StringConstants.connectedWalletData);
+    } else {
+      explorerService.instance.storeConnectedWallet(_selectedWallet);
+      final walletName = _selectedWallet!.listing.name;
+      analyticsService.instance.sendEvent(ConnectSuccessEvent(
+        name: walletName,
+        method: AnalyticsPlatform.mobile,
+      ));
+    }
+    return session;
+  }
+
+  void _oneSIWEFinish(W3MSession updatedSession) async {
+    await _storeSession(updatedSession);
+    onModalUpdate.broadcast(ModalConnect(updatedSession));
+    closeModal();
   }
 
   void _onSessionEvent(SessionEvent? args) async {
@@ -1472,6 +1695,12 @@ extension _W3MServiceExtension on W3MService {
         _currentSelectedChain = null;
         _notify();
       }
+    } else if (args?.name == EventsConstants.accountsChanged) {
+      try {
+        if (siweService.instance!.signOutOnAccountChange) {
+          await siweService.instance!.signOut();
+        }
+      } catch (_) {}
     }
   }
 
@@ -1515,7 +1744,7 @@ extension _W3MServiceExtension on W3MService {
   }
 
   void _onRelayClientError(ErrorEvent? args) {
-    _logger.i('[$runtimeType] relay client error: $args');
+    _logger.i('[$runtimeType] relay client error: ${args?.error}');
     final service = _currentSession?.sessionService ?? W3MSessionService.wc;
     if (service.isWC) {
       _status = W3MServiceStatus.error;

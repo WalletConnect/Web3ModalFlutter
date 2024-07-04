@@ -34,13 +34,37 @@ class W3MListAvatar extends StatelessWidget {
             decoration: isNetwork
                 ? ShapeDecoration(
                     shape: StarBorder.polygon(
+                      side: BorderSide(
+                        color: color ?? themeColors.grayGlass010,
+                        width: 1.0,
+                        strokeAlign: BorderSide.strokeAlignInside,
+                      ),
                       pointRounding: 0.3,
                       sides: 6,
                     ),
                   )
                 : BoxDecoration(
                     borderRadius: BorderRadius.circular(radius),
-                    color: themeColors.grayGlass005,
+                    border: Border.all(
+                      color: color ?? themeColors.grayGlass010,
+                      width: 1.0,
+                      strokeAlign: BorderSide.strokeAlignOutside,
+                    ),
+                  ),
+          ),
+        ),
+        AspectRatio(
+          aspectRatio: 1.0,
+          child: Container(
+            decoration: isNetwork
+                ? ShapeDecoration(
+                    shape: StarBorder.polygon(
+                      pointRounding: 0.3,
+                      sides: 6,
+                    ),
+                  )
+                : BoxDecoration(
+                    borderRadius: BorderRadius.circular(radius),
                   ),
             clipBehavior: Clip.antiAlias,
             child: (imageUrl ?? '').isNotEmpty
@@ -74,31 +98,6 @@ class W3MListAvatar extends StatelessWidget {
                     : ColoredBox(
                         color: themeColors.grayGlass005,
                       ),
-          ),
-        ),
-        AspectRatio(
-          aspectRatio: 1.0,
-          child: Container(
-            decoration: isNetwork
-                ? ShapeDecoration(
-                    shape: StarBorder.polygon(
-                      side: BorderSide(
-                        color: color ?? themeColors.grayGlass010,
-                        width: 1.0,
-                        strokeAlign: BorderSide.strokeAlignInside,
-                      ),
-                      pointRounding: 0.3,
-                      sides: 6,
-                    ),
-                  )
-                : BoxDecoration(
-                    borderRadius: BorderRadius.circular(radius),
-                    border: Border.all(
-                      color: color ?? themeColors.grayGlass010,
-                      width: 1.0,
-                      strokeAlign: BorderSide.strokeAlignInside,
-                    ),
-                  ),
           ),
         ),
       ],

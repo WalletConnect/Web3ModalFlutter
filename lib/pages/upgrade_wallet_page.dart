@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
-import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/constants/url_constants.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
@@ -40,12 +40,12 @@ class UpgradeWalletPage extends StatelessWidget {
             onTap: () {
               analyticsService.instance.sendEvent(EmailUpgradeFromModal());
               launchUrlString(
-                StringConstants.secureSite,
+                UrlConstants.secureDashboard,
                 mode: LaunchMode.externalApplication,
               );
             },
             rightIcon: 'assets/icons/arrow_top_right.svg',
-            title: 'secure.walletconnect.com',
+            title: Uri.parse(UrlConstants.secureDashboard).authority,
             size: BaseButtonSize.small,
             iconSize: 12.0,
             fontSize: 14.0,

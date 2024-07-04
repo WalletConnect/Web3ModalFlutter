@@ -25,41 +25,8 @@ abstract class ILoggerService {
     StackTrace? stackTrace,
   });
 
-  /// Log a message at level [Level.warning].
-  void w(
-    dynamic message, {
-    DateTime? time,
-    Object? error,
-    StackTrace? stackTrace,
-  });
-
   /// Log a message at level [Level.error].
   void e(
-    dynamic message, {
-    DateTime? time,
-    Object? error,
-    StackTrace? stackTrace,
-  });
-
-  /// Log a message at level [Level.fatal].
-  void f(
-    dynamic message, {
-    DateTime? time,
-    Object? error,
-    StackTrace? stackTrace,
-  });
-
-  /// Log a message with [level].
-  void log(
-    Level level,
-    dynamic message, {
-    DateTime? time,
-    Object? error,
-    StackTrace? stackTrace,
-  });
-
-  /// Log a message at level private.
-  void p(
     dynamic message, {
     DateTime? time,
     Object? error,

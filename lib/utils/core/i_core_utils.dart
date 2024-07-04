@@ -4,14 +4,6 @@ abstract class ICoreUtils {
 
   bool isValidEmail(String email);
 
-  Future<bool> isRestrictedRegion();
-
-  Future<String> getApiUrl();
-
-  Future<String> getBlockchainApiUrl();
-
-  Future<String> getAnalyticsUrl();
-
   /// Returns true if the given [url] is a valid HTTP or HTTPS URL.
   bool isHttpUrl(String url);
 

@@ -7,6 +7,7 @@ export 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 /// Models
 export 'models/w3m_chain_info.dart';
 export 'models/w3m_wallet_info.dart';
+export 'services/siwe_service/models/w3m_siwe.dart';
 
 /// Utils
 export 'utils/w3m_chains_presets.dart';

@@ -33,11 +33,4 @@ class StringConstants {
   static const String connectedWalletData = 'w3m_walletData';
   static const String selectedChainId = 'w3m_selectedChainId';
   static const String w3mSession = 'w3m_session';
-
-  // Urls
-  static const String exploreAllWallets =
-      'https://explorer.walletconnect.com/?type=wallet';
-  static const String learnMoreUrl =
-      'https://ethereum.org/en/developers/docs/networks/';
-  static const String secureSite = 'https://secure.walletconnect.com/dashboard';
 }

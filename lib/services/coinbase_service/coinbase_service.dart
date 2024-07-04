@@ -1,11 +1,12 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:web3modal_flutter/models/listing.dart';
 
 import 'package:web3modal_flutter/services/coinbase_service/i_coinbase_service.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:coinbase_wallet_sdk/currency.dart';
@@ -16,11 +17,41 @@ import 'package:coinbase_wallet_sdk/eth_web3_rpc.dart';
 import 'package:coinbase_wallet_sdk/request.dart';
 
 class CoinbaseService implements ICoinbaseService {
-  static const coinbaseWalletId =
-      'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa';
-  static const coinbaseSchema = 'cbwallet://wsegue';
   static const coinbasePackageName = 'org.toshi';
-  static const coinbaseWalletName = 'Coinbase Wallet';
+  static const defaultWalletData = W3MWalletInfo(
+    listing: Listing(
+      id: 'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa',
+      name: 'Coinbase Wallet',
+      homepage: 'https://www.coinbase.com/wallet/',
+      imageId: 'a5ebc364-8f91-4200-fcc6-be81310a0000',
+      order: 4110,
+      mobileLink: 'cbwallet://wsegue',
+      appStore: 'https://apps.apple.com/app/apple-store/id1278383455',
+      playStore: 'https://play.google.com/store/apps/details?id=org.toshi',
+      // rdns: 'com.coinbase.wallet',
+    ),
+    installed: false,
+    recent: false,
+  );
+
+  String _iconImage = '';
+
+  @override
+  ConnectionMetadata get metadata => ConnectionMetadata(
+        metadata: PairingMetadata(
+          name: _walletData.listing.name,
+          description: '',
+          url: _walletData.listing.homepage,
+          icons: [
+            _iconImage,
+          ],
+          redirect: Redirect(
+            native: _walletData.listing.mobileLink,
+            universal: _walletData.listing.webappLink,
+          ),
+        ),
+        publicKey: '',
+      );
 
   static const supportedMethods = [
     ...MethodsConstants.requiredMethods,
@@ -33,54 +64,73 @@ class CoinbaseService implements ICoinbaseService {
     'wallet_watchAsset',
   ];
 
-  @Deprecated('Use onModalConnect')
   @override
   Event<CoinbaseConnectEvent> onCoinbaseConnect = Event<CoinbaseConnectEvent>();
 
-  @Deprecated('Use onModalError')
   @override
   Event<CoinbaseErrorEvent> onCoinbaseError = Event<CoinbaseErrorEvent>();
 
-  @Deprecated('Use onModalSessionUpdate')
   @override
   Event<CoinbaseSessionEvent> onCoinbaseSessionUpdate =
       Event<CoinbaseSessionEvent>();
 
-  @Deprecated('Do no use')
   @override
   Event<CoinbaseResponseEvent> get onCoinbaseResponse =>
       Event<CoinbaseResponseEvent>();
 
-  @protected
+  final IWeb3App _web3app;
+  late bool _enabled;
+  late W3MWalletInfo _walletData;
+
+  CoinbaseService({required IWeb3App web3app, bool enabled = false})
+      : _web3app = web3app,
+        _enabled = enabled;
+
   @override
-  Future<void> cbInit({
-    required PairingMetadata metadata,
-    W3MWalletInfo? cbWallet,
-  }) async {
+  Future<void> init() async {
+    if (!_enabled) return;
     // Configure SDK for each platform
-    final universal = metadata.redirect?.universal ?? metadata.url;
-    final nativeLink = metadata.redirect?.native ?? '';
-    if (universal.isNotEmpty && nativeLink.isNotEmpty) {
+
+    _walletData = (await explorerService.instance.getCoinbaseWalletObject()) ??
+        defaultWalletData;
+    final imageId = defaultWalletData.listing.imageId;
+    _iconImage = explorerService.instance.getWalletImageUrl(imageId);
+
+    final universal = _web3app.metadata.redirect?.universal ?? '';
+    final nativeLink = _web3app.metadata.redirect?.native ?? '';
+    final walletLink = _walletData.listing.mobileLink ?? '';
+    if ((universal.isNotEmpty && nativeLink.isNotEmpty) ||
+        walletLink.isNotEmpty) {
       try {
         final config = Configuration(
           ios: IOSConfiguration(
-            host: Uri.parse(cbWallet?.listing.mobileLink ?? coinbaseSchema),
+            host: Uri.parse(walletLink),
             callback: Uri.parse(nativeLink),
           ),
-          android: AndroidConfiguration(domain: Uri.parse(universal)),
+          android: AndroidConfiguration(
+            domain: Uri.parse(universal),
+          ),
         );
         await CoinbaseWalletSDK.shared.configure(config);
       } catch (_) {
         // Silent error
       }
     } else {
+      _enabled = false;
       throw W3MCoinbaseException('Initialization error');
     }
   }
 
-  @protected
   @override
-  Future<void> cbGetAccount() async {
+  Future<String> get ownPublicKey async =>
+      await CoinbaseWalletSDK.shared.ownPublicKey();
+
+  @override
+  Future<String> get peerPublicKey async =>
+      await CoinbaseWalletSDK.shared.peerPublicKey();
+
+  @override
+  Future<void> getAccount() async {
     await _checkInstalled();
     try {
       final results = await CoinbaseWalletSDK.shared.initiateHandshake([
@@ -94,7 +144,15 @@ class CoinbaseService implements ICoinbaseService {
         throw W3MCoinbaseException('$errorMessage ($errorCode)');
       }
 
-      final data = CoinbaseData.fromJson(result.account!.toJson());
+      final data = CoinbaseData.fromJson(result.account!.toJson()).copytWith(
+        peer: metadata.copyWith(
+          publicKey: await peerPublicKey,
+        ),
+        self: ConnectionMetadata(
+          metadata: _web3app.metadata,
+          publicKey: await ownPublicKey,
+        ),
+      );
       onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
       return;
     } on PlatformException catch (e, s) {
@@ -108,9 +166,8 @@ class CoinbaseService implements ICoinbaseService {
     }
   }
 
-  @protected
   @override
-  Future<dynamic> cbRequest({
+  Future<dynamic> request({
     required String chainId,
     required SessionRequestParams request,
   }) async {
@@ -134,7 +191,15 @@ class CoinbaseService implements ICoinbaseService {
           break;
         case 'eth_requestAccounts':
           final json = jsonDecode(value!);
-          final data = CoinbaseData.fromJson(json);
+          final data = CoinbaseData.fromJson(json).copytWith(
+            peer: metadata.copyWith(
+              publicKey: await peerPublicKey,
+            ),
+            self: ConnectionMetadata(
+              metadata: _web3app.metadata,
+              publicKey: await ownPublicKey,
+            ),
+          );
           onCoinbaseConnect.broadcast(CoinbaseConnectEvent(data));
           break;
         default:
@@ -152,9 +217,8 @@ class CoinbaseService implements ICoinbaseService {
     }
   }
 
-  @protected
   @override
-  Future<bool> cbIsInstalled() async {
+  Future<bool> isInstalled() async {
     try {
       return await CoinbaseWalletSDK.shared.isAppInstalled();
     } catch (e, s) {
@@ -162,9 +226,8 @@ class CoinbaseService implements ICoinbaseService {
     }
   }
 
-  @protected
   @override
-  Future<bool> cbIsConnected() async {
+  Future<bool> isConnected() async {
     try {
       return await CoinbaseWalletSDK.shared.isConnected();
     } catch (e, s) {
@@ -172,9 +235,8 @@ class CoinbaseService implements ICoinbaseService {
     }
   }
 
-  @protected
   @override
-  Future<void> cbResetSession() async {
+  Future<void> resetSession() async {
     try {
       return CoinbaseWalletSDK.shared.resetSession();
     } catch (e, s) {
@@ -183,7 +245,7 @@ class CoinbaseService implements ICoinbaseService {
   }
 
   Future<bool> _checkInstalled() async {
-    final installed = await cbIsInstalled();
+    final installed = await isInstalled();
     if (!installed) {
       throw W3MCoinbaseNotInstalledException();
     }
@@ -209,25 +271,24 @@ extension on SessionRequestParams {
       case 'eth_requestAccounts':
         return RequestAccounts();
       case 'eth_signTransaction':
-        final jsonData = _getTransactionFromParams(params);
-        final hexValue = jsonData['value'].toString().replaceFirst('0x', '');
-        final value = int.parse(hexValue, radix: 16);
-        return SignTransaction(
-          fromAddress: jsonData['from'],
-          toAddress: jsonData['to'],
-          chainId: chainId!,
-          weiValue: BigInt.from(value),
-          data: jsonData['data'] ?? '',
-        );
       case MethodsConstants.ethSendTransaction:
+        BigInt? weiValue;
         final jsonData = _getTransactionFromParams(params);
-        String? weiValue;
         if (jsonData.containsKey('value')) {
           final hexValue = jsonData['value'].toString().replaceFirst('0x', '');
           final value = int.parse(hexValue, radix: 16);
-          weiValue = BigInt.from(value).toString();
+          weiValue = BigInt.from(value);
         }
-        final data = jsonData['data']?.toString() ?? '';
+        final data = jsonData['data']?.toString();
+        if (method == 'eth_signTransaction') {
+          return SignTransaction(
+            fromAddress: jsonData['from'].toString(),
+            toAddress: jsonData['to'].toString(),
+            chainId: chainId!,
+            weiValue: weiValue,
+            data: data,
+          );
+        }
         return SendTransaction(
           fromAddress: jsonData['from'].toString(),
           toAddress: jsonData['to'].toString(),
@@ -259,9 +320,13 @@ extension on SessionRequestParams {
         } catch (e, s) {
           throw W3MCoinbaseException('Unrecognized chainId $chainId', e, s);
         }
-      // TODO [CoinbaseService] implement after Coinbase merges this PR https://github.com/MobileWalletProtocol/wallet-mobile-sdk/pull/327
-      // case 'wallet_watchAsset':
-      //   return WatchAsset(params: params);
+      case 'wallet_watchAsset':
+        final address = _getAddressFromParamsList(params);
+        final symbol = _getDataFromParamsList(params);
+        return WatchAsset(
+          address: address,
+          symbol: symbol,
+        );
       default:
         throw W3MCoinbaseException('Unsupported request method $method');
     }
@@ -291,20 +356,3 @@ extension on SessionRequestParams {
     return param as Map<String, dynamic>;
   }
 }
-
-// class WatchAsset extends Action {
-//   WatchAsset({
-//     required String address,
-//     required String symbol,
-//     int? decimals,
-//     String? image,
-//   }) : super(
-//           method: 'wallet_watchAsset',
-//           paramsJson: jsonEncode({
-//             'address': address,
-//             'symbol': symbol,
-//             'decimals': decimals ?? 18,
-//             if (image != null) 'image': image,
-//           }),
-//         );
-// }

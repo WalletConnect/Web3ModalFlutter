@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/constants/url_constants.dart';
+import 'package:web3modal_flutter/models/listing.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
@@ -21,10 +23,7 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 class MagicService implements IMagicService {
-  static const _url = 'secure-mobile.walletconnect.com';
   static const _safeDomains = [
-    _url,
-    'secure.walletconnect.com',
     'auth.magic.link',
     'launchdarkly.com',
   ];
@@ -36,6 +35,31 @@ class MagicService implements IMagicService {
     'wallet_switchEthereumChain',
     'wallet_addEthereumChain',
   ];
+  static const defaultWalletData = W3MWalletInfo(
+    listing: Listing(
+      id: '',
+      name: 'Email Wallet',
+      homepage: '',
+      imageId: '',
+      order: 10000,
+    ),
+    installed: false,
+    recent: false,
+  );
+
+  @override
+  ConnectionMetadata get metadata => ConnectionMetadata(
+        metadata: PairingMetadata(
+          name: defaultWalletData.listing.name,
+          description: '',
+          url: defaultWalletData.listing.homepage,
+          icons: [
+            '',
+          ],
+        ),
+        publicKey: '',
+      );
+
   //
   final IWeb3App _web3app;
   Timer? _timeOutTimer;
@@ -143,14 +167,15 @@ class MagicService implements IMagicService {
         onWebResourceError: _onWebResourceError,
         onPageFinished: (String url) async {
           _onLoadCount++;
+          // If bundleId/packageName is whitelisted in cloud then for some reason it enters here twice
+          // Like as if secure-mobile.walletconnect.com is loaded twice
+          // If bundleId/packageName is NOT whitelisted in cloud then it enter just once.
+          // This is happening only on Android devices, on iOS only once execution is done no matter what.
           if (_onLoadCount < 2 && Platform.isAndroid) return;
-          await _runJavascript(_web3app.core.projectId);
-          Future.delayed(Duration(milliseconds: 200)).then((_) async {
-            try {
-              _initialized.complete(true);
-            } catch (e) {
-              loggerService.instance.e('[$runtimeType] CRASH! $e');
-            }
+          await _runJavascript();
+          Future.delayed(Duration(milliseconds: 600)).then((value) {
+            if (_initialized.isCompleted) return;
+            _initialized.complete(true);
           });
         },
       ),
@@ -303,7 +328,7 @@ class MagicService implements IMagicService {
         'referer': _web3app.metadata.url,
         'x-bundle-id': _packageName,
       };
-      final uri = Uri.parse('https://$_url/mobile-sdk');
+      final uri = Uri.parse(UrlConstants.secureService);
       final queryParams = {
         'projectId': _web3app.core.projectId,
         'bundleId': _packageName,
@@ -327,7 +352,7 @@ class MagicService implements IMagicService {
 
   void _onFrameMessage(JavaScriptMessage jsMessage) async {
     if (Platform.isAndroid) {
-      loggerService.instance.p('[$runtimeType] jsMessage ${jsMessage.message}');
+      loggerService.instance.d('[$runtimeType] jsMessage ${jsMessage.message}');
     }
     try {
       final frameMessage = jsMessage.toFrameMessage();
@@ -429,7 +454,14 @@ class MagicService implements IMagicService {
           onMagicUpdate.broadcast(event);
           _connected.complete(isConnected.value);
         } else {
-          onMagicLoginSuccess.broadcast(MagicLoginEvent(data));
+          final session = data.copytWith(
+            peer: metadata,
+            self: ConnectionMetadata(
+              metadata: _web3app.metadata,
+              publicKey: '',
+            ),
+          );
+          onMagicLoginSuccess.broadcast(MagicLoginEvent(session));
         }
       }
       // ****** SIGN_OUT
@@ -482,7 +514,7 @@ class MagicService implements IMagicService {
         _error(SignOutErrorEvent());
       }
     } catch (e, s) {
-      loggerService.instance.p('[$runtimeType] $jsMessage', stackTrace: s);
+      loggerService.instance.d('[$runtimeType] $jsMessage', stackTrace: s);
     }
   }
 
@@ -531,24 +563,24 @@ class MagicService implements IMagicService {
     onMagicError.broadcast(errorEvent);
   }
 
-  Future<void> _runJavascript(String projectId) async {
+  Future<void> _runJavascript() async {
     return await _webViewController.runJavaScript('''
       const iframeFL = document.getElementById('frame-mobile-sdk')
-      
+
       window.addEventListener('message', ({ data, origin }) => {
-        console.log('w3mMessage received <=== ' + JSON.stringify({data,origin}))
+        console.log('[MagicService] received <=== ' + JSON.stringify({data,origin}))
         window.w3mWebview.postMessage(JSON.stringify({data,origin}))
       })
 
       const sendW3Message = async (message) => {
-        console.log('w3mMessage posted =====> ' + JSON.stringify(message))
+        console.log('[MagicService] posted =====> ' + JSON.stringify(message))
         iframeFL.contentWindow.postMessage(message, '*')
       }
     ''');
   }
 
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
-    loggerService.instance.p('[$runtimeType] JS Console ${message.message}');
+    loggerService.instance.d('[$runtimeType] JS Console ${message.message}');
   }
 
   void _onWebResourceError(WebResourceError error) {
@@ -568,7 +600,11 @@ class MagicService implements IMagicService {
   }
 
   bool _isAllowedDomain(String domain) {
-    final domains = _safeDomains.join('|');
+    final domains = [
+      Uri.parse(UrlConstants.secureService).authority,
+      Uri.parse(UrlConstants.secureDashboard).authority,
+      ..._safeDomains,
+    ].join('|');
     return RegExp(r'' + domains).hasMatch(domain);
   }
 
@@ -580,7 +616,7 @@ class MagicService implements IMagicService {
       loggerService.instance.e(
         '[EmailLogin] initialization timed out. Please check if your '
         'bundleId/packageName $_packageName is whitelisted in your cloud '
-        'configuration at https://cloud.walletconnect.com/ for project id ${_web3app.core.projectId}',
+        'configuration at ${UrlConstants.cloudService} for project id ${_web3app.core.projectId}',
       );
     }
   }

@@ -4,57 +4,55 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i14;
-import 'dart:convert' as _i27;
-import 'dart:typed_data' as _i28;
-import 'dart:ui' as _i17;
+import 'dart:convert' as _i26;
+import 'dart:typed_data' as _i27;
+import 'dart:ui' as _i16;
 
 import 'package:flutter/foundation.dart' as _i2;
 import 'package:flutter/material.dart' as _i11;
 import 'package:http/http.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i13;
-import 'package:url_launcher/url_launcher.dart' as _i19;
+import 'package:url_launcher/url_launcher.dart' as _i18;
 import 'package:walletconnect_flutter_v2/apis/core/relay_client/i_message_tracker.dart'
     as _i7;
 import 'package:walletconnect_flutter_v2/apis/core/relay_client/json_rpc_2/src/peer.dart'
-    as _i26;
-import 'package:walletconnect_flutter_v2/apis/core/relay_client/relay_client.dart'
     as _i25;
+import 'package:walletconnect_flutter_v2/apis/core/relay_client/relay_client.dart'
+    as _i24;
 import 'package:walletconnect_flutter_v2/apis/core/relay_client/websocket/i_websocket_handler.dart'
     as _i8;
 import 'package:walletconnect_flutter_v2/apis/core/store/i_generic_store.dart'
     as _i4;
 import 'package:walletconnect_flutter_v2/apis/core/store/i_store.dart' as _i6;
 import 'package:walletconnect_flutter_v2/apis/sign_api/i_sessions.dart' as _i5;
-import 'package:web3modal_flutter/models/grid_item.dart' as _i30;
+import 'package:web3modal_flutter/models/grid_item.dart' as _i29;
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart'
-    as _i35;
-import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart'
-    as _i31;
-import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart'
+    as _i34;
+import 'package:web3modal_flutter/services/blockchain_service/blockchain_service.dart'
+    as _i30;
+import 'package:web3modal_flutter/services/blockchain_service/models/blockchain_identity.dart'
     as _i10;
-import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart'
-    as _i16;
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart'
     as _i12;
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart'
-    as _i20;
+    as _i19;
 import 'package:web3modal_flutter/services/ledger_service/ledger_service.dart'
-    as _i32;
+    as _i31;
 import 'package:web3modal_flutter/services/network_service/network_service.dart'
-    as _i29;
+    as _i28;
 import 'package:web3modal_flutter/services/storage_service/storage_service.dart'
-    as _i33;
+    as _i32;
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart'
     as _i15;
-import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart' as _i21;
-import 'package:web3modal_flutter/utils/platform/platform_utils.dart' as _i22;
-import 'package:web3modal_flutter/utils/toast/toast_message.dart' as _i24;
-import 'package:web3modal_flutter/utils/toast/toast_utils.dart' as _i23;
-import 'package:web3modal_flutter/utils/url/url_utils.dart' as _i18;
+import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart' as _i20;
+import 'package:web3modal_flutter/utils/platform/platform_utils.dart' as _i21;
+import 'package:web3modal_flutter/utils/toast/toast_message.dart' as _i23;
+import 'package:web3modal_flutter/utils/toast/toast_utils.dart' as _i22;
+import 'package:web3modal_flutter/utils/url/url_utils.dart' as _i17;
 import 'package:web3modal_flutter/web3modal_flutter.dart' as _i3;
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack.dart'
-    as _i34;
+    as _i33;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -185,8 +183,9 @@ class _FakeAuthRequestResponse_10 extends _i1.SmartFake
         );
 }
 
-class _FakeIStore_11<T> extends _i1.SmartFake implements _i6.IStore<T> {
-  _FakeIStore_11(
+class _FakeSessionAuthRequestResponse_11 extends _i1.SmartFake
+    implements _i3.SessionAuthRequestResponse {
+  _FakeSessionAuthRequestResponse_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -195,8 +194,8 @@ class _FakeIStore_11<T> extends _i1.SmartFake implements _i6.IStore<T> {
         );
 }
 
-class _FakeSessionData_12 extends _i1.SmartFake implements _i3.SessionData {
-  _FakeSessionData_12(
+class _FakeIStore_12<T> extends _i1.SmartFake implements _i6.IStore<T> {
+  _FakeIStore_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -205,9 +204,19 @@ class _FakeSessionData_12 extends _i1.SmartFake implements _i3.SessionData {
         );
 }
 
-class _FakeIMessageTracker_13 extends _i1.SmartFake
+class _FakeSessionData_13 extends _i1.SmartFake implements _i3.SessionData {
+  _FakeSessionData_13(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeIMessageTracker_14 extends _i1.SmartFake
     implements _i7.IMessageTracker {
-  _FakeIMessageTracker_13(
+  _FakeIMessageTracker_14(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -216,9 +225,9 @@ class _FakeIMessageTracker_13 extends _i1.SmartFake
         );
 }
 
-class _FakeIWebSocketHandler_14 extends _i1.SmartFake
+class _FakeIWebSocketHandler_15 extends _i1.SmartFake
     implements _i8.IWebSocketHandler {
-  _FakeIWebSocketHandler_14(
+  _FakeIWebSocketHandler_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -227,8 +236,8 @@ class _FakeIWebSocketHandler_14 extends _i1.SmartFake
         );
 }
 
-class _FakeResponse_15 extends _i1.SmartFake implements _i9.Response {
-  _FakeResponse_15(
+class _FakeResponse_16 extends _i1.SmartFake implements _i9.Response {
+  _FakeResponse_16(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -237,9 +246,9 @@ class _FakeResponse_15 extends _i1.SmartFake implements _i9.Response {
         );
 }
 
-class _FakeStreamedResponse_16 extends _i1.SmartFake
+class _FakeStreamedResponse_17 extends _i1.SmartFake
     implements _i9.StreamedResponse {
-  _FakeStreamedResponse_16(
+  _FakeStreamedResponse_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -248,9 +257,9 @@ class _FakeStreamedResponse_16 extends _i1.SmartFake
         );
 }
 
-class _FakeBlockchainIdentity_17 extends _i1.SmartFake
+class _FakeBlockchainIdentity_18 extends _i1.SmartFake
     implements _i10.BlockchainIdentity {
-  _FakeBlockchainIdentity_17(
+  _FakeBlockchainIdentity_18(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -259,8 +268,8 @@ class _FakeBlockchainIdentity_17 extends _i1.SmartFake
         );
 }
 
-class _FakeWidget_18 extends _i1.SmartFake implements _i11.Widget {
-  _FakeWidget_18(
+class _FakeWidget_19 extends _i1.SmartFake implements _i11.Widget {
+  _FakeWidget_19(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -504,6 +513,14 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         ),
       ) as _i3.Event<_i3.ModalConnect>);
   @override
+  _i3.Event<_i3.ModalConnect> get onModalUpdate => (super.noSuchMethod(
+        Invocation.getter(#onModalUpdate),
+        returnValue: _FakeEvent_1<_i3.ModalConnect>(
+          this,
+          Invocation.getter(#onModalUpdate),
+        ),
+      ) as _i3.Event<_i3.ModalConnect>);
+  @override
   _i3.Event<_i3.ModalNetworkChange> get onModalNetworkChange =>
       (super.noSuchMethod(
         Invocation.getter(#onModalNetworkChange),
@@ -586,70 +603,6 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValue: false,
       ) as bool);
   @override
-  _i3.Event<_i16.CoinbaseConnectEvent> get onCoinbaseConnect =>
-      (super.noSuchMethod(
-        Invocation.getter(#onCoinbaseConnect),
-        returnValue: _FakeEvent_1<_i16.CoinbaseConnectEvent>(
-          this,
-          Invocation.getter(#onCoinbaseConnect),
-        ),
-      ) as _i3.Event<_i16.CoinbaseConnectEvent>);
-  @override
-  set onCoinbaseConnect(
-          _i3.Event<_i16.CoinbaseConnectEvent>? _onCoinbaseConnect) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #onCoinbaseConnect,
-          _onCoinbaseConnect,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  _i3.Event<_i16.CoinbaseErrorEvent> get onCoinbaseError => (super.noSuchMethod(
-        Invocation.getter(#onCoinbaseError),
-        returnValue: _FakeEvent_1<_i16.CoinbaseErrorEvent>(
-          this,
-          Invocation.getter(#onCoinbaseError),
-        ),
-      ) as _i3.Event<_i16.CoinbaseErrorEvent>);
-  @override
-  set onCoinbaseError(_i3.Event<_i16.CoinbaseErrorEvent>? _onCoinbaseError) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #onCoinbaseError,
-          _onCoinbaseError,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  _i3.Event<_i16.CoinbaseSessionEvent> get onCoinbaseSessionUpdate =>
-      (super.noSuchMethod(
-        Invocation.getter(#onCoinbaseSessionUpdate),
-        returnValue: _FakeEvent_1<_i16.CoinbaseSessionEvent>(
-          this,
-          Invocation.getter(#onCoinbaseSessionUpdate),
-        ),
-      ) as _i3.Event<_i16.CoinbaseSessionEvent>);
-  @override
-  set onCoinbaseSessionUpdate(
-          _i3.Event<_i16.CoinbaseSessionEvent>? _onCoinbaseSessionUpdate) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #onCoinbaseSessionUpdate,
-          _onCoinbaseSessionUpdate,
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  _i3.Event<_i16.CoinbaseResponseEvent> get onCoinbaseResponse =>
-      (super.noSuchMethod(
-        Invocation.getter(#onCoinbaseResponse),
-        returnValue: _FakeEvent_1<_i16.CoinbaseResponseEvent>(
-          this,
-          Invocation.getter(#onCoinbaseResponse),
-        ),
-      ) as _i3.Event<_i16.CoinbaseResponseEvent>);
-  @override
   _i14.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
           #init,
@@ -723,6 +676,21 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
+  String formatMessage(_i3.SIWECreateMessageArgs? params) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #formatMessage,
+          [params],
+        ),
+        returnValue: _i13.dummyValue<String>(
+          this,
+          Invocation.method(
+            #formatMessage,
+            [params],
+          ),
+        ),
+      ) as String);
+  @override
   _i14.Future<void> buildConnectionUri() => (super.noSuchMethod(
         Invocation.method(
           #buildConnectionUri,
@@ -760,10 +728,11 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
-  void closeModal() => super.noSuchMethod(
+  void closeModal({bool? disconnectSession = false}) => super.noSuchMethod(
         Invocation.method(
           #closeModal,
           [],
+          {#disconnectSession: disconnectSession},
         ),
         returnValueForMissingStub: null,
       );
@@ -787,7 +756,6 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
   _i14.Future<List<dynamic>> requestReadContract({
     required _i3.DeployedContract? deployedContract,
     required String? functionName,
-    String? rpcUrl,
     List<dynamic>? parameters = const [],
   }) =>
       (super.noSuchMethod(
@@ -797,7 +765,6 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
           {
             #deployedContract: deployedContract,
             #functionName: functionName,
-            #rpcUrl: rpcUrl,
             #parameters: parameters,
           },
         ),
@@ -807,7 +774,6 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
   _i14.Future<dynamic> requestWriteContract({
     required String? topic,
     required String? chainId,
-    String? rpcUrl,
     required _i3.DeployedContract? deployedContract,
     required String? functionName,
     required _i3.Transaction? transaction,
@@ -821,7 +787,6 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
           {
             #topic: topic,
             #chainId: chainId,
-            #rpcUrl: rpcUrl,
             #deployedContract: deployedContract,
             #functionName: functionName,
             #transaction: transaction,
@@ -890,7 +855,7 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
-  void addListener(_i17.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i16.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -898,7 +863,7 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: null,
       );
   @override
-  void removeListener(_i17.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i16.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
@@ -913,79 +878,12 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         ),
         returnValueForMissingStub: null,
       );
-  @override
-  _i14.Future<void> cbInit({
-    required _i3.PairingMetadata? metadata,
-    _i3.W3MWalletInfo? cbWallet,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #cbInit,
-          [],
-          {
-            #metadata: metadata,
-            #cbWallet: cbWallet,
-          },
-        ),
-        returnValue: _i14.Future<void>.value(),
-        returnValueForMissingStub: _i14.Future<void>.value(),
-      ) as _i14.Future<void>);
-  @override
-  _i14.Future<void> cbGetAccount() => (super.noSuchMethod(
-        Invocation.method(
-          #cbGetAccount,
-          [],
-        ),
-        returnValue: _i14.Future<void>.value(),
-        returnValueForMissingStub: _i14.Future<void>.value(),
-      ) as _i14.Future<void>);
-  @override
-  _i14.Future<dynamic> cbRequest({
-    required String? chainId,
-    required _i3.SessionRequestParams? request,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #cbRequest,
-          [],
-          {
-            #chainId: chainId,
-            #request: request,
-          },
-        ),
-        returnValue: _i14.Future<dynamic>.value(),
-      ) as _i14.Future<dynamic>);
-  @override
-  _i14.Future<bool> cbIsInstalled() => (super.noSuchMethod(
-        Invocation.method(
-          #cbIsInstalled,
-          [],
-        ),
-        returnValue: _i14.Future<bool>.value(false),
-      ) as _i14.Future<bool>);
-  @override
-  _i14.Future<bool> cbIsConnected() => (super.noSuchMethod(
-        Invocation.method(
-          #cbIsConnected,
-          [],
-        ),
-        returnValue: _i14.Future<bool>.value(false),
-      ) as _i14.Future<bool>);
-  @override
-  _i14.Future<void> cbResetSession() => (super.noSuchMethod(
-        Invocation.method(
-          #cbResetSession,
-          [],
-        ),
-        returnValue: _i14.Future<void>.value(),
-        returnValueForMissingStub: _i14.Future<void>.value(),
-      ) as _i14.Future<void>);
 }
 
 /// A class which mocks [UrlUtils].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUrlUtils extends _i1.Mock implements _i18.UrlUtils {
+class MockUrlUtils extends _i1.Mock implements _i17.UrlUtils {
   MockUrlUtils() {
     _i1.throwOnMissingStub(this);
   }
@@ -998,17 +896,17 @@ class MockUrlUtils extends _i1.Mock implements _i18.UrlUtils {
   @override
   _i14.Future<bool> Function(
     Uri, {
-    _i19.LaunchMode? mode,
+    _i18.LaunchMode? mode,
   }) get launchUrlFunc => (super.noSuchMethod(
         Invocation.getter(#launchUrlFunc),
         returnValue: (
           Uri url, {
-          _i19.LaunchMode? mode,
+          _i18.LaunchMode? mode,
         }) =>
             _i14.Future<bool>.value(false),
       ) as _i14.Future<bool> Function(
         Uri, {
-        _i19.LaunchMode? mode,
+        _i18.LaunchMode? mode,
       }));
   @override
   _i14.Future<bool> Function(Uri) get canLaunchUrlFunc => (super.noSuchMethod(
@@ -1031,7 +929,7 @@ class MockUrlUtils extends _i1.Mock implements _i18.UrlUtils {
   @override
   _i14.Future<bool> launchUrl(
     Uri? url, {
-    _i19.LaunchMode? mode,
+    _i18.LaunchMode? mode,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1043,9 +941,9 @@ class MockUrlUtils extends _i1.Mock implements _i18.UrlUtils {
       ) as _i14.Future<bool>);
   @override
   _i14.Future<bool> openRedirect(
-    _i20.WalletRedirect? redirect, {
+    _i19.WalletRedirect? redirect, {
     String? wcURI,
-    _i21.PlatformType? pType,
+    _i20.PlatformType? pType,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1063,27 +961,27 @@ class MockUrlUtils extends _i1.Mock implements _i18.UrlUtils {
 /// A class which mocks [PlatformUtils].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformUtils extends _i1.Mock implements _i22.PlatformUtils {
+class MockPlatformUtils extends _i1.Mock implements _i21.PlatformUtils {
   MockPlatformUtils() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i21.PlatformExact getPlatformExact() => (super.noSuchMethod(
+  _i20.PlatformExact getPlatformExact() => (super.noSuchMethod(
         Invocation.method(
           #getPlatformExact,
           [],
         ),
-        returnValue: _i21.PlatformExact.iOS,
-      ) as _i21.PlatformExact);
+        returnValue: _i20.PlatformExact.iOS,
+      ) as _i20.PlatformExact);
   @override
-  _i21.PlatformType getPlatformType() => (super.noSuchMethod(
+  _i20.PlatformType getPlatformType() => (super.noSuchMethod(
         Invocation.method(
           #getPlatformType,
           [],
         ),
-        returnValue: _i21.PlatformType.mobile,
-      ) as _i21.PlatformType);
+        returnValue: _i20.PlatformType.mobile,
+      ) as _i20.PlatformType);
   @override
   bool canDetectInstalledApps() => (super.noSuchMethod(
         Invocation.method(
@@ -1129,18 +1027,18 @@ class MockPlatformUtils extends _i1.Mock implements _i22.PlatformUtils {
 /// A class which mocks [ToastUtils].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockToastUtils extends _i1.Mock implements _i23.ToastUtils {
+class MockToastUtils extends _i1.Mock implements _i22.ToastUtils {
   MockToastUtils() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i14.Stream<_i24.ToastMessage?> get toasts => (super.noSuchMethod(
+  _i14.Stream<_i23.ToastMessage?> get toasts => (super.noSuchMethod(
         Invocation.getter(#toasts),
-        returnValue: _i14.Stream<_i24.ToastMessage?>.empty(),
-      ) as _i14.Stream<_i24.ToastMessage?>);
+        returnValue: _i14.Stream<_i23.ToastMessage?>.empty(),
+      ) as _i14.Stream<_i23.ToastMessage?>);
   @override
-  void show(_i24.ToastMessage? message) => super.noSuchMethod(
+  void show(_i23.ToastMessage? message) => super.noSuchMethod(
         Invocation.method(
           #show,
           [message],
@@ -1357,6 +1255,15 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
           Invocation.getter(#completeRequests),
         ),
       ) as _i4.IGenericStore<_i3.StoredCacao>);
+  @override
+  _i3.Event<_i3.SessionAuthResponse> get onSessionAuthResponse =>
+      (super.noSuchMethod(
+        Invocation.getter(#onSessionAuthResponse),
+        returnValue: _FakeEvent_1<_i3.SessionAuthResponse>(
+          this,
+          Invocation.getter(#onSessionAuthResponse),
+        ),
+      ) as _i3.Event<_i3.SessionAuthResponse>);
   @override
   _i14.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
@@ -1601,6 +1508,54 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
         returnValue: <int, _i3.StoredCacao>{},
       ) as Map<int, _i3.StoredCacao>);
   @override
+  _i14.Future<_i3.SessionAuthRequestResponse> authenticate({
+    required _i3.SessionAuthRequestParams? params,
+    String? pairingTopic,
+    List<List<String>>? methods = const [
+      [r'wc_sessionAuthenticate']
+    ],
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #authenticate,
+          [],
+          {
+            #params: params,
+            #pairingTopic: pairingTopic,
+            #methods: methods,
+          },
+        ),
+        returnValue: _i14.Future<_i3.SessionAuthRequestResponse>.value(
+            _FakeSessionAuthRequestResponse_11(
+          this,
+          Invocation.method(
+            #authenticate,
+            [],
+            {
+              #params: params,
+              #pairingTopic: pairingTopic,
+              #methods: methods,
+            },
+          ),
+        )),
+      ) as _i14.Future<_i3.SessionAuthRequestResponse>);
+  @override
+  _i14.Future<bool> validateSignedCacao({
+    required _i3.Cacao? cacao,
+    required String? projectId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #validateSignedCacao,
+          [],
+          {
+            #cacao: cacao,
+            #projectId: projectId,
+          },
+        ),
+        returnValue: _i14.Future<bool>.value(false),
+      ) as _i14.Future<bool>);
+  @override
   String formatAuthMessage({
     required String? iss,
     required _i3.CacaoRequestPayload? cacaoPayload,
@@ -1655,7 +1610,7 @@ class MockSessions extends _i1.Mock implements _i3.Sessions {
   @override
   _i6.IStore<dynamic> get storage => (super.noSuchMethod(
         Invocation.getter(#storage),
-        returnValue: _FakeIStore_11<dynamic>(
+        returnValue: _FakeIStore_12<dynamic>(
           this,
           Invocation.getter(#storage),
         ),
@@ -1711,7 +1666,7 @@ class MockSessions extends _i1.Mock implements _i3.Sessions {
   @override
   _i3.SessionData Function(dynamic) get fromJson => (super.noSuchMethod(
         Invocation.getter(#fromJson),
-        returnValue: (dynamic __p0) => _FakeSessionData_12(
+        returnValue: (dynamic __p0) => _FakeSessionData_13(
           this,
           Invocation.getter(#fromJson),
         ),
@@ -1828,7 +1783,7 @@ class MockSessions extends _i1.Mock implements _i3.Sessions {
 /// A class which mocks [RelayClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockRelayClient extends _i1.Mock implements _i25.RelayClient {
+class MockRelayClient extends _i1.Mock implements _i24.RelayClient {
   MockRelayClient() {
     _i1.throwOnMissingStub(this);
   }
@@ -1901,7 +1856,7 @@ class MockRelayClient extends _i1.Mock implements _i25.RelayClient {
         ),
       ) as _i3.Event<_i3.EventArgs>);
   @override
-  set jsonRPC(_i26.Peer? _jsonRPC) => super.noSuchMethod(
+  set jsonRPC(_i25.Peer? _jsonRPC) => super.noSuchMethod(
         Invocation.setter(
           #jsonRPC,
           _jsonRPC,
@@ -1927,7 +1882,7 @@ class MockRelayClient extends _i1.Mock implements _i25.RelayClient {
   @override
   _i7.IMessageTracker get messageTracker => (super.noSuchMethod(
         Invocation.getter(#messageTracker),
-        returnValue: _FakeIMessageTracker_13(
+        returnValue: _FakeIMessageTracker_14(
           this,
           Invocation.getter(#messageTracker),
         ),
@@ -1960,7 +1915,7 @@ class MockRelayClient extends _i1.Mock implements _i25.RelayClient {
   @override
   _i8.IWebSocketHandler get socketHandler => (super.noSuchMethod(
         Invocation.getter(#socketHandler),
-        returnValue: _FakeIWebSocketHandler_14(
+        returnValue: _FakeIWebSocketHandler_15(
           this,
           Invocation.getter(#socketHandler),
         ),
@@ -2099,7 +2054,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #head,
@@ -2119,7 +2074,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #get,
@@ -2133,7 +2088,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i27.Encoding? encoding,
+    _i26.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2145,7 +2100,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #post,
@@ -2163,7 +2118,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i27.Encoding? encoding,
+    _i26.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2175,7 +2130,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #put,
@@ -2193,7 +2148,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i27.Encoding? encoding,
+    _i26.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2205,7 +2160,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #patch,
@@ -2223,7 +2178,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
     Uri? url, {
     Map<String, String>? headers,
     Object? body,
-    _i27.Encoding? encoding,
+    _i26.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2235,7 +2190,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
             #encoding: encoding,
           },
         ),
-        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_15(
+        returnValue: _i14.Future<_i9.Response>.value(_FakeResponse_16(
           this,
           Invocation.method(
             #delete,
@@ -2269,7 +2224,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
         )),
       ) as _i14.Future<String>);
   @override
-  _i14.Future<_i28.Uint8List> readBytes(
+  _i14.Future<_i27.Uint8List> readBytes(
     Uri? url, {
     Map<String, String>? headers,
   }) =>
@@ -2279,8 +2234,8 @@ class MockClient extends _i1.Mock implements _i9.Client {
           [url],
           {#headers: headers},
         ),
-        returnValue: _i14.Future<_i28.Uint8List>.value(_i28.Uint8List(0)),
-      ) as _i14.Future<_i28.Uint8List>);
+        returnValue: _i14.Future<_i27.Uint8List>.value(_i27.Uint8List(0)),
+      ) as _i14.Future<_i27.Uint8List>);
   @override
   _i14.Future<_i9.StreamedResponse> send(_i9.BaseRequest? request) =>
       (super.noSuchMethod(
@@ -2289,7 +2244,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
           [request],
         ),
         returnValue:
-            _i14.Future<_i9.StreamedResponse>.value(_FakeStreamedResponse_16(
+            _i14.Future<_i9.StreamedResponse>.value(_FakeStreamedResponse_17(
           this,
           Invocation.method(
             #send,
@@ -2310,7 +2265,7 @@ class MockClient extends _i1.Mock implements _i9.Client {
 /// A class which mocks [NetworkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockNetworkService extends _i1.Mock implements _i29.NetworkService {
+class MockNetworkService extends _i1.Mock implements _i28.NetworkService {
   MockNetworkService() {
     _i1.throwOnMissingStub(this);
   }
@@ -2332,14 +2287,14 @@ class MockNetworkService extends _i1.Mock implements _i29.NetworkService {
         returnValueForMissingStub: null,
       );
   @override
-  List<_i30.GridItem<_i3.W3MChainInfo>> get itemListComplete =>
+  List<_i29.GridItem<_i3.W3MChainInfo>> get itemListComplete =>
       (super.noSuchMethod(
         Invocation.getter(#itemListComplete),
-        returnValue: <_i30.GridItem<_i3.W3MChainInfo>>[],
-      ) as List<_i30.GridItem<_i3.W3MChainInfo>>);
+        returnValue: <_i29.GridItem<_i3.W3MChainInfo>>[],
+      ) as List<_i29.GridItem<_i3.W3MChainInfo>>);
   @override
   set itemListComplete(
-          List<_i30.GridItem<_i3.W3MChainInfo>>? _itemListComplete) =>
+          List<_i29.GridItem<_i3.W3MChainInfo>>? _itemListComplete) =>
       super.noSuchMethod(
         Invocation.setter(
           #itemListComplete,
@@ -2348,18 +2303,18 @@ class MockNetworkService extends _i1.Mock implements _i29.NetworkService {
         returnValueForMissingStub: null,
       );
   @override
-  _i2.ValueNotifier<List<_i30.GridItem<_i3.W3MChainInfo>>> get itemList =>
+  _i2.ValueNotifier<List<_i29.GridItem<_i3.W3MChainInfo>>> get itemList =>
       (super.noSuchMethod(
         Invocation.getter(#itemList),
         returnValue:
-            _FakeValueNotifier_0<List<_i30.GridItem<_i3.W3MChainInfo>>>(
+            _FakeValueNotifier_0<List<_i29.GridItem<_i3.W3MChainInfo>>>(
           this,
           Invocation.getter(#itemList),
         ),
-      ) as _i2.ValueNotifier<List<_i30.GridItem<_i3.W3MChainInfo>>>);
+      ) as _i2.ValueNotifier<List<_i29.GridItem<_i3.W3MChainInfo>>>);
   @override
   set itemList(
-          _i2.ValueNotifier<List<_i30.GridItem<_i3.W3MChainInfo>>>?
+          _i2.ValueNotifier<List<_i29.GridItem<_i3.W3MChainInfo>>>?
               _itemList) =>
       super.noSuchMethod(
         Invocation.setter(
@@ -2388,12 +2343,11 @@ class MockNetworkService extends _i1.Mock implements _i29.NetworkService {
       );
 }
 
-/// A class which mocks [BlockchainApiUtils].
+/// A class which mocks [BlockChainService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBlockchainApiUtils extends _i1.Mock
-    implements _i31.BlockchainApiUtils {
-  MockBlockchainApiUtils() {
+class MockBlockChainService extends _i1.Mock implements _i30.BlockChainService {
+  MockBlockChainService() {
     _i1.throwOnMissingStub(this);
   }
 
@@ -2419,7 +2373,7 @@ class MockBlockchainApiUtils extends _i1.Mock
           ],
         ),
         returnValue: _i14.Future<_i10.BlockchainIdentity>.value(
-            _FakeBlockchainIdentity_17(
+            _FakeBlockchainIdentity_18(
           this,
           Invocation.method(
             #getIdentity,
@@ -2435,7 +2389,7 @@ class MockBlockchainApiUtils extends _i1.Mock
 /// A class which mocks [LedgerService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLedgerService extends _i1.Mock implements _i32.LedgerService {
+class MockLedgerService extends _i1.Mock implements _i31.LedgerService {
   MockLedgerService() {
     _i1.throwOnMissingStub(this);
   }
@@ -2508,7 +2462,7 @@ class MockLedgerService extends _i1.Mock implements _i32.LedgerService {
 /// A class which mocks [StorageService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockStorageService extends _i1.Mock implements _i33.StorageService {
+class MockStorageService extends _i1.Mock implements _i32.StorageService {
   MockStorageService() {
     _i1.throwOnMissingStub(this);
   }
@@ -2569,7 +2523,7 @@ class MockStorageService extends _i1.Mock implements _i33.StorageService {
 /// A class which mocks [WidgetStack].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWidgetStack extends _i1.Mock implements _i34.WidgetStack {
+class MockWidgetStack extends _i1.Mock implements _i33.WidgetStack {
   MockWidgetStack() {
     _i1.throwOnMissingStub(this);
   }
@@ -2593,7 +2547,7 @@ class MockWidgetStack extends _i1.Mock implements _i34.WidgetStack {
           #getCurrent,
           [],
         ),
-        returnValue: _FakeWidget_18(
+        returnValue: _FakeWidget_19(
           this,
           Invocation.method(
             #getCurrent,
@@ -2605,7 +2559,7 @@ class MockWidgetStack extends _i1.Mock implements _i34.WidgetStack {
   void push(
     _i11.Widget? widget, {
     bool? renderScreen = false,
-    _i35.AnalyticsEvent? event,
+    _i34.AnalyticsEvent? event,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -2680,7 +2634,7 @@ class MockWidgetStack extends _i1.Mock implements _i34.WidgetStack {
         returnValueForMissingStub: null,
       );
   @override
-  void addListener(_i17.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i16.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -2688,7 +2642,7 @@ class MockWidgetStack extends _i1.Mock implements _i34.WidgetStack {
         returnValueForMissingStub: null,
       );
   @override
-  void removeListener(_i17.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i16.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],

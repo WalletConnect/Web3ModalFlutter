@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
@@ -51,8 +52,14 @@ class _QRCodePageState extends State<QRCodePage> {
     setState(() {});
   }
 
-  void _onError(EventArgs? args) {
-    _showUserRejection();
+  void _onError(ModalError? args) {
+    final event = args ?? ModalError('An error occurred');
+    toastUtils.instance.show(
+      ToastMessage(
+        type: ToastType.error,
+        text: event.message,
+      ),
+    );
   }
 
   @override
@@ -85,10 +92,14 @@ class _QRCodePageState extends State<QRCodePage> {
               child: _qrQodeWidget ??
                   AspectRatio(
                     aspectRatio: 1.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(radiuses.radiusL),
-                        color: themeColors.grayGlass005,
+                    child: Shimmer.fromColors(
+                      baseColor: themeColors.grayGlass100,
+                      highlightColor: themeColors.grayGlass025,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(radiuses.radiusL),
+                          color: themeColors.grayGlass010,
+                        ),
                       ),
                     ),
                   ),
@@ -144,8 +155,4 @@ class _QRCodePageState extends State<QRCodePage> {
       ToastMessage(type: ToastType.success, text: 'Link copied'),
     );
   }
-
-  void _showUserRejection() => toastUtils.instance.show(
-        ToastMessage(type: ToastType.error, text: 'User rejected'),
-      );
 }

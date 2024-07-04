@@ -1,3 +1,9 @@
+## 3.3.0-beta01
+
+- One-Click Auth + SIWE implementation
+- Coinbase Wallet dependency update
+- Bug fixes
+
 ## 3.2.2
 
 - Network change improvements

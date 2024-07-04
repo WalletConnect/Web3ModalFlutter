@@ -2,6 +2,8 @@ import 'package:web3modal_flutter/services/magic_service/models/magic_events.dar
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 abstract class IMagicService {
+  ConnectionMetadata get metadata;
+
   Future<void> init();
 
   void setEmail(String value);

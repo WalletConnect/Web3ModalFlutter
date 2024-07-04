@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -53,6 +54,9 @@ class _W3MAccountAvatarState extends State<W3MAccountAvatar> {
           child: (_avatarUrl ?? '').isNotEmpty
               ? CachedNetworkImage(
                   imageUrl: _avatarUrl!,
+                  httpHeaders: coreUtils.instance.getAPIHeaders(
+                    widget.service.web3App!.core.projectId,
+                  ),
                   fadeInDuration: const Duration(milliseconds: 500),
                   fadeOutDuration: const Duration(milliseconds: 500),
                 )

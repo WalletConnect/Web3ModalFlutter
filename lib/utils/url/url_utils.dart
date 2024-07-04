@@ -64,9 +64,9 @@ class UrlUtils extends IUrlUtils {
         }
       } on FormatException catch (e) {
         if (id != null) {
-          loggerService.instance.p('[$runtimeType] $uri ($id): ${e.message}');
+          loggerService.instance.d('[$runtimeType] $uri ($id): ${e.message}');
         } else {
-          loggerService.instance.p('[$runtimeType] $uri: ${e.message}');
+          loggerService.instance.d('[$runtimeType] $uri: ${e.message}');
         }
       } catch (e) {
         rethrow;

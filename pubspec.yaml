@@ -1,6 +1,6 @@
 name: web3modal_flutter
 description: "WalletConnect Web3Modal: Simple, intuitive wallet login. With this drop-in UI SDK, enable any wallet's users to seamlessly log in to your app and enjoy a unified experience"
-version: 3.2.2
+version: 3.3.0-beta01
 repository: https://github.com/WalletConnect/Web3ModalFlutter
 
 environment:
@@ -9,7 +9,7 @@ environment:
 dependencies:
   appcheck: ^1.0.6
   cached_network_image: ^3.3.1
-  coinbase_wallet_sdk: ^1.0.7
+  coinbase_wallet_sdk: ^1.0.8
   collection: ^1.17.2
   convert: ^3.1.1
   cupertino_icons: ^1.0.2
@@ -25,7 +25,7 @@ dependencies:
   shimmer: ^3.0.0
   url_launcher: ^6.2.5
   uuid: ^4.3.3
-  walletconnect_flutter_v2: ^2.2.3
+  walletconnect_flutter_v2: ^2.3.0-beta03
   webview_flutter: ^4.7.0
   webview_flutter_android: ^3.16.0
   webview_flutter_wkwebview: ^3.13.0

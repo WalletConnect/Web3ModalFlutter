@@ -50,5 +50,5 @@ class ErrorOpeningWallet extends ModalError {
 }
 
 class UserRejectedConnection extends ModalError {
-  UserRejectedConnection() : super('User rejected Wallet connection');
+  UserRejectedConnection() : super('User rejected connection');
 }

@@ -1,3 +1,4 @@
+import 'package:web3modal_flutter/constants/url_constants.dart';
 import 'package:web3modal_flutter/models/listing.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/native_app_data.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -100,5 +101,5 @@ class WCSampleWallets {
   }
 
   static const _walletImage =
-      'https://docs.walletconnect.com/assets/images/web3walletLogo-54d3b546146931ceaf47a3500868a73a.png';
+      '${UrlConstants.docsUrl}/assets/images/web3walletLogo-54d3b546146931ceaf47a3500868a73a.png';
 }

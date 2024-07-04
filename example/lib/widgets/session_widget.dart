@@ -1,13 +1,17 @@
+import 'dart:convert';
+
+import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:walletconnect_flutter_dapp/home_page.dart';
+import 'package:walletconnect_flutter_dapp/utils/chain_data_wrapper.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
 import 'package:walletconnect_flutter_dapp/utils/constants.dart';
-import 'package:walletconnect_flutter_dapp/utils/crypto/eip155.dart';
-import 'package:walletconnect_flutter_dapp/utils/crypto/helpers.dart';
-import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/eip155_service.dart';
 import 'package:walletconnect_flutter_dapp/widgets/method_dialog.dart';
 
 class SessionWidget extends StatefulWidget {
@@ -36,7 +40,12 @@ class SessionWidgetState extends State<SessionWidget> {
               children: [
                 CircleAvatar(
                   radius: 25.0,
-                  backgroundImage: NetworkImage(iconImage),
+                  backgroundImage: NetworkImage(
+                    iconImage,
+                    headers: coreUtils.instance.getAPIHeaders(
+                      widget.w3mService.web3App!.core.projectId,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 10.0),
               ],
@@ -116,6 +125,42 @@ class SessionWidgetState extends State<SessionWidget> {
     } catch (e) {
       debugPrint('[ExampleApp] ${e.toString()}');
     }
+    children.add(
+      Column(
+        children: [
+          const SizedBox.square(dimension: 8.0),
+          Text(
+            'Stored session:',
+            style:
+                Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+                      color: Web3ModalTheme.colorsOf(context).foreground100,
+                    ),
+          ),
+          InkWell(
+            onTap: () => Clipboard.setData(
+              ClipboardData(
+                text: jsonEncode(widget.w3mService.session?.toMap()),
+              ),
+            ).then(
+              (_) => showPlatformToast(
+                child: const Text(StringConstants.copiedToClipboard),
+                context: context,
+              ),
+            ),
+            child: Text(
+              const JsonEncoder.withIndent("     ")
+                  .convert(widget.w3mService.session?.toMap()),
+              style: Web3ModalTheme.getDataOf(context)
+                  .textStyles
+                  .small400
+                  .copyWith(
+                    color: Web3ModalTheme.colorsOf(context).foreground100,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
 
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),

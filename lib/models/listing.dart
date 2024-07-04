@@ -14,7 +14,7 @@ class Listing {
   final String? rdns;
   final List<Injected>? injected;
 
-  Listing({
+  const Listing({
     required this.id,
     required this.name,
     required this.homepage,

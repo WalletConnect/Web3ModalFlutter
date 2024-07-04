@@ -1,14 +1,13 @@
 import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
-// ignore: unused_import
-import 'package:web3modal_flutter/utils/util.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
+import 'package:walletconnect_flutter_dapp/utils/constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/siwe_service.dart';
 import 'package:walletconnect_flutter_dapp/widgets/logger_widget.dart';
 import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';
-import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -26,6 +25,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final overlay = OverlayController(const Duration(milliseconds: 200));
   late W3MService _w3mService;
+  late SIWESampleWebService _siweTestService;
 
   @override
   void initState() {
@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _toggleOverlay();
     });
+    _siweTestService = SIWESampleWebService();
     _initializeService();
   }
 
@@ -40,19 +41,10 @@ class _MyHomePageState extends State<MyHomePage> {
     overlay.show(context);
   }
 
-  void _initializeService() async {
-    // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
-    W3MChainPresets.chains.addAll(W3MChainPresets.extraChains);
-    W3MChainPresets.chains.addAll(W3MChainPresets.testChains);
-    // W3MChainPresets.chains.removeWhere((key, _) => key != '137');
-
-    _w3mService = W3MService(
-      projectId: DartDefines.projectId,
-      logLevel: LogLevel.error,
-      metadata: const PairingMetadata(
+  PairingMetadata get _pairingMetadata => const PairingMetadata(
         name: StringConstants.w3mPageTitleV3,
         description: StringConstants.w3mPageTitleV3,
-        url: 'https://walletconnect.com/appkit',
+        url: 'https://walletconnect.com/',
         icons: [
           'https://docs.walletconnect.com/assets/images/web3modalLogo-2cee77e07851ba0a710b56d03d4d09dd.png'
         ],
@@ -60,43 +52,153 @@ class _MyHomePageState extends State<MyHomePage> {
           native: 'web3modalflutter://',
           universal: 'https://walletconnect.com/appkit',
         ),
-      ),
+      );
+
+  SIWEConfig get _siweConfig => SIWEConfig(
+        context: context,
+        getNonce: () async {
+          // this has to be called at the very moment of creating the pairing uri
+          try {
+            debugPrint('[SIWEConfig] getNonce()');
+            final response = await _siweTestService.getNonce();
+            return response['nonce'] as String;
+          } catch (error) {
+            debugPrint('[SIWEConfig] getNonce error: $error');
+            // Fallback patch for testing purposes in case SIWE backend has issues
+            return AuthUtils.generateNonce();
+          }
+        },
+        getMessageParams: () async {
+          // Provide everything that is needed to construct the SIWE message
+          debugPrint('[SIWEConfig] getMessageParams()');
+          final uri = Uri.parse(_pairingMetadata.redirect!.universal!);
+          return SIWEMessageArgs(
+            domain: uri.authority,
+            uri: 'https://walletconnect.com/login',
+            statement: 'Welcome to AppKit for Flutter.',
+            methods: MethodsConstants.allMethods,
+          );
+        },
+        createMessage: (SIWECreateMessageArgs args) {
+          // Create SIWE message to be signed.
+          // You can use our provided formatMessage() method of implement your own
+          debugPrint('[SIWEConfig] createMessage()');
+          return _w3mService.formatMessage(args);
+        },
+        verifyMessage: (SIWEVerifyMessageArgs args) async {
+          // Implement your verifyMessage to authenticate the user after it.
+          try {
+            debugPrint('[SIWEConfig] verifyMessage()');
+            final payload = args.toJson();
+            final uri = Uri.parse(_pairingMetadata.redirect!.universal!);
+            final result = await _siweTestService.authenticate(
+              payload,
+              domain: uri.authority,
+            );
+            return result['token'] != null;
+          } catch (error) {
+            debugPrint('[SIWEConfig] verifyMessage error: $error');
+            // Fallback patch for testing purposes in case SIWE backend has issues
+            final chainId = AuthSignature.getChainIdFromMessage(args.message);
+            final address = AuthSignature.getAddressFromMessage(args.message);
+            final cacaoSignature = args.cacao != null
+                ? args.cacao!.s
+                : CacaoSignature(
+                    t: CacaoSignature.EIP191,
+                    s: args.signature,
+                  );
+            return await AuthSignature.verifySignature(
+              address,
+              args.message,
+              cacaoSignature,
+              chainId,
+              DartDefines.projectId,
+            );
+          }
+        },
+        getSession: () async {
+          // Return proper session from your Web Service
+          try {
+            debugPrint('[SIWEConfig] getSession()');
+            final session = await _siweTestService.getAppKitAuthSession();
+            final address = session['address']!.toString();
+            final chainId = session['chainId']!.toString();
+            return SIWESession(address: address, chains: [chainId]);
+          } catch (error) {
+            debugPrint('[SIWEConfig] getSession error: $error');
+            // Fallback patch for testing purposes in case SIWE backend has issues
+            final address = _w3mService.session!.address!;
+            final chainId = _w3mService.session!.chainId;
+            return SIWESession(address: address, chains: [chainId]);
+          }
+        },
+        onSignIn: (SIWESession session) {
+          // Called after SIWE message is signed and verified
+          debugPrint('[SIWEConfig] onSignIn()');
+        },
+        signOut: () async {
+          // Called when user taps on disconnect button
+          try {
+            debugPrint('[SIWEConfig] signOut()');
+            final _ = await _siweTestService.appKitAuthSignOut();
+            return true;
+          } catch (error) {
+            debugPrint('[SIWEConfig] signOut error: $error');
+            // Fallback patch for testing purposes in case SIWE backend has issues
+            return true;
+          }
+        },
+        onSignOut: () {
+          // Called when disconnecting WalletConnect session was successfull
+          debugPrint('[SIWEConfig] onSignOut()');
+        },
+        // enabled: true,
+        // signOutOnDisconnect: true,
+        // signOutOnAccountChange: true,
+        // signOutOnNetworkChange: true,
+        // nonceRefetchIntervalMs: 300000,
+        // sessionRefetchIntervalMs: 300000,
+      );
+
+  void _initializeService() async {
+    // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
+    W3MChainPresets.chains.addAll(W3MChainPresets.extraChains);
+    W3MChainPresets.chains.addAll(W3MChainPresets.testChains);
+
+    _w3mService = W3MService(
+      projectId: DartDefines.projectId,
+      logLevel: LogLevel.error,
+      metadata: _pairingMetadata,
+      siweConfig: _siweConfig,
       enableAnalytics: true, // OPTIONAL - null by default
       enableEmail: true, // OPTIONAL - false by default
       // requiredNamespaces: {},
       // optionalNamespaces: {},
+      // includedWalletIds: {},
+      featuredWalletIds: {
+        'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase
+        '18450873727504ae9315a084fa7624b5297d2fe5880f0982979c17345a138277', // Kraken Wallet
+        'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
+        '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
+        'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a', // Uniswap
+        '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', // Bitget
+      },
       // excludedWalletIds: {
-      //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
+      //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase
       // },
       // MORE WALLETS https://explorer.walletconnect.com/?type=wallet&chains=eip155%3A1
-      // includedWalletIds: {
-      //   'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
-      //   '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
-      //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
-      //   'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a', // Uniswap
-      //   '18450873727504ae9315a084fa7624b5297d2fe5880f0982979c17345a138277', // Kraken Wallet
-      //   '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', // Bitget
-      //   '19177a98252e07ddfc9af2083ba8e07ef627cb6103467ffebb3f8f4205fd7927', // Ledger Live
-      //   '4457c130df49fb3cb1f8b99574b97b35208bd3d0d13b8d25d2b5884ed2cad13a', // Shapeshift
-      // },
-      // featuredWalletIds: {
-      //   '18450873727504ae9315a084fa7624b5297d2fe5880f0982979c17345a138277', // Kraken Wallet
-      //   '19177a98252e07ddfc9af2083ba8e07ef627cb6103467ffebb3f8f4205fd7927', // Ledger Live
-      //   '4457c130df49fb3cb1f8b99574b97b35208bd3d0d13b8d25d2b5884ed2cad13a', // Shapeshift
-      //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase Wallet
-      //   '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', // Bitget
-      // },
     );
-    //
+    // modal specific subscriptions
     _w3mService.onModalConnect.subscribe(_onModalConnect);
+    _w3mService.onModalUpdate.subscribe(_onModalUpdate);
     _w3mService.onModalNetworkChange.subscribe(_onModalNetworkChange);
     _w3mService.onModalDisconnect.subscribe(_onModalDisconnect);
     _w3mService.onModalError.subscribe(_onModalError);
-    //
+    // session related subscriptions
     _w3mService.onSessionExpireEvent.subscribe(_onSessionExpired);
     _w3mService.onSessionUpdateEvent.subscribe(_onSessionUpdate);
     _w3mService.onSessionEventEvent.subscribe(_onSessionEvent);
-    //
+    // relayClient subscriptions
     _w3mService.web3App!.core.relayClient.onRelayClientConnect.subscribe(
       _onRelayClientConnect,
     );
@@ -125,6 +227,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     //
     _w3mService.onModalConnect.unsubscribe(_onModalConnect);
+    _w3mService.onModalUpdate.unsubscribe(_onModalUpdate);
     _w3mService.onModalNetworkChange.unsubscribe(_onModalNetworkChange);
     _w3mService.onModalDisconnect.unsubscribe(_onModalDisconnect);
     _w3mService.onModalError.unsubscribe(_onModalError);
@@ -149,6 +252,10 @@ class _MyHomePageState extends State<MyHomePage> {
     if (walletName.toLowerCase().contains('metamask')) {
       _switchToPolygonIfNeeded();
     }
+  }
+
+  void _onModalUpdate(ModalConnect? event) {
+    setState(() {});
   }
 
   void _switchToPolygonIfNeeded() {

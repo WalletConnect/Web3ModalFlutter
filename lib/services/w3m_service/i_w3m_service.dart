@@ -101,6 +101,8 @@ abstract class IW3MService with ChangeNotifier {
 
   Future<void> loadAccountData();
 
+  String formatMessage(SIWECreateMessageArgs params);
+
   /// Disconnects the session and pairing, if any.
   /// If there is no session, this does nothing.
   Future<void> disconnect({bool disconnectAllSessions = true});
@@ -108,14 +110,12 @@ abstract class IW3MService with ChangeNotifier {
   Future<List<dynamic>> requestReadContract({
     required DeployedContract deployedContract,
     required String functionName,
-    @Deprecated('This is not needed anymore') String? rpcUrl,
     List parameters = const [],
   });
 
   Future<dynamic> requestWriteContract({
     required String? topic,
     required String chainId,
-    @Deprecated('This is not needed anymore') String? rpcUrl,
     required DeployedContract deployedContract,
     required String functionName,
     required Transaction transaction,
@@ -135,7 +135,7 @@ abstract class IW3MService with ChangeNotifier {
   Future<void> requestAddChain(W3MChainInfo newChain);
 
   /// Closes the modal.
-  void closeModal();
+  void closeModal({bool disconnectSession = false});
 
   @override
   Future<void> dispose();
@@ -143,6 +143,7 @@ abstract class IW3MService with ChangeNotifier {
   /* EVENTS DECLARATIONS */
 
   abstract final Event<ModalConnect> onModalConnect;
+  abstract final Event<ModalConnect> onModalUpdate;
   abstract final Event<ModalNetworkChange> onModalNetworkChange;
   abstract final Event<ModalDisconnect> onModalDisconnect;
   abstract final Event<ModalError> onModalError;
