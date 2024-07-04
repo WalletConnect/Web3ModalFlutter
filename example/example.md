@@ -27,19 +27,21 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void _initializeW3MService() async {
     // Add your own custom chain to chains presets list to show when using W3MNetworkSelectButton
-    // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
+    // See https://docs.walletconnect.com/appkit/flutter/core/custom-chains
     // W3MChainPresets.chains.putIfAbsent('<chainID>', () => <Your W3MChainInfo>);
 
     _w3mService = W3MService(
       projectId: 'YOUR_PROJECT_ID',
       metadata: const PairingMetadata(
-        name: 'Web3Modal Flutter Example',
-        description: 'Web3Modal Flutter Example',
-        url: 'https://web3modal.com/',
-        icons: ['https://web3modal.com/images/rpc-illustration.png'],
+        name: 'AppKit Flutter Example',
+        description: 'AppKit Flutter Example',
+        url: 'https://walletconnect.com/',
+        icons: [
+          'https://docs.walletconnect.com/assets/images/web3modalLogo-2cee77e07851ba0a710b56d03d4d09dd.png'
+        ],
         redirect: Redirect(
           native: 'web3modalflutter://',
-          universal: 'https://web3modal.com',
+          universal: 'https://walletconnect.com/appkit',
         ),
       ),
     );
@@ -52,12 +54,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return Web3ModalTheme(
       isDarkMode: true,
       child: MaterialApp(
-        title: 'Web3Modal Demo',
+        title: 'AppKit Demo',
         home: Builder(
           builder: (context) {
             return Scaffold(
               appBar: AppBar(
-                title: const Text('Web3Modal Demo'),
+                title: const Text('AppKit Demo'),
                 backgroundColor: Web3ModalTheme.colorsOf(context).background100,
                 foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
               ),

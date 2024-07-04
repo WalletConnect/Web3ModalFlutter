@@ -93,7 +93,7 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
-      customArchiveName = "Web3Modal Flutter"
+      customArchiveName = "AppKit Flutter"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

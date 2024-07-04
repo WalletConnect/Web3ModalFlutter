@@ -161,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 
   void _initializeService() async {
-    // See https://docs.walletconnect.com/web3modal/flutter/custom-chains
+    // See https://docs.walletconnect.com/appkit/flutter/core/custom-chains
     W3MChainPresets.chains.addAll(W3MChainPresets.extraChains);
     W3MChainPresets.chains.addAll(W3MChainPresets.testChains);
 

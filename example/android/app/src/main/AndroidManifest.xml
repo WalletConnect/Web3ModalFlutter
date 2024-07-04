@@ -55,7 +55,7 @@
     </queries>
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="Web3Modal Flutter"
+        android:label="AppKit Flutter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         

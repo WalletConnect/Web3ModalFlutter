@@ -1,6 +1,6 @@
 // import 'dart:convert';
 
-const String testSignData = 'Test Web3Modal data';
+const String testSignData = 'Test AppKit data';
 
 Map<String, dynamic> typedData() =>
     {"type": "string", "name": "Key", "value": "Value"};

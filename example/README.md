@@ -1,10 +1,10 @@
 # web3modal_flutter
 
-Example Dapp for WalletConnect Web3Modal package
+Example Dapp for WalletConnect AppKit package
 
 ## Documentation
 
-For a full reference please check the [Official Documentation](https://docs.walletconnect.com/2.0/web3modal/flutter/installation)
+For a full reference please check the [Official Documentation](https://docs.walletconnect.com/appkit/flutter/core/installation)
 
 ## Run the example app
 
