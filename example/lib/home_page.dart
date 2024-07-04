@@ -1,10 +1,10 @@
 import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:walletconnect_flutter_dapp/utils/constants.dart';
-import 'package:walletconnect_flutter_dapp/utils/crypto/siwe_service.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
+import 'package:walletconnect_flutter_dapp/utils/constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/siwe_service.dart';
 import 'package:walletconnect_flutter_dapp/widgets/logger_widget.dart';
 import 'package:walletconnect_flutter_dapp/widgets/session_widget.dart';
 import 'package:walletconnect_flutter_dapp/utils/dart_defines.dart';

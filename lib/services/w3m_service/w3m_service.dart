@@ -1587,7 +1587,7 @@ extension _W3MServiceExtension on W3MService {
     if (args != null) {
       if (args.session != null) {
         // IF 1-CA SUPPORTED WE SHOULD CALL SIWECONGIF METHODS HERE
-        final session = await _settleSession(args.session!, cacaos: args.auths);
+        final session = await _settleSession(args.session!);
         final namespace = args.session!.namespaces[StringConstants.namespace]!;
         final chains = namespace.chains!.map((c) => c.split(':').last).toList()
           ..sort();
@@ -1649,10 +1649,7 @@ extension _W3MServiceExtension on W3MService {
   }
 
   // HAS TO BE CALLED JUST ONCE ON CONNECTION
-  Future<W3MSession> _settleSession(
-    SessionData sessionData, {
-    List<Cacao>? cacaos,
-  }) async {
+  Future<W3MSession> _settleSession(SessionData sessionData) async {
     if (_currentSelectedChain == null) {
       final chains = NamespaceUtils.getChainIdsFromNamespaces(
         namespaces: sessionData.namespaces,
@@ -1660,7 +1657,7 @@ extension _W3MServiceExtension on W3MService {
       final chainId = chains.first.split(':').last.toString();
       _currentSelectedChain = W3MChainPresets.chains[chainId];
     }
-    final session = W3MSession(sessionData: sessionData, cacaos: cacaos);
+    final session = W3MSession(sessionData: sessionData);
     await _setSesionAndChainData(session);
     if (_selectedWallet == null) {
       analyticsService.instance.sendEvent(ConnectSuccessEvent(

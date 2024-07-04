@@ -28,7 +28,6 @@ class W3MSession {
     CoinbaseData? coinbaseData,
     MagicData? magicData,
     SIWESession? siweSession,
-    List<Cacao>? cacaos,
   })  : _sessionData = sessionData,
         _coinbaseData = coinbaseData,
         _magicData = magicData,
@@ -40,7 +39,6 @@ class W3MSession {
     final coinbaseDataString = map['coinbaseData'];
     final magicDataString = map['magicData'];
     final siweSession = map['siweSession'];
-    final cacaos = map['cacaos'] as List?;
     return W3MSession(
       sessionData: sessionDataString != null
           ? SessionData.fromJson(sessionDataString)
@@ -52,7 +50,6 @@ class W3MSession {
           magicDataString != null ? MagicData.fromJson(magicDataString) : null,
       siweSession:
           siweSession != null ? SIWESession.fromJson(siweSession) : null,
-      cacaos: cacaos?.map((c) => Cacao.fromJson(c)).toList(),
     );
   }
 
@@ -61,7 +58,6 @@ class W3MSession {
     CoinbaseData? coinbaseData,
     MagicData? magicData,
     SIWESession? siweSession,
-    List<Cacao>? cacaos,
   }) {
     return W3MSession(
       sessionData: sessionData ?? _sessionData,
