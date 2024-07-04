@@ -26,6 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final overlay = OverlayController(const Duration(milliseconds: 200));
   late W3MService _w3mService;
   late SIWESampleWebService _siweTestService;
+  bool _initialized = false;
 
   @override
   void initState() {
@@ -55,7 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 
   SIWEConfig get _siweConfig => SIWEConfig(
-        context: context,
         getNonce: () async {
           // this has to be called at the very moment of creating the pairing uri
           try {
@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
           return SIWEMessageArgs(
             domain: uri.authority,
             uri: 'https://walletconnect.com/login',
-            statement: 'Welcome to AppKit for Flutter.',
+            statement: 'Welcome to AppKit $packageVersion for Flutter.',
             methods: MethodsConstants.allMethods,
           );
         },
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
             debugPrint('[SIWEConfig] verifyMessage()');
             final payload = args.toJson();
             final uri = Uri.parse(_pairingMetadata.redirect!.universal!);
-            final result = await _siweTestService.authenticate(
+            final result = await _siweTestService.verifyMessage(
               payload,
               domain: uri.authority,
             );
@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // Return proper session from your Web Service
           try {
             debugPrint('[SIWEConfig] getSession()');
-            final session = await _siweTestService.getAppKitAuthSession();
+            final session = await _siweTestService.getSession();
             final address = session['address']!.toString();
             final chainId = session['chainId']!.toString();
             return SIWESession(address: address, chains: [chainId]);
@@ -140,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // Called when user taps on disconnect button
           try {
             debugPrint('[SIWEConfig] signOut()');
-            final _ = await _siweTestService.appKitAuthSignOut();
+            final _ = await _siweTestService.signOut();
             return true;
           } catch (error) {
             debugPrint('[SIWEConfig] signOut error: $error');
@@ -165,29 +165,36 @@ class _MyHomePageState extends State<MyHomePage> {
     W3MChainPresets.chains.addAll(W3MChainPresets.extraChains);
     W3MChainPresets.chains.addAll(W3MChainPresets.testChains);
 
-    _w3mService = W3MService(
-      projectId: DartDefines.projectId,
-      logLevel: LogLevel.error,
-      metadata: _pairingMetadata,
-      siweConfig: _siweConfig,
-      enableAnalytics: true, // OPTIONAL - null by default
-      enableEmail: true, // OPTIONAL - false by default
-      // requiredNamespaces: {},
-      // optionalNamespaces: {},
-      // includedWalletIds: {},
-      featuredWalletIds: {
-        'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase
-        '18450873727504ae9315a084fa7624b5297d2fe5880f0982979c17345a138277', // Kraken Wallet
-        'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
-        '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
-        'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a', // Uniswap
-        '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', // Bitget
-      },
-      // excludedWalletIds: {
-      //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase
-      // },
-      // MORE WALLETS https://explorer.walletconnect.com/?type=wallet&chains=eip155%3A1
-    );
+    try {
+      _w3mService = W3MService(
+        context: context,
+        projectId: DartDefines.projectId,
+        logLevel: LogLevel.error,
+        metadata: _pairingMetadata,
+        siweConfig: _siweConfig,
+        enableAnalytics: true, // OPTIONAL - null by default
+        enableEmail: true, // OPTIONAL - false by default
+        // requiredNamespaces: {},
+        // optionalNamespaces: {},
+        // includedWalletIds: {},
+        featuredWalletIds: {
+          'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase
+          '18450873727504ae9315a084fa7624b5297d2fe5880f0982979c17345a138277', // Kraken Wallet
+          'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // Metamask
+          '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
+          'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a', // Uniswap
+          '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', // Bitget
+        },
+        // excludedWalletIds: {
+        //   'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa', // Coinbase
+        // },
+        // MORE WALLETS https://explorer.walletconnect.com/?type=wallet&chains=eip155%3A1
+      );
+      setState(() => _initialized = true);
+    } on W3MServiceException catch (e) {
+      debugPrint('⛔️ ${e.message}');
+      return;
+    }
     // modal specific subscriptions
     _w3mService.onModalConnect.subscribe(_onModalConnect);
     _w3mService.onModalUpdate.subscribe(_onModalUpdate);
@@ -380,26 +387,28 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () => _refreshData(),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox.square(dimension: 4.0),
-              Text(
-                'Custom theme is: ${isCustom ? 'ON' : 'OFF'}',
-                style: TextStyle(
-                  color: Web3ModalTheme.colorsOf(context).foreground100,
+      body: !_initialized
+          ? const SizedBox.shrink()
+          : RefreshIndicator(
+              onRefresh: () => _refreshData(),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox.square(dimension: 4.0),
+                    Text(
+                      'v$packageVersion',
+                      style: TextStyle(
+                        color: Web3ModalTheme.colorsOf(context).foreground100,
+                      ),
+                    ),
+                    _ButtonsView(w3mService: _w3mService),
+                    const Divider(height: 0.0, color: Colors.transparent),
+                    _ConnectedView(w3mService: _w3mService)
+                  ],
                 ),
               ),
-              _ButtonsView(w3mService: _w3mService),
-              const Divider(height: 0.0, color: Colors.transparent),
-              _ConnectedView(w3mService: _w3mService)
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -428,7 +437,7 @@ class _ButtonsView extends StatelessWidget {
             // custom: ElevatedButton(
             //   style: buttonStyle(context),
             //   onPressed: () {
-            //     w3mService.openNetworks(context);
+            //     w3mService.openNetworksView();
             //   },
             //   child: const Text('OPEN CHAINS'),
             // ),
@@ -442,7 +451,7 @@ class _ButtonsView extends StatelessWidget {
           // custom: ElevatedButton(
           //   style: buttonStyle(context),
           //   onPressed: () {
-          //     w3mService.openModal(context);
+          //     w3mService.openModalView();
           //   },
           //   child: w3mService.isConnected
           //       ? Text(Util.truncate(w3mService.session!.address!))
@@ -477,7 +486,7 @@ class _ConnectedView extends StatelessWidget {
               // custom: ElevatedButton(
               //   style: buttonStyle(context),
               //   onPressed: () {
-              //     w3mService.openModal(context);
+              //     w3mService.openModalView();
               //   },
               //   child: Text(balance),
               // ),

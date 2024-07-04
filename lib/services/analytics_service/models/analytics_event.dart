@@ -495,3 +495,95 @@ class EmailUpgradeFromModal implements AnalyticsEvent {
         if (properties != null) 'properties': properties,
       };
 }
+
+class ClickSignSiweMessage implements AnalyticsEvent {
+  final String _network;
+  ClickSignSiweMessage({required String network}) : _network = network;
+
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'CLICK_SIGN_SIWE_MESSAGE';
+
+  @override
+  Map<String, dynamic>? get properties => {
+        'network': _network,
+      };
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
+class ClickCancelSiwe implements AnalyticsEvent {
+  final String _network;
+  ClickCancelSiwe({required String network}) : _network = network;
+
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'CLICK_CANCEL_SIWE';
+
+  @override
+  Map<String, dynamic>? get properties => {
+        'network': _network,
+      };
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
+class SiweAuthSuccess implements AnalyticsEvent {
+  final String _network;
+  SiweAuthSuccess({required String network}) : _network = network;
+
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'SIWE_AUTH_SUCCESS';
+
+  @override
+  Map<String, dynamic>? get properties => {
+        'network': _network,
+      };
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}
+
+class SiweAuthError implements AnalyticsEvent {
+  final String _network;
+  SiweAuthError({required String network}) : _network = network;
+
+  @override
+  String get type => 'track';
+
+  @override
+  String get event => 'SIWE_AUTH_ERROR';
+
+  @override
+  Map<String, dynamic>? get properties => {
+        'network': _network,
+      };
+
+  @override
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'event': event,
+        if (properties != null) 'properties': properties,
+      };
+}

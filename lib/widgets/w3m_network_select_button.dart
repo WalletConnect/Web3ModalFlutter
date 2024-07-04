@@ -56,15 +56,28 @@ class _W3MNetworkSelectButtonState extends State<W3MNetworkSelectButton> {
 
   void _onConnectPressed() {
     analyticsService.instance.sendEvent(ClickNetworksEvent());
-    widget.service.openModal(
-      widget.context ?? context,
-      SelectNetworkPage(
-        onTapNetwork: (info) {
-          widget.service.selectChain(info);
-          widgetStack.instance.addDefault();
-        },
-      ),
-    );
+    if (widget.service.modalContext != null) {
+      widget.service.openModalView(
+        SelectNetworkPage(
+          onTapNetwork: (info) {
+            widget.service.selectChain(info);
+            widgetStack.instance.addDefault();
+          },
+        ),
+      );
+    } else {
+      // TODO remove this once context parameter is enforced
+      // ignore: deprecated_member_use_from_same_package
+      widget.service.openModal(
+        widget.context ?? context,
+        SelectNetworkPage(
+          onTapNetwork: (info) {
+            widget.service.selectChain(info);
+            widgetStack.instance.addDefault();
+          },
+        ),
+      );
+    }
   }
 
   void _onServiceUpdate() {

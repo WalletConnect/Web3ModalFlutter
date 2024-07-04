@@ -695,8 +695,7 @@ class __$$SIWEMessageArgsImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
-@JsonSerializable(includeIfNull: false)
+@JsonSerializable()
 class _$SIWEMessageArgsImpl implements _SIWEMessageArgs {
   const _$SIWEMessageArgsImpl(
       {required this.domain,
@@ -992,8 +991,7 @@ class __$$SIWEVerifyMessageArgsImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
-@JsonSerializable(includeIfNull: false)
+@JsonSerializable()
 class _$SIWEVerifyMessageArgsImpl implements _SIWEVerifyMessageArgs {
   const _$SIWEVerifyMessageArgsImpl(
       {required this.message,

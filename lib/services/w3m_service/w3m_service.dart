@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:web3modal_flutter/constants/key_constants.dart';
 
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/constants/url_constants.dart';
@@ -55,7 +56,7 @@ import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 /// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
 class W3MService with ChangeNotifier implements IW3MService {
   String _projectId = '';
-  BuildContext? _context;
+
   Map<String, RequiredNamespace> _requiredNamespaces = {};
   Map<String, RequiredNamespace> _optionalNamespaces = {};
   String? _lastChainEmitted;
@@ -112,7 +113,15 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   ILoggerService get _logger => loggerService.instance;
 
+  bool _disconnectOnClose = false;
+
+  BuildContext? _context;
+  @override
+  BuildContext? get modalContext => _context;
+
+  /// `context` is required if SIWEConfig is passed.
   W3MService({
+    BuildContext? context,
     IWeb3App? web3App,
     String? projectId,
     PairingMetadata? metadata,
@@ -128,16 +137,23 @@ class W3MService with ChangeNotifier implements IW3MService {
   }) {
     if (web3App == null) {
       if (projectId == null) {
-        throw ArgumentError(
-          'Either a projectId and metadata must be provided or an already created web3App.',
+        throw W3MServiceException(
+          'Either a `projectId` and `metadata` must be provided or an already created `web3App`',
         );
       }
       if (metadata == null) {
-        throw ArgumentError(
-          'Metada is required when using projectId.',
+        throw W3MServiceException(
+          '`metadata:` parameter is required when using `projectId:`',
         );
       }
     }
+    if (siweConfig?.enabled == true && context == null) {
+      throw W3MServiceException(
+        '`context:` parameter is required if using `siweConfig:`. Also, `context:` parameter will be enforced in future versions.',
+      );
+    }
+
+    _context = context;
 
     _web3App = web3App ??
         Web3App(
@@ -299,10 +315,9 @@ class W3MService with ChangeNotifier implements IW3MService {
         await _setSesionAndChainData(session);
         _notify();
       } catch (_) {
-        final context = siweService.instance!.config!.context;
+        _disconnectOnClose = true;
         _showModalView(
-          context,
-          ApproveSIWEPage(onSiweFinish: _oneSIWEFinish),
+          startWidget: ApproveSIWEPage(onSiweFinish: _oneSIWEFinish),
         );
       }
     }
@@ -468,11 +483,25 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   // This method would be used from a custom button alone
+  @Deprecated(
+      'Add context param to W3MService and use openNetworksView() instead')
   @override
   Future<void> openNetworks(BuildContext context) async {
     return _showModalView(
-      context,
-      SelectNetworkPage(
+      context: context,
+      startWidget: SelectNetworkPage(
+        onTapNetwork: (info) {
+          selectChain(info);
+          widgetStack.instance.addDefault();
+        },
+      ),
+    );
+  }
+
+  @override
+  Future<void> openNetworksView() {
+    return _showModalView(
+      startWidget: SelectNetworkPage(
         onTapNetwork: (info) {
           selectChain(info);
           widgetStack.instance.addDefault();
@@ -482,15 +511,21 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   // TODO [W3MService] startWidget parameter should be removed
+  @Deprecated('Add context param to W3MService and use openModalView() instead')
   @override
   Future<void> openModal(BuildContext context, [Widget? startWidget]) async {
-    return _showModalView(context, startWidget);
+    return _showModalView(context: context, startWidget: startWidget);
   }
 
-  Future<void> _showModalView(
-    BuildContext context, [
+  @override
+  Future<void> openModalView([Widget? startWidget]) {
+    return _showModalView(startWidget: startWidget);
+  }
+
+  Future<void> _showModalView({
+    BuildContext? context,
     Widget? startWidget,
-  ]) async {
+  }) async {
     _checkInitialized();
 
     if (_isOpen) {
@@ -498,7 +533,13 @@ class W3MService with ChangeNotifier implements IW3MService {
       return;
     }
     _isOpen = true;
-    _context = context;
+    _context = context ?? modalContext;
+
+    if (_context == null) {
+      loggerService.instance.e(
+          'No context was found. Try adding `context:` parameter in W3MService class');
+      return;
+    }
 
     analyticsService.instance.sendEvent(ModalOpenEvent(
       connected: _isConnected,
@@ -899,35 +940,37 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   @override
   void closeModal({bool disconnectSession = false}) async {
-    if (disconnectSession) {
-      await disconnect();
-      selectWallet(null);
-    }
+    _disconnectOnClose = disconnectSession;
     // If we aren't open, then we can't and shouldn't close
-    _close(event: false);
+    _close();
     if (_context != null) {
       final canPop = Navigator.of(_context!, rootNavigator: true).canPop();
       if (canPop) {
         Navigator.of(_context!, rootNavigator: true).pop();
-        analyticsService.instance.sendEvent(ModalCloseEvent(
-          connected: _isConnected,
-        ));
       }
     }
     _notify();
   }
 
-  void _close({bool event = true}) {
+  void _close() async {
     if (!_isOpen) {
       return;
     }
     _isOpen = false;
-    toastUtils.instance.clear();
-    if (event) {
-      analyticsService.instance.sendEvent(ModalCloseEvent(
-        connected: _isConnected,
-      ));
+    if (_disconnectOnClose) {
+      _disconnectOnClose = false;
+      final currentKey = widgetStack.instance.getCurrent().key;
+      if (currentKey == KeyConstants.approveSiwePageKey) {
+        final chainId = _currentSelectedChain?.chainId ?? '1';
+        analyticsService.instance.sendEvent(ClickCancelSiwe(network: chainId));
+      }
+      await disconnect();
+      selectWallet(null);
     }
+    toastUtils.instance.clear();
+    analyticsService.instance.sendEvent(ModalCloseEvent(
+      connected: _isConnected,
+    ));
   }
 
   @override
@@ -1373,6 +1416,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     try {
       if (siweService.instance!.signOutOnNetworkChange) {
         await siweService.instance!.signOut();
+        _disconnectOnClose = true;
         widgetStack.instance.push(ApproveSIWEPage(
           onSiweFinish: _oneSIWEFinish,
         ));
@@ -1446,6 +1490,7 @@ extension _W3MMagicExtension on W3MService {
           await _checkSIWEStatus();
           onModalUpdate.broadcast(ModalConnect(_currentSession!));
         } else {
+          _disconnectOnClose = true;
           widgetStack.instance.push(ApproveSIWEPage(
             onSiweFinish: _oneSIWEFinish,
           ));
@@ -1529,6 +1574,7 @@ extension _W3MCoinbaseExtension on W3MService {
       onModalConnect.broadcast(ModalConnect(session));
       //
       if (siweService.instance!.enabled) {
+        _disconnectOnClose = true;
         widgetStack.instance.push(ApproveSIWEPage(
           onSiweFinish: _oneSIWEFinish,
         ));
@@ -1637,6 +1683,7 @@ extension _W3MServiceExtension on W3MService {
       onModalConnect.broadcast(ModalConnect(session));
       //
       if (siweService.instance!.enabled) {
+        _disconnectOnClose = true;
         widgetStack.instance.push(ApproveSIWEPage(
           onSiweFinish: _oneSIWEFinish,
         ));
@@ -1681,6 +1728,9 @@ extension _W3MServiceExtension on W3MService {
     await _storeSession(updatedSession);
     onModalUpdate.broadcast(ModalConnect(updatedSession));
     closeModal();
+    analyticsService.instance.sendEvent(SiweAuthSuccess(
+      network: updatedSession.chainId,
+    ));
   }
 
   void _onSessionEvent(SessionEvent? args) async {

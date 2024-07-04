@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -15,6 +16,8 @@ enum W3MServiceStatus {
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].
 /// optionalNamespaces is mostly not needed, if you use it, the values set here will override every optionalNamespaces set in evey chain
 abstract class IW3MService with ChangeNotifier {
+  BuildContext? get modalContext;
+
   /// Whether or not this object has been initialized.
   W3MServiceStatus get status;
 
@@ -30,7 +33,7 @@ abstract class IW3MService with ChangeNotifier {
   bool get isConnected;
 
   /// The URI that can be used to connect to this dApp.
-  /// This is only available after the [openModal] function is called.
+  /// This is only available after the [openModalView] function is called.
   String? get wcUri;
 
   /// The current session's data.
@@ -54,11 +57,18 @@ abstract class IW3MService with ChangeNotifier {
   /// Sets up the explorer and the web3App if they already been initialized.
   Future<void> init();
 
+  @Deprecated(
+      'Add context param to W3MService and use openNetworksView() instead')
   Future<void> openNetworks(BuildContext context);
+
+  Future<void> openNetworksView();
 
   /// Opens the modal with the provided [startWidget] (if any).
   /// If none is provided, the default state will be used based on platform.
+  @Deprecated('Add context param to W3MService and use openModalView() instead')
   Future<void> openModal(BuildContext context, [Widget? startWidget]);
+
+  Future<void> openModalView([Widget? startWidget]);
 
   /// Connects to the relay if not already connected.
   /// If the relay is already connected, this does nothing.

@@ -7,7 +7,6 @@ import 'package:web3modal_flutter/services/magic_service/models/magic_events.dar
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
-import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
@@ -71,17 +70,31 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     });
   }
 
-  void _onTap() => widget.service.openModal(widget.context ?? context);
+  void _onTap() {
+    if (widget.service.modalContext != null) {
+      widget.service.openModalView();
+    } else {
+      // TODO remove this once context parameter is enforced
+      // ignore: deprecated_member_use_from_same_package
+      widget.service.openModal(widget.context ?? context);
+    }
+  }
 
   void _approveSign(MagicRequestEvent? args) async {
     if (args?.request != null) {
       if (widget.service.isOpen) {
         widgetStack.instance.popAllAndPush(ApproveTransactionPage());
       } else {
-        widget.service.openModal(
-          widget.context ?? context,
-          ApproveTransactionPage(),
-        );
+        if (widget.service.modalContext != null) {
+          widget.service.openModalView(ApproveTransactionPage());
+        } else {
+          // TODO remove this once context parameter is enforced
+          // ignore: deprecated_member_use_from_same_package
+          widget.service.openModal(
+            widget.context ?? context,
+            ApproveTransactionPage(),
+          );
+        }
       }
     }
   }
@@ -90,7 +103,13 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
     if (widget.service.isOpen) {
       widgetStack.instance.popAllAndPush(ConfirmEmailPage());
     } else {
-      widget.service.openModal(widget.context ?? context, ConfirmEmailPage());
+      if (widget.service.modalContext != null) {
+        widget.service.openModalView(ConfirmEmailPage());
+      } else {
+        // TODO remove this once context parameter is enforced
+        // ignore: deprecated_member_use_from_same_package
+        widget.service.openModal(widget.context ?? context, ConfirmEmailPage());
+      }
     }
   }
 

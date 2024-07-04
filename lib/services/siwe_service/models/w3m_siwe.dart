@@ -6,10 +6,6 @@ import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 part 'w3m_siwe.g.dart';
 part 'w3m_siwe.freezed.dart';
 
-// TODO work to do
-// context parameter
-// disconnect when closing modal
-// siwe with email
 class SIWEConfig {
   final Future<String> Function() getNonce;
   final Future<SIWEMessageArgs> Function() getMessageParams;
@@ -34,10 +30,8 @@ class SIWEConfig {
   // Defaults to true
   final bool signOutOnNetworkChange;
   //
-  final BuildContext context;
 
   SIWEConfig({
-    required this.context,
     required this.getNonce,
     required this.getMessageParams,
     required this.createMessage,
@@ -115,7 +109,6 @@ class SIWECreateMessageArgs with _$SIWECreateMessageArgs {
 
 @freezed
 class SIWEMessageArgs with _$SIWEMessageArgs {
-  @JsonSerializable(includeIfNull: false)
   const factory SIWEMessageArgs({
     required String domain,
     required String uri,
@@ -136,7 +129,6 @@ class SIWEMessageArgs with _$SIWEMessageArgs {
 
 @freezed
 class SIWEVerifyMessageArgs with _$SIWEVerifyMessageArgs {
-  @JsonSerializable(includeIfNull: false)
   const factory SIWEVerifyMessageArgs({
     required String message,
     required String signature,

@@ -4,7 +4,6 @@ import 'package:web3modal_flutter/models/grid_item.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/network_service/i_network_service.dart';
 import 'package:web3modal_flutter/utils/asset_util.dart';
-import 'package:web3modal_flutter/utils/util.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class NetworkService implements INetworkService {

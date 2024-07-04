@@ -70,7 +70,13 @@ class _W3MConnectWalletButtonState extends State<W3MConnectWalletButton> {
     if (widget.service.isConnected) {
       widget.service.disconnect();
     } else {
-      widget.service.openModal(widget.context ?? context);
+      if (widget.service.modalContext != null) {
+        widget.service.openModalView();
+      } else {
+        // TODO remove this once context parameter is enforced
+        // ignore: deprecated_member_use_from_same_package
+        widget.service.openModal(widget.context ?? context);
+      }
       _updateState();
     }
   }
