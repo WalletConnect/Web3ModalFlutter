@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
+import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/services/siwe_service/siwe_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
@@ -66,6 +68,9 @@ class _ApproveSIWEPageState extends State<ApproveSIWEPage> {
     try {
       final address = _service!.session!.address!;
       String chainId = _service!.selectedChain?.chainId ?? '1';
+      analyticsService.instance.sendEvent(ClickSignSiweMessage(
+        network: chainId,
+      ));
       chainId = W3MChainPresets.chains[chainId]!.namespace;
       //
       final message = await siweService.instance!.createMessage(
@@ -102,6 +107,8 @@ class _ApproveSIWEPageState extends State<ApproveSIWEPage> {
 
   void _handleError(String? error) {
     debugPrint('[$runtimeType] _handleError $error');
+    String chainId = _service!.selectedChain?.chainId ?? '1';
+    analyticsService.instance.sendEvent(SiweAuthError(network: chainId));
     setState(() => _waitingSign = false);
     toastUtils.instance.show(ToastMessage(
       type: ToastType.error,

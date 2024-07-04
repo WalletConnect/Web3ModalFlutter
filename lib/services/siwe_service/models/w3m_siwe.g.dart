@@ -72,29 +72,20 @@ _$SIWEMessageArgsImpl _$$SIWEMessageArgsImplFromJson(
     );
 
 Map<String, dynamic> _$$SIWEMessageArgsImplToJson(
-    _$SIWEMessageArgsImpl instance) {
-  final val = <String, dynamic>{
-    'domain': instance.domain,
-    'uri': instance.uri,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('type', instance.type?.toJson());
-  writeNotNull('nbf', instance.nbf);
-  writeNotNull('exp', instance.exp);
-  writeNotNull('statement', instance.statement);
-  writeNotNull('requestId', instance.requestId);
-  writeNotNull('resources', instance.resources);
-  writeNotNull('expiry', instance.expiry);
-  writeNotNull('iat', instance.iat);
-  writeNotNull('methods', instance.methods);
-  return val;
-}
+        _$SIWEMessageArgsImpl instance) =>
+    <String, dynamic>{
+      'domain': instance.domain,
+      'uri': instance.uri,
+      'type': instance.type?.toJson(),
+      'nbf': instance.nbf,
+      'exp': instance.exp,
+      'statement': instance.statement,
+      'requestId': instance.requestId,
+      'resources': instance.resources,
+      'expiry': instance.expiry,
+      'iat': instance.iat,
+      'methods': instance.methods,
+    };
 
 _$SIWEVerifyMessageArgsImpl _$$SIWEVerifyMessageArgsImplFromJson(
         Map<String, dynamic> json) =>
@@ -108,22 +99,13 @@ _$SIWEVerifyMessageArgsImpl _$$SIWEVerifyMessageArgsImplFromJson(
     );
 
 Map<String, dynamic> _$$SIWEVerifyMessageArgsImplToJson(
-    _$SIWEVerifyMessageArgsImpl instance) {
-  final val = <String, dynamic>{
-    'message': instance.message,
-    'signature': instance.signature,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('cacao', instance.cacao?.toJson());
-  writeNotNull('clientId', instance.clientId);
-  return val;
-}
+        _$SIWEVerifyMessageArgsImpl instance) =>
+    <String, dynamic>{
+      'message': instance.message,
+      'signature': instance.signature,
+      'cacao': instance.cacao?.toJson(),
+      'clientId': instance.clientId,
+    };
 
 _$SIWESessionImpl _$$SIWESessionImplFromJson(Map<String, dynamic> json) =>
     _$SIWESessionImpl(

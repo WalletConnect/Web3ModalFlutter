@@ -11,6 +11,7 @@ export 'services/siwe_service/models/w3m_siwe.dart';
 
 /// Utils
 export 'utils/w3m_chains_presets.dart';
+export 'utils/util.dart';
 
 /// Theme
 export 'theme/w3m_theme.dart';

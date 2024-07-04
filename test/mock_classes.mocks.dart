@@ -640,6 +640,15 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
+  _i14.Future<void> openNetworksView() => (super.noSuchMethod(
+        Invocation.method(
+          #openNetworksView,
+          [],
+        ),
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
+  @override
   _i14.Future<void> openModal(
     _i11.BuildContext? context, [
     _i11.Widget? startWidget,
@@ -651,6 +660,16 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
             context,
             startWidget,
           ],
+        ),
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
+  @override
+  _i14.Future<void> openModalView([_i11.Widget? startWidget]) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #openModalView,
+          [startWidget],
         ),
         returnValue: _i14.Future<void>.value(),
         returnValueForMissingStub: _i14.Future<void>.value(),
