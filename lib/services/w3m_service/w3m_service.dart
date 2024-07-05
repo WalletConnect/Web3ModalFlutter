@@ -60,7 +60,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   Map<String, RequiredNamespace> _requiredNamespaces = {};
   Map<String, RequiredNamespace> _optionalNamespaces = {};
   String? _lastChainEmitted;
-  bool _supportsOneClickAuth = true;
+  bool _supportsOneClickAuth = false;
 
   W3MServiceStatus _status = W3MServiceStatus.idle;
   @override
@@ -777,6 +777,31 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
   }
 
+  SessionAuthResponse? _sessionAuthResponse;
+  void _awaitOCAuthCallback(SessionAuthRequestResponse authResponse) async {
+    try {
+      _sessionAuthResponse = await authResponse.completer.future;
+      _supportsOneClickAuth = true;
+      if (_sessionAuthResponse?.session != null) {
+        _web3App.onSessionConnect.broadcast(SessionConnect(
+          _sessionAuthResponse!.session!,
+        ));
+      } else {
+        if (_sessionAuthResponse?.jsonRpcError != null) {
+          throw _sessionAuthResponse!.jsonRpcError!;
+        }
+        if (_sessionAuthResponse?.error != null) {
+          throw _sessionAuthResponse!.error!;
+        }
+      }
+    } on TimeoutException {
+      _logger.i('[$runtimeType] Rebuilding session, ending future');
+      return;
+    } catch (e) {
+      await _connectionErrorHandler(e);
+    }
+  }
+
   Future<void> _connectionErrorHandler(dynamic e) async {
     if (_isUserRejectedError(e)) {
       _logger.i('[$runtimeType] User declined connection');
@@ -787,10 +812,10 @@ class W3MService with ChangeNotifier implements IW3MService {
     } else {
       if (e is JsonRpcError) {
         final message = e.message ?? '';
-        if (e.code == 10001 &&
-            message.contains(MethodConstants.WC_SESSION_AUTHENTICATE)) {
-          // WILL HANDLE SESSION REQUEST
+        final method = MethodConstants.WC_SESSION_AUTHENTICATE;
+        if (e.code == 10001 && message.contains(method)) {
           _supportsOneClickAuth = false;
+          // WILL HANDLE SESSION REQUEST
           return;
         }
         onModalError.broadcast(ModalError('Error connecting to wallet'));
@@ -808,27 +833,6 @@ class W3MService with ChangeNotifier implements IW3MService {
       }
     }
     return await expirePreviousInactivePairings();
-  }
-
-  void _awaitOCAuthCallback(SessionAuthRequestResponse authResponse) async {
-    try {
-      final response = await authResponse.completer.future;
-      if (response.session != null) {
-        _web3App.onSessionConnect.broadcast(SessionConnect(response.session!));
-      } else {
-        if (response.jsonRpcError != null) {
-          throw response.jsonRpcError!;
-        }
-        if (response.error != null) {
-          throw response.error!;
-        }
-      }
-    } on TimeoutException {
-      _logger.i('[$runtimeType] Rebuilding session, ending future');
-      return;
-    } catch (e) {
-      await _connectionErrorHandler(e);
-    }
   }
 
   @override
@@ -1361,7 +1365,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     _isConnected = false;
     _currentSession = null;
     _lastChainEmitted = null;
-    _supportsOneClickAuth = true;
+    _supportsOneClickAuth = false;
     _status = W3MServiceStatus.initialized;
     _notify();
   }
@@ -1671,10 +1675,10 @@ extension _W3MServiceExtension on W3MService {
   }
 
   void _onSessionConnect(SessionConnect? args) async {
-    final siweEnabled = siweService.instance!.enabled;
-    if (_supportsOneClickAuth && siweEnabled) return;
     final debugString = jsonEncode(args?.session.toJson());
     dev.log('[$runtimeType] _onSessionConnect: $debugString');
+    final siweEnabled = siweService.instance!.enabled;
+    if (_supportsOneClickAuth && siweEnabled) return;
     if (args != null) {
       // IF SIWE CALLBACK (1-CA NOT SUPPORTED) SIWECONGIF METHODS ARE CALLED ON ApproveSIWEPage
       final session = await _settleSession(args.session);

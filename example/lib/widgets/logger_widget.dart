@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
-import 'package:web3modal_flutter/version.dart';
 
 class DraggableCard extends StatefulWidget {
   final OverlayController overlayController;
@@ -54,20 +53,6 @@ class _DraggableCardState extends State<DraggableCard> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            color: Colors.black,
-            width: MediaQuery.of(context).size.width,
-            height: 20.0,
-            alignment: Alignment.center,
-            child: const Text(
-              packageVersion,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
           SizedBox(
             width: MediaQuery.of(context).size.width,
             height: 200.0,

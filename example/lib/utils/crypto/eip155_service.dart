@@ -262,6 +262,17 @@ class EIP155 {
           contract: deployedContract,
         );
       case 'write':
+        // return await w3mService.requestWriteContract(
+        //   topic: w3mService.session?.topic ?? '',
+        //   chainId: 'eip155:11155111',
+        //   deployedContract: deployedContract,
+        //   functionName: 'subscribe',
+        //   parameters: [],
+        //   transaction: Transaction(
+        //     from: EthereumAddress.fromHex(w3mService.session!.address!),
+        //     value: EtherAmount.fromInt(EtherUnit.finney, 1),
+        //   ),
+        // );
         // we first call `decimals` function, which is a read function,
         // to check how much decimal we need to use to parse the amount value
         final decimals = await w3mService.requestReadContract(

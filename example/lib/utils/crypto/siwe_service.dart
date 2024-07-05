@@ -21,7 +21,7 @@ class SIWESampleWebService {
 
   Future<void> _checkHeaders() async {
     final instance = await SharedPreferences.getInstance();
-    final headers = instance.getString('w3m_siwe_headers');
+    final headers = instance.getString('app_w3m_siwe_headers');
     if (headers != null) {
       _headers = {
         ...(jsonDecode(headers) as Map<String, dynamic>),
@@ -32,7 +32,7 @@ class SIWESampleWebService {
 
   Future<void> _persistHeaders() async {
     final instance = await SharedPreferences.getInstance();
-    await instance.setString('w3m_siwe_headers', jsonEncode(_headers));
+    await instance.setString('app_w3m_siwe_headers', jsonEncode(_headers));
   }
 
   Future<Map<String, dynamic>> getNonce() async {

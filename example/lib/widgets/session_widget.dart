@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:walletconnect_flutter_dapp/home_page.dart';
+
 import 'package:walletconnect_flutter_dapp/utils/chain_data_wrapper.dart';
+import 'package:walletconnect_flutter_dapp/utils/styles.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';

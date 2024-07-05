@@ -1,5 +1,6 @@
 import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:walletconnect_flutter_dapp/widgets/debug_drawer.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -31,11 +32,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    _siweTestService = SIWESampleWebService();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _toggleOverlay();
+      SharedPreferences.getInstance().then((instance) {
+        _initializeService(instance);
+      });
     });
-    _siweTestService = SIWESampleWebService();
-    _initializeService();
   }
 
   void _toggleOverlay() {
@@ -55,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
 
-  SIWEConfig get _siweConfig => SIWEConfig(
+  SIWEConfig _siweConfig(bool enabled) => SIWEConfig(
         getNonce: () async {
           // this has to be called at the very moment of creating the pairing uri
           try {
@@ -152,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // Called when disconnecting WalletConnect session was successfull
           debugPrint('[SIWEConfig] onSignOut()');
         },
-        // enabled: true,
+        enabled: enabled,
         // signOutOnDisconnect: true,
         // signOutOnAccountChange: true,
         // signOutOnNetworkChange: true,
@@ -160,7 +163,11 @@ class _MyHomePageState extends State<MyHomePage> {
         // sessionRefetchIntervalMs: 300000,
       );
 
-  void _initializeService() async {
+  void _initializeService(SharedPreferences prefs) async {
+    final analyticsValue = prefs.getBool('app_w3m_analytics') ?? true;
+    final emailWalletValue = prefs.getBool('app_w3m_email_wallet') ?? true;
+    final siweAuthValue = prefs.getBool('app_w3m_siwe_auth') ?? true;
+
     // See https://docs.walletconnect.com/appkit/flutter/core/custom-chains
     W3MChainPresets.chains.addAll(W3MChainPresets.extraChains);
     W3MChainPresets.chains.addAll(W3MChainPresets.testChains);
@@ -171,9 +178,9 @@ class _MyHomePageState extends State<MyHomePage> {
         projectId: DartDefines.projectId,
         logLevel: LogLevel.error,
         metadata: _pairingMetadata,
-        siweConfig: _siweConfig,
-        enableAnalytics: true, // OPTIONAL - null by default
-        enableEmail: true, // OPTIONAL - false by default
+        siweConfig: _siweConfig(siweAuthValue),
+        enableAnalytics: analyticsValue, // OPTIONAL - null by default
+        enableEmail: emailWalletValue, // OPTIONAL - false by default
         // requiredNamespaces: {},
         // optionalNamespaces: {},
         // includedWalletIds: {},
@@ -248,60 +255,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onModalConnect(ModalConnect? event) {
     debugPrint('[ExampleApp] _onModalConnect ${event?.toString()}');
-    debugPrint(
-      '[ExampleApp] _onModalConnect selectedChain ${_w3mService.selectedChain?.chainId}',
-    );
-    debugPrint(
-      '[ExampleApp] _onModalConnect address ${_w3mService.session!.address}',
-    );
     setState(() {});
-    final walletName = _w3mService.session?.peer?.metadata.name ?? '';
-    if (walletName.toLowerCase().contains('metamask')) {
-      _switchToPolygonIfNeeded();
-    }
   }
 
   void _onModalUpdate(ModalConnect? event) {
     setState(() {});
-  }
-
-  void _switchToPolygonIfNeeded() {
-    final polygon = W3MChainPresets.chains['137']!;
-    // final approvedChains = _w3mService.getApprovedChains() ?? [];
-    // if (!approvedChains.contains(polygon.namespace)) {
-    Future.delayed(
-      const Duration(milliseconds: 500),
-      () {
-        showDialog(
-          context: context,
-          builder: (_) {
-            return AlertDialog(
-              content: const Text('Switch to Polygon?'),
-              actions: [
-                ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    _w3mService.launchConnectedWallet();
-                    try {
-                      await _w3mService.requestSwitchToChain(polygon);
-                    } catch (e) {
-                      debugPrint('[ExampleApp] requestSwitchToChain $e');
-                    }
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Switch'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-    // }
   }
 
   void _onModalNetworkChange(ModalNetworkChange? event) {
@@ -360,7 +318,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isCustom = Web3ModalTheme.isCustomTheme(context);
     return Scaffold(
       backgroundColor: Web3ModalTheme.colorsOf(context).background125,
       appBar: AppBar(
@@ -368,24 +325,6 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text(StringConstants.w3mPageTitleV3),
         backgroundColor: Web3ModalTheme.colorsOf(context).background175,
         foregroundColor: Web3ModalTheme.colorsOf(context).foreground100,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logo_dev_rounded),
-            onPressed: _toggleOverlay,
-          ),
-          IconButton(
-            icon: isCustom
-                ? const Icon(Icons.yard)
-                : const Icon(Icons.yard_outlined),
-            onPressed: widget.toggleTheme,
-          ),
-          IconButton(
-            icon: Web3ModalTheme.maybeOf(context)?.isDarkMode ?? false
-                ? const Icon(Icons.light_mode_outlined)
-                : const Icon(Icons.dark_mode_outlined),
-            onPressed: widget.toggleBrightness,
-          ),
-        ],
       ),
       body: !_initialized
           ? const SizedBox.shrink()
@@ -396,19 +335,35 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const SizedBox.square(dimension: 4.0),
-                    Text(
-                      'v$packageVersion',
-                      style: TextStyle(
-                        color: Web3ModalTheme.colorsOf(context).foreground100,
-                      ),
-                    ),
                     _ButtonsView(w3mService: _w3mService),
                     const Divider(height: 0.0, color: Colors.transparent),
-                    _ConnectedView(w3mService: _w3mService)
+                    _ConnectedView(w3mService: _w3mService),
                   ],
                 ),
               ),
             ),
+      endDrawer: Drawer(
+        backgroundColor: Web3ModalTheme.colorsOf(context).background125,
+        child: DebugDrawer(
+          toggleOverlay: _toggleOverlay,
+          toggleBrightness: widget.toggleBrightness,
+          toggleTheme: widget.toggleTheme,
+        ),
+      ),
+      onEndDrawerChanged: (isOpen) {
+        // write your callback implementation here
+        if (isOpen) return;
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const AlertDialog(
+              content: Text(
+                'If you made changes you\'ll need to restart the app',
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -498,53 +453,4 @@ class _ConnectedView extends StatelessWidget {
       ],
     );
   }
-}
-
-ButtonStyle buttonStyle(BuildContext context) {
-  final themeColors = Web3ModalTheme.colorsOf(context);
-  return ButtonStyle(
-    backgroundColor: MaterialStateProperty.resolveWith<Color>(
-      (states) {
-        if (states.contains(MaterialState.disabled)) {
-          return Web3ModalTheme.colorsOf(context).background225;
-        }
-        return Web3ModalTheme.colorsOf(context).accent100;
-      },
-    ),
-    shape: MaterialStateProperty.resolveWith<RoundedRectangleBorder>(
-      (states) {
-        return RoundedRectangleBorder(
-          side: states.contains(MaterialState.disabled)
-              ? BorderSide(color: themeColors.grayGlass005, width: 1.0)
-              : BorderSide(color: themeColors.grayGlass010, width: 1.0),
-          borderRadius: borderRadius(context),
-        );
-      },
-    ),
-    textStyle: MaterialStateProperty.resolveWith<TextStyle>(
-      (states) {
-        return Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
-              color: (states.contains(MaterialState.disabled))
-                  ? Web3ModalTheme.colorsOf(context).foreground300
-                  : Web3ModalTheme.colorsOf(context).inverse100,
-            );
-      },
-    ),
-    foregroundColor: MaterialStateProperty.resolveWith<Color>(
-      (states) {
-        return (states.contains(MaterialState.disabled))
-            ? Web3ModalTheme.colorsOf(context).foreground300
-            : Web3ModalTheme.colorsOf(context).inverse100;
-      },
-    ),
-  );
-}
-
-BorderRadiusGeometry borderRadius(BuildContext context) {
-  final radiuses = Web3ModalTheme.radiusesOf(context);
-  return radiuses.isSquare()
-      ? const BorderRadius.all(Radius.zero)
-      : radiuses.isCircular()
-          ? BorderRadius.circular(1000.0)
-          : BorderRadius.circular(8.0);
 }
