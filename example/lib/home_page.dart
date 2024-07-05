@@ -173,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
         metadata: _pairingMetadata,
         siweConfig: _siweConfig,
         enableAnalytics: true, // OPTIONAL - null by default
-        // enableEmail: true, // OPTIONAL - false by default
+        enableEmail: true, // OPTIONAL - false by default
         // requiredNamespaces: {},
         // optionalNamespaces: {},
         // includedWalletIds: {},
