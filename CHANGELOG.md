@@ -1,4 +1,4 @@
-## 3.3.0-beta02
+## 3.3.0-beta03
 
 - One-Click Auth + SIWE implementation
 - Coinbase Wallet dependency update

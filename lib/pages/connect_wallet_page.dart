@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/services/siwe_service/siwe_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/utils/toast/toast_message.dart';
@@ -23,7 +24,7 @@ import 'package:web3modal_flutter/widgets/avatars/loading_border.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class ConnectWalletPage extends StatefulWidget {
-  const ConnectWalletPage() : super(key: KeyConstants.connecWalletPageKey);
+  const ConnectWalletPage() : super(key: KeyConstants.connectWalletPageKey);
 
   @override
   State<ConnectWalletPage> createState() => _ConnectWalletPageState();
@@ -55,8 +56,11 @@ class _ConnectWalletPageState extends State<ConnectWalletPage>
     if (state == AppLifecycleState.resumed) {
       final isOpen = _service?.isOpen ?? false;
       final isConnected = _service?.isConnected ?? false;
-      if (isOpen && isConnected) {
-        _service?.closeModal();
+      if (isOpen && isConnected && !siweService.instance!.enabled) {
+        Future.delayed(Duration(seconds: 1), () {
+          if (!mounted) return;
+          _service?.closeModal();
+        });
       }
     }
   }

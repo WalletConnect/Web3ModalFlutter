@@ -1630,44 +1630,42 @@ extension _W3MServiceExtension on W3MService {
   void _onSessionAuthResponse(SessionAuthResponse? args) async {
     final debugString = jsonEncode(args?.toJson());
     dev.log('[$runtimeType] _onSessionAuthResponse: $debugString');
-    if (args != null) {
-      if (args.session != null) {
-        // IF 1-CA SUPPORTED WE SHOULD CALL SIWECONGIF METHODS HERE
-        final session = await _settleSession(args.session!);
-        final namespace = args.session!.namespaces[StringConstants.namespace]!;
-        final chains = namespace.chains!.map((c) => c.split(':').last).toList()
-          ..sort();
-        String chainId = _currentSelectedChain?.chainId ?? chains.first;
-        chainId = W3MChainPresets.chains[chainId]!.namespace;
-        //
-        try {
-          // Verify message with just the first cacao
-          final Cacao cacao = args.auths!.first;
-          final message = _web3App.formatAuthMessage(
-            iss: cacao.p.iss,
-            cacaoPayload: CacaoRequestPayload.fromCacaoPayload(cacao.p),
-          );
-          final clientId = await _web3App.core.crypto.getClientId();
-          await siweService.instance!.verifyMessage(
-            message: message,
-            signature: cacao.s.s,
-            clientId: clientId,
-          );
-        } catch (e) {
-          await disconnect();
-          return;
-        }
-        //
-        final siweSession = await siweService.instance!.getSession();
-        final newSession = session.copyWith(siweSession: siweSession);
-        //
-        onModalConnect.broadcast(ModalConnect(newSession));
-        await _storeSession(newSession);
-        _notify();
-        //
-        if (_isOpen) {
-          closeModal();
-        }
+    if (args?.session != null) {
+      // IF 1-CA SUPPORTED WE SHOULD CALL SIWECONGIF METHODS HERE
+      final session = await _settleSession(args!.session!);
+      final namespace = args.session!.namespaces[StringConstants.namespace]!;
+      final chains = namespace.chains!.map((c) => c.split(':').last).toList()
+        ..sort();
+      String chainId = _currentSelectedChain?.chainId ?? chains.first;
+      chainId = W3MChainPresets.chains[chainId]!.namespace;
+      //
+      try {
+        // Verify message with just the first cacao
+        final Cacao cacao = args.auths!.first;
+        final message = _web3App.formatAuthMessage(
+          iss: cacao.p.iss,
+          cacaoPayload: CacaoRequestPayload.fromCacaoPayload(cacao.p),
+        );
+        final clientId = await _web3App.core.crypto.getClientId();
+        await siweService.instance!.verifyMessage(
+          message: message,
+          signature: cacao.s.s,
+          clientId: clientId,
+        );
+      } catch (e) {
+        loggerService.instance.e('[$runtimeType] _onSessionAuthResponse $e');
+        await disconnect();
+        return;
+      }
+      //
+      final siweSession = await siweService.instance!.getSession();
+      final newSession = session.copyWith(siweSession: siweSession);
+      //
+      await _storeSession(newSession);
+      onModalConnect.broadcast(ModalConnect(newSession));
+      //
+      if (_isOpen) {
+        closeModal();
       }
     }
   }
@@ -1676,7 +1674,7 @@ extension _W3MServiceExtension on W3MService {
     final siweEnabled = siweService.instance!.enabled;
     if (_supportsOneClickAuth && siweEnabled) return;
     final debugString = jsonEncode(args?.session.toJson());
-    _logger.i('[$runtimeType] _onSessionConnect: $debugString');
+    dev.log('[$runtimeType] _onSessionConnect: $debugString');
     if (args != null) {
       // IF SIWE CALLBACK (1-CA NOT SUPPORTED) SIWECONGIF METHODS ARE CALLED ON ApproveSIWEPage
       final session = await _settleSession(args.session);

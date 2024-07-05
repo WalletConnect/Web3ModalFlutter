@@ -16,6 +16,7 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_account_avatar.dart';
 import 'package:web3modal_flutter/widgets/buttons/primary_button.dart';
 import 'package:web3modal_flutter/widgets/buttons/secondary_button.dart';
+import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/content_loading.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/avatars/w3m_wallet_avatar.dart';
@@ -127,6 +128,18 @@ class _ApproveSIWEPageState extends State<ApproveSIWEPage> {
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
+    String peerIcon;
+    try {
+      peerIcon = _service?.session?.peer?.metadata.icons.first ?? '';
+    } catch (e) {
+      peerIcon = '';
+    }
+    String selfIcon;
+    try {
+      selfIcon = _service?.session?.self?.metadata.icons.first ?? '';
+    } catch (e) {
+      selfIcon = '';
+    }
     return Web3ModalNavbar(
       title: 'Sign In',
       noClose: true,
@@ -153,7 +166,8 @@ class _ApproveSIWEPageState extends State<ApproveSIWEPage> {
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      borderRadius: _service!.session!.sessionService.isMagic
+                      borderRadius: _service!.session!.sessionService.isMagic ||
+                              peerIcon.isEmpty
                           ? BorderRadius.circular(60.0)
                           : BorderRadius.circular(radiuses.radiusM),
                       color: themeColors.background150,
@@ -166,11 +180,22 @@ class _ApproveSIWEPageState extends State<ApproveSIWEPage> {
                         : SizedBox(
                             width: 60.0,
                             height: 60.0,
-                            child: W3MListAvatar(
-                              imageUrl:
-                                  _service?.session?.peer?.metadata.icons.first,
-                              borderRadius: radiuses.radiusS,
-                            ),
+                            child: peerIcon.isEmpty
+                                ? RoundedIcon(
+                                    borderRadius:
+                                        radiuses.isSquare() ? 0.0 : 60.0,
+                                    size: 60.0,
+                                    padding: 12.0,
+                                    assetPath:
+                                        'assets/icons/regular/wallet.svg',
+                                    assetColor: themeColors.accent100,
+                                    circleColor: themeColors.accenGlass010,
+                                    borderColor: themeColors.accenGlass010,
+                                  )
+                                : W3MListAvatar(
+                                    imageUrl: peerIcon,
+                                    borderRadius: radiuses.radiusS,
+                                  ),
                           ),
                   ),
                 ),
@@ -185,14 +210,19 @@ class _ApproveSIWEPageState extends State<ApproveSIWEPage> {
                       borderRadius: BorderRadius.circular(36.0),
                       color: themeColors.background150,
                     ),
-                    child: SizedBox(
-                      width: 60.0,
-                      height: 60.0,
-                      child: W3MListAvatar(
-                        imageUrl: _service?.session?.self?.metadata.icons.first,
-                        borderRadius: 30.0,
-                      ),
-                    ),
+                    child: selfIcon.isEmpty
+                        ? W3MAccountAvatar(
+                            service: _service!,
+                            size: 60.0,
+                          )
+                        : SizedBox(
+                            width: 60.0,
+                            height: 60.0,
+                            child: W3MListAvatar(
+                              imageUrl: selfIcon,
+                              borderRadius: 30.0,
+                            ),
+                          ),
                   ),
                 ),
               ],

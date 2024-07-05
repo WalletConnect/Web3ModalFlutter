@@ -115,7 +115,15 @@ class SIWESampleWebService {
         headers: _headers,
       );
       debugPrint('[SIWESERVICE] signOut() => ${response.body}');
-      return jsonDecode(response.body) as Map<String, dynamic>;
+      final result = jsonDecode(response.body) as Map<String, dynamic>;
+      _headers = {
+        ...coreUtils.instance.getAPIHeaders(
+          DartDefines.appKitProjectId,
+        ),
+        'Content-Type': 'application/json',
+      };
+      await _persistHeaders();
+      return result;
     } catch (error) {
       debugPrint('[SIWESERVICE] ⛔️ signOut() => ${error.toString()}');
       rethrow;
