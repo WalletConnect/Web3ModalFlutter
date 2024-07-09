@@ -722,13 +722,6 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   @override
-  String formatMessage(SIWECreateMessageArgs params) {
-    return siweService.instance!.formatMessage(
-      params,
-    );
-  }
-
-  @override
   Future<void> buildConnectionUri() async {
     if (!_isConnected) {
       try {
@@ -1002,6 +995,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     List parameters = const [],
   }) async {
     try {
+      // TODO use blockchain-api if possible.
       return await _web3App.requestReadContract(
         deployedContract: deployedContract,
         functionName: functionName,

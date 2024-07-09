@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
           } catch (error) {
             debugPrint('[SIWEConfig] getNonce error: $error');
             // Fallback patch for testing purposes in case SIWE backend has issues
-            return AuthUtils.generateNonce();
+            return AuthSignature.generateNonce();
           }
         },
         getMessageParams: () async {
@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // Create SIWE message to be signed.
           // You can use our provided formatMessage() method of implement your own
           debugPrint('[SIWEConfig] createMessage()');
-          return _w3mService.formatMessage(args);
+          return AuthSignature.formatMessage(args);
         },
         verifyMessage: (SIWEVerifyMessageArgs args) async {
           // Implement your verifyMessage to authenticate the user after it.

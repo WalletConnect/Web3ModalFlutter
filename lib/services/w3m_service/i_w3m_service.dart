@@ -111,8 +111,6 @@ abstract class IW3MService with ChangeNotifier {
 
   Future<void> loadAccountData();
 
-  String formatMessage(SIWECreateMessageArgs params);
-
   /// Disconnects the session and pairing, if any.
   /// If there is no session, this does nothing.
   Future<void> disconnect({bool disconnectAllSessions = true});

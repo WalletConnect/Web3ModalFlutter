@@ -7,6 +7,7 @@ import 'package:web3modal_flutter/services/coinbase_service/i_coinbase_service.d
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_data.dart';
 import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_events.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:coinbase_wallet_sdk/currency.dart';
@@ -122,12 +123,24 @@ class CoinbaseService implements ICoinbaseService {
   }
 
   @override
-  Future<String> get ownPublicKey async =>
-      await CoinbaseWalletSDK.shared.ownPublicKey();
+  Future<String> get ownPublicKey async {
+    try {
+      return await CoinbaseWalletSDK.shared.ownPublicKey();
+    } catch (e) {
+      loggerService.instance.e('[$runtimeType] ownPublicKey $e');
+      return '';
+    }
+  }
 
   @override
-  Future<String> get peerPublicKey async =>
-      await CoinbaseWalletSDK.shared.peerPublicKey();
+  Future<String> get peerPublicKey async {
+    try {
+      return await CoinbaseWalletSDK.shared.peerPublicKey();
+    } catch (e) {
+      loggerService.instance.e('[$runtimeType] peerPublicKey $e');
+      return '';
+    }
+  }
 
   @override
   Future<void> getAccount() async {
