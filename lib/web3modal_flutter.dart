@@ -2,7 +2,8 @@
 library web3modal_flutter;
 
 /// libraries
-export 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
+export 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart'
+    hide AuthSignature;
 
 /// Models
 export 'models/w3m_chain_info.dart';
@@ -12,6 +13,7 @@ export 'services/siwe_service/models/w3m_siwe.dart';
 /// Utils
 export 'utils/w3m_chains_presets.dart';
 export 'utils/util.dart';
+export 'services/siwe_service/utils/siwe_utils.dart';
 
 /// Theme
 export 'theme/w3m_theme.dart';

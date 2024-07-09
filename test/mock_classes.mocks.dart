@@ -695,21 +695,6 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
         returnValueForMissingStub: _i14.Future<void>.value(),
       ) as _i14.Future<void>);
   @override
-  String formatMessage(_i3.SIWECreateMessageArgs? params) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #formatMessage,
-          [params],
-        ),
-        returnValue: _i13.dummyValue<String>(
-          this,
-          Invocation.method(
-            #formatMessage,
-            [params],
-          ),
-        ),
-      ) as String);
-  @override
   _i14.Future<void> buildConnectionUri() => (super.noSuchMethod(
         Invocation.method(
           #buildConnectionUri,
@@ -1360,6 +1345,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
     required _i3.DeployedContract? deployedContract,
     required String? functionName,
     required String? rpcUrl,
+    _i3.EthereumAddress? sender,
     List<dynamic>? parameters = const [],
   }) =>
       (super.noSuchMethod(
@@ -1370,6 +1356,7 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
             #deployedContract: deployedContract,
             #functionName: functionName,
             #rpcUrl: rpcUrl,
+            #sender: sender,
             #parameters: parameters,
           },
         ),
