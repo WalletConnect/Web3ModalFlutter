@@ -79,12 +79,14 @@ class CoinbaseService implements ICoinbaseService {
   Event<CoinbaseResponseEvent> get onCoinbaseResponse =>
       Event<CoinbaseResponseEvent>();
 
-  final IWeb3App _web3app;
+  late final PairingMetadata _metadata;
   late bool _enabled;
   late W3MWalletInfo _walletData;
 
-  CoinbaseService({required IWeb3App web3app, bool enabled = false})
-      : _web3app = web3app,
+  CoinbaseService({
+    required PairingMetadata metadata,
+    bool enabled = false,
+  })  : _metadata = metadata,
         _enabled = enabled;
 
   @override
@@ -97,8 +99,8 @@ class CoinbaseService implements ICoinbaseService {
     final imageId = defaultWalletData.listing.imageId;
     _iconImage = explorerService.instance.getWalletImageUrl(imageId);
 
-    final universal = _web3app.metadata.redirect?.universal ?? '';
-    final nativeLink = _web3app.metadata.redirect?.native ?? '';
+    final universal = _metadata.redirect?.universal ?? '';
+    final nativeLink = _metadata.redirect?.native ?? '';
     final walletLink = _walletData.listing.mobileLink ?? '';
     if ((universal.isNotEmpty && nativeLink.isNotEmpty) ||
         walletLink.isNotEmpty) {
@@ -162,7 +164,7 @@ class CoinbaseService implements ICoinbaseService {
           publicKey: await peerPublicKey,
         ),
         self: ConnectionMetadata(
-          metadata: _web3app.metadata,
+          metadata: _metadata,
           publicKey: await ownPublicKey,
         ),
       );
@@ -209,7 +211,7 @@ class CoinbaseService implements ICoinbaseService {
               publicKey: await peerPublicKey,
             ),
             self: ConnectionMetadata(
-              metadata: _web3app.metadata,
+              metadata: _metadata,
               publicKey: await ownPublicKey,
             ),
           );

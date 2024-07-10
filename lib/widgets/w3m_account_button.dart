@@ -83,7 +83,7 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
   void _approveSign(MagicRequestEvent? args) async {
     if (args?.request != null) {
       if (widget.service.isOpen) {
-        widgetStack.instance.popAllAndPush(ApproveTransactionPage());
+        widgetStack.instance.push(ApproveTransactionPage());
       } else {
         if (widget.service.modalContext != null) {
           widget.service.openModalView(ApproveTransactionPage());

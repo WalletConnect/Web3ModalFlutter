@@ -110,11 +110,12 @@ class _ApproveSIWEPageState extends State<ApproveSIWEPage> {
     debugPrint('[$runtimeType] _handleError $error');
     String chainId = _service!.selectedChain?.chainId ?? '1';
     analyticsService.instance.sendEvent(SiweAuthError(network: chainId));
-    setState(() => _waitingSign = false);
     toastUtils.instance.show(ToastMessage(
       type: ToastType.error,
       text: error ?? 'Something went wrong.',
     ));
+    if (!mounted) return;
+    setState(() => _waitingSign = false);
   }
 
   void _cancelSIWE() async {

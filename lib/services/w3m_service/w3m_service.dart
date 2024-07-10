@@ -26,7 +26,6 @@ import 'package:web3modal_flutter/services/coinbase_service/models/coinbase_even
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
-import 'package:web3modal_flutter/services/ledger_service/ledger_service_singleton.dart';
 import 'package:web3modal_flutter/services/logger_service/i_logger_service.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
@@ -178,7 +177,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       });
 
     explorerService.instance = ExplorerService(
-      projectId: _projectId,
+      core: _web3App.core,
       referer: _web3App.metadata.name.replaceAll(' ', ''),
       featuredWalletIds: featuredWalletIds,
       includedWalletIds: includedWalletIds,
@@ -186,23 +185,21 @@ class W3MService with ChangeNotifier implements IW3MService {
     );
 
     blockchainService.instance = BlockChainService(
-      web3app: _web3App,
-      projectId: _projectId,
+      core: _web3App.core,
     );
-
-    siweService.instance = SiweService(
-      web3app: _web3App,
-      siweConfig: siweConfig,
-    );
-
     magicService.instance = MagicService(
       web3app: _web3App,
       enabled: enableEmail,
     );
 
     coinbaseService.instance = CoinbaseService(
-      web3app: _web3App,
+      metadata: _web3App.metadata,
       enabled: _initializeCoinbaseSDK,
+    );
+
+    siweService.instance = SiweService(
+      web3app: _web3App,
+      siweConfig: siweConfig,
     );
   }
 
@@ -230,11 +227,12 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     _registerListeners();
 
+    await _web3App.init();
     await storageService.instance.init();
     await networkService.instance.init();
     await explorerService.instance.init();
     await coinbaseService.instance.init();
-    await _web3App.init();
+    await blockchainService.instance.init();
 
     _currentSession = await _getStoredSession();
     final isMagic = _currentSession?.sessionService.isMagic == true;
@@ -551,8 +549,8 @@ class W3MService with ChangeNotifier implements IW3MService {
 
     final isBottomSheet = platformUtils.instance.isBottomSheet();
     final theme = Web3ModalTheme.maybeOf(_context!);
-    final themeData = theme?.themeData ?? const Web3ModalThemeData();
     await magicService.instance.syncTheme(theme);
+    final themeData = theme?.themeData ?? const Web3ModalThemeData();
 
     Widget? showWidget = startWidget;
     if (_isConnected && showWidget == null) {
@@ -895,6 +893,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       }
     }
     if (_currentSession?.sessionService.isMagic == true) {
+      await Future.delayed(Duration(milliseconds: 300));
       final disconnected = await magicService.instance.disconnect();
       if (!disconnected) {
         _status = W3MServiceStatus.initialized;
@@ -1224,18 +1223,18 @@ class W3MService with ChangeNotifier implements IW3MService {
     }
 
     // Get the chain balance.
-    _chainBalance = await ledgerService.instance.getBalance(
-      _currentSelectedChain!.rpcUrl,
-      _currentSession!.address!,
+    _chainBalance = await blockchainService.instance.getRpcRequest(
+      method: 'eth_getBalance',
+      params: [_currentSession!.address!, 'latest'],
+      chain: _currentSelectedChain!.namespace,
     );
-    balanceNotifier.value =
-        '$chainBalance ${_currentSelectedChain?.tokenName ?? ''}';
+    final tokenName = _currentSelectedChain?.tokenName ?? '';
+    balanceNotifier.value = '$_chainBalance $tokenName';
 
     // Get the avatar, each chainId is just a number in string form.
     try {
-      final blockchainId = await blockchainService.instance!.getIdentity(
+      final blockchainId = await blockchainService.instance.getIdentity(
         _currentSession!.address!,
-        int.parse(_currentSelectedChain!.chainId),
       );
       _avatarUrl = blockchainId.avatar;
       _logger.i('[$runtimeType] loadAccountData');
@@ -1489,6 +1488,8 @@ extension _W3MMagicExtension on W3MService {
           onModalUpdate.broadcast(ModalConnect(_currentSession!));
         } else {
           _disconnectOnClose = true;
+          final theme = Web3ModalTheme.maybeOf(_context!);
+          await magicService.instance.syncTheme(theme);
           widgetStack.instance.push(ApproveSIWEPage(
             onSiweFinish: _oneSIWEFinish,
           ));
@@ -1545,7 +1546,11 @@ extension _W3MMagicExtension on W3MService {
   void _onMagicRequest(MagicRequestEvent? args) {
     _logger.d('[$runtimeType] _onMagicRequest ${args?.toString()}');
     if (args?.result != null) {
-      closeModal();
+      if (args!.result is JsonRpcError && widgetStack.instance.canPop()) {
+        widgetStack.instance.pop();
+      } else {
+        closeModal();
+      }
     }
   }
 

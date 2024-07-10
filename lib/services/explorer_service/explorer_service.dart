@@ -31,9 +31,10 @@ class ExplorerService implements IExplorerService {
   final String _referer;
 
   late RequestParams _requestParams;
+  late final ICore _core;
 
   @override
-  final String projectId;
+  String get projectId => _core.projectId;
 
   @override
   ValueNotifier<bool> initialized = ValueNotifier(false);
@@ -91,12 +92,13 @@ class ExplorerService implements IExplorerService {
   bool get canPaginate => _canPaginate;
 
   ExplorerService({
-    required this.projectId,
+    required ICore core,
     required String referer,
     this.featuredWalletIds,
     this.includedWalletIds,
     this.excludedWalletIds,
-  })  : _referer = referer,
+  })  : _core = core,
+        _referer = referer,
         _client = http.Client();
 
   @override
@@ -197,7 +199,10 @@ class ExplorerService implements IExplorerService {
   }
 
   Future<List<NativeAppData>> _fetchNativeAppData() async {
-    final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
+    final headers = coreUtils.instance.getAPIHeaders(
+      _core.projectId,
+      _referer,
+    );
     final uri = Platform.isIOS
         ? Uri.parse('${UrlConstants.apiService}/getIosData')
         : Uri.parse('${UrlConstants.apiService}/getAndroidData');
@@ -278,7 +283,10 @@ class ExplorerService implements IExplorerService {
     bool updateCount = true,
   }) async {
     final queryParams = params?.toJson() ?? {};
-    final headers = coreUtils.instance.getAPIHeaders(projectId, _referer);
+    final headers = coreUtils.instance.getAPIHeaders(
+      _core.projectId,
+      _referer,
+    );
     final uri = Uri.parse('${UrlConstants.apiService}/getWallets').replace(
       queryParameters: queryParams,
     );

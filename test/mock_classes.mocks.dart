@@ -28,7 +28,7 @@ import 'package:walletconnect_flutter_v2/apis/core/store/i_store.dart' as _i6;
 import 'package:walletconnect_flutter_v2/apis/sign_api/i_sessions.dart' as _i5;
 import 'package:web3modal_flutter/models/grid_item.dart' as _i29;
 import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart'
-    as _i34;
+    as _i33;
 import 'package:web3modal_flutter/services/blockchain_service/blockchain_service.dart'
     as _i30;
 import 'package:web3modal_flutter/services/blockchain_service/models/blockchain_identity.dart'
@@ -37,12 +37,10 @@ import 'package:web3modal_flutter/services/explorer_service/explorer_service.dar
     as _i12;
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart'
     as _i19;
-import 'package:web3modal_flutter/services/ledger_service/ledger_service.dart'
-    as _i31;
 import 'package:web3modal_flutter/services/network_service/network_service.dart'
     as _i28;
 import 'package:web3modal_flutter/services/storage_service/storage_service.dart'
-    as _i32;
+    as _i31;
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart'
     as _i15;
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart' as _i20;
@@ -52,7 +50,7 @@ import 'package:web3modal_flutter/utils/toast/toast_utils.dart' as _i22;
 import 'package:web3modal_flutter/utils/url/url_utils.dart' as _i17;
 import 'package:web3modal_flutter/web3modal_flutter.dart' as _i3;
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack.dart'
-    as _i33;
+    as _i32;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -291,14 +289,6 @@ class MockExplorerService extends _i1.Mock implements _i12.ExplorerService {
   }
 
   @override
-  String get projectId => (super.noSuchMethod(
-        Invocation.getter(#projectId),
-        returnValue: _i13.dummyValue<String>(
-          this,
-          Invocation.getter(#projectId),
-        ),
-      ) as String);
-  @override
   _i2.ValueNotifier<bool> get initialized => (super.noSuchMethod(
         Invocation.getter(#initialized),
         returnValue: _FakeValueNotifier_0<bool>(
@@ -389,6 +379,14 @@ class MockExplorerService extends _i1.Mock implements _i12.ExplorerService {
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  String get projectId => (super.noSuchMethod(
+        Invocation.getter(#projectId),
+        returnValue: _i13.dummyValue<String>(
+          this,
+          Invocation.getter(#projectId),
+        ),
+      ) as String);
   @override
   String get searchValue => (super.noSuchMethod(
         Invocation.getter(#searchValue),
@@ -2358,117 +2356,54 @@ class MockBlockChainService extends _i1.Mock implements _i30.BlockChainService {
   }
 
   @override
-  String get projectId => (super.noSuchMethod(
-        Invocation.getter(#projectId),
-        returnValue: _i13.dummyValue<String>(
-          this,
-          Invocation.getter(#projectId),
+  _i14.Future<void> init() => (super.noSuchMethod(
+        Invocation.method(
+          #init,
+          [],
         ),
-      ) as String);
+        returnValue: _i14.Future<void>.value(),
+        returnValueForMissingStub: _i14.Future<void>.value(),
+      ) as _i14.Future<void>);
   @override
-  _i14.Future<_i10.BlockchainIdentity> getIdentity(
-    String? address,
-    int? chainId,
-  ) =>
+  _i14.Future<_i10.BlockchainIdentity> getIdentity(String? address) =>
       (super.noSuchMethod(
         Invocation.method(
           #getIdentity,
-          [
-            address,
-            chainId,
-          ],
+          [address],
         ),
         returnValue: _i14.Future<_i10.BlockchainIdentity>.value(
             _FakeBlockchainIdentity_18(
           this,
           Invocation.method(
             #getIdentity,
-            [
-              address,
-              chainId,
-            ],
+            [address],
           ),
         )),
       ) as _i14.Future<_i10.BlockchainIdentity>);
-}
-
-/// A class which mocks [LedgerService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockLedgerService extends _i1.Mock implements _i31.LedgerService {
-  MockLedgerService() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
-  _i14.Future<double?> getBalance(
-    String? rpcUrl,
-    String? address,
-  ) =>
+  _i14.Future<dynamic> getRpcRequest({
+    required String? method,
+    required List<dynamic>? params,
+    required String? chain,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getBalance,
-          [
-            rpcUrl,
-            address,
-          ],
+          #getRpcRequest,
+          [],
+          {
+            #method: method,
+            #params: params,
+            #chain: chain,
+          },
         ),
-        returnValue: _i14.Future<double?>.value(),
-      ) as _i14.Future<double?>);
-  @override
-  _i14.Future<String> fetchEnsName(
-    String? rpcUrl,
-    String? address,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchEnsName,
-          [
-            rpcUrl,
-            address,
-          ],
-        ),
-        returnValue: _i14.Future<String>.value(_i13.dummyValue<String>(
-          this,
-          Invocation.method(
-            #fetchEnsName,
-            [
-              rpcUrl,
-              address,
-            ],
-          ),
-        )),
-      ) as _i14.Future<String>);
-  @override
-  _i14.Future<String> fetchEnsAvatar(
-    String? rpcUrl,
-    String? address,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fetchEnsAvatar,
-          [
-            rpcUrl,
-            address,
-          ],
-        ),
-        returnValue: _i14.Future<String>.value(_i13.dummyValue<String>(
-          this,
-          Invocation.method(
-            #fetchEnsAvatar,
-            [
-              rpcUrl,
-              address,
-            ],
-          ),
-        )),
-      ) as _i14.Future<String>);
+        returnValue: _i14.Future<dynamic>.value(),
+      ) as _i14.Future<dynamic>);
 }
 
 /// A class which mocks [StorageService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockStorageService extends _i1.Mock implements _i32.StorageService {
+class MockStorageService extends _i1.Mock implements _i31.StorageService {
   MockStorageService() {
     _i1.throwOnMissingStub(this);
   }
@@ -2529,7 +2464,7 @@ class MockStorageService extends _i1.Mock implements _i32.StorageService {
 /// A class which mocks [WidgetStack].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWidgetStack extends _i1.Mock implements _i33.WidgetStack {
+class MockWidgetStack extends _i1.Mock implements _i32.WidgetStack {
   MockWidgetStack() {
     _i1.throwOnMissingStub(this);
   }
@@ -2565,7 +2500,7 @@ class MockWidgetStack extends _i1.Mock implements _i33.WidgetStack {
   void push(
     _i11.Widget? widget, {
     bool? renderScreen = false,
-    _i34.AnalyticsEvent? event,
+    _i33.AnalyticsEvent? event,
   }) =>
       super.noSuchMethod(
         Invocation.method(
