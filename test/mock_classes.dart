@@ -4,7 +4,6 @@ import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'package:web3modal_flutter/services/blockchain_service/blockchain_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
-import 'package:web3modal_flutter/services/ledger_service/ledger_service.dart';
 import 'package:web3modal_flutter/services/network_service/network_service.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils.dart';
@@ -27,7 +26,6 @@ import 'mock_classes.mocks.dart';
   http.Client,
   NetworkService,
   BlockChainService,
-  LedgerService,
   StorageService,
   WidgetStack,
 ])

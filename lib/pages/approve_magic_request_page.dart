@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/services/magic_service/magic_service_singleton.dart';
+import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 
 class ApproveTransactionPage extends StatefulWidget {
@@ -22,7 +23,12 @@ class _ApproveTransactionPageState extends State<ApproveTransactionPage> {
       noClose: true,
       safeAreaLeft: true,
       safeAreaRight: true,
-      body: magicService.instance.webview,
+      body: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: ResponsiveData.maxHeightOf(context),
+        ),
+        child: magicService.instance.webview,
+      ),
     );
   }
 }

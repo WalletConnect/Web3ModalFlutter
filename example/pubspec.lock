@@ -213,10 +213,10 @@ packages:
     dependency: transitive
     description:
       name: coinbase_wallet_sdk
-      sha256: e18bd5351939aacda75c0b525aa9167b945f1206040ec254f971afe96dfd98b0
+      sha256: "4a309b22d1d8647ab4381ac075921dba211ac642f58b2ca06c0c1fb8f58973da"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.8"
+    version: "1.0.9"
   collection:
     dependency: transitive
     description:
@@ -1131,7 +1131,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.3.0-beta05"
+    version: "3.3.0-beta06"
   web_socket_channel:
     dependency: transitive
     description:
