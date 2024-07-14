@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:universal_io/io.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 
@@ -53,5 +54,11 @@ class PlatformUtils extends IPlatformUtils {
   @override
   bool isMobileWidth(double width) {
     return width <= 500.0;
+  }
+
+  @override
+  bool isTablet(BuildContext context) {
+    final mqData = MediaQueryData.fromView(View.of(context));
+    return mqData.size.shortestSide < 600 ? false : true;
   }
 }

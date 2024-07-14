@@ -1,12 +1,16 @@
-name: Build Android App
+name: Build Android App Release
 
 on:
   workflow_dispatch:
-  release:
-    types: [ published ]
+  push:
+    # branches:
+    #   - 'release_v*'
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
 
 jobs:
   build_with_signing:
+    name: Build Android App Release
     runs-on: macos-latest
     
     steps:
@@ -61,6 +65,9 @@ jobs:
       working-directory: example
       env:
         PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        APPKIT_AUTH: ${{ secrets.APPKIT_AUTH }}
+        APPKIT_PROJECT_ID: ${{ secrets.APPKIT_PROJECT_ID }}
+        AUTH_SERVICE_URL: ${{ secrets.AUTH_SERVICE_URL }}
       run: |
         # Get app version from file
         GRADLE_FILE=android/gradle.properties
@@ -78,7 +85,7 @@ jobs:
         NEXT_BUILD=$(grep 'versionCode' $GRADLE_FILE | cut -d'=' -f2)
 
         # Build Android app with flutter
-        flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --release
+        flutter build apk --build-name $VERSION --build-number $NEXT_BUILD --dart-define="PROJECT_ID=$PROJECT_ID" --dart-define="APPKIT_AUTH=$APPKIT_AUTH" --dart-define="APPKIT_PROJECT_ID=$APPKIT_PROJECT_ID" --dart-define="AUTH_SERVICE_URL=$AUTH_SERVICE_URL" --release --flavor stable
         
     # Setup Node
     - name: Setup Node
@@ -94,7 +101,7 @@ jobs:
       env:
         APP_ID: ${{ secrets.ANDROID_APP_ID }}
       run: |
-        firebase appdistribution:distribute app-release.apk --app $APP_ID --release-notes "Web3Modal Flutter beta testing" --groups flutter-team
+        firebase appdistribution:distribute app-stable-release.apk --app $APP_ID --release-notes "Web3Modal Flutter stable release" --groups "flutter-team, javascript-team, kotlin-team"
     - name: Notify Channel
       uses: slackapi/slack-github-action@v1.24.0
       env:
@@ -103,7 +110,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"New Android Example app for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
+            "text":"🤖 New *Android* build *${{ github.ref_name }}* stable version for *Web3Modal Flutter* was just deployed. Test at https://appdistribution.firebase.dev/i/a8efff56e3f0fdb0"
           }
     
     # Clean up Flutter envs

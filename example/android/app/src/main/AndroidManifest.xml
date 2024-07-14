@@ -5,6 +5,7 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="https" />
         </intent>
+        <package android:name="org.toshi"/>
         <package android:name="io.metamask"/>
         <package android:name="com.wallet.crypto.trustapp"/>
         <package android:name="io.gnosis.safe"/>
@@ -47,17 +48,22 @@
         <package android:name="com.ripio.android"/>
         <package android:name="kh.com.sabay.sabaywallet"/>
         <package android:name="com.tokoin.wallet"/>
+        <package android:name="com.walletconnect.flutterwallet"/>
+        <package android:name="com.walletconnect.web3wallet.rnsample"/>
+        <package android:name="com.walletconnect.sample.wallet"/>
+        <package android:name="com.walletconnect.sample.wallet.internal"/>
     </queries>
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="Web3Modal Flutter"
+        android:label="AppKit Flutter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.web3modal.flutterExample.activity"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
@@ -78,9 +84,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
-                <data android:scheme="flutterdapp" />
+                <data android:scheme="web3modalflutter" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
@@ -38,13 +37,21 @@ abstract class IExplorerService {
   String get searchValue;
 
   /// update the recently used position to the top list
-  Future<void> storeConnectedWalletData(W3MWalletInfo? walletInfo);
+  Future<void> storeConnectedWallet(W3MWalletInfo? walletInfo);
 
+  Future<void> storeRecentWalletId(String? walletId);
+
+  /// Get connected wallet data from local storage
+  W3MWalletInfo? getConnectedWallet();
+
+  /// Gets the WalletRedirect object from a wallet info data
+  WalletRedirect? getWalletRedirect(W3MWalletInfo? walletInfo);
+
+  /// Given an imageId it return the wallet app icon from our services
   String getWalletImageUrl(String imageId);
 
+  /// Given an imageId it return the chain icon from our services
   String getAssetImageUrl(String imageId);
 
-  WalletRedirect? getWalletRedirect(Listing listing);
-
-  Future<WalletRedirect?> tryWalletRedirectByName(String? name);
+  Future<W3MWalletInfo?> getCoinbaseWalletObject();
 }

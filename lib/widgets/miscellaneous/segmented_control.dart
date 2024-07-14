@@ -26,6 +26,7 @@ class _SegmentedControlState extends State<SegmentedControl> {
   Widget build(BuildContext context) {
     final themeData = Web3ModalTheme.getDataOf(context);
     final themeColors = Web3ModalTheme.colorsOf(context);
+    final radiuses = Web3ModalTheme.radiusesOf(context);
     return SizedBox(
       height: 32.0,
       child: CustomSlidingSegmentedControl<SegmentOption>(
@@ -87,11 +88,15 @@ class _SegmentedControlState extends State<SegmentedControl> {
         },
         decoration: BoxDecoration(
           color: themeColors.grayGlass002,
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: radiuses.isSquare()
+              ? BorderRadius.all(Radius.zero)
+              : BorderRadius.circular(16.0),
         ),
         thumbDecoration: BoxDecoration(
           color: themeColors.grayGlass002,
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: radiuses.isSquare()
+              ? BorderRadius.all(Radius.zero)
+              : BorderRadius.circular(16.0),
           border: Border.all(
             color: themeColors.grayGlass002,
             width: 1,

@@ -3,9 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
-import 'package:web3modal_flutter/utils/util.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
-import 'package:web3modal_flutter/widgets/w3m_connect_wallet_button.dart';
 
 import '../mock_classes.dart';
 
@@ -19,12 +18,10 @@ void main() {
 
     setUp(() async {
       service = W3MServiceSpy();
-      when(service.initError).thenReturn(null);
       when(service.isConnected).thenReturn(false);
       when(service.isOpen).thenReturn(false);
-      when(service.address).thenReturn(address);
-      when(service.chainBalance).thenReturn(null);
-      when(service.tokenImageUrl).thenReturn(null);
+      when(service.session?.address).thenReturn(address);
+      when(service.chainBalance).thenReturn('');
       when(service.selectedChain).thenReturn(null);
       when(service.avatarUrl).thenReturn(null);
     });
@@ -103,7 +100,7 @@ void main() {
         findsOneWidget,
       );
 
-      when(service.chainBalance).thenReturn(0.0);
+      when(service.chainBalance).thenReturn('0.0');
       service.notifyListeners();
       await tester.pumpAndSettle();
 
@@ -115,14 +112,14 @@ void main() {
       // Opens modal
       await tester.tap(
         find.byKey(
-          Web3ModalKeyConstants.w3mAccountButton,
+          KeyConstants.w3mAccountButton,
         ),
       );
 
       await tester.pump();
 
       verify(
-        service.openModal(anyNamed('context'), anyNamed('startWidget')),
+        service.openModal(anyNamed('context')),
       ).called(1);
     });
   });

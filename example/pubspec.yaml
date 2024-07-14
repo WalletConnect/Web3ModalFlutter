@@ -3,7 +3,7 @@ description: A dApp showing how to use WalletConnect v2 with Flutter
 
 publish_to: "none"
 
-version: 3.0.20
+version: 3.3.0
 
 environment:
   sdk: ">=3.0.1 <4.0.0"
@@ -11,18 +11,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.2
+  fl_toast: ^3.1.0
+  shared_preferences: ^2.2.0
+  intl: ^0.19.0
   web3modal_flutter:
     path: ../
-  walletconnect_flutter_v2: ^2.1.8
-  cupertino_icons: ^1.0.2
-  get_it: ^7.6.0
-  logger: ^2.0.2+1
-  fl_toast: ^3.1.0
-  smooth_page_indicator: ^1.1.0
-  web3dart: ^2.6.1
-  universal_io: ^2.2.2
-  json_annotation: ^4.8.1
-  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:

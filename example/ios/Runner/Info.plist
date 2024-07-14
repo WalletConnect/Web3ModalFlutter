@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Web3Modal Flutter</string>
+	<string>AppKit Flutter</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -19,12 +19,14 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.0.20</string>
+	<string>3.3.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>com.web3modal.flutterExample</string>
 			<key>CFBundleURLSchemes</key>
@@ -34,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>20</string>
+	<string>67</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
@@ -64,7 +66,7 @@
 		<string>rainbow</string>
 		<string>obvious</string>
 		<string>robinhood-wallet</string>
-		<string>kriptomatapp</string>
+		<string>cbwallet</string>
 		<string>okto</string>
 		<string>bitkeep</string>
 		<string>hyperPay</string>
@@ -75,20 +77,20 @@
 		<string>oasys-wallet</string>
 		<string>coinstats</string>
 		<string>ledgerlive</string>
-		<string>zerion</string>
 		<string>safe</string>
 		<string>okex</string>
 		<string>trust</string>
 		<string>thorwallet</string>
-		<string>leapcosmos</string>
-		<string>everspace</string>
+		<string>krakenwallet</string>
 		<string>cosmostation</string>
 		<string>coinwallet</string>
 		<string>mewwallet</string>
 		<string>metamask</string>
 		<string>avacus</string>
 		<string>argent</string>
-		<string>bybitapp</string>
+		<string>walletapp</string>
+		<string>wcflutterwallet</string>
+		<string>rn-web3wallet</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

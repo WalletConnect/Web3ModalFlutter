@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:web3modal_flutter/pages/wallets_list_short_page.dart';
+import 'package:web3modal_flutter/services/analytics_service/analytics_service_singleton.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/i_widget_stack.dart';
 //
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
@@ -16,7 +18,14 @@ class WidgetStack extends IWidgetStack {
   Widget getCurrent() => _stack.last;
 
   @override
-  void push(Widget widget, {bool renderScreen = false}) {
+  void push(
+    Widget widget, {
+    bool renderScreen = false,
+    AnalyticsEvent? event,
+  }) {
+    if (event != null) {
+      analyticsService.instance.sendEvent(event);
+    }
     onRenderScreen.value = renderScreen;
     _stack.add(widget);
     notifyListeners();
@@ -55,6 +64,12 @@ class WidgetStack extends IWidgetStack {
   }
 
   @override
+  void popAllAndPush(Widget widget, {bool renderScreen = false}) {
+    _stack.clear();
+    push(widget, renderScreen: renderScreen);
+  }
+
+  @override
   bool containsKey(Key key) {
     return _stack.any((element) => element.key == key);
   }
@@ -76,7 +91,7 @@ class WidgetStack extends IWidgetStack {
     } else if (pType == PlatformType.desktop || pType == PlatformType.web) {
       // add(const QRCodeAndWalletListPage());
       push(const WalletsListShortPage(), renderScreen: true);
-      // TODO fix non mobile page
+      // TODO [WidgetStack] fix non mobile page
     }
   }
 }

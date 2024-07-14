@@ -90,7 +90,11 @@ class ResponsiveData extends InheritedWidget {
   }
 
   static double paddingBottomOf(BuildContext context) {
-    return MediaQuery.of(context).padding.bottom + kPadding6;
+    return max(MediaQuery.of(context).viewInsets.bottom, kPadding6);
+  }
+
+  static bool isKeyboardShown(BuildContext context) {
+    return MediaQuery.of(context).viewInsets.bottom > 0;
   }
 
   static bool isPortrait(BuildContext context) {

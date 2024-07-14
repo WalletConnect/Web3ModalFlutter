@@ -45,9 +45,9 @@ class Web3ModalColors with _$Web3ModalColors {
   }) = _Web3ModalColors;
 
   static const darkMode = Web3ModalColors(
-    accent100: Color(0xFF47A1FF),
-    accent090: Color(0xFF59AAFF),
-    accent080: Color(0xFF6CB4FF),
+    accent100: Color(0xFF667DFF),
+    accent090: Color(0xFF7388FD),
+    accent080: Color(0xFF7F92FA),
     //
     grayGlass100: Color(0xFFFFFFFF),
     //
@@ -61,7 +61,7 @@ class Web3ModalColors with _$Web3ModalColors {
     foreground275: Color(0xFF788181),
     foreground300: Color(0xFF6E7777),
     //
-    background100: Color(0xFF141414),
+    background100: Color(0xFF121313),
     background125: Color(0xFF191A1A),
     background150: Color(0xFF1E1F1F),
     background175: Color(0xFF222525),
@@ -84,9 +84,9 @@ class Web3ModalColors with _$Web3ModalColors {
   );
 
   static const lightMode = Web3ModalColors(
-    accent100: Color(0xFF3396FF),
-    accent090: Color(0xFF2D7DD2),
-    accent080: Color(0xFF2978CC),
+    accent100: Color(0xFF5570FF),
+    accent090: Color(0xFF4F67E7),
+    accent080: Color(0xFF485ED0),
     //
     grayGlass100: Color(0xFF000000),
     //
@@ -102,8 +102,8 @@ class Web3ModalColors with _$Web3ModalColors {
     //
     background100: Color(0xFFFFFFFF),
     background125: Color(0xFFFFFFFF),
-    background150: Color(0xFFF3F8F8),
-    background175: Color(0xFFEEF4F4),
+    background150: Color(0xFFF5FAFA),
+    background175: Color(0xFFF3F8F8),
     background200: Color(0xFFEAF1F1),
     background225: Color(0xFFE5EDED),
     background250: Color(0xFFE1E9E9),

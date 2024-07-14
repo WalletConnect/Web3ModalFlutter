@@ -1,3 +1,4 @@
+import 'package:web3modal_flutter/models/listing.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/api_response.dart';
 
@@ -155,8 +156,8 @@ final testSessionWalletSwap = SessionData(
       accounts: ['eip155:1:0x123'],
       methods: [
         'method1',
-        EthConstants.walletAddEthChain,
-        EthConstants.walletSwitchEthChain,
+        MethodsConstants.walletAddEthChain,
+        MethodsConstants.walletSwitchEthChain,
       ],
       events: [],
     ),

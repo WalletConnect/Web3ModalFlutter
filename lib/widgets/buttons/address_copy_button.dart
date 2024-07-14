@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:web3modal_flutter/theme/w3m_theme.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/text/w3m_address.dart';
 
@@ -19,7 +19,7 @@ class W3MAddressWithCopyButton extends StatelessWidget {
     final themeColors = Web3ModalTheme.colorsOf(context);
     return GestureDetector(
       onTap: () async {
-        await Clipboard.setData(ClipboardData(text: service.address!));
+        await Clipboard.setData(ClipboardData(text: service.session!.address!));
         toastUtils.instance.show(
           ToastMessage(type: ToastType.success, text: 'Address copied'),
         );

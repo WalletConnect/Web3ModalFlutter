@@ -1,4 +1,3 @@
-import 'package:event/event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -9,11 +8,9 @@ import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/pages/account_page.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
-import 'package:web3modal_flutter/utils/util.dart';
+import 'package:web3modal_flutter/web3modal_flutter.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
-
-import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/toast/toast_utils_singleton.dart';
@@ -73,9 +70,8 @@ void main() {
       when(service.wcUri).thenReturn('test');
       when(service.status).thenReturn(W3MServiceStatus.initialized);
       when(service.isOpen).thenReturn(true);
-      when(service.address).thenReturn(address);
-      when(service.chainBalance).thenReturn(null);
-      when(service.tokenImageUrl).thenReturn(null);
+      when(service.session?.address).thenReturn(address);
+      when(service.chainBalance).thenReturn('');
       when(service.selectedChain).thenReturn(null);
       when(service.avatarUrl).thenReturn(null);
     });
@@ -142,7 +138,7 @@ void main() {
           findsOneWidget,
         );
         await tester.tap(find.byKey(
-          Web3ModalKeyConstants.chainSwapButton,
+          KeyConstants.chainSwapButton,
         ));
 
         await tester.pump();
@@ -158,7 +154,7 @@ void main() {
           findsOneWidget,
         );
         await tester.tap(find.byKey(
-          Web3ModalKeyConstants.addressCopyButton,
+          KeyConstants.addressCopyButton,
         ));
 
         verify(mockToastUtils.show(any)).called(1);
@@ -172,7 +168,7 @@ void main() {
           findsOneWidget,
         );
         await tester.tap(find.byKey(
-          Web3ModalKeyConstants.disconnectButton,
+          KeyConstants.disconnectButton,
         ));
 
         verify(service.disconnect()).called(1);

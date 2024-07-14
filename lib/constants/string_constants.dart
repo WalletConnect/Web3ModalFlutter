@@ -26,15 +26,11 @@ class StringConstants {
 
   // Misc
   static const String noResults = 'No results found';
+  static const String namespace = 'eip155';
 
   // Storage
   static const String recentWalletId = 'w3m_recentWallet';
-  static const String walletData = 'w3m_walletData';
+  static const String connectedWalletData = 'w3m_walletData';
   static const String selectedChainId = 'w3m_selectedChainId';
-
-  // Urls
-  static const String exploreAllWallets =
-      'https://explorer.walletconnect.com/?type=wallet';
-  static const String learnMoreUrl =
-      'https://ethereum.org/en/developers/docs/networks/';
+  static const String w3mSession = 'w3m_session';
 }

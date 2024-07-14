@@ -55,37 +55,37 @@ class _Web3ModalState extends State<Web3Modal> {
   Widget build(BuildContext context) {
     final themeColors = Web3ModalTheme.colorsOf(context);
     final radiuses = Web3ModalTheme.radiusesOf(context);
-    final bool bottomSheet = platformUtils.instance.isBottomSheet();
+    final bottomSheet = platformUtils.instance.isBottomSheet();
+    final isTabletSize = platformUtils.instance.isTablet(context);
     final maxRadius = min(radiuses.radiusM, 36.0);
-    final BorderRadius innerContainerBorderRadius = bottomSheet
+    final innerContainerBorderRadius = bottomSheet && !isTabletSize
         ? BorderRadius.only(
             topLeft: Radius.circular(maxRadius),
             topRight: Radius.circular(maxRadius),
           )
-        : BorderRadius.only(
-            topLeft: Radius.circular(maxRadius),
-            topRight: Radius.circular(maxRadius),
-            bottomLeft: Radius.circular(maxRadius),
-            bottomRight: Radius.circular(maxRadius),
+        : BorderRadius.all(
+            Radius.circular(maxRadius),
           );
 
     return ResponsiveContainer(
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: innerContainerBorderRadius,
-          border: Border.all(
-            color: themeColors.grayGlass005,
-            width: 1,
-          ),
-          color: themeColors.background125,
-        ),
-        child: Stack(
-          children: [
-            TransitionContainer(
-              child: _isLoading ? const ContentLoading() : _currentScreen!,
+      child: ClipRRect(
+        borderRadius: innerContainerBorderRadius,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: themeColors.grayGlass005,
+              width: 1,
             ),
-            const WalletConnectModalToastManager(),
-          ],
+            color: themeColors.background125,
+          ),
+          child: Stack(
+            children: [
+              TransitionContainer(
+                child: _isLoading ? const ContentLoading() : _currentScreen!,
+              ),
+              const WalletConnectModalToastManager(),
+            ],
+          ),
         ),
       ),
     );

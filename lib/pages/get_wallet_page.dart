@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:web3modal_flutter/constants/key_constants.dart';
-import 'package:web3modal_flutter/constants/string_constants.dart';
+import 'package:web3modal_flutter/constants/url_constants.dart';
 import 'package:web3modal_flutter/models/grid_item.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -19,7 +19,7 @@ import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dar
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
 
 class GetWalletPage extends StatelessWidget {
-  const GetWalletPage() : super(key: Web3ModalKeyConstants.getAWalletPageKey);
+  const GetWalletPage() : super(key: KeyConstants.getAWalletPageKey);
 
   @override
   Widget build(BuildContext context) {
@@ -59,26 +59,28 @@ class GetWalletPage extends StatelessWidget {
                   );
                 }
               },
-              lastItem: AllWalletsItem(
-                title: 'Explore all',
-                onTap: () => urlUtils.instance.launchUrl(
-                  Uri.parse(StringConstants.exploreAllWallets),
-                  mode: LaunchMode.externalApplication,
-                ),
-                trailing: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: SvgPicture.asset(
-                    'assets/icons/arrow_top_right.svg',
-                    package: 'web3modal_flutter',
-                    colorFilter: ColorFilter.mode(
-                      themeColors.foreground200,
-                      BlendMode.srcIn,
+              bottomItems: [
+                AllWalletsItem(
+                  title: 'Explore all',
+                  onTap: () => urlUtils.instance.launchUrl(
+                    Uri.parse(UrlConstants.exploreWallets),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  trailing: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: SvgPicture.asset(
+                      'assets/icons/arrow_top_right.svg',
+                      package: 'web3modal_flutter',
+                      colorFilter: ColorFilter.mode(
+                        themeColors.foreground200,
+                        BlendMode.srcIn,
+                      ),
+                      width: 18.0,
+                      height: 18.0,
                     ),
-                    width: 18.0,
-                    height: 18.0,
                   ),
                 ),
-              ),
+              ],
             );
           },
         ),

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:walletconnect_flutter_v2/apis/core/relay_client/relay_client.dart';
 import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
-import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils.dart';
+import 'package:web3modal_flutter/services/blockchain_service/blockchain_service.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service.dart';
-import 'package:web3modal_flutter/services/ledger_service/ledger_service.dart';
 import 'package:web3modal_flutter/services/network_service/network_service.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils.dart';
@@ -26,8 +25,7 @@ import 'mock_classes.mocks.dart';
   RelayClient,
   http.Client,
   NetworkService,
-  BlockchainApiUtils,
-  LedgerService,
+  BlockChainService,
   StorageService,
   WidgetStack,
 ])

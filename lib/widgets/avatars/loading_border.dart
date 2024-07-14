@@ -12,12 +12,14 @@ class LoadingBorder extends StatefulWidget {
     this.strokeWidth = 4.0,
     this.borderRadius = 0.0,
     this.animate = true,
+    this.isNetwork = false,
   });
   final Widget child;
   final double padding;
   final double strokeWidth;
   final double borderRadius;
   final bool animate;
+  final bool isNetwork;
 
   @override
   State<LoadingBorder> createState() => _LoadingBorderState();
@@ -71,15 +73,24 @@ class _LoadingBorderState extends State<LoadingBorder>
           height: kSelectedWalletIconHeight + widget.padding,
           width: kSelectedWalletIconHeight + widget.padding,
           child: CustomPaint(
-            painter: _CircularBorderPainter(
-              borderRadius: widget.borderRadius,
-              frontColor: themeColors.accent100,
-              strokeWidth: widget.strokeWidth,
-            ),
+            painter: widget.isNetwork
+                ? _NetworkPainter(
+                    sides: 6,
+                    radius:
+                        (kSelectedWalletIconHeight / 2) + (widget.padding / 2),
+                    radians: 9.95,
+                    frontColor: themeColors.accent100,
+                    strokeWidth: widget.strokeWidth,
+                  )
+                : _CircularBorderPainter(
+                    borderRadius: widget.borderRadius,
+                    frontColor: themeColors.accent100,
+                    strokeWidth: widget.strokeWidth,
+                  ),
             child: RotationTransition(
               turns: _tweenAnimation,
               child: CustomPaint(
-                painter: _CircularBorderPainter2(
+                painter: _RotatingPainter(
                   show: widget.animate,
                   backColor: themeColors.background125,
                 ),
@@ -131,8 +142,52 @@ class _CircularBorderPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
-class _CircularBorderPainter2 extends CustomPainter {
-  const _CircularBorderPainter2({
+class _NetworkPainter extends CustomPainter {
+  const _NetworkPainter({
+    required this.sides,
+    required this.radius,
+    required this.radians,
+    required this.frontColor,
+    required this.strokeWidth,
+  });
+  final double sides;
+  final double radius;
+  final double radians;
+  final Color frontColor;
+  final double strokeWidth;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = frontColor
+      ..strokeWidth = strokeWidth
+      ..strokeJoin = StrokeJoin.round
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    var path = Path();
+    var angle = (math.pi * 2) / sides;
+    Offset center = Offset(size.width / 2, size.height / 2);
+    Offset startPoint = Offset(
+      radius * math.cos(radians),
+      radius * math.sin(radians),
+    );
+    path.moveTo(startPoint.dx + center.dx, startPoint.dy + center.dy);
+    for (int i = 1; i <= sides; i++) {
+      double x = radius * math.cos(radians + angle * i) + center.dx;
+      double y = radius * math.sin(radians + angle * i) + center.dy;
+      path.lineTo(x, y);
+    }
+    path.close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+class _RotatingPainter extends CustomPainter {
+  const _RotatingPainter({
     required this.backColor,
     this.show = true,
   });

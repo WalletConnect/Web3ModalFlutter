@@ -1,23 +1,24 @@
+import 'dart:convert';
+
+import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'package:walletconnect_flutter_dapp/utils/chain_data_wrapper.dart';
+import 'package:walletconnect_flutter_dapp/utils/styles.dart';
+import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
 import 'package:walletconnect_flutter_dapp/utils/constants.dart';
-import 'package:walletconnect_flutter_dapp/utils/crypto/eip155.dart';
-import 'package:walletconnect_flutter_dapp/utils/crypto/helpers.dart';
-import 'package:walletconnect_flutter_dapp/utils/string_constants.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/eip155_service.dart';
 import 'package:walletconnect_flutter_dapp/widgets/method_dialog.dart';
 
 class SessionWidget extends StatefulWidget {
-  const SessionWidget({
-    super.key,
-    required this.w3mService,
-    required this.launchRedirect,
-  });
+  const SessionWidget({super.key, required this.w3mService});
 
   final W3MService w3mService;
-  final void Function() launchRedirect;
 
   @override
   SessionWidgetState createState() => SessionWidgetState();
@@ -26,79 +27,145 @@ class SessionWidget extends StatefulWidget {
 class SessionWidgetState extends State<SessionWidget> {
   @override
   Widget build(BuildContext context) {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
+    final session = widget.w3mService.session!;
+    String iconImage = '';
+    if ((session.peer?.metadata.icons ?? []).isNotEmpty) {
+      iconImage = session.peer?.metadata.icons.first ?? '';
+    }
     final List<Widget> children = [
       const SizedBox(height: StyleConstants.linear16),
-      Text(
-        session.peer.metadata.name,
-        style: Web3ModalTheme.getDataOf(context).textStyles.title600.copyWith(
-              color: Web3ModalTheme.colorsOf(context).foreground100,
-            ),
-        textAlign: TextAlign.center,
-      ),
-      const SizedBox(height: StyleConstants.linear8),
-      Text(
-        StringConstants.sessionTopic,
-        style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
-              color: Web3ModalTheme.colorsOf(context).foreground100,
-            ),
-      ),
-      Text(
-        session.topic,
-        style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
-              color: Web3ModalTheme.colorsOf(context).foreground100,
-            ),
-      ),
-    ];
-
-    children.add(
       Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (iconImage.isNotEmpty)
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 25.0,
+                  backgroundImage: NetworkImage(
+                    iconImage,
+                    headers: coreUtils.instance.getAPIHeaders(
+                      widget.w3mService.web3App!.core.projectId,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10.0),
+              ],
+            ),
           Expanded(
-            child: Column(
-              children: _buildChainApprovedMethodsTiles(),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    session.connectedWalletName ?? '',
+                    style: Web3ModalTheme.getDataOf(context)
+                        .textStyles
+                        .large600
+                        .copyWith(
+                          color: Web3ModalTheme.colorsOf(context).foreground100,
+                        ),
+                  ),
+                ),
+                Visibility(
+                  visible: !session.sessionService.isMagic,
+                  child: IconButton(
+                    onPressed: () {
+                      widget.w3mService.launchConnectedWallet();
+                    },
+                    icon: const Icon(Icons.open_in_new),
+                  ),
+                )
+              ],
             ),
           ),
+        ],
+      ),
+      const SizedBox(height: StyleConstants.linear16),
+      // TOPIC LABEL
+      Visibility(
+        visible: session.topic != null,
+        child: Column(
+          children: [
+            Text(
+              StringConstants.sessionTopic,
+              style: Web3ModalTheme.getDataOf(context)
+                  .textStyles
+                  .small600
+                  .copyWith(
+                    color: Web3ModalTheme.colorsOf(context).foreground100,
+                  ),
+            ),
+            Text(
+              '${session.topic}',
+              style: Web3ModalTheme.getDataOf(context)
+                  .textStyles
+                  .small400
+                  .copyWith(
+                    color: Web3ModalTheme.colorsOf(context).foreground100,
+                  ),
+            ),
+          ],
+        ),
+      ),
+      Column(
+        children: _buildSupportedChainsWidget(),
+      ),
+      const SizedBox(height: StyleConstants.linear8),
+    ];
+
+    // Get current active account
+    final accounts = session.getAccounts() ?? [];
+    try {
+      final currentNamespace = widget.w3mService.selectedChain?.namespace;
+      final chainsNamespaces = NamespaceUtils.getChainsFromAccounts(accounts);
+      if (chainsNamespaces.contains(currentNamespace)) {
+        final account = accounts.firstWhere(
+          (account) => account.contains('$currentNamespace:'),
+        );
+        children.add(_buildAccountWidget(account));
+      }
+    } catch (e) {
+      debugPrint('[ExampleApp] ${e.toString()}');
+    }
+    children.add(
+      Column(
+        children: [
           const SizedBox.square(dimension: 8.0),
-          Expanded(
-            child: Column(
-              children: _buildApprovedChainsTiles(),
+          Text(
+            'Stored session:',
+            style:
+                Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+                      color: Web3ModalTheme.colorsOf(context).foreground100,
+                    ),
+          ),
+          InkWell(
+            onTap: () => Clipboard.setData(
+              ClipboardData(
+                text: jsonEncode(widget.w3mService.session?.toMap()),
+              ),
+            ).then(
+              (_) => showPlatformToast(
+                child: const Text(StringConstants.copiedToClipboard),
+                context: context,
+              ),
+            ),
+            child: Text(
+              const JsonEncoder.withIndent("     ")
+                  .convert(widget.w3mService.session?.toMap()),
+              style: Web3ModalTheme.getDataOf(context)
+                  .textStyles
+                  .small400
+                  .copyWith(
+                    color: Web3ModalTheme.colorsOf(context).foreground100,
+                  ),
             ),
           ),
         ],
       ),
     );
 
-    // Get all of the accounts
-    final List<String> namespaceAccounts = [];
-
-    // Loop through the namespaces, and get the accounts
-    for (final namespace in session.namespaces.values) {
-      namespaceAccounts.addAll(namespace.accounts);
-    }
-
-    try {
-      final selectedChain = widget.w3mService.selectedChain;
-      final containsChain = namespaceAccounts.indexWhere(
-        (nsa) => nsa.split(':')[1] == selectedChain?.chainId,
-      );
-      if (containsChain > -1) {
-        final namespace = namespaceAccounts.firstWhere(
-          (nsa) => nsa.split(':')[1] == selectedChain?.chainId,
-        );
-        children.add(_buildAccountWidget(namespace));
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -151,7 +218,7 @@ class SessionWidgetState extends State<SessionWidget> {
       padding: const EdgeInsets.all(StyleConstants.linear8),
       margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
       decoration: BoxDecoration(
-        border: Border.all(color: chainMetadata.color),
+        border: Border.all(color: Web3ModalTheme.colorsOf(context).accent100),
         borderRadius: const BorderRadius.all(
           Radius.circular(StyleConstants.linear8),
         ),
@@ -167,89 +234,154 @@ class SessionWidgetState extends State<SessionWidget> {
     ChainMetadata chainMetadata,
     String address,
   ) {
-    final List<Widget> buttons = [];
     // Add Methods
-    for (final String method in getChainMethods(chainMetadata.type)) {
-      buttons.add(
+    final approvedMethods =
+        widget.w3mService.getApprovedMethods() ?? <String>[];
+    if (approvedMethods.isEmpty) {
+      return [
+        Text(
+          'No methods approved',
+          style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
+                color: Web3ModalTheme.colorsOf(context).foreground100,
+              ),
+        )
+      ];
+    }
+    final usableMethods = EIP155UIMethods.values.map((e) => e.name).toList();
+    //
+    final List<Widget> children = [];
+    for (final method in approvedMethods) {
+      final implemented = usableMethods.contains(method);
+      children.add(
         Container(
           height: StyleConstants.linear40,
           width: double.infinity,
           margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
           child: ElevatedButton(
-            onPressed: () async {
-              final future = callChainMethod(
-                chainMetadata.type,
-                method,
-                chainMetadata,
-                address,
-              );
-              MethodDialog.show(context, method, future);
-              widget.launchRedirect();
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
-                chainMetadata.color,
-              ),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    StyleConstants.linear8,
-                  ),
-                ),
-              ),
-            ),
-            child: Text(
-              method,
-              style: Web3ModalTheme.getDataOf(context)
-                  .textStyles
-                  .small600
-                  .copyWith(
-                    color: Web3ModalTheme.colorsOf(context).foreground100,
-                  ),
-            ),
+            onPressed: implemented
+                ? () async {
+                    widget.w3mService.launchConnectedWallet();
+                    final future = callChainMethod(
+                      chainMetadata.type,
+                      EIP155.methodFromName(method),
+                      chainMetadata,
+                      address,
+                    );
+                    MethodDialog.show(context, method, future);
+                  }
+                : null,
+            style: buttonStyle(context),
+            child: Text(method),
           ),
         ),
       );
     }
 
-    return buttons;
-  }
-
-  List<Widget> _buildChainApprovedMethodsTiles() {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
-    final approvedMethods = session.namespaces['eip155']?.methods ?? [];
-    List<Widget> children = [];
+    children.add(const Divider());
+    final onSepolia = chainMetadata.w3mChainInfo.chainId == '11155111';
+    if (!onSepolia) {
+      children.add(
+        const Text(
+          'Test USDT Contract on Ethereum \nor switch to Sepolia to try a test Contract',
+          textAlign: TextAlign.center,
+        ),
+      );
+    } else {
+      children.add(
+        const Text(
+          'Test AAVE Token Contract on Sepolia \nor switch to Ethereum to try USDT',
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+    final onMainnet = chainMetadata.w3mChainInfo.chainId == '1';
 
     children.addAll([
-      const SizedBox(height: StyleConstants.linear8),
-      Text(
-        'Approved methods:',
-        style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
-              color: Web3ModalTheme.colorsOf(context).foreground100,
-            ),
+      Container(
+        height: StyleConstants.linear40,
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
+        child: ElevatedButton(
+          onPressed: onSepolia
+              ? () async {
+                  final future = EIP155.callTestSmartContract(
+                    w3mService: widget.w3mService,
+                    action: 'read',
+                  );
+                  MethodDialog.show(
+                    context,
+                    'Test Contract (Read)',
+                    future,
+                  );
+                }
+              : onMainnet
+                  ? () async {
+                      final future = EIP155.callUSDTSmartContract(
+                        w3mService: widget.w3mService,
+                        action: 'read',
+                      );
+                      MethodDialog.show(
+                        context,
+                        'Test Contract (Read)',
+                        future,
+                      );
+                    }
+                  : null,
+          style: buttonStyle(context),
+          child: onMainnet
+              ? const Text('USDT Contract (Read)')
+              : const Text('AAVE Contract (Read)'),
+        ),
+      ),
+      Container(
+        height: StyleConstants.linear40,
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(vertical: StyleConstants.linear8),
+        child: ElevatedButton(
+          onPressed: onSepolia
+              ? () async {
+                  widget.w3mService.launchConnectedWallet();
+                  final future = EIP155.callTestSmartContract(
+                    w3mService: widget.w3mService,
+                    action: 'write',
+                  );
+                  MethodDialog.show(context, 'Test Contract (Write)', future);
+                }
+              : onMainnet
+                  ? () async {
+                      widget.w3mService.launchConnectedWallet();
+                      final future = EIP155.callUSDTSmartContract(
+                        w3mService: widget.w3mService,
+                        action: 'write',
+                      );
+                      MethodDialog.show(
+                          context, 'Test Contract (Write)', future);
+                    }
+                  : null,
+          style: buttonStyle(context),
+          child: onMainnet
+              ? const Text('USDT Contract (Write)')
+              : const Text('AAVE Contract (Write)'),
+        ),
       ),
     ]);
 
-    children.add(Text(
-      approvedMethods.join(', '),
-      style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
-            color: Web3ModalTheme.colorsOf(context).foreground100,
-          ),
-    ));
     return children;
   }
 
-  List<Widget> _buildApprovedChainsTiles() {
+  List<Widget> _buildSupportedChainsWidget() {
     List<Widget> children = [];
-    children.addAll([
-      const SizedBox(height: StyleConstants.linear8),
-      Text(
-        'Approved chains:',
-        style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
-              color: Web3ModalTheme.colorsOf(context).foreground100,
-            ),
-      ),
-    ]);
+    children.addAll(
+      [
+        const SizedBox(height: StyleConstants.linear8),
+        Text(
+          'Supported chains:',
+          style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
+                color: Web3ModalTheme.colorsOf(context).foreground100,
+              ),
+        ),
+      ],
+    );
     final approvedChains = widget.w3mService.getApprovedChains() ?? <String>[];
     children.add(
       Text(
@@ -263,10 +395,19 @@ class SessionWidgetState extends State<SessionWidget> {
   }
 
   Widget _buildChainEventsTiles(ChainMetadata chainMetadata) {
-    final List<Widget> values = [];
-    // Add Methods
-    for (final String event in getChainEvents(chainMetadata.type)) {
-      values.add(
+    // Add Events
+    final approvedEvents = widget.w3mService.getApprovedEvents() ?? <String>[];
+    if (approvedEvents.isEmpty) {
+      return Text(
+        'No events approved',
+        style: Web3ModalTheme.getDataOf(context).textStyles.small400.copyWith(
+              color: Web3ModalTheme.colorsOf(context).foreground100,
+            ),
+      );
+    }
+    final List<Widget> children = [];
+    for (final event in approvedEvents) {
+      children.add(
         Container(
           margin: const EdgeInsets.symmetric(
             vertical: StyleConstants.linear8,
@@ -275,11 +416,9 @@ class SessionWidgetState extends State<SessionWidget> {
           padding: const EdgeInsets.all(StyleConstants.linear8),
           decoration: BoxDecoration(
             border: Border.all(
-              color: chainMetadata.color,
+              color: Web3ModalTheme.colorsOf(context).accent100,
             ),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(StyleConstants.linear8),
-            ),
+            borderRadius: borderRadius(context),
           ),
           child: Text(
             event,
@@ -292,25 +431,24 @@ class SessionWidgetState extends State<SessionWidget> {
       );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: values,
+    return Wrap(
+      children: children,
     );
   }
 
   Future<dynamic> callChainMethod(
     ChainType type,
-    String method,
+    EIP155UIMethods method,
     ChainMetadata chainMetadata,
     String address,
   ) {
-    final session = widget.w3mService.web3App!.sessions.getAll().first;
+    final session = widget.w3mService.session!;
     switch (type) {
       case ChainType.eip155:
         return EIP155.callMethod(
           w3mService: widget.w3mService,
-          topic: session.topic,
-          method: method.toEip155Method()!,
+          topic: session.topic ?? '',
+          method: method,
           chainId: chainMetadata.w3mChainInfo.namespace,
           address: address.toLowerCase(),
         );

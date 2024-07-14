@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
-import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/widgets/buttons/balance_button.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
@@ -44,9 +43,7 @@ class _W3MBalanceTextState extends State<W3MBalanceText> {
   void _w3mServiceUpdated() {
     if (_service == null) return;
     setState(() {
-      _balance = coreUtils.instance.formatChainBalance(
-        _service!.chainBalance,
-      );
+      _balance = _service!.chainBalance;
       _tokenName = _service?.selectedChain?.tokenName;
     });
   }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
-import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
+import 'package:web3modal_flutter/utils/asset_util.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
 import 'package:web3modal_flutter/widgets/icons/rounded_icon.dart';
 
@@ -43,10 +44,10 @@ class _BalanceButtonState extends State<BalanceButton> {
 
   void _w3mServiceUpdated() {
     setState(() {
-      _tokenImage = widget.service.tokenImageUrl;
-      _balance = coreUtils.instance.formatChainBalance(
-        widget.service.chainBalance,
-      );
+      final chainId = widget.service.selectedChain?.chainId ?? '1';
+      final imageId = AssetUtil.getChainIconId(chainId) ?? '';
+      _tokenImage = explorerService.instance.getAssetImageUrl(imageId);
+      _balance = widget.service.chainBalance;
       _tokenName = widget.service.selectedChain?.tokenName;
     });
   }

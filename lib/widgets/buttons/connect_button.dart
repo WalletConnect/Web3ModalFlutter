@@ -4,6 +4,7 @@ import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/widgets/buttons/base_button.dart';
+import 'package:web3modal_flutter/widgets/loader.dart';
 
 enum ConnectButtonState {
   error,
@@ -37,6 +38,7 @@ class ConnectButton extends StatelessWidget {
     final connected = state == ConnectButtonState.connected;
     final radiuses = Web3ModalTheme.radiusesOf(context);
     final borderRadius = radiuses.isSquare() ? 0.0 : size.height / 2;
+    final showLoading = connecting || serviceStatus.isLoading;
     return BaseButton(
       onTap: disabled || connecting
           ? null
@@ -79,24 +81,20 @@ class ConnectButton extends StatelessWidget {
         ),
       ),
       overridePadding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-        connecting || serviceStatus.isLoading
+        showLoading
             ? const EdgeInsets.only(left: 6.0, right: 16.0)
             : const EdgeInsets.only(left: 16.0, right: 16.0),
       ),
-      child: connecting || serviceStatus.isLoading
+      child: showLoading
           ? Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: size.height * 0.7,
-                  height: size.height * 0.7,
-                  padding: const EdgeInsets.all(kPadding6),
-                  child: CircularProgressIndicator(
-                    color: themeColors.accent100,
-                    strokeWidth: size == BaseButtonSize.small ? 1.0 : 1.5,
-                  ),
+                const SizedBox.square(dimension: kPadding6),
+                CircularLoader(
+                  size: size.height * 0.4,
+                  strokeWidth: size == BaseButtonSize.small ? 1.0 : 1.5,
                 ),
-                const SizedBox.square(dimension: 4.0),
+                const SizedBox.square(dimension: kPadding6),
                 if (connecting)
                   Text(
                       titleOverride ?? StringConstants.connectButtonConnecting),

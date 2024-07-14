@@ -1,7 +1,6 @@
 import 'package:walletconnect_flutter_v2/walletconnect_flutter_v2.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
 import 'package:web3modal_flutter/utils/core/i_core_utils.dart';
-import 'package:web3modal_flutter/utils/w3m_logger.dart';
 
 class CoreUtils extends ICoreUtils {
   @override
@@ -10,20 +9,15 @@ class CoreUtils extends ICoreUtils {
   }
 
   @override
-  bool isHttpUrl(String url) {
-    return url.startsWith('http://') || url.startsWith('https://');
+  bool isValidEmail(String email) {
+    return RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(email);
   }
 
   @override
-  String createSafeUrl(String url) {
-    if (url.isEmpty) return url;
-
-    String safeUrl = url;
-    if (!safeUrl.contains('://')) {
-      safeUrl = url.replaceAll('/', '').replaceAll(':', '');
-      safeUrl = '$safeUrl://';
-    }
-    return safeUrl;
+  bool isHttpUrl(String url) {
+    return url.startsWith('http://') || url.startsWith('https://');
   }
 
   @override
@@ -38,34 +32,60 @@ class CoreUtils extends ICoreUtils {
   }
 
   @override
-  Uri? formatCustomSchemeUri(String? appUrl, String wcUri) {
+  String createSafeUrl(String url) {
+    if (url.isEmpty) return url;
+
+    String safeUrl = url;
+    if (!safeUrl.contains('://')) {
+      safeUrl = url.replaceAll('/', '').replaceAll(':', '');
+      safeUrl = '$safeUrl://';
+    } else {
+      final parts = safeUrl.split('://');
+      if (parts.last.isNotEmpty && parts.last != 'wc') {
+        if (!safeUrl.endsWith('/')) {
+          return '$safeUrl/';
+        }
+        return safeUrl;
+      } else {
+        safeUrl = url.replaceFirst('://wc', '://');
+      }
+    }
+    return safeUrl;
+  }
+
+  @override
+  Uri? formatCustomSchemeUri(String? appUrl, String? wcUri) {
     if (appUrl == null || appUrl.isEmpty) return null;
 
     if (isHttpUrl(appUrl)) {
       return formatWebUrl(appUrl, wcUri);
     }
 
-    String safeAppUrl = createSafeUrl(appUrl);
-    String encodedWcUrl = Uri.encodeComponent(wcUri);
-    W3MLoggerUtil.logger.t('[$runtimeType] Encoded WC URL: $encodedWcUrl');
+    final safeAppUrl = createSafeUrl(appUrl);
+
+    if (wcUri == null) {
+      return Uri.parse(safeAppUrl);
+    }
+
+    final encodedWcUrl = Uri.encodeComponent(wcUri);
 
     return Uri.parse('${safeAppUrl}wc?uri=$encodedWcUrl');
   }
 
   @override
-  Uri? formatWebUrl(String? appUrl, String wcUri) {
+  Uri? formatWebUrl(String? appUrl, String? wcUri) {
     if (appUrl == null || appUrl.isEmpty) return null;
 
     if (!isHttpUrl(appUrl)) {
       return formatCustomSchemeUri(appUrl, wcUri);
     }
-    String plainAppUrl = appUrl;
-    if (!appUrl.endsWith('/')) {
-      plainAppUrl = '$appUrl/';
+    String plainAppUrl = createPlainUrl(appUrl);
+
+    if (wcUri == null) {
+      return Uri.parse(plainAppUrl);
     }
 
-    String encodedWcUrl = Uri.encodeComponent(wcUri);
-    W3MLoggerUtil.logger.t('[$runtimeType] Encoded WC URL: $encodedWcUrl');
+    final encodedWcUrl = Uri.encodeComponent(wcUri);
 
     return Uri.parse('${plainAppUrl}wc?uri=$encodedWcUrl');
   }
@@ -73,7 +93,7 @@ class CoreUtils extends ICoreUtils {
   @override
   String formatChainBalance(double? chainBalance, {int precision = 3}) {
     if (chainBalance == null) {
-      return '_.'.padRight(precision + 2, '_');
+      return '_.'.padRight(precision + 1, '_');
     }
     if (chainBalance == 0.0) {
       return '0.'.padRight(precision + 2, '0');
@@ -99,7 +119,7 @@ class CoreUtils extends ICoreUtils {
       'x-sdk-type': StringConstants.X_SDK_TYPE,
       'x-sdk-version': 'flutter-${StringConstants.X_SDK_VERSION}',
       'user-agent': getUserAgent(),
-      'referer': referer ?? '',
+      if (referer != null) 'referer': referer,
     };
   }
 }

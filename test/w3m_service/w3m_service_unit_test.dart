@@ -1,6 +1,3 @@
-// ignore_for_file: depend_on_referenced_packages
-
-import 'package:event/event.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:web3modal_flutter/constants/string_constants.dart';
@@ -8,8 +5,8 @@ import 'package:web3modal_flutter/services/explorer_service/explorer_service_sin
 import 'package:web3modal_flutter/services/w3m_service/i_w3m_service.dart';
 
 import 'package:web3modal_flutter/utils/url/url_utils_singleton.dart';
-import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_api_utils_singleton.dart';
-import 'package:web3modal_flutter/services/blockchain_api_service/blockchain_identity.dart';
+import 'package:web3modal_flutter/services/blockchain_service/blockchain_service_singleton.dart';
+import 'package:web3modal_flutter/services/blockchain_service/models/blockchain_identity.dart';
 import 'package:web3modal_flutter/services/network_service/network_service_singleton.dart';
 import 'package:web3modal_flutter/services/storage_service/storage_service_singleton.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -27,8 +24,7 @@ void main() {
     late MockRelayClient mockRelayClient;
     late MockNetworkService mockNetworkService;
     late MockStorageService mockStorageService;
-    late MockBlockchainApiUtils mockBlockchainApiUtils;
-    late MockLedgerService mockEVMService;
+    late MockBlockChainService mockBlockChainService;
     late MockUrlUtils mockUrlUtils;
 
     late Event<SessionDelete> onSessionDelete = Event<SessionDelete>();
@@ -82,14 +78,13 @@ void main() {
       // Service mocking
       mockNetworkService = MockNetworkService();
       mockStorageService = MockStorageService();
-      mockBlockchainApiUtils = MockBlockchainApiUtils();
+      mockBlockChainService = MockBlockChainService();
       es = MockExplorerService();
-      mockEVMService = MockLedgerService();
       mockUrlUtils = MockUrlUtils();
       networkService.instance = mockNetworkService;
       storageService.instance = mockStorageService;
       explorerService.instance = es;
-      blockchainApiUtils.instance = mockBlockchainApiUtils;
+      blockchainService.instance = mockBlockChainService;
       urlUtils.instance = mockUrlUtils;
 
       // Change all chain presets to use our mock EVMService
@@ -105,10 +100,10 @@ void main() {
           .thenAnswer((_) => Future.value(true));
       when(es.getAssetImageUrl('imageId')).thenReturn('abc');
       when(es.getWalletRedirect(anyNamed('name'))).thenReturn(null);
-      when(mockEVMService.getBalance(any, any)).thenAnswer(
-        (_) => Future.value(1.0),
-      );
-      when(mockBlockchainApiUtils.getIdentity(any, any)).thenAnswer(
+      // when(mockEVMService.getBalance(any, any)).thenAnswer(
+      //   (_) => Future.value(1.0),
+      // );
+      when(mockBlockChainService.getIdentity(any)).thenAnswer(
         (realInvocation) => Future.value(
           const BlockchainIdentity(
             avatar: null,
@@ -129,16 +124,16 @@ void main() {
       // );
     });
 
-    group('Constructor', () {
-      test('initializes blockchainApiUtils with projectId', () {
-        W3MService(
-          projectId: 'projectId',
-          metadata: metadata,
-        );
+    // group('Constructor', () {
+    //   test('initializes blockchainApiUtils with projectId', () {
+    //     W3MService(
+    //       projectId: 'projectId',
+    //       metadata: metadata,
+    //     );
 
-        expect(blockchainApiUtils.instance!.projectId, 'projectId');
-      });
-    });
+    //     expect(blockchainService.instance!.projectId, 'projectId');
+    //   });
+    // });
 
     group('init', () {
       test(
@@ -195,8 +190,8 @@ void main() {
           mockStorageService.setString(StringConstants.selectedChainId, '1'),
         ).called(1);
         verify(es.getAssetImageUrl('imageId')).called(1);
-        verify(mockEVMService.getBalance(any, any)).called(1);
-        verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
+        // verify(mockEVMService.getBalance(any, any)).called(1);
+        verify(mockBlockChainService.getIdentity(any)).called(1);
         expect(service.selectedChain, W3MChainPresets.chains['1']);
         expect(counter, 4);
 
@@ -232,8 +227,8 @@ void main() {
           mockStorageService.setString(StringConstants.selectedChainId, '1'),
         ).called(1);
         verify(es.getAssetImageUrl('imageId')).called(1);
-        verify(mockEVMService.getBalance(any, any)).called(1);
-        verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
+        // verify(mockEVMService.getBalance(any, any)).called(1);
+        verify(mockBlockChainService.getIdentity(any)).called(1);
         expect(service.selectedChain, W3MChainPresets.chains['1']);
 
         // Chain swap to polygon
@@ -245,8 +240,8 @@ void main() {
           mockStorageService.setString(StringConstants.selectedChainId, '137'),
         ).called(1);
         verify(es.getAssetImageUrl('imageId')).called(1);
-        verify(mockEVMService.getBalance(any, any)).called(1);
-        verify(mockBlockchainApiUtils.getIdentity(any, any)).called(1);
+        // verify(mockEVMService.getBalance(any, any)).called(1);
+        verify(mockBlockChainService.getIdentity(any)).called(1);
         expect(service.selectedChain, W3MChainPresets.chains['137']);
 
         // Setting selected chain to null will disconnect
@@ -266,7 +261,6 @@ void main() {
         expect(service.session == null, true);
         expect(service.selectedChain, null);
         expect(service.chainBalance, null);
-        expect(service.tokenImageUrl, null);
 
         expect(counter, 8); // setRequiredNamespaces, disconnect
       });

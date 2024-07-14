@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:web3modal_flutter/constants/key_constants.dart';
 import 'package:web3modal_flutter/pages/about_networks.dart';
+import 'package:web3modal_flutter/pages/connet_network_page.dart';
+import 'package:web3modal_flutter/services/analytics_service/models/analytics_event.dart';
 import 'package:web3modal_flutter/theme/constants.dart';
 import 'package:web3modal_flutter/widgets/miscellaneous/responsive_container.dart';
 import 'package:web3modal_flutter/widgets/widget_stack/widget_stack_singleton.dart';
@@ -14,9 +16,29 @@ import 'package:web3modal_flutter/widgets/navigation/navbar.dart';
 import 'package:web3modal_flutter/widgets/web3modal_provider.dart';
 
 class SelectNetworkPage extends StatelessWidget {
-  const SelectNetworkPage({required this.onTapNetwork})
-      : super(key: Web3ModalKeyConstants.selectNetworkPage);
+  const SelectNetworkPage({
+    this.onTapNetwork,
+  }) : super(key: KeyConstants.selectNetworkPage);
+
   final Function(W3MChainInfo)? onTapNetwork;
+
+  void _onSelectNetwork(BuildContext context, W3MChainInfo chainInfo) async {
+    final service = Web3ModalProvider.of(context).service;
+    if (service.isConnected) {
+      final approvedChains = service.session!.getApprovedChains() ?? [];
+      final isChainApproved = approvedChains.contains(chainInfo.namespace);
+      if (chainInfo.chainId == service.selectedChain?.chainId) {
+        widgetStack.instance.pop();
+      } else if (isChainApproved || service.session!.sessionService.isMagic) {
+        await service.selectChain(chainInfo, switchChain: true);
+        widgetStack.instance.pop();
+      } else {
+        widgetStack.instance.push(ConnectNetworkPage(chainInfo: chainInfo));
+      }
+    } else {
+      onTapNetwork?.call(chainInfo);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +67,10 @@ class SelectNetworkPage extends StatelessWidget {
                     return const ContentLoading();
                   }
                   return NetworksGrid(
-                    onTapNetwork: onTapNetwork,
+                    onTapNetwork: (chainInfo) => _onSelectNetwork(
+                      context,
+                      chainInfo,
+                    ),
                     itemList: items,
                   );
                 },
@@ -63,11 +88,15 @@ class SelectNetworkPage extends StatelessWidget {
           ),
           SimpleIconButton(
             onTap: () {
-              widgetStack.instance.push(const AboutNetworks());
+              widgetStack.instance.push(
+                const AboutNetworks(),
+                event: ClickNetworkHelpEvent(),
+              );
             },
             size: BaseButtonSize.small,
             leftIcon: 'assets/icons/help.svg',
             title: 'What is a network?',
+            fontSize: 15.0,
             backgroundColor: Colors.transparent,
             foregroundColor: themeColors.accent100,
             overlayColor: MaterialStateProperty.all<Color>(

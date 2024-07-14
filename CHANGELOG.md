@@ -1,3 +1,42 @@
+## 3.3.0-beta06
+
+- One-Click Auth + SIWE implementation
+- Coinbase Wallet dependency update
+- Bug fixes
+
+## 3.2.2
+
+- Network change improvements
+
+## 3.2.1
+
+- Email Wallet improvements:
+  - Smart Contract interaction
+  - Enhanced theming
+
+## 3.2.0
+
+- New feature: Email Wallet. Now you can create wallets by just using an email and graduate them to self-custodial if desired! Just toggle `enableEmail` on `W3MService` instance.
+- New feature: Analytics API support. Just toggle `enableAnalytics` flag on `W3MService` instance to support.
+
+## 3.1.2
+
+- Bug fixes for Coinbase Wallet integration
+- Added new events onModalConnect, onModalDisconnect and onModalError and deprecated previous ones
+
+## 3.1.1
+
+- Minor bug fix during preferences clearing
+- Better Smart Contract interactions
+
+## 3.1.0
+
+- Coinbase Wallet integration
+
+## 3.0.21
+
+- Fix an Android bug happening when sending a request from a dApp in a different device than the paired wallet
+
 ## 3.0.20
 
 - Minor improvements

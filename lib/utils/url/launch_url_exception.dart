@@ -1,10 +1,12 @@
 class LaunchUrlException {
   final String message;
-
   LaunchUrlException(this.message);
+}
 
-  @override
-  String toString() {
-    return 'LaunchUrlException{message: $message}';
-  }
+class CanNotLaunchUrl extends LaunchUrlException {
+  CanNotLaunchUrl() : super('App not installed');
+}
+
+class ErrorLaunchingUrl extends LaunchUrlException {
+  ErrorLaunchingUrl() : super('Error launching app');
 }

@@ -1,13 +1,16 @@
-name: Build iOS App
+name: Build iOS App Release
 
 on:
   workflow_dispatch:
-  release:
-    types: [ published ]
+  push:
+    # branches:
+    #   - 'release_v*' #${{ github.ref_name }}
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
 
 jobs:
   build_with_signing:
-    runs-on: macos-latest
+    runs-on: macos-latest-xlarge
     
     steps:
     # Checkout the repo
@@ -79,16 +82,21 @@ jobs:
         PROJECT_ID: ${{ secrets.PROJECT_ID }}
         APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
         APPLE_ISSUER_ID: ${{ secrets.APPLE_ISSUER_ID }}
+        APPKIT_AUTH: ${{ secrets.APPKIT_AUTH }}
+        APPKIT_PROJECT_ID: ${{ secrets.APPKIT_PROJECT_ID }}
+        AUTH_SERVICE_URL: ${{ secrets.AUTH_SERVICE_URL }}
       run: |
         # Get app version from file
-        FILE_VALUE=`cat $GITHUB_WORKSPACE/lib/version.dart`
-        VERSION=`echo $FILE_VALUE | sed "s/[^']*'\([^']*\)'.*/\1/"`
+        FILE_VALUE=$(echo | grep "^version: " pubspec.yaml)
+        PARTS=(${FILE_VALUE//:/ })
+        FULL_VERSION=${PARTS[1]}
+        VERSION_NUMBER=(${FULL_VERSION//-/ })
 
         # Build ios app with flutter
-        flutter build ios --build-name $VERSION --dart-define="PROJECT_ID=$PROJECT_ID" --config-only --release
+        flutter build ios --build-name $VERSION_NUMBER --dart-define="PROJECT_ID=$PROJECT_ID" --dart-define="APPKIT_AUTH=$APPKIT_AUTH" --dart-define="APPKIT_PROJECT_ID=$APPKIT_PROJECT_ID" --dart-define="AUTH_SERVICE_URL=$AUTH_SERVICE_URL" --config-only --release
         
         cd ios
-        agvtool new-marketing-version $VERSION
+        agvtool new-marketing-version $VERSION_NUMBER
         agvtool next-version -all
 
         # Archive and export
@@ -109,7 +117,7 @@ jobs:
       with:
         payload: |-
           {
-            "text":"New iOS Example app for Web3Modal Flutter ${{ github.event.release.name }} was just deployed."
+            "text":"🍎 New *iOS* build *${{ github.ref_name }}* stable version for *Web3Modal Flutter* was just deployed."
           }
     # Clean up
     - name: Clean up

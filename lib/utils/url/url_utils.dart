@@ -1,48 +1,50 @@
 import 'package:appcheck/appcheck.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' as launcher;
 import 'package:web3modal_flutter/services/explorer_service/models/redirect.dart';
+import 'package:web3modal_flutter/services/logger_service/logger_service_singleton.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 import 'package:web3modal_flutter/utils/platform/platform_utils_singleton.dart';
 import 'package:web3modal_flutter/utils/url/i_url_utils.dart';
 import 'package:web3modal_flutter/utils/url/launch_url_exception.dart';
 
-import 'package:web3modal_flutter/utils/w3m_logger.dart';
-
-Future<bool> _launchUrl(Uri url, {LaunchMode? mode}) async {
+Future<bool> _launchUrlFunc(Uri url, {launcher.LaunchMode? mode}) async {
   try {
-    return await launchUrl(
+    final success = await launcher.launchUrl(
       url,
-      mode: mode ?? LaunchMode.platformDefault,
+      mode: mode ?? launcher.LaunchMode.platformDefault,
     );
+    if (!success) {
+      throw CanNotLaunchUrl();
+    }
+    return true;
   } catch (e) {
-    W3MLoggerUtil.logger.e(
-      'Error launching URL: ${url.toString()}',
-    );
-    W3MLoggerUtil.logger.e(e);
-    throw LaunchUrlException(
-      'Error launching URL: ${url.toString()}',
-    );
+    rethrow;
   }
 }
 
-Future<bool> _androidLaunch(String uri) async {
-  return await AppCheck.isAppEnabled(uri);
+Future<bool> _androidAppCheck(String uri) async {
+  try {
+    return await AppCheck.isAppEnabled(uri);
+  } catch (e) {
+    return false;
+  }
 }
 
 class UrlUtils extends IUrlUtils {
   UrlUtils({
-    this.androidAppCheck = _androidLaunch,
-    this.launchUrlFunc = _launchUrl,
-    this.canLaunchUrlFunc = canLaunchUrl,
+    this.androidAppCheck = _androidAppCheck,
+    this.launchUrlFunc = _launchUrlFunc,
+    this.canLaunchUrlFunc = launcher.canLaunchUrl,
   });
 
   final Future<bool> Function(String uri) androidAppCheck;
-  final Future<bool> Function(Uri url, {LaunchMode? mode}) launchUrlFunc;
+  final Future<bool> Function(Uri url, {launcher.LaunchMode? mode})
+      launchUrlFunc;
   final Future<bool> Function(Uri url) canLaunchUrlFunc;
 
   @override
-  Future<bool> isInstalled(String? uri) async {
+  Future<bool> isInstalled(String? uri, {String? id}) async {
     if (uri == null || uri.isEmpty) {
       return false;
     }
@@ -60,8 +62,14 @@ class UrlUtils extends IUrlUtils {
         } else if (p == PlatformExact.iOS) {
           return await canLaunchUrlFunc(Uri.parse(uri));
         }
+      } on FormatException catch (e) {
+        if (id != null) {
+          loggerService.instance.d('[$runtimeType] $uri ($id): ${e.message}');
+        } else {
+          loggerService.instance.d('[$runtimeType] $uri: ${e.message}');
+        }
       } catch (e) {
-        W3MLoggerUtil.logger.i('[$runtimeType] isInstalled $uri $e');
+        rethrow;
       }
     }
 
@@ -69,55 +77,60 @@ class UrlUtils extends IUrlUtils {
   }
 
   @override
-  Future<bool> launchUrl(Uri url, {LaunchMode? mode}) async {
-    return launchUrlFunc(
+  Future<bool> launchUrl(Uri url, {launcher.LaunchMode? mode}) async {
+    return await launchUrlFunc(
       url,
       mode: mode,
     );
   }
 
   @override
-  Future<void> openRedirect(
+  Future<bool> openRedirect(
     WalletRedirect redirect, {
     String? wcURI,
     PlatformType? pType,
   }) async {
+    //
+    Uri? uriToOpen;
     try {
-      Uri? uriToOpen;
-      if ((redirect.mobileOnly || pType == PlatformType.mobile) &&
-          redirect.mobile != null) {
-        uriToOpen = wcURI != null
-            ? coreUtils.instance.formatCustomSchemeUri(
-                redirect.mobile,
-                wcURI,
-              )
-            : redirect.mobileUri;
+      final isMobile = (redirect.mobileOnly || pType == PlatformType.mobile);
+      if (isMobile && redirect.mobile != null) {
+        // final uri = wcURI ?? redirect.mobileUri?.toString();
+        uriToOpen = coreUtils.instance.formatCustomSchemeUri(
+          redirect.mobile,
+          wcURI,
+        );
       }
-      if ((redirect.webOnly || pType == PlatformType.web) &&
-          redirect.web != null) {
-        uriToOpen = wcURI != null
-            ? coreUtils.instance.formatWebUrl(
-                redirect.web,
-                wcURI,
-              )
-            : redirect.webUri;
+      //
+      final isWeb = (redirect.webOnly || pType == PlatformType.web);
+      if (isWeb && redirect.web != null) {
+        // final uri = wcURI ?? redirect.webUri?.toString();
+        uriToOpen = coreUtils.instance.formatWebUrl(
+          redirect.web,
+          wcURI,
+        );
       }
-      if ((redirect.desktopOnly || pType == PlatformType.desktop) &&
-          redirect.desktop != null) {
-        uriToOpen = wcURI != null
-            ? coreUtils.instance.formatCustomSchemeUri(
-                redirect.desktop,
-                wcURI,
-              )
-            : redirect.desktopUri;
+      //
+      final isDesktop = (redirect.desktopOnly || pType == PlatformType.desktop);
+      if (isDesktop && redirect.desktop != null) {
+        // final uri = wcURI ?? redirect.desktopUri?.toString();
+        uriToOpen = coreUtils.instance.formatCustomSchemeUri(
+          redirect.desktop,
+          wcURI,
+        );
       }
-      try {
-        await launchUrlFunc(uriToOpen!, mode: LaunchMode.externalApplication);
-      } catch (_) {
-        throw LaunchUrlException('App not installed');
-      }
-    } catch (e) {
-      rethrow;
+    } catch (e, s) {
+      loggerService.instance.e(
+        'Error opening redirect',
+        error: e,
+        stackTrace: s,
+      );
+      return false;
     }
+    loggerService.instance.i('[$runtimeType] openRedirect $uriToOpen');
+    return await launchUrlFunc(
+      uriToOpen!,
+      mode: launcher.LaunchMode.externalApplication,
+    );
   }
 }
