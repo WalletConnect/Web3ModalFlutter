@@ -24,11 +24,24 @@ class WCSampleWallets {
       'platform': ['ios', 'android'],
       'ios': NativeAppData(
         id: '123456789012345678901234567891',
-        schema: 'wcflutterwallet://',
+        schema: 'wcflutterwallet-production://',
       ),
       'android': NativeAppData(
         id: '123456789012345678901234567891',
         schema: 'com.walletconnect.flutterwallet',
+      ),
+    },
+    // Flutter Wallet
+    '123456789012345678901234567895': {
+      'name': 'Wallet (Flutter internal)',
+      'platform': ['ios', 'android'],
+      'ios': NativeAppData(
+        id: '123456789012345678901234567895',
+        schema: 'wcflutterwallet-internal://',
+      ),
+      'android': NativeAppData(
+        id: '123456789012345678901234567895',
+        schema: 'com.walletconnect.flutterwallet.internal',
       ),
     },
     // React Native Wallet

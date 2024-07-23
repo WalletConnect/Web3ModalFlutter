@@ -27,7 +27,7 @@ _$SIWECreateMessageArgsImpl _$$SIWECreateMessageArgsImplFromJson(
       resources: (json['resources'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      expiry: json['expiry'] as int?,
+      expiry: (json['expiry'] as num?)?.toInt(),
       iat: json['iat'] as String?,
     );
 
@@ -65,7 +65,7 @@ _$SIWEMessageArgsImpl _$$SIWEMessageArgsImplFromJson(
       resources: (json['resources'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      expiry: json['expiry'] as int?,
+      expiry: (json['expiry'] as num?)?.toInt(),
       iat: json['iat'] as String?,
       methods:
           (json['methods'] as List<dynamic>?)?.map((e) => e as String).toList(),

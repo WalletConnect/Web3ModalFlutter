@@ -99,19 +99,18 @@ class CoinbaseService implements ICoinbaseService {
     final imageId = defaultWalletData.listing.imageId;
     _iconImage = explorerService.instance.getWalletImageUrl(imageId);
 
-    final universal = _metadata.redirect?.universal ?? '';
-    final nativeLink = _metadata.redirect?.native ?? '';
     final walletLink = _walletData.listing.mobileLink ?? '';
-    if ((universal.isNotEmpty && nativeLink.isNotEmpty) ||
-        walletLink.isNotEmpty) {
+    final redirect = _metadata.redirect;
+    final callback = redirect?.universal ?? redirect?.native ?? '';
+    if (callback.isNotEmpty || walletLink.isNotEmpty) {
       try {
         final config = Configuration(
           ios: IOSConfiguration(
             host: Uri.parse(walletLink),
-            callback: Uri.parse(nativeLink),
+            callback: Uri.parse(callback),
           ),
           android: AndroidConfiguration(
-            domain: Uri.parse(universal),
+            domain: Uri.parse(callback),
           ),
         );
         await CoinbaseWalletSDK.shared.configure(config);

@@ -375,7 +375,7 @@ class SessionWidgetState extends State<SessionWidget> {
       [
         const SizedBox(height: StyleConstants.linear8),
         Text(
-          'Supported chains:',
+          'Session chains:',
           style: Web3ModalTheme.getDataOf(context).textStyles.small600.copyWith(
                 color: Web3ModalTheme.colorsOf(context).foreground100,
               ),

@@ -108,7 +108,10 @@ class _W3MAccountButtonState extends State<W3MAccountButton> {
       } else {
         // TODO remove this once context parameter is enforced
         // ignore: deprecated_member_use_from_same_package
-        widget.service.openModal(widget.context ?? context, ConfirmEmailPage());
+        widget.service.openModal(
+          widget.context ?? context,
+          ConfirmEmailPage(),
+        );
       }
     }
   }

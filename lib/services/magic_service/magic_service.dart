@@ -579,6 +579,9 @@ class MagicService implements IMagicService {
     ''');
   }
 
+  // sendW3Message({type:"@w3m-app/GET_SOCIAL_REDIRECT_URI",payload:{provider:"x"}});
+  // sendW3Message({type:"@w3m-app/CONNECT_SOCIAL",payload:{uri:"https://auth.magic.link/v1/oauth2/twitter/start?magic_api_key=pk_live_B080E9DC31E5875E&magic_challenge=9HbSG6KYL3r2b7LqzhD7-EcjoHLj-a7wt7npmSBR2fw&state=FfR0W7idPzp81HM2KE~zBPR7bbSQM97CL5zZZMHd_2_ZHZ~rLvnO63MO3fd6eB4LMymif9pQupdhVL11l4NsQk4D-zQDfPGB17PpiWjPobCemCZwP.HdkH4dQeSDgkiH&platform=web&redirect_uri=https%3A%2F%2Fsecure.walletconnect.com%2Fsdk%2Foauth%3FprojectId%3Dcad4956f31a5e40a00b62865b030c6f8"}});
+
   void _onDebugConsoleReceived(JavaScriptConsoleMessage message) {
     loggerService.instance.d('[$runtimeType] JS Console ${message.message}');
   }
