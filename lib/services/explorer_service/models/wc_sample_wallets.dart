@@ -1,4 +1,3 @@
-import 'package:web3modal_flutter/constants/url_constants.dart';
 import 'package:web3modal_flutter/models/listing.dart';
 import 'package:web3modal_flutter/services/explorer_service/models/native_app_data.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
@@ -7,7 +6,7 @@ class WCSampleWallets {
   static final nativeData = {
     // Swift Wallet
     '123456789012345678901234567890': {
-      'name': 'Wallet (Swift)',
+      'name': 'SW Wallet',
       'platform': ['ios'],
       'ios': NativeAppData(
         id: '123456789012345678901234567890',
@@ -20,7 +19,7 @@ class WCSampleWallets {
     },
     // Flutter Wallet
     '123456789012345678901234567891': {
-      'name': 'Wallet (Flutter)',
+      'name': 'FL Wallet',
       'platform': ['ios', 'android'],
       'ios': NativeAppData(
         id: '123456789012345678901234567891',
@@ -31,9 +30,9 @@ class WCSampleWallets {
         schema: 'com.walletconnect.flutterwallet',
       ),
     },
-    // Flutter Wallet
+    // Flutter Wallet internal
     '123456789012345678901234567895': {
-      'name': 'Wallet (Flutter internal)',
+      'name': 'FL Wallet (internal)',
       'platform': ['ios', 'android'],
       'ios': NativeAppData(
         id: '123456789012345678901234567895',
@@ -46,7 +45,7 @@ class WCSampleWallets {
     },
     // React Native Wallet
     '123456789012345678901234567892': {
-      'name': 'Wallet (RN)',
+      'name': 'RN Wallet (internal)',
       'platform': ['ios', 'android'],
       'ios': NativeAppData(
         id: '123456789012345678901234567892',
@@ -57,9 +56,22 @@ class WCSampleWallets {
         schema: 'com.walletconnect.web3wallet.rnsample',
       ),
     },
+    // React Native Wallet internal
+    '1234567890123456789012345678922': {
+      'name': 'RN Wallet (internal)',
+      'platform': ['ios', 'android'],
+      'ios': NativeAppData(
+        id: '1234567890123456789012345678922',
+        schema: 'rn-web3wallet://',
+      ),
+      'android': NativeAppData(
+        id: '1234567890123456789012345678922',
+        schema: 'com.walletconnect.web3wallet.rnsample.internal',
+      ),
+    },
     // Kotlin Wallet
     '123456789012345678901234567893': {
-      'name': 'Wallet (Kotlin)',
+      'name': 'KT Wallet',
       'platform': ['android'],
       'ios': NativeAppData(
         id: '123456789012345678901234567893',
@@ -72,7 +84,7 @@ class WCSampleWallets {
     },
     // Kotlin Wallet Internal
     '123456789012345678901234567894': {
-      'name': 'Wallet (Kotlin Internal)',
+      'name': 'KT Wallet (Internal)',
       'platform': ['android'],
       'ios': NativeAppData(
         id: '123456789012345678901234567894',
@@ -91,13 +103,15 @@ class WCSampleWallets {
       final schema = (entry.value['ios']! as NativeAppData).schema;
       final platforms = entry.value['platform']! as List<String>;
       final name = entry.value['name']! as String;
+      final icon =
+          'https://thegraph.academy/wp-content/uploads/2021/04/WalletConnect-logo.png';
       if (platforms.contains(platform)) {
         return W3MWalletInfo(
           listing: Listing.fromJson({
             'id': entry.key,
             'name': name,
             'homepage': 'https://walletconnect.com',
-            'image_id': _walletImage,
+            'image_id': icon,
             'order': 10,
             'mobile_link': schema,
             'app_store':
@@ -112,7 +126,4 @@ class WCSampleWallets {
     }).toList();
     return wallets.whereType<W3MWalletInfo>().toList();
   }
-
-  static const _walletImage =
-      '${UrlConstants.docsUrl}/assets/images/web3walletLogo-54d3b546146931ceaf47a3500868a73a.png';
 }

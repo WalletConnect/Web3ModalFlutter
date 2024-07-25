@@ -271,16 +271,16 @@ extension on SessionRequestParams {
   Action toCoinbaseRequest(String? chainId) {
     switch (method) {
       case 'personal_sign':
-        final address = _getAddressFromParamsList(params);
-        final message = _getDataFromParamsList(params);
+        final address = _getAddressFromParamsList(method, params);
+        final message = _getDataFromParamsList(method, params);
         return PersonalSign(address: address, message: message);
       case 'eth_signTypedData_v3':
-        final address = _getAddressFromParamsList(params);
-        final jsonData = _getDataFromParamsList(params);
+        final address = _getAddressFromParamsList(method, params);
+        final jsonData = _getDataFromParamsList(method, params);
         return SignTypedDataV3(address: address, typedDataJson: jsonData);
       case 'eth_signTypedData_v4':
-        final address = _getAddressFromParamsList(params);
-        final jsonData = _getDataFromParamsList(params);
+        final address = _getAddressFromParamsList(method, params);
+        final jsonData = _getDataFromParamsList(method, params);
         return SignTypedDataV4(address: address, typedDataJson: jsonData);
       case 'eth_requestAccounts':
         return RequestAccounts();
@@ -335,8 +335,8 @@ extension on SessionRequestParams {
           throw W3MCoinbaseException('Unrecognized chainId $chainId', e, s);
         }
       case 'wallet_watchAsset':
-        final address = _getAddressFromParamsList(params);
-        final symbol = _getDataFromParamsList(params);
+        final address = _getAddressFromParamsList(method, params);
+        final symbol = _getDataFromParamsList(method, params);
         return WatchAsset(
           address: address,
           symbol: symbol,
@@ -346,23 +346,40 @@ extension on SessionRequestParams {
     }
   }
 
-  // TODO [CoinbaseService] this should be an utils on WCFV2
-  String _getAddressFromParamsList(dynamic params) {
-    return (params as List).firstWhere((p) {
-      try {
-        EthereumAddress.fromHex(p);
-        return true;
-      } catch (e) {
-        return false;
+  String _getAddressFromParamsList(String method, dynamic params) {
+    try {
+      final paramsList = List.from((params as List));
+      if (method == 'personal_sign') {
+        // for `personal_sign` first value in params has to be always the message
+        paramsList.removeAt(0);
       }
-    });
+
+      return paramsList.firstWhere((p) {
+        try {
+          EthereumAddress.fromHex(p);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  dynamic _getDataFromParamsList(dynamic params) {
-    return (params as List).firstWhere((p) {
-      final address = _getAddressFromParamsList(params);
-      return p != address;
-    });
+  dynamic _getDataFromParamsList(String method, dynamic params) {
+    try {
+      final paramsList = List.from((params as List));
+      if (method == 'personal_sign') {
+        return paramsList.first;
+      }
+      return paramsList.firstWhere((p) {
+        final address = _getAddressFromParamsList(method, params);
+        return p != address;
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Map<String, dynamic> _getTransactionFromParams(dynamic params) {

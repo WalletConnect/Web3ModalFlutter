@@ -109,7 +109,6 @@ class BlockChainService implements IBlockChainService {
     throw jsonResponse.error!;
   }
 
-  // TODO to be implemented
   // @override
   // Future<double?> getBalance(
   //   String address,

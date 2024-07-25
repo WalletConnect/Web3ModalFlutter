@@ -1762,6 +1762,7 @@ extension _W3MServiceExtension on W3MService {
       _currentSelectedChainId = args?.data?.toString();
     } else if (args?.name == EventsConstants.accountsChanged) {
       try {
+        // TODO implement account change
         if (siweService.instance!.signOutOnAccountChange) {
           await siweService.instance!.signOut();
         }
