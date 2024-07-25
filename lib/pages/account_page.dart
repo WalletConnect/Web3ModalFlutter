@@ -234,7 +234,7 @@ class _SelectNetworkButton extends StatelessWidget {
                 assetColor: themeColors.background100,
               ),
       ),
-      title: service.selectedChain?.chainName ?? '',
+      title: service.selectedChain?.chainName ?? 'Unsupported network',
       titleStyle: themeData.textStyles.paragraph500.copyWith(
         color: themeColors.foreground100,
       ),

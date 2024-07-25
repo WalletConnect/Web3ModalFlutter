@@ -248,11 +248,7 @@ extension W3MSessionExtension on W3MSession {
         namespaces: namespaces ?? {},
       );
       if (chainIds.isNotEmpty) {
-        final chainId = (chainIds..sort()).first.split(':')[1];
-        // If we have the chain in our presets, set it as the selected chain
-        if (W3MChainPresets.chains.containsKey(chainId)) {
-          return chainId;
-        }
+        return (chainIds..sort()).first.split(':')[1];
       }
     }
     if (sessionService.isCoinbase) {

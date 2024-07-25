@@ -249,7 +249,6 @@ class _DebugDrawerState extends State<DebugDrawer> with WidgetsBindingObserver {
             ),
             onTap: () {
               if (_hasUpdates) {
-                // TODO warn and crash!
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {

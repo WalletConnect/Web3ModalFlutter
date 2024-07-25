@@ -49,6 +49,7 @@
         <package android:name="kh.com.sabay.sabaywallet"/>
         <package android:name="com.tokoin.wallet"/>
         <package android:name="com.walletconnect.flutterwallet"/>
+        <package android:name="com.walletconnect.flutterwallet.internal"/>
         <package android:name="com.walletconnect.web3wallet.rnsample"/>
         <package android:name="com.walletconnect.sample.wallet"/>
         <package android:name="com.walletconnect.sample.wallet.internal"/>

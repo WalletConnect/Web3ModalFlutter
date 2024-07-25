@@ -107,16 +107,14 @@ class ExplorerService implements IExplorerService {
       return;
     }
 
-    await _setInstalledWalletIdsParam();
-    await _fetchInitialWallets();
-
-    initialized.value = true;
-  }
-
-  Future<void> _setInstalledWalletIdsParam() async {
+    // TODO ideally we should call this at every opening to be able to detect newly installed wallets.
     final nativeData = await _fetchNativeAppData();
     final installed = await nativeData.getInstalledApps();
     _installedWalletIds = Set<String>.from(installed.map((e) => e.id));
+
+    await _fetchInitialWallets();
+
+    initialized.value = true;
   }
 
   Future<void> _fetchInitialWallets() async {

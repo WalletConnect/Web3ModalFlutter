@@ -88,7 +88,12 @@ class BlockChainService implements IBlockChainService {
         rethrow;
       }
     } else {
-      throw Exception('Failed to get request $method');
+      final result = jsonDecode(response.body) as Map<String, dynamic>;
+      final reasons = result['reasons'] as List;
+      final reason = reasons.first as Map<String, dynamic>;
+      loggerService.instance.i(
+        '[$runtimeType] Failed to get request $method. ${reason['description']}',
+      );
     }
   }
 
@@ -104,7 +109,6 @@ class BlockChainService implements IBlockChainService {
     throw jsonResponse.error!;
   }
 
-  // TODO to be implemented
   // @override
   // Future<double?> getBalance(
   //   String address,

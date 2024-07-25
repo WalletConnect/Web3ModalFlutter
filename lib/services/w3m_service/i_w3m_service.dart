@@ -11,6 +11,7 @@ enum W3MServiceStatus {
 
   bool get isInitialized => this == initialized;
   bool get isLoading => this == initializing;
+  bool get isError => this == error;
 }
 
 /// Either a [projectId] and [metadata] must be provided or an already created [web3App].

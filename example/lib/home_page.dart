@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         redirect: Redirect(
           native: 'web3modalflutter://',
-          universal: 'https://walletconnect.com/appkit',
+          // universal: 'https://walletconnect.com/appkit',
         ),
       );
 
@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
         getMessageParams: () async {
           // Provide everything that is needed to construct the SIWE message
           debugPrint('[SIWEConfig] getMessageParams()');
-          final uri = Uri.parse(_pairingMetadata.redirect!.universal!);
+          final uri = Uri.parse(_pairingMetadata.redirect!.native!);
           return SIWEMessageArgs(
             domain: uri.authority,
             uri: 'https://walletconnect.com/login',
@@ -93,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
           try {
             debugPrint('[SIWEConfig] verifyMessage()');
             final payload = args.toJson();
-            final uri = Uri.parse(_pairingMetadata.redirect!.universal!);
+            final uri = Uri.parse(_pairingMetadata.redirect!.native!);
             final result = await _siweTestService.verifyMessage(
               payload,
               domain: uri.authority,
@@ -253,9 +253,9 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  void _onModalConnect(ModalConnect? event) {
-    debugPrint('[ExampleApp] _onModalConnect ${event?.toString()}');
+  void _onModalConnect(ModalConnect? event) async {
     setState(() {});
+    debugPrint('[ExampleApp] _onModalConnect ${event?.session.toJson()}');
   }
 
   void _onModalUpdate(ModalConnect? event) {
@@ -304,8 +304,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onRelayClientError(EventArgs? event) {
-    debugPrint('[ExampleApp] _onRelayClientError ${event?.toString()}');
     setState(() {});
+    showTextToast(text: 'Relay disconnected', context: context);
   }
 
   void _onRelayClientDisconnect(EventArgs? event) {
@@ -364,13 +364,20 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         );
       },
+      floatingActionButton: CircleAvatar(
+        radius: 6.0,
+        backgroundColor: _initialized &&
+                _w3mService.web3App?.core.relayClient.isConnected == true
+            ? Colors.green
+            : Colors.red,
+      ),
     );
   }
 
   Future<void> _refreshData() async {
+    await _w3mService.reconnectRelay();
     await _w3mService.loadAccountData();
     setState(() {});
-    return;
   }
 }
 
