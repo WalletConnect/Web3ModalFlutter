@@ -1018,6 +1018,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   Future<List<dynamic>> requestReadContract({
     required DeployedContract deployedContract,
     required String functionName,
+    required String rpcUrl,
     List parameters = const [],
   }) async {
     try {
@@ -1025,7 +1026,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       return await _web3App.requestReadContract(
         deployedContract: deployedContract,
         functionName: functionName,
-        rpcUrl: selectedChain!.rpcUrl,
+        rpcUrl: rpcUrl,
         parameters: parameters,
       );
     } catch (e) {
