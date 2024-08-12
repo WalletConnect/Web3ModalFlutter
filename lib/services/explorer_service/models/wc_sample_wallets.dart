@@ -23,7 +23,7 @@ class WCSampleWallets {
       'platform': ['ios', 'android'],
       'ios': NativeAppData(
         id: '123456789012345678901234567891',
-        schema: 'wcflutterwallet-production://',
+        schema: 'wcflutterwallet://',
       ),
       'android': NativeAppData(
         id: '123456789012345678901234567891',

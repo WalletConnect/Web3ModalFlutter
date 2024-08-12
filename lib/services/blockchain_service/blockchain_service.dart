@@ -11,17 +11,13 @@ import 'package:web3modal_flutter/services/logger_service/logger_service_singlet
 class BlockChainService implements IBlockChainService {
   late final ICore _core;
   late final String _baseUrl;
-  late final String _clientId;
+  String? _clientId;
 
-  BlockChainService({required ICore core}) : _core = core;
+  BlockChainService({required ICore core})
+      : _core = core,
+        _baseUrl = '${UrlConstants.blockChainService}/v1';
 
-  @override
-  Future<void> init() async {
-    _baseUrl = '${UrlConstants.blockChainService}/v1';
-    _clientId = await _core.crypto.getClientId();
-  }
-
-  Map<String, String> get _requiredParams => {
+  Map<String, String?> get _requiredParams => {
         'projectId': _core.projectId,
         'clientId': _clientId,
       };
@@ -32,10 +28,18 @@ class BlockChainService implements IBlockChainService {
       };
 
   @override
+  Future<void> init() async {
+    _clientId = await _core.crypto.getClientId();
+  }
+
+  @override
   Future<BlockchainIdentity> getIdentity(String address) async {
     try {
       final uri = Uri.parse('$_baseUrl/identity/$address');
       final queryParams = {..._requiredParams};
+      if (queryParams['clientId'] == null) {
+        queryParams['clientId'] = await _core.crypto.getClientId();
+      }
       final response = await http.get(
         uri.replace(queryParameters: queryParams),
         headers: _requiredHeaders,
@@ -66,6 +70,9 @@ class BlockChainService implements IBlockChainService {
     }
     final uri = Uri.parse(_baseUrl);
     final queryParams = {..._requiredParams, 'chainId': chain};
+    if (queryParams['clientId'] == null) {
+      queryParams['clientId'] = await _core.crypto.getClientId();
+    }
     final response = await http.post(
       uri.replace(queryParameters: queryParams),
       headers: {

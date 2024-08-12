@@ -276,6 +276,8 @@ class EIP155 {
         // we first call `decimals` function, which is a read function,
         // to check how much decimal we need to use to parse the amount value
         final decimals = await w3mService.requestReadContract(
+          topic: w3mService.session!.topic,
+          chainId: w3mService.selectedChain!.namespace,
           deployedContract: deployedContract,
           functionName: 'decimals',
         );
@@ -346,6 +348,8 @@ class EIP155 {
         // we first call `decimals` function, which is a read function,
         // to check how much decimal we need to use to parse the amount value
         final decimals = await w3mService.requestReadContract(
+          topic: w3mService.session!.topic,
+          chainId: w3mService.selectedChain!.namespace,
           deployedContract: deployedContract,
           functionName: 'decimals',
         );
@@ -379,16 +383,22 @@ class EIP155 {
     final results = await Future.wait([
       // results[0]
       w3mService.requestReadContract(
+        topic: w3mService.session!.topic,
+        chainId: w3mService.selectedChain!.namespace,
         deployedContract: contract,
         functionName: 'name',
       ),
       // results[1]
       w3mService.requestReadContract(
+        topic: w3mService.session!.topic,
+        chainId: w3mService.selectedChain!.namespace,
         deployedContract: contract,
         functionName: 'totalSupply',
       ),
       // results[2]
       w3mService.requestReadContract(
+        topic: w3mService.session!.topic,
+        chainId: w3mService.selectedChain!.namespace,
         deployedContract: contract,
         functionName: 'balanceOf',
         parameters: [
@@ -397,6 +407,8 @@ class EIP155 {
       ),
       // results[4]
       w3mService.requestReadContract(
+        topic: w3mService.session!.topic,
+        chainId: w3mService.selectedChain!.namespace,
         deployedContract: contract,
         functionName: 'decimals',
       ),

@@ -225,6 +225,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.18.0"
+  connectivity_plus:
+    dependency: transitive
+    description:
+      name: connectivity_plus
+      sha256: "3e7d1d9dbae40ae82cbe6c23c518f0c4ffe32764ee9749b9a99d32cbac8734f6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.4"
+  connectivity_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: connectivity_plus_platform_interface
+      sha256: "42657c1715d48b167930d5f34d00222ac100475f73d10162ddf43e714932f204"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   convert:
     dependency: transitive
     description:
@@ -273,6 +289,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
+  dbus:
+    dependency: transitive
+    description:
+      name: dbus
+      sha256: "365c771ac3b0e58845f39ec6deebc76e3276aa9922b0cc60840712094d9047ac"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.10"
   ed25519_edwards:
     dependency: transitive
     description:
@@ -584,6 +608,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  nm:
+    dependency: transitive
+    description:
+      name: nm
+      sha256: "2c9aae4127bdc8993206464fcc063611e0e36e72018696cd9631023a31b24254"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.0"
   octo_image:
     dependency: transitive
     description:
@@ -708,10 +740,10 @@ packages:
     dependency: transitive
     description:
       name: pointycastle
-      sha256: "43ac87de6e10afabc85c445745a7b799e04de84cebaa4fd7bf55a5e1e9604d29"
+      sha256: "4be0097fcf3fd3e8449e53730c631200ebc7b88016acecab2b0da2f0149222fe"
       url: "https://pub.dev"
     source: hosted
-    version: "3.7.4"
+    version: "3.9.1"
   pool:
     dependency: transitive
     description:
@@ -1097,10 +1129,10 @@ packages:
     dependency: transitive
     description:
       name: walletconnect_flutter_v2
-      sha256: "4a77de8d33f5d1f6b6ae07d4d2f7bf591ddb6c4cd671bf7493100798d92fa4d3"
+      sha256: da2208740e7f40a682e2fc258fd16b176ca0dcece2696343822cd0c997c4e13c
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.0"
+    version: "2.3.1"
   watcher:
     dependency: transitive
     description:
@@ -1131,7 +1163,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.3.0"
+    version: "3.3.1"
   web_socket_channel:
     dependency: transitive
     description:

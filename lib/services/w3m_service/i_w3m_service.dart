@@ -117,8 +117,11 @@ abstract class IW3MService with ChangeNotifier {
   Future<void> disconnect({bool disconnectAllSessions = true});
 
   Future<List<dynamic>> requestReadContract({
+    required String? topic,
+    required String chainId,
     required DeployedContract deployedContract,
     required String functionName,
+    EthereumAddress? sender,
     List parameters = const [],
   });
 
@@ -128,8 +131,8 @@ abstract class IW3MService with ChangeNotifier {
     required DeployedContract deployedContract,
     required String functionName,
     required Transaction transaction,
-    String? method,
     List parameters = const [],
+    String? method,
   });
 
   /// Make a request
