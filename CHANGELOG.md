@@ -1,3 +1,7 @@
+## 3.3.1
+
+- Bug fixes and improvements
+
 ## 3.3.0
 
 - One-Click Auth + SIWE implementation

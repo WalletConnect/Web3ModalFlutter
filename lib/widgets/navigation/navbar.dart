@@ -19,6 +19,7 @@ class Web3ModalNavbar extends StatelessWidget {
     this.safeAreaRight = false,
     this.safeAreaBottom = true,
     this.noClose = false,
+    this.divider = true,
   });
 
   final VoidCallback? onBack;
@@ -26,7 +27,7 @@ class Web3ModalNavbar extends StatelessWidget {
   final Widget body;
   final String title;
   final NavbarActionButton? leftAction;
-  final bool safeAreaLeft, safeAreaRight, safeAreaBottom, noClose;
+  final bool safeAreaLeft, safeAreaRight, safeAreaBottom, noClose, divider;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +91,7 @@ class Web3ModalNavbar extends StatelessWidget {
               ),
             ),
           ),
-          Divider(color: themeColors.grayGlass005, height: 0.0),
+          if (divider) Divider(color: themeColors.grayGlass005, height: 0.0),
           Flexible(
             child: SafeArea(
               left: safeAreaLeft,

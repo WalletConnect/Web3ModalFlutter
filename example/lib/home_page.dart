@@ -74,10 +74,10 @@ class _MyHomePageState extends State<MyHomePage> {
         getMessageParams: () async {
           // Provide everything that is needed to construct the SIWE message
           debugPrint('[SIWEConfig] getMessageParams()');
-          final uri = Uri.parse(_pairingMetadata.redirect!.native!);
+          final uri = Uri.parse(_pairingMetadata.url);
           return SIWEMessageArgs(
             domain: uri.authority,
-            uri: 'https://walletconnect.com/login',
+            uri: 'https://${uri.authority}/login',
             statement: 'Welcome to AppKit $packageVersion for Flutter.',
             methods: MethodsConstants.allMethods,
           );
@@ -93,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
           try {
             debugPrint('[SIWEConfig] verifyMessage()');
             final payload = args.toJson();
-            final uri = Uri.parse(_pairingMetadata.redirect!.native!);
+            final uri = Uri.parse(_pairingMetadata.url);
             final result = await _siweTestService.verifyMessage(
               payload,
               domain: uri.authority,

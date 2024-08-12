@@ -193,6 +193,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     blockchainService.instance = BlockChainService(
       core: _web3App.core,
     );
+
     magicService.instance = MagicService(
       web3app: _web3App,
       enabled: enableEmail,
@@ -813,6 +814,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       _logger.i('[$runtimeType] Rebuilding session, ending future');
       return;
     } catch (e) {
+      await disconnect();
       await _connectionErrorHandler(e);
     }
   }
@@ -1016,16 +1018,24 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   @override
   Future<List<dynamic>> requestReadContract({
+    required String? topic,
+    required String chainId,
     required DeployedContract deployedContract,
     required String functionName,
+    EthereumAddress? sender,
     List parameters = const [],
   }) async {
     try {
-      // TODO use blockchain-api if possible.
+      if (selectedChain == null) {
+        throw W3MServiceException(
+          'You must select a chain before reading a contract',
+        );
+      }
       return await _web3App.requestReadContract(
         deployedContract: deployedContract,
         functionName: functionName,
         rpcUrl: selectedChain!.rpcUrl,
+        sender: sender,
         parameters: parameters,
       );
     } catch (e) {
@@ -1040,31 +1050,18 @@ class W3MService with ChangeNotifier implements IW3MService {
     required DeployedContract deployedContract,
     required String functionName,
     required Transaction transaction,
+    List<dynamic> parameters = const [],
     String? method,
-    List parameters = const [],
   }) async {
     try {
-      final requestParams = SessionRequestParams(
-        method: MethodsConstants.ethSendTransaction,
-        params: [
-          Transaction.callContract(
-            contract: deployedContract,
-            function: deployedContract.function(functionName),
-            from: transaction.from,
-            value: transaction.value,
-            maxGas: transaction.maxGas,
-            gasPrice: transaction.gasPrice,
-            nonce: transaction.nonce,
-            maxFeePerGas: transaction.maxFeePerGas,
-            maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
-            parameters: parameters,
-          ).toJson(),
-        ],
-      );
-      return request(
-        topic: topic,
+      return await _web3App.requestWriteContract(
+        topic: topic ?? '',
         chainId: chainId,
-        request: requestParams,
+        deployedContract: deployedContract,
+        functionName: functionName,
+        transaction: transaction,
+        parameters: parameters,
+        method: method,
       );
     } catch (e) {
       rethrow;

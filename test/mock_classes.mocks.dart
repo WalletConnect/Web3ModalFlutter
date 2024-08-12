@@ -807,8 +807,11 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
 
   @override
   _i14.Future<List<dynamic>> requestReadContract({
+    required String? topic,
+    required String? chainId,
     required _i3.DeployedContract? deployedContract,
     required String? functionName,
+    _i3.EthereumAddress? sender,
     List<dynamic>? parameters = const [],
   }) =>
       (super.noSuchMethod(
@@ -816,8 +819,11 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
           #requestReadContract,
           [],
           {
+            #topic: topic,
+            #chainId: chainId,
             #deployedContract: deployedContract,
             #functionName: functionName,
+            #sender: sender,
             #parameters: parameters,
           },
         ),
@@ -831,8 +837,8 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
     required _i3.DeployedContract? deployedContract,
     required String? functionName,
     required _i3.Transaction? transaction,
-    String? method,
     List<dynamic>? parameters = const [],
+    String? method,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -844,8 +850,8 @@ class MockW3MService extends _i1.Mock implements _i3.W3MService {
             #deployedContract: deployedContract,
             #functionName: functionName,
             #transaction: transaction,
-            #method: method,
             #parameters: parameters,
+            #method: method,
           },
         ),
         returnValue: _i14.Future<dynamic>.value(),
@@ -1466,7 +1472,6 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
   _i14.Future<dynamic> requestWriteContract({
     required String? topic,
     required String? chainId,
-    required String? rpcUrl,
     required _i3.DeployedContract? deployedContract,
     required String? functionName,
     required _i3.Transaction? transaction,
@@ -1480,7 +1485,6 @@ class MockWeb3App extends _i1.Mock implements _i3.Web3App {
           {
             #topic: topic,
             #chainId: chainId,
-            #rpcUrl: rpcUrl,
             #deployedContract: deployedContract,
             #functionName: functionName,
             #transaction: transaction,
