@@ -14,12 +14,18 @@ class LoggerService implements ILoggerService {
       level: level.toLevel(),
       printer: PrettyPrinter(methodCount: null),
     );
-    if (debugMode && level == LogLevel.error) {
+    if (debugMode) {
       Logger.addLogListener(_logListener);
     }
   }
 
-  void _logListener(LogEvent event) => debugPrint('${event.message}');
+  void _logListener(LogEvent event) {
+    debugPrint('${event.message}');
+    if (event.error != null) debugPrint('Exception : ${event.error}');
+    if (event.stackTrace != null) {
+      debugPrint('Stacktrace :\n${event.stackTrace}');
+    }
+  }
 
   @override
   void d(

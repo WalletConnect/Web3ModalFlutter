@@ -54,23 +54,24 @@ class UrlUtils extends IUrlUtils {
       return false;
     }
 
-    if (platformUtils.instance.canDetectInstalledApps()) {
-      final p = platformUtils.instance.getPlatformExact();
-      try {
-        if (p == PlatformExact.android) {
-          return await androidAppCheck(uri);
-        } else if (p == PlatformExact.iOS) {
-          return await canLaunchUrlFunc(Uri.parse(uri));
-        }
-      } on FormatException catch (e) {
-        if (id != null) {
-          loggerService.instance.d('[$runtimeType] $uri ($id): ${e.message}');
-        } else {
-          loggerService.instance.d('[$runtimeType] $uri: ${e.message}');
-        }
-      } catch (e) {
-        rethrow;
+    final p = platformUtils.instance.getPlatformExact();
+    if (!platformUtils.instance.canDetectInstalledApps()) {
+      return false;
+    }
+    try {
+      if (p == PlatformExact.android) {
+        return await androidAppCheck(uri);
+      } else if (p == PlatformExact.iOS) {
+        return await canLaunchUrlFunc(Uri.parse(uri));
       }
+    } on FormatException catch (e) {
+      if (id != null) {
+        loggerService.instance.d('[$runtimeType] $uri ($id): ${e.message}');
+      } else {
+        loggerService.instance.d('[$runtimeType] $uri: ${e.message}');
+      }
+    } catch (e) {
+      rethrow;
     }
 
     return false;
