@@ -331,8 +331,8 @@ class W3MService with ChangeNotifier implements IW3MService {
   Future<void> _setSesionAndChainData(W3MSession w3mSession) async {
     try {
       await _storeSession(w3mSession);
-      final chainId = _currentSelectedChainId ?? w3mSession.chainId;
-      await _setLocalEthChain(chainId, logEvent: false);
+      _currentSelectedChainId = _currentSelectedChainId ?? w3mSession.chainId;
+      await _setLocalEthChain(_currentSelectedChainId!, logEvent: false);
     } catch (e, s) {
       _logger.e(
         '[$runtimeType] _setSesionAndChainData error $e',
@@ -370,7 +370,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     if (_currentSession != null) {
       final chainId = _savedChainId(null);
       if (chainId != null && W3MChainPresets.chains.containsKey(chainId)) {
-        await selectChain(W3MChainPresets.chains[chainId]!, logEvent: false);
+        await _setLocalEthChain(chainId, logEvent: false);
       } else {
         _currentSelectedChainId = chainId;
       }
@@ -458,6 +458,7 @@ class W3MService with ChangeNotifier implements IW3MService {
   }
 
   Future<void> _setLocalEthChain(String chainId, {bool? logEvent}) async {
+    _currentSelectedChainId = chainId;
     final caip2Chain = 'eip155:$_currentSelectedChainId';
     _logger.i('[$runtimeType] set local chain $caip2Chain');
     _currentSelectedChainId = chainId;
@@ -1296,6 +1297,7 @@ class W3MService with ChangeNotifier implements IW3MService {
       _logger.i('[$runtimeType] requestSwitchToChain error $e');
       // if request errors due to user rejection then set the previous chain
       if (_isUserRejectedError(e)) {
+        // fallback to current chain if rejected by user
         await _setLocalEthChain(_currentSelectedChainId!);
         throw JsonRpcError(code: 5002, message: 'User rejected methods.');
       } else {
