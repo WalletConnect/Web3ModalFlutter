@@ -55,6 +55,7 @@ class BlockChainService implements IBlockChainService {
     }
   }
 
+  int _retries = 1;
   @override
   Future<dynamic> getRpcRequest({
     required String method,
@@ -87,6 +88,7 @@ class BlockChainService implements IBlockChainService {
       }),
     );
     if (response.statusCode == 200 && response.body.isNotEmpty) {
+      _retries = 1;
       try {
         final result = _parseRpcResultAs<String>(response.body);
         final amount = EtherAmount.fromBigInt(EtherUnit.wei, hexToInt(result));
@@ -95,12 +97,16 @@ class BlockChainService implements IBlockChainService {
         rethrow;
       }
     } else {
-      final result = jsonDecode(response.body) as Map<String, dynamic>;
-      final reasons = result['reasons'] as List;
-      final reason = reasons.first as Map<String, dynamic>;
-      loggerService.instance.i(
-        '[$runtimeType] Failed to get request $method. ${reason['description']}',
-      );
+      if (response.body.isEmpty && _retries > 0) {
+        loggerService.instance.i('[$runtimeType] Empty body');
+        _retries -= 1;
+        await getRpcRequest(method: method, params: params, chain: chain);
+      } else {
+        loggerService.instance.i(
+          '[$runtimeType] Failed to get request $method. '
+          'Response: ${response.body}, Status code: ${response.statusCode}',
+        );
+      }
     }
   }
 
