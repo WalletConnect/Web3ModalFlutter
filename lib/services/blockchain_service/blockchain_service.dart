@@ -81,10 +81,10 @@ class BlockChainService implements IBlockChainService {
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
+        'id': 1,
         'jsonrpc': '2.0',
         'method': method,
         'params': params,
-        'chainId': chain.split(':').last,
       }),
     );
     if (response.statusCode == 200 && response.body.isNotEmpty) {
@@ -114,7 +114,7 @@ class BlockChainService implements IBlockChainService {
     try {
       final result = Map<String, dynamic>.from({
         ...jsonDecode(body),
-        'id': -1,
+        'id': 1,
       });
       final jsonResponse = JsonRpcResponse.fromJson(result);
       if (jsonResponse.result != null) {
