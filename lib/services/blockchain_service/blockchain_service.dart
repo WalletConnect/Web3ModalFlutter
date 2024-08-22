@@ -111,15 +111,23 @@ class BlockChainService implements IBlockChainService {
   }
 
   T _parseRpcResultAs<T>(String body) {
-    final result = Map<String, dynamic>.from({
-      ...jsonDecode(body),
-      'id': -1,
-    });
-    final jsonResponse = JsonRpcResponse.fromJson(result);
-    if (jsonResponse.result != null) {
-      return jsonResponse.result;
+    try {
+      final result = Map<String, dynamic>.from({
+        ...jsonDecode(body),
+        'id': -1,
+      });
+      final jsonResponse = JsonRpcResponse.fromJson(result);
+      if (jsonResponse.result != null) {
+        return jsonResponse.result;
+      }
+      throw jsonResponse.error ??
+          WalletConnectError(
+            code: 0,
+            message: 'Error parsing result',
+          );
+    } catch (e) {
+      rethrow;
     }
-    throw jsonResponse.error!;
   }
 
   // @override

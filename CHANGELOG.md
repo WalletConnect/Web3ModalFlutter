@@ -1,4 +1,4 @@
-## 3.3.2
+## 3.3.3
 
 - Fix a bug where reading stored chainId failed
 - Added retry to blockchain call when response is empty
