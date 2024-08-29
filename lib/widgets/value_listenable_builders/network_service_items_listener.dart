@@ -28,7 +28,8 @@ class NetworkServiceItemsListener extends StatelessWidget {
           valueListenable: networkService.instance.itemList,
           builder: (context, items, _) {
             final service = Web3ModalProvider.of(context).service;
-            final supportedChains = service.getAvailableChains();
+            final ns = service.selectedChain?.namespace.split(':').first;
+            final supportedChains = service.getAvailableChains(namespace: ns);
             final parsedItems = supportedChains == null
                 ? items
                 : items.map((e) {

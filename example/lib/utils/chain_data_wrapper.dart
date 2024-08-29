@@ -3,7 +3,7 @@ import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 class ChainDataWrapper {
-  static final List<ChainMetadata> chains = [
+  static final List<ChainMetadata> _chains = [
     ChainMetadata(
       type: ChainType.eip155,
       color: Colors.blue,
@@ -59,16 +59,11 @@ class ChainDataWrapper {
       color: Colors.green.shade100,
       w3mChainInfo: W3MChainPresets.chains['1313161554']!,
     ),
-    // const ChainMetadata(
-    //   type: ChainType.solana,
-    //   chainId: 'solana:4sGjMW1sUnHzSxGspuhpqLDx6wiyjNtZ',
-    //   name: 'Solana',
-    //   logo: 'TODO',
-    //   color: Colors.black,
-    //   rpc: [
-    //     "https://solana-api.projectserum.com",
-    //   ],
-    // ),
+    ChainMetadata(
+      type: ChainType.solana,
+      color: Colors.purple.shade400,
+      w3mChainInfo: W3MChainPresets.chains['5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp']!,
+    ),
     // ChainMetadata(
     //   type: ChainType.kadena,
     //   chainId: 'kadena:mainnet01',
@@ -82,22 +77,9 @@ class ChainDataWrapper {
   ];
 }
 
-String getChainName(String chain) {
-  try {
-    return ChainDataWrapper.chains
-        .where((element) => element.w3mChainInfo.namespace == chain)
-        .first
-        .w3mChainInfo
-        .chainName;
-  } catch (e) {
-    debugPrint('[ExampleApp] getChainName, Invalid chain: $chain');
-  }
-  return 'Unknown';
-}
-
 ChainMetadata getChainMetadataFromChain(String namespace) {
   try {
-    return ChainDataWrapper.chains
+    return ChainDataWrapper._chains
         .where((element) => element.w3mChainInfo.namespace == namespace)
         .first;
   } catch (_) {

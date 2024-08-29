@@ -66,6 +66,10 @@ class W3MService with ChangeNotifier implements IW3MService {
   W3MServiceStatus get status => _status;
 
   String? _currentSelectedChainId;
+  String? _currentSelectedNamespace;
+  String get _caip2Chain =>
+      '$_currentSelectedNamespace:$_currentSelectedChainId';
+
   @override
   W3MChainInfo? get selectedChain =>
       W3MChainPresets.chains[_currentSelectedChainId];
@@ -388,6 +392,7 @@ class W3MService with ChangeNotifier implements IW3MService {
     if (chainInfo?.chainId == _currentSelectedChainId) {
       return;
     }
+    _currentSelectedNamespace = chainInfo?.namespace.split(':').first;
 
     // If the chain is null, disconnect and stop.
     if (chainInfo == null) {
@@ -405,8 +410,12 @@ class W3MService with ChangeNotifier implements IW3MService {
     } else {
       final hasValidSession = _isConnected && _currentSession != null;
       if (switchChain && hasValidSession && _currentSelectedChainId != null) {
-        final approvedChains = _currentSession!.getApprovedChains() ?? [];
-        final hasChainAlready = approvedChains.contains(chainInfo.namespace);
+        final approvedChains = _currentSession!.getApprovedChains(
+          namespace: _currentSelectedNamespace,
+        );
+        final hasChainAlready = (approvedChains ?? []).contains(
+          chainInfo.namespace,
+        );
         if (!hasChainAlready) {
           requestSwitchToChain(chainInfo);
           final hasSwitchMethod = _currentSession!.hasSwitchMethod();
@@ -424,42 +433,49 @@ class W3MService with ChangeNotifier implements IW3MService {
 
   /// Will get the list of available chains to add
   @override
-  List<String>? getAvailableChains() {
+  List<String>? getAvailableChains({required String? namespace}) {
     // if there's no session or if supportsAddChain method then every chain can be used
     if (_currentSession == null || _currentSession!.hasSwitchMethod()) {
       return null;
     }
-    return getApprovedChains();
+    return getApprovedChains(namespace: namespace);
   }
 
   /// Will get the list of already approved chains by the wallet (to switch to)
   @override
-  List<String>? getApprovedChains() {
+  List<String>? getApprovedChains({required String? namespace}) {
     if (_currentSession == null) {
       return null;
     }
-    return _currentSession!.getApprovedChains();
+    return _currentSession!.getApprovedChains(
+      namespace: null,
+    );
   }
 
   @override
-  List<String>? getApprovedMethods() {
+  List<String>? getApprovedMethods({required String? namespace}) {
     if (_currentSession == null) {
       return null;
     }
-    return _currentSession!.getApprovedMethods();
+    return _currentSession!.getApprovedMethods(
+      namespace: namespace,
+    );
   }
 
   @override
-  List<String>? getApprovedEvents() {
+  List<String>? getApprovedEvents({required String? namespace}) {
     if (_currentSession == null) {
       return null;
     }
-    return _currentSession!.getApprovedEvents();
+    return _currentSession!.getApprovedEvents(
+      namespace: namespace,
+    );
   }
 
   Future<void> _setLocalEthChain(String chainId, {bool? logEvent}) async {
     _currentSelectedChainId = chainId;
-    final caip2Chain = 'eip155:$_currentSelectedChainId';
+    final ns = _currentSelectedNamespace ?? StringConstants.namespace;
+    final caip2Chain = '$ns:$_currentSelectedChainId';
     _logger.i('[$runtimeType] set local chain $caip2Chain');
     _currentSelectedChainId = chainId;
     _notify();
@@ -1225,15 +1241,31 @@ class W3MService with ChangeNotifier implements IW3MService {
       );
     } else {
       // Set the optional namespaces to everything in our chain presets
+      final eip155Chains = W3MChainPresets.chains.values
+          .where((e) => e.namespace.contains(StringConstants.namespace))
+          .toList();
       _optionalNamespaces = {
         StringConstants.namespace: RequiredNamespace(
-          chains:
-              W3MChainPresets.chains.values.map((e) => e.namespace).toList(),
+          chains: eip155Chains.map((e) => e.namespace).toList(),
           methods: MethodsConstants.allMethods.toSet().toList(),
           events: EventsConstants.allEvents.toSet().toList(),
         ),
       };
+      final solanaChains = W3MChainPresets.chains.values
+          .where((e) => e.namespace.contains('solana'))
+          .toList();
+      if (solanaChains.isNotEmpty) {
+        _optionalNamespaces.putIfAbsent(
+          'solana',
+          () => RequiredNamespace(
+            chains: solanaChains.map((e) => e.namespace).toList(),
+            methods: ['solana_signMessage', 'solana_signTransaction'],
+            events: [],
+          ),
+        );
+      }
     }
+    debugPrint('_optionalNamespaces: $_optionalNamespaces');
   }
 
   /// Loads account balance and avatar.
@@ -1247,11 +1279,12 @@ class W3MService with ChangeNotifier implements IW3MService {
       return;
     }
 
+    final ns = _currentSelectedNamespace ?? StringConstants.namespace;
     // Get the chain balance.
     _chainBalance = await blockchainService.instance.getRpcRequest(
-      method: 'eth_getBalance',
-      params: [_currentSession!.address!, 'latest'],
-      chain: 'eip155:$_currentSelectedChainId',
+      method: 'getBalance',
+      params: [_currentSession!.address!], //, 'latest'
+      chain: '$ns:$_currentSelectedChainId',
     );
     final tokenName = selectedChain?.tokenName ?? '';
     balanceNotifier.value = '$_chainBalance $tokenName';
@@ -1275,7 +1308,8 @@ class W3MService with ChangeNotifier implements IW3MService {
       await selectChain(newChain);
       return;
     }
-    final currentChain = 'eip155:$_currentSelectedChainId';
+    final ns = _currentSelectedNamespace ?? StringConstants.namespace;
+    final currentChain = '$ns:$_currentSelectedChainId';
     final newChainId = newChain.namespace;
     _logger.i('[$runtimeType] requesting switch to chain $newChainId');
     try {
@@ -1314,7 +1348,8 @@ class W3MService with ChangeNotifier implements IW3MService {
   @override
   Future<void> requestAddChain(W3MChainInfo newChain) async {
     final topic = _currentSession?.topic ?? '';
-    final currentChainId = 'eip155:$_currentSelectedChainId';
+    final ns = _currentSelectedNamespace ?? StringConstants.namespace;
+    final currentChainId = '$ns:$_currentSelectedChainId';
     final newChainId = newChain.namespace;
     _logger.i('[$runtimeType] requesting switch to add chain $newChainId');
     try {

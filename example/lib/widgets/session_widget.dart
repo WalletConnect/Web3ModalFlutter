@@ -12,7 +12,7 @@ import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 import 'package:walletconnect_flutter_dapp/models/chain_metadata.dart';
 import 'package:walletconnect_flutter_dapp/utils/constants.dart';
-import 'package:walletconnect_flutter_dapp/utils/crypto/eip155_service.dart';
+import 'package:walletconnect_flutter_dapp/utils/crypto/methods_service.dart';
 import 'package:walletconnect_flutter_dapp/widgets/method_dialog.dart';
 
 class SessionWidget extends StatefulWidget {
@@ -113,13 +113,17 @@ class SessionWidgetState extends State<SessionWidget> {
     ];
 
     // Get current active account
-    final accounts = session.getAccounts() ?? [];
     try {
+      final ns = widget.w3mService.selectedChain?.namespace.split(':').first;
+      final accounts = session.getAccounts(namespace: ns) ?? [];
       final currentNamespace = widget.w3mService.selectedChain?.namespace;
       final chainsNamespaces = NamespaceUtils.getChainsFromAccounts(accounts);
       if (chainsNamespaces.contains(currentNamespace)) {
         final account = accounts.firstWhere(
-          (account) => account.contains('$currentNamespace:'),
+          (account) {
+            debugPrint('[ExampleApp] account $account');
+            return account.contains('$currentNamespace:');
+          },
         );
         children.add(_buildAccountWidget(account));
       }
@@ -170,6 +174,7 @@ class SessionWidgetState extends State<SessionWidget> {
   }
 
   Widget _buildAccountWidget(String namespaceAccount) {
+    debugPrint('_buildAccountWidget $namespaceAccount');
     final chainId = NamespaceUtils.getChainFromAccount(namespaceAccount);
     final account = NamespaceUtils.getAccount(namespaceAccount);
     final chainMetadata = getChainMetadataFromChain(chainId);
@@ -234,9 +239,11 @@ class SessionWidgetState extends State<SessionWidget> {
     ChainMetadata chainMetadata,
     String address,
   ) {
+    debugPrint('_buildChainMethodButtons $address');
+    final ns = chainMetadata.w3mChainInfo.namespace.split(':').first;
     // Add Methods
     final approvedMethods =
-        widget.w3mService.getApprovedMethods() ?? <String>[];
+        widget.w3mService.getApprovedMethods(namespace: ns) ?? [];
     if (approvedMethods.isEmpty) {
       return [
         Text(
@@ -247,7 +254,7 @@ class SessionWidgetState extends State<SessionWidget> {
         )
       ];
     }
-    final usableMethods = EIP155UIMethods.values.map((e) => e.name).toList();
+    final usableMethods = SupportedMethods.values.map((e) => e.name).toList();
     //
     final List<Widget> children = [];
     for (final method in approvedMethods) {
@@ -261,11 +268,19 @@ class SessionWidgetState extends State<SessionWidget> {
             onPressed: implemented
                 ? () async {
                     widget.w3mService.launchConnectedWallet();
-                    final future = callChainMethod(
-                      chainMetadata.type,
-                      EIP155.methodFromName(method),
-                      chainMetadata,
-                      address,
+                    // final future = callChainMethod(
+                    //   chainMetadata.type,
+                    //   MethodsService.methodFromName(method),
+                    //   chainMetadata,
+                    //   address,
+                    // );
+                    final session = widget.w3mService.session!;
+                    final future = MethodsService.callMethod(
+                      w3mService: widget.w3mService,
+                      topic: session.topic ?? '',
+                      method: MethodsService.methodFromName(method),
+                      chainId: chainMetadata.w3mChainInfo.namespace,
+                      address: address,
                     );
                     MethodDialog.show(context, method, future);
                   }
@@ -304,7 +319,7 @@ class SessionWidgetState extends State<SessionWidget> {
         child: ElevatedButton(
           onPressed: onSepolia
               ? () async {
-                  final future = EIP155.callTestSmartContract(
+                  final future = MethodsService.callTestSmartContract(
                     w3mService: widget.w3mService,
                     action: 'read',
                   );
@@ -316,7 +331,7 @@ class SessionWidgetState extends State<SessionWidget> {
                 }
               : onMainnet
                   ? () async {
-                      final future = EIP155.callUSDTSmartContract(
+                      final future = MethodsService.callUSDTSmartContract(
                         w3mService: widget.w3mService,
                         action: 'read',
                       );
@@ -341,7 +356,7 @@ class SessionWidgetState extends State<SessionWidget> {
           onPressed: onSepolia
               ? () async {
                   widget.w3mService.launchConnectedWallet();
-                  final future = EIP155.callTestSmartContract(
+                  final future = MethodsService.callTestSmartContract(
                     w3mService: widget.w3mService,
                     action: 'write',
                   );
@@ -350,7 +365,7 @@ class SessionWidgetState extends State<SessionWidget> {
               : onMainnet
                   ? () async {
                       widget.w3mService.launchConnectedWallet();
-                      final future = EIP155.callUSDTSmartContract(
+                      final future = MethodsService.callUSDTSmartContract(
                         w3mService: widget.w3mService,
                         action: 'write',
                       );
@@ -382,7 +397,9 @@ class SessionWidgetState extends State<SessionWidget> {
         ),
       ],
     );
-    final approvedChains = widget.w3mService.getApprovedChains() ?? <String>[];
+    final ns = widget.w3mService.selectedChain?.namespace.split(':').first;
+    final approvedChains =
+        widget.w3mService.getApprovedChains(namespace: ns) ?? <String>[];
     children.add(
       Text(
         approvedChains.join(', '),
@@ -396,7 +413,9 @@ class SessionWidgetState extends State<SessionWidget> {
 
   Widget _buildChainEventsTiles(ChainMetadata chainMetadata) {
     // Add Events
-    final approvedEvents = widget.w3mService.getApprovedEvents() ?? <String>[];
+    final ns = chainMetadata.w3mChainInfo.namespace.split(':').first;
+    final approvedEvents =
+        widget.w3mService.getApprovedEvents(namespace: ns) ?? <String>[];
     if (approvedEvents.isEmpty) {
       return Text(
         'No events approved',
@@ -438,14 +457,14 @@ class SessionWidgetState extends State<SessionWidget> {
 
   Future<dynamic> callChainMethod(
     ChainType type,
-    EIP155UIMethods method,
+    SupportedMethods method,
     ChainMetadata chainMetadata,
     String address,
   ) {
     final session = widget.w3mService.session!;
     switch (type) {
       case ChainType.eip155:
-        return EIP155.callMethod(
+        return MethodsService.callMethod(
           w3mService: widget.w3mService,
           topic: session.topic ?? '',
           method: method,
