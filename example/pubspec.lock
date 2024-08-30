@@ -1128,9 +1128,11 @@ packages:
   walletconnect_flutter_v2:
     dependency: transitive
     description:
-      path: "/Users/alfreedom/Development/WalletConnect/WalletConnectFlutterV2/"
-      relative: false
-    source: path
+      path: "."
+      ref: ae59206fd7e385f76e24dd7346cb54fbabe64424
+      resolved-ref: ae59206fd7e385f76e24dd7346cb54fbabe64424
+      url: "https://github.com/WalletConnect/WalletConnectFlutterV2.git"
+    source: git
     version: "2.3.1"
   watcher:
     dependency: transitive
