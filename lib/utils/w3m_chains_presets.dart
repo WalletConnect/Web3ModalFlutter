@@ -278,6 +278,10 @@ class W3MChainPresets {
     // Base
     '8453': '7289c336-3981-4081-c5f4-efc26ac64a00',
     // Aurora
-    '1313161554': '3ff73439-a619-4894-9262-4470c773a100'
+    '1313161554': '3ff73439-a619-4894-9262-4470c773a100',
+    // Solana networks
+    '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp': 'a1b58899-f671-4276-6a5e-56ca5bd59700',
+    '4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z': 'a1b58899-f671-4276-6a5e-56ca5bd59700',
+    'EtWTRABZaYq6iMfeYKouRu166VU2xqa1': 'a1b58899-f671-4276-6a5e-56ca5bd59700',
   };
 }
