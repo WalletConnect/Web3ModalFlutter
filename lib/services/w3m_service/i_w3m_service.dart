@@ -99,16 +99,16 @@ abstract class IW3MService with ChangeNotifier {
   void launchConnectedWallet();
 
   /// List of available chains to be added in connected wallet
-  List<String>? getAvailableChains();
+  List<String>? getAvailableChains({required String? namespace});
 
   /// List of approved chains by connected wallet
-  List<String>? getApprovedChains();
+  List<String>? getApprovedChains({required String? namespace});
 
   /// List of approved methods by connected wallet
-  List<String>? getApprovedMethods();
+  List<String>? getApprovedMethods({required String? namespace});
 
   /// List of approved events by connected wallet
-  List<String>? getApprovedEvents();
+  List<String>? getApprovedEvents({required String? namespace});
 
   Future<void> loadAccountData();
 

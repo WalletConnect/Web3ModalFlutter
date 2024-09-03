@@ -1,15 +1,18 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/test_data/usdt_contract.dart';
 import 'package:web3modal_flutter/web3modal_flutter.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:convert/convert.dart';
+// ignore: depend_on_referenced_packages
+import 'package:bs58/bs58.dart';
 
 import 'package:walletconnect_flutter_dapp/utils/crypto/test_data/aave_contract.dart';
 import 'package:walletconnect_flutter_dapp/utils/crypto/test_data/test_data.dart';
 
-enum EIP155UIMethods {
+enum SupportedMethods {
   personalSign,
   ethSendTransaction,
   requestAccounts,
@@ -17,7 +20,9 @@ enum EIP155UIMethods {
   ethSignTypedDataV3,
   ethSignTypedDataV4,
   ethSignTransaction,
-  walletWatchAsset;
+  walletWatchAsset,
+  solanaSignMessage,
+  solanaSignTransaction;
 
   String get name {
     switch (this) {
@@ -37,29 +42,37 @@ enum EIP155UIMethods {
         return 'eth_signTransaction';
       case walletWatchAsset:
         return 'wallet_watchAsset';
+      case solanaSignMessage:
+        return 'solana_signMessage';
+      case solanaSignTransaction:
+        return 'solana_signTransaction';
     }
   }
 }
 
-class EIP155 {
-  static EIP155UIMethods methodFromName(String name) {
+class MethodsService {
+  static SupportedMethods methodFromName(String name) {
     switch (name) {
       case 'personal_sign':
-        return EIP155UIMethods.personalSign;
+        return SupportedMethods.personalSign;
       case 'eth_signTypedData_v4':
-        return EIP155UIMethods.ethSignTypedDataV4;
+        return SupportedMethods.ethSignTypedDataV4;
       case 'eth_sendTransaction':
-        return EIP155UIMethods.ethSendTransaction;
+        return SupportedMethods.ethSendTransaction;
       case 'eth_requestAccounts':
-        return EIP155UIMethods.requestAccounts;
+        return SupportedMethods.requestAccounts;
       case 'eth_signTypedData_v3':
-        return EIP155UIMethods.ethSignTypedDataV3;
+        return SupportedMethods.ethSignTypedDataV3;
       case 'eth_signTypedData':
-        return EIP155UIMethods.ethSignTypedData;
+        return SupportedMethods.ethSignTypedData;
       case 'eth_signTransaction':
-        return EIP155UIMethods.ethSignTransaction;
+        return SupportedMethods.ethSignTransaction;
       case 'wallet_watchAsset':
-        return EIP155UIMethods.walletWatchAsset;
+        return SupportedMethods.walletWatchAsset;
+      case 'solana_signMessage':
+        return SupportedMethods.solanaSignMessage;
+      case 'solana_signTransaction':
+        return SupportedMethods.solanaSignTransaction;
       default:
         throw Exception('Unrecognized method');
     }
@@ -68,39 +81,41 @@ class EIP155 {
   static Future<dynamic> callMethod({
     required W3MService w3mService,
     required String topic,
-    required EIP155UIMethods method,
+    required SupportedMethods method,
     required String chainId,
     required String address,
   }) {
-    final cid = int.parse(chainId.split(':')[1]);
+    debugPrint(
+        '[SampleDapp] callMethod, topic: $topic, method: ${method.name}, chainId: $chainId, address: $address');
+    final cid = chainId.split(':')[1];
     switch (method) {
-      case EIP155UIMethods.requestAccounts:
-        return requestAccounts(
+      case SupportedMethods.requestAccounts:
+        return _requestAccounts(
           w3mService: w3mService,
         );
-      case EIP155UIMethods.personalSign:
-        return personalSign(
+      case SupportedMethods.personalSign:
+        return _personalSign(
           w3mService: w3mService,
           message: testSignData,
         );
-      case EIP155UIMethods.ethSignTypedDataV3:
-        return ethSignTypedDataV3(
+      case SupportedMethods.ethSignTypedDataV3:
+        return _ethSignTypedDataV3(
           w3mService: w3mService,
-          data: jsonEncode(typeDataV3(cid)),
+          data: jsonEncode(typeDataV3(int.parse(cid))),
         );
-      case EIP155UIMethods.ethSignTypedData:
-        return ethSignTypedData(
+      case SupportedMethods.ethSignTypedData:
+        return _ethSignTypedData(
           w3mService: w3mService,
           data: jsonEncode(typedData()),
         );
-      case EIP155UIMethods.ethSignTypedDataV4:
-        return ethSignTypedDataV4(
+      case SupportedMethods.ethSignTypedDataV4:
+        return _ethSignTypedDataV4(
           w3mService: w3mService,
-          data: jsonEncode(typeDataV4(cid)),
+          data: jsonEncode(typeDataV4(int.parse(cid))),
         );
-      case EIP155UIMethods.ethSignTransaction:
-      case EIP155UIMethods.ethSendTransaction:
-        return ethSendTransaction(
+      case SupportedMethods.ethSignTransaction:
+      case SupportedMethods.ethSendTransaction:
+        return _ethSendTransaction(
           w3mService: w3mService,
           transaction: Transaction(
             from: EthereumAddress.fromHex(address),
@@ -111,27 +126,38 @@ class EIP155 {
           ),
           method: method,
         );
-      case EIP155UIMethods.walletWatchAsset:
-        return walletWatchAsset(
+      case SupportedMethods.walletWatchAsset:
+        return _walletWatchAsset(
           w3mService: w3mService,
+        );
+      case SupportedMethods.solanaSignMessage:
+        return _solanaSignMessage(
+          w3mService: w3mService,
+          message: testSignData,
+        );
+      case SupportedMethods.solanaSignTransaction:
+        return _solanaSignTransaction(
+          w3mService: w3mService,
+          address: address,
+          isV0: true,
         );
     }
   }
 
-  static Future<dynamic> requestAccounts({
+  static Future<dynamic> _requestAccounts({
     required W3MService w3mService,
   }) async {
     return await w3mService.request(
       topic: w3mService.session!.topic,
       chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
-        method: EIP155UIMethods.requestAccounts.name,
+        method: SupportedMethods.requestAccounts.name,
         params: [],
       ),
     );
   }
 
-  static Future<dynamic> personalSign({
+  static Future<dynamic> _personalSign({
     required W3MService w3mService,
     required String message,
   }) async {
@@ -142,7 +168,7 @@ class EIP155 {
       topic: w3mService.session!.topic,
       chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
-        method: EIP155UIMethods.personalSign.name,
+        method: SupportedMethods.personalSign.name,
         params: [
           '0x$encoded',
           w3mService.session!.address!,
@@ -151,7 +177,7 @@ class EIP155 {
     );
   }
 
-  static Future<dynamic> ethSignTypedData({
+  static Future<dynamic> _ethSignTypedData({
     required W3MService w3mService,
     required String data,
   }) async {
@@ -159,7 +185,7 @@ class EIP155 {
       topic: w3mService.session!.topic,
       chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
-        method: EIP155UIMethods.ethSignTypedData.name,
+        method: SupportedMethods.ethSignTypedData.name,
         params: [
           data,
           w3mService.session!.address!,
@@ -168,7 +194,7 @@ class EIP155 {
     );
   }
 
-  static Future<dynamic> ethSignTypedDataV3({
+  static Future<dynamic> _ethSignTypedDataV3({
     required W3MService w3mService,
     required String data,
   }) async {
@@ -176,7 +202,7 @@ class EIP155 {
       topic: w3mService.session!.topic,
       chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
-        method: EIP155UIMethods.ethSignTypedDataV3.name,
+        method: SupportedMethods.ethSignTypedDataV3.name,
         params: [
           data,
           w3mService.session!.address!,
@@ -185,7 +211,7 @@ class EIP155 {
     );
   }
 
-  static Future<dynamic> ethSignTypedDataV4({
+  static Future<dynamic> _ethSignTypedDataV4({
     required W3MService w3mService,
     required String data,
   }) async {
@@ -193,7 +219,7 @@ class EIP155 {
       topic: w3mService.session!.topic,
       chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
-        method: EIP155UIMethods.ethSignTypedDataV4.name,
+        method: SupportedMethods.ethSignTypedDataV4.name,
         params: [
           data,
           w3mService.session!.address!,
@@ -202,10 +228,10 @@ class EIP155 {
     );
   }
 
-  static Future<dynamic> ethSendTransaction({
+  static Future<dynamic> _ethSendTransaction({
     required W3MService w3mService,
     required Transaction transaction,
-    required EIP155UIMethods method,
+    required SupportedMethods method,
   }) async {
     return await w3mService.request(
       topic: w3mService.session!.topic,
@@ -219,14 +245,14 @@ class EIP155 {
     );
   }
 
-  static Future<dynamic> walletWatchAsset({
+  static Future<dynamic> _walletWatchAsset({
     required W3MService w3mService,
   }) async {
     return await w3mService.request(
       topic: w3mService.session!.topic,
       chainId: w3mService.selectedChain!.chainId,
       request: SessionRequestParams(
-        method: EIP155UIMethods.walletWatchAsset.name,
+        method: SupportedMethods.walletWatchAsset.name,
         params: {
           "type": "ERC20",
           "options": {
@@ -441,5 +467,66 @@ class EIP155 {
     final d = decimals.toInt();
     final pad = '1'.padRight(d + 1, '0');
     return int.parse(pad);
+  }
+
+  // SOLANA METHODS
+
+  static Future<dynamic> _solanaSignMessage({
+    required W3MService w3mService,
+    required String message,
+  }) async {
+    final bytes = utf8.encode(message);
+    final encoded = base58.encode(bytes);
+
+    return await w3mService.request(
+      topic: w3mService.session!.topic,
+      chainId: w3mService.selectedChain!.chainId,
+      request: SessionRequestParams(
+        method: SupportedMethods.solanaSignMessage.name,
+        params: {
+          'pubkey': w3mService.session!.address!,
+          'message': encoded,
+        },
+      ),
+    );
+  }
+
+  static Future<dynamic> _solanaSignTransaction({
+    required W3MService w3mService,
+    required String address,
+    bool isV0 = true,
+  }) async {
+    return await w3mService.request(
+      topic: w3mService.session!.topic,
+      chainId: w3mService.selectedChain!.chainId,
+      request: SessionRequestParams(
+        method: SupportedMethods.solanaSignTransaction.name,
+        params: {
+          "transaction":
+              "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQABA8oGprM4KFNdgDJcXvItmbIeBJ29nZ+Y9t2KatWbwffpdaMhhWgGf/cOLK4MfSqKoh7TzOlbq+4eA+l1aEoKxIQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACTY9ZvhErKjznLrlIyC4FZnRbCLD05FhimRRroeKDqJAQICAAEMAgAAAICWmAAAAAAAAA==",
+          "feePayer": address,
+          "pubkey": address,
+          "recentBlockhash": "H32Ss1hxpP2ZJM4whREVNyUWRgzFLVA97UXJUjBrEsgx",
+          "instructions": [
+            {
+              "programId": "11111111111111111111111111111111",
+              "data": [2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+              "keys": [
+                {
+                  "isSigner": true,
+                  "isWritable": true,
+                  "pubkey": address,
+                },
+                {
+                  "isSigner": false,
+                  "isWritable": true,
+                  "pubkey": "8vCyX7oB6Pc3pbWMGYYZF5pbSnAdQ7Gyr32JqxqCy8ZR"
+                }
+              ]
+            }
+          ]
+        },
+      ),
+    );
   }
 }

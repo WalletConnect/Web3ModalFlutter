@@ -169,8 +169,23 @@ class _MyHomePageState extends State<MyHomePage> {
     final siweAuthValue = prefs.getBool('app_w3m_siwe_auth') ?? true;
 
     // See https://docs.walletconnect.com/appkit/flutter/core/custom-chains
-    W3MChainPresets.chains.addAll(W3MChainPresets.extraChains);
-    W3MChainPresets.chains.addAll(W3MChainPresets.testChains);
+    // W3MChainPresets.chains.addAll(W3MChainPresets.extraChains);
+    // W3MChainPresets.chains.addAll(W3MChainPresets.testChains);
+    W3MChainPresets.chains.putIfAbsent(
+      '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
+      () => W3MChainInfo(
+        chainName: 'Solana Mainnet',
+        namespace: 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
+        chainId: '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
+        tokenName: 'SOL',
+        chainIcon:
+            W3MChainPresets.chainImagesId['5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp'],
+        rpcUrl: 'https://rpc.ankr.com/solana',
+        extraRpcUrls: [
+          'https://api.tatum.io/v3/blockchain/node/solana-mainnet',
+        ],
+      ),
+    );
 
     try {
       _w3mService = W3MService(

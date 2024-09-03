@@ -89,14 +89,16 @@ class W3MSession {
       return true;
     }
 
-    final nsMethods = getApprovedMethods() ?? [];
+    final nsMethods = getApprovedMethods(namespace: 'eip155') ?? [];
     final supportsAddChain = nsMethods.contains(
       MethodsConstants.walletAddEthChain,
     );
     return supportsAddChain;
   }
 
-  List<String>? getApprovedMethods() {
+  List<String>? getApprovedMethods({required String? namespace}) {
+    final methodsList = <String>[];
+
     if (sessionService.noSession) {
       return null;
     }
@@ -108,29 +110,71 @@ class W3MSession {
     }
 
     final sessionNamespaces = _sessionData!.namespaces;
-    final namespace = sessionNamespaces[StringConstants.namespace];
-    final methodsList = namespace?.methods.toSet().toList();
-    return methodsList ?? [];
+    if ((namespace ?? '').isEmpty) {
+      for (var namespace in sessionNamespaces.keys) {
+        final events = sessionNamespaces[namespace]?.methods ?? [];
+        methodsList.addAll(events);
+      }
+
+      return methodsList;
+    }
+
+    return sessionNamespaces[namespace]?.methods ?? [];
   }
 
-  List<String>? getApprovedEvents() {
+  List<String>? getApprovedEvents({required String? namespace}) {
+    final eventsList = <String>[];
+
     if (sessionService.noSession) {
       return null;
     }
     if (sessionService.isCoinbase) {
-      return [];
+      return eventsList;
     }
     if (sessionService.isMagic) {
-      return [];
+      return eventsList;
     }
 
     final sessionNamespaces = _sessionData!.namespaces;
-    final namespace = sessionNamespaces[StringConstants.namespace];
-    final eventsList = namespace?.events.toSet().toList();
-    return eventsList ?? [];
+    if ((namespace ?? '').isEmpty) {
+      for (var namespace in sessionNamespaces.keys) {
+        final events = sessionNamespaces[namespace]?.events ?? [];
+        eventsList.addAll(events);
+      }
+
+      return eventsList;
+    }
+
+    return sessionNamespaces[namespace]?.events ?? [];
   }
 
-  List<String>? getApprovedChains() {
+  List<String>? getAccounts({required String? namespace}) {
+    final accountList = <String>[];
+
+    if (sessionService.noSession) {
+      return null;
+    }
+    if (sessionService.isCoinbase) {
+      return ['${StringConstants.namespace}:$chainId:$address'];
+    }
+    if (sessionService.isMagic) {
+      return ['${StringConstants.namespace}:$chainId:$address'];
+    }
+
+    final sessionNamespaces = _sessionData!.namespaces;
+    if ((namespace ?? '').isEmpty) {
+      for (var namespace in sessionNamespaces.keys) {
+        final accounts = sessionNamespaces[namespace]?.accounts ?? [];
+        accountList.addAll(accounts);
+      }
+
+      return accountList;
+    }
+
+    return sessionNamespaces[namespace]?.accounts ?? [];
+  }
+
+  List<String>? getApprovedChains({required String? namespace}) {
     if (sessionService.noSession) {
       return null;
     }
@@ -139,24 +183,8 @@ class W3MSession {
       return [chainId];
     }
 
-    final accounts = getAccounts() ?? [];
-    final approvedChains = NamespaceUtils.getChainsFromAccounts(accounts);
-    return approvedChains;
-  }
-
-  List<String>? getAccounts() {
-    if (sessionService.noSession) {
-      return null;
-    }
-    if (sessionService.isCoinbase) {
-      return ['${StringConstants.namespace}:$chainId:$address'];
-    }
-    if (sessionService.isMagic) {
-      return ['${StringConstants.namespace}:$chainId:$address'];
-    }
-
-    final sessionNamespaces = _sessionData!.namespaces;
-    return sessionNamespaces[StringConstants.namespace]?.accounts ?? [];
+    final accounts = getAccounts(namespace: namespace) ?? [];
+    return NamespaceUtils.getChainsFromAccounts(accounts);
   }
 
   Redirect? getSessionRedirect() {
@@ -284,9 +312,9 @@ extension W3MSessionExtension on W3MSession {
   Map<String, Namespace>? _namespaces() {
     if (sessionService.isCoinbase) {
       return {
-        'eip155': Namespace(
-          chains: ['eip155:$chainId'],
-          accounts: ['eip155:$chainId:$address'],
+        StringConstants.namespace: Namespace(
+          chains: ['${StringConstants.namespace}:$chainId'],
+          accounts: ['${StringConstants.namespace}:$chainId:$address'],
           methods: [...CoinbaseService.supportedMethods],
           events: [],
         ),
@@ -294,9 +322,9 @@ extension W3MSessionExtension on W3MSession {
     }
     if (sessionService.isMagic) {
       return {
-        'eip155': Namespace(
-          chains: ['eip155:$chainId'],
-          accounts: ['eip155:$chainId:$address'],
+        StringConstants.namespace: Namespace(
+          chains: ['${StringConstants.namespace}:$chainId'],
+          accounts: ['${StringConstants.namespace}:$chainId:$address'],
           methods: [...MagicService.supportedMethods],
           events: [],
         ),

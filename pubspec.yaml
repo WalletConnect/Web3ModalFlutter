@@ -24,7 +24,10 @@ dependencies:
   shimmer: ^3.0.0
   url_launcher: ^6.2.5
   uuid: ^4.3.3
-  walletconnect_flutter_v2: ^2.3.1
+  walletconnect_flutter_v2: #^2.3.1
+    git:
+      url: https://github.com/WalletConnect/WalletConnectFlutterV2.git
+      ref: ae59206fd7e385f76e24dd7346cb54fbabe64424
   webview_flutter: ^4.7.0
   webview_flutter_android: ^3.16.0
   webview_flutter_wkwebview: ^3.13.0
