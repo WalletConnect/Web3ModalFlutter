@@ -1,33 +1,41 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:web3modal_flutter/utils/platform/i_platform_utils.dart';
 
 class PlatformUtils extends IPlatformUtils {
+  bool get _runsOnIos =>
+      (kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) ||
+      (!kIsWeb && Platform.isIOS);
+  bool get _runsOnAndroid =>
+      (kIsWeb && defaultTargetPlatform == TargetPlatform.android) ||
+      (!kIsWeb && Platform.isAndroid);
+
   @override
   PlatformExact getPlatformExact() {
-    if (Platform.isAndroid) {
+    if (_runsOnAndroid) {
       return PlatformExact.android;
-    } else if (Platform.isIOS) {
+    } else if (_runsOnIos) {
       return PlatformExact.iOS;
+    } else if (kIsWeb) {
+      return PlatformExact.web;
     } else if (Platform.isLinux) {
       return PlatformExact.linux;
     } else if (Platform.isMacOS) {
       return PlatformExact.macOS;
     } else if (Platform.isWindows) {
       return PlatformExact.windows;
-    } else if (kIsWeb) {
-      return PlatformExact.web;
     }
     return PlatformExact.web;
   }
 
   @override
   PlatformType getPlatformType() {
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (_runsOnAndroid || _runsOnIos) {
       return PlatformType.mobile;
-    } else if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
+    } else if (!kIsWeb &&
+        (Platform.isLinux || Platform.isMacOS || Platform.isWindows)) {
       return PlatformType.desktop;
     } else if (kIsWeb) {
       return PlatformType.web;
@@ -37,7 +45,7 @@ class PlatformUtils extends IPlatformUtils {
 
   @override
   bool canDetectInstalledApps() {
-    return getPlatformType() == PlatformType.mobile;
+    return !kIsWeb && getPlatformType() == PlatformType.mobile;
   }
 
   @override

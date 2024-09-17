@@ -118,8 +118,9 @@ class CoreUtils extends ICoreUtils {
       'x-project-id': projectId,
       'x-sdk-type': StringConstants.X_SDK_TYPE,
       'x-sdk-version': 'flutter-${StringConstants.X_SDK_VERSION}',
-      'user-agent': getUserAgent(),
-      if (referer != null) 'referer': referer,
+      // Following headers are rejected by some web browsers (i.e. Safari)
+      // 'user-agent': getUserAgent(),
+      // if (referer != null) 'referer': referer,
     };
   }
 }

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:web3modal_flutter/services/explorer_service/explorer_service_singleton.dart';
+import 'package:cached_network_image_platform_interface/cached_network_image_platform_interface.dart';
 import 'package:web3modal_flutter/theme/w3m_theme.dart';
 import 'package:web3modal_flutter/utils/core/core_utils_singleton.dart';
 
@@ -75,6 +76,8 @@ class W3MListAvatar extends StatelessWidget {
                     ),
                     child: CachedNetworkImage(
                       imageUrl: imageUrl!,
+                      // Workaround for https://github.com/Baseflow/flutter_cached_network_image/issues/820
+                      imageRenderMethodForWeb: ImageRenderMethodForWeb.HttpGet,
                       httpHeaders: coreUtils.instance.getAPIHeaders(projectId),
                       fadeInDuration: const Duration(milliseconds: 500),
                       fadeOutDuration: const Duration(milliseconds: 500),

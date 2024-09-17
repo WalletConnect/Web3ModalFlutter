@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -201,7 +200,7 @@ class ExplorerService implements IExplorerService {
       _core.projectId,
       _referer,
     );
-    final uri = Platform.isIOS
+    final uri = platformUtils.instance.getPlatformExact() == PlatformExact.iOS
         ? Uri.parse('${UrlConstants.apiService}/getIosData')
         : Uri.parse('${UrlConstants.apiService}/getAndroidData');
     try {
@@ -211,7 +210,12 @@ class ExplorerService implements IExplorerService {
           jsonDecode(response.body),
           (json) => NativeAppData.fromJson(json),
         );
-        return apiResponse.data.toList();
+        final result = apiResponse.data.toList();
+        loggerService.instance.d(
+          '[$runtimeType] fetched native data : ${result.map((appData) => jsonEncode(appData.toJson()))}',
+          error: response.statusCode,
+        );
+        return result;
       } else {
         loggerService.instance.d(
           '⛔ [$runtimeType] error fetching native data $uri',
@@ -423,6 +427,9 @@ class ExplorerService implements IExplorerService {
 
   @override
   Future<W3MWalletInfo?> getCoinbaseWalletObject() async {
+    if (platformUtils.instance.getPlatformType() == PlatformType.web) {
+      return null;
+    }
     final results = await _fetchListings(
       params: RequestParams(
         page: 1,
@@ -486,15 +493,17 @@ class ExplorerService implements IExplorerService {
 
   String _getPlatformType() {
     final type = platformUtils.instance.getPlatformType();
+    final exactPlatform = platformUtils.instance.getPlatformExact();
     final platform = type.toString().toLowerCase();
     switch (type) {
       case PlatformType.mobile:
-        if (Platform.isIOS) {
-          return 'ios';
-        } else if (Platform.isAndroid) {
-          return 'android';
-        } else {
-          return 'mobile';
+        switch (exactPlatform) {
+          case PlatformExact.iOS:
+            return 'ios';
+          case PlatformExact.android:
+            return 'android';
+          default:
+            return 'mobile';
         }
       default:
         return platform;
