@@ -1,3 +1,10 @@
+# ⚠️ WARNING
+
+### This package is no longer maintened, please upgrade to reown_appkit.
+
+- Read more at: [https://docs.reown.com/advanced/walletconnect-deprecations#flutter](https://docs.reown.com/advanced/walletconnect-deprecations#flutter)
+- AppKit Updgrade guide: [https://docs.reown.com/appkit/upgrade/from-web3modal-flutter](https://docs.reown.com/appkit/upgrade/from-web3modal-flutter)
+
 # WalletConnect's official AppKit SDK for Flutter
 
 The all-in-one stack to build apps for the new internet<br />

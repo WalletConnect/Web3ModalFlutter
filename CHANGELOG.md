@@ -1,3 +1,7 @@
+## 3.3.4
+
+- Package is no longer maintained. Check readme file
+
 ## 3.3.3
 
 - Fix a bug where reading stored chainId failed

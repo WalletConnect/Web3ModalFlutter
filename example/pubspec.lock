@@ -633,7 +633,7 @@ packages:
     source: hosted
     version: "2.1.0"
   package_info_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: package_info_plus
       sha256: "2c582551839386fa7ddbc7770658be7c0f87f388a4bff72066478f597c34d17f"
@@ -1163,7 +1163,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "3.3.3"
+    version: "3.3.4"
   web_socket_channel:
     dependency: transitive
     description:
